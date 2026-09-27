@@ -36,7 +36,17 @@ Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (
 
 **Một phase một lần.** Không làm phase sau khi chưa được yêu cầu. Không giao cả 12 phase trong một lượt.
 
-## 3. Kiến trúc bắt buộc
+## 3. Package manager & monorepo (BẮT BUỘC)
+
+- **Chỉ dùng npm** + **Nx** (chạy qua `npx nx` hoặc npm scripts). Monorepo = npm workspaces + Nx.
+- **Cấm pnpm, yarn, bun**: không chạy `pnpm`/`yarn`/`bun`, không tạo `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `yarn.lock`, `bun.lockb`, `.pnpmfile.cjs`.
+- Lockfile duy nhất: `package-lock.json` (commit vào repo).
+- Thêm dependency: `npm install <pkg> -w <workspace>`; không sửa tay version rồi bỏ qua install.
+- Dependency nội bộ khai báo `"*"` (npm workspaces), **không** dùng protocol `workspace:`.
+- Task chạy qua Nx: `npx nx run-many -t lint test build`, `npx nx affected -t test`, `npx nx run <project>:<target>`.
+- Không tự chuyển sang tool khác (Turborepo, Lerna, pnpm) dù docs roadmap có nhắc "Nx or pnpm" — quyết định đã chốt là npm + Nx.
+
+## 4. Kiến trúc bắt buộc
 
 1. `game-core`, `learning-engine` là TS thuần: **cấm** import React, Phaser, Zustand, DOM, IndexedDB.
 2. Case content chỉ nằm trong `packages/game-content` (JSON + Zod). Không hardcode text/ID của Case #001 trong React/Phaser.
@@ -47,7 +57,7 @@ Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (
 7. Không global mutable singleton ngoài store được phê duyệt.
 8. Scene phải cleanup listener khi shutdown/destroy.
 
-## 4. Code rules
+## 5. Code rules
 
 - TypeScript strict; không `any` nếu không có lý do ghi rõ trong comment.
 - .NET: nullable enabled, warnings as errors.
@@ -56,7 +66,7 @@ Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (
 - Dev log prefix: `[CaseEngine] [Dialogue] [Objective] [Learning] [Save]`; giảm log ở production.
 - Content load lỗi → thông báo cho developer đọc được, không im lặng chạy tiếp. Không crash trắng màn hình.
 
-## 5. Product guardrails (không được vi phạm)
+## 6. Product guardrails (không được vi phạm)
 
 - Investigation first: không flow `Walk → Quiz → Reward`.
 - Không energy, lives, timer ép trả lời, streak punishment, ads, animation "WRONG!".
@@ -65,7 +75,7 @@ Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (
 - Đỏ (`#A4412D` / `#743026`) chỉ dùng cho clue, evidence, objective, contradiction, selected node, map marker.
 - Out of scope MVP: multiplayer, AI NPC, voice recognition, procedural case, SignalR, Redis.
 
-## 6. Definition of Done (mỗi phase)
+## 7. Definition of Done (mỗi phase)
 
 Chạy và **dán output** trước khi báo xong:
 
@@ -78,8 +88,8 @@ Backend (khi có thay đổi trong `apps/api`): `dotnet build` + `dotnet test`.
 
 Báo cáo gồm: tóm tắt, file thay đổi, test thêm, lệnh đã chạy + kết quả, hạn chế còn lại. Không đánh dấu complete nếu chỉ có UI mock hoặc test chưa chạy.
 
-## 7. Môi trường hiện tại
+## 8. Môi trường hiện tại
 
-- Windows, Node 22, npm workspaces. Chưa có `pnpm`.
+- Windows, Node 22, npm + Nx (npm workspaces).
 - Chưa có .NET 10 SDK trên máy → nếu không build được backend, nói rõ, không tuyên bố đã pass.
 - Repo chưa `git init`.

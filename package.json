@@ -3,23 +3,35 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "workspaces": ["apps/game-web", "packages/*"],
+  "workspaces": [
+    "apps/game-web",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "npm run dev -w @lexicon/game-web",
-    "build": "npm run build -w @lexicon/game-web",
-    "test": "vitest run",
-    "test:e2e": "npm run test:e2e -w @lexicon/game-web",
-    "lint": "eslint .",
+    "preinstall": "npx --yes only-allow npm",
+    "dev": "nx run @lexicon/game-web:dev",
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test",
+    "test:e2e": "nx run @lexicon/game-web:test:e2e",
+    "lint": "nx run-many -t lint",
+    "typecheck": "tsc -b",
     "format": "prettier --write .",
-    "typecheck": "tsc -b"
+    "affected": "nx affected -t lint test build",
+    "graph": "nx graph"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
+    "nx": "^21.0.0",
     "prettier": "^3.3.0",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.0.0",
     "vitest": "^2.1.0"
+  },
+  "packageManager": "npm@10.9.7",
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
   }
 }

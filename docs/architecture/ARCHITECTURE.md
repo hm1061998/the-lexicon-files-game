@@ -161,7 +161,7 @@ Dependency: `Api → Infrastructure → Application → Domain`. Cloud save dùn
 
 | Chủ đề | Quyết định | Nguồn |
 |---|---|---|
-| Workspace | npm workspaces (pnpm chưa có trên máy) | 04 §2 cho phép |
+| Package manager / monorepo | **npm + Nx** (npm workspaces). Cấm pnpm/yarn/bun | 04 §2 ("Nx or pnpm") → chốt Nx; rule trong AGENTS.md §3 |
 | Physics | Phaser Arcade | 06 §31 |
 | Dialogue | custom JSON | README |
 | Validation content | Zod, fail build | 04 §35 |
