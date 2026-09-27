@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\LexiconFiles.Domain\LexiconFiles.Domain.csproj" />
+  </ItemGroup>
+</Project>

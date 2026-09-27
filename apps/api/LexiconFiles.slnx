@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="LexiconFiles.Api/LexiconFiles.Api.csproj" />
+  <Project Path="LexiconFiles.Application/LexiconFiles.Application.csproj" />
+  <Project Path="LexiconFiles.Domain/LexiconFiles.Domain.csproj" />
+  <Project Path="LexiconFiles.Infrastructure/LexiconFiles.Infrastructure.csproj" />
+  <Project Path="LexiconFiles.Tests/LexiconFiles.Tests.csproj" />
+</Solution>
