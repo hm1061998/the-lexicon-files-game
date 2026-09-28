@@ -18,8 +18,8 @@ function createFakeBus(): { bus: EventBus<GameEventMap>; emitted: Emitted[] } {
 }
 
 const areas: InteractableArea[] = [
-  { id: 'a', x: 0, y: 0, radius: 10 },
-  { id: 'b', x: 100, y: 0, radius: 10 },
+  { id: 'a', x: 0, y: 0, radius: 10, prompt: 'Prompt A' },
+  { id: 'b', x: 100, y: 0, radius: 10, prompt: 'Prompt B' },
 ];
 
 describe('InteractionTracker', () => {
@@ -29,7 +29,9 @@ describe('InteractionTracker', () => {
 
     tracker.update({ x: 0, y: 0 }, areas);
 
-    expect(emitted).toEqual([{ event: 'interaction:nearby', payload: { interactableId: 'a' } }]);
+    expect(emitted).toEqual([
+      { event: 'interaction:nearby', payload: { interactableId: 'a', prompt: 'Prompt A' } },
+    ]);
     expect(tracker.current).toBe('a');
   });
 
@@ -52,7 +54,7 @@ describe('InteractionTracker', () => {
     tracker.update({ x: 500, y: 500 }, areas);
 
     expect(emitted).toEqual([
-      { event: 'interaction:nearby', payload: { interactableId: 'a' } },
+      { event: 'interaction:nearby', payload: { interactableId: 'a', prompt: 'Prompt A' } },
       { event: 'interaction:cleared', payload: {} },
     ]);
     expect(tracker.current).toBeNull();
@@ -66,9 +68,21 @@ describe('InteractionTracker', () => {
     tracker.update({ x: 100, y: 0 }, areas);
 
     expect(emitted).toEqual([
-      { event: 'interaction:nearby', payload: { interactableId: 'a' } },
-      { event: 'interaction:nearby', payload: { interactableId: 'b' } },
+      { event: 'interaction:nearby', payload: { interactableId: 'a', prompt: 'Prompt A' } },
+      { event: 'interaction:nearby', payload: { interactableId: 'b', prompt: 'Prompt B' } },
     ]);
     expect(tracker.current).toBe('b');
+  });
+
+  it('emits nearby with prompt', () => {
+    const { bus, emitted } = createFakeBus();
+    const tracker = new InteractionTracker(bus);
+
+    tracker.update({ x: 0, y: 0 }, areas);
+
+    expect(emitted[0]).toEqual({
+      event: 'interaction:nearby',
+      payload: { interactableId: 'a', prompt: 'Prompt A' },
+    });
   });
 });

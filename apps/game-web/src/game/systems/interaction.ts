@@ -3,6 +3,7 @@ export type InteractableArea = {
   x: number;
   y: number;
   radius: number;
+  prompt: string;
 };
 
 export function findNearestInteractable(

@@ -20,7 +20,8 @@ export class InteractionTracker {
     if (id === this.currentId) return this.currentId;
 
     this.currentId = id;
-    if (id) this.bus.emit('interaction:nearby', { interactableId: id });
+    if (nearest)
+      this.bus.emit('interaction:nearby', { interactableId: nearest.id, prompt: nearest.prompt });
     else this.bus.emit('interaction:cleared', {});
     return this.currentId;
   }

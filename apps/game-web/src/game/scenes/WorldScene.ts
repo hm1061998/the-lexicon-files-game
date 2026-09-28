@@ -64,6 +64,7 @@ export class WorldScene extends Phaser.Scene {
           x: asset.x + asset.interaction.x,
           y: asset.y + asset.interaction.y,
           radius: asset.interaction.radius,
+          prompt: asset.interaction.prompt,
         });
       }
     }
