@@ -5,7 +5,7 @@ phase: phase-1
 status: proposed
 result_commit: dfc3cfd
 active_spec: docs/superpowers/specs/2026-09-28-phase-1-game-world-prototype-design.md
-active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
+active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 ---
 
 ## Metadata
@@ -22,7 +22,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Current Status
 
-- Spec Phase 1 đã viết; chờ người dùng review spec trước khi lập plan.
+- Spec Phase 1 đã duyệt; plan 6 task đã viết, chờ người dùng review và chọn cách thực thi.
 
 ## Completed
 
@@ -52,7 +52,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Next Actions
 
-- Người dùng review spec Phase 1; sau đó lập plan bằng writing-plans.
+- Người dùng review plan Phase 1 và chọn Subagent-driven hoặc Native.
 
 ## Verification
 
