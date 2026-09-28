@@ -1,6 +1,12 @@
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { PaperPanel } from '@lexicon/ui';
-import type { CaseDefinition, GameState, UiStrings } from '@lexicon/shared-types';
+import type {
+  CaseDefinition,
+  GameState,
+  LanguageProfile,
+  TranslationMode,
+  UiStrings,
+} from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
 import './notebook.css';
 
@@ -20,6 +26,9 @@ export function NotebookPanel({
   strings,
   onSelectTab,
   onClose,
+  profile,
+  translationMode = 'Learning',
+  onRevealTranslation = () => undefined,
 }: {
   caseDefinition: CaseDefinition;
   caseState: GameState;
@@ -27,8 +36,13 @@ export function NotebookPanel({
   strings: UiStrings;
   onSelectTab(tab: NotebookTab): void;
   onClose(): void;
+  profile?: LanguageProfile;
+  translationMode?: TranslationMode;
+  onRevealTranslation?(vocabularyId: string, contextId: string): void;
 }): JSX.Element {
   const headingId = useId();
+  const [revealedVocabularyId, setRevealedVocabularyId] = useState<string | null>(null);
+  useEffect(() => setRevealedVocabularyId(null), [translationMode]);
   const discovered = caseDefinition.evidences.filter(({ id }) =>
     caseState.evidenceIds.includes(id),
   );
@@ -57,7 +71,39 @@ export function NotebookPanel({
           </nav>
           <div className="notebook-content">
             {activeTab === 'people' && <p>{strings.notebookEmptyPeople}</p>}
-            {activeTab === 'vocabulary' && <p>{strings.notebookEmptyVocabulary}</p>}
+            {activeTab === 'vocabulary' &&
+              (Object.keys(profile?.vocabulary ?? {}).length ? (
+                <ul>
+                  {caseDefinition.vocabulary
+                    .filter((entry) => profile?.vocabulary[entry.id])
+                    .map((entry) => (
+                      <li key={entry.id}>
+                        <h3>
+                          {entry.lemma} <small>{strings.vocabularyStageSeen}</small>
+                        </h3>
+                        <p>{entry.definitionEn}</p>
+                        {translationMode === 'Beginner' ? (
+                          <p>{entry.translationVi}</p>
+                        ) : translationMode === 'Learning' && revealedVocabularyId === entry.id ? (
+                          <p>{entry.translationVi}</p>
+                        ) : translationMode === 'Learning' ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const contextId = profile?.vocabulary[entry.id]?.contextsSeen[0];
+                              if (contextId) onRevealTranslation(entry.id, contextId);
+                              setRevealedVocabularyId(entry.id);
+                            }}
+                          >
+                            {strings.revealTranslation}
+                          </button>
+                        ) : null}
+                      </li>
+                    ))}
+                </ul>
+              ) : (
+                <p>{strings.notebookEmptyVocabulary}</p>
+              ))}
             {activeTab === 'evidence' &&
               (discovered.length > 0 ? (
                 <ul>

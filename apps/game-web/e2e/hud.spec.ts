@@ -143,6 +143,9 @@ async function collectMeetingMinutes(page: Page): Promise<void> {
   await expect(page.getByRole('dialog')).toContainText('The meeting began at 8:00 PM.');
   const closeButton = page.getByRole('button', { name: 'Đóng' });
   await expect(closeButton).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  const lastVocabularyWord = page.getByRole('button', { name: /several\. Xem nghĩa từ/ });
+  await expect(lastVocabularyWord).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(closeButton).toBeFocused();
 }

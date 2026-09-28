@@ -1,7 +1,11 @@
 export { sceneDefinitionSchema, parseSceneDefinition } from './schema/scene';
 export { conditionSchema, effectSchema } from './schema/caseEngine';
 export { parseCaseDefinition } from './schema/caseDefinition';
-export { vocabularyEntrySchema, vocabularySpanSchema, vocabularyCatalogueSchema } from './schema/learning';
+export {
+  vocabularyEntrySchema,
+  vocabularySpanSchema,
+  vocabularyCatalogueSchema,
+} from './schema/learning';
 export { validateVocabularyReferences } from './validation/vocabularyReferences';
 export { parseUiStrings } from './schema/ui';
 export { loadSceneDefinition, DEFAULT_START } from './loader/loadScene';

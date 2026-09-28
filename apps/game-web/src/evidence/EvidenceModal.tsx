@@ -3,6 +3,7 @@ import { PaperPanel } from '@lexicon/ui';
 import type { EvidenceDefinition, UiStrings } from '@lexicon/shared-types';
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './evidence.css';
+import { VocabularyText } from '../vocabulary/VocabularyText';
 
 const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -11,10 +12,26 @@ export function EvidenceModal({
   evidence,
   strings,
   onClose,
+  vocabulary = [],
+  translationMode = 'Learning',
+  onEncounter = () => undefined,
+  onInspect = () => undefined,
+  onRevealTranslation = () => undefined,
+  onTranslationModeChange,
+  vocabularyTutorialSeen = true,
+  onVocabularyTutorialSeen,
 }: {
   evidence: EvidenceDefinition;
   strings: UiStrings;
   onClose(): void;
+  vocabulary?: import('@lexicon/shared-types').CaseDefinition['vocabulary'];
+  translationMode?: import('@lexicon/shared-types').TranslationMode;
+  onEncounter?(vocabularyId: string, contextId: string): void;
+  onInspect?(vocabularyId: string, contextId: string): void;
+  onRevealTranslation?(vocabularyId: string, contextId: string): void;
+  onTranslationModeChange?(mode: import('@lexicon/shared-types').TranslationMode): void;
+  vocabularyTutorialSeen?: boolean;
+  onVocabularyTutorialSeen?(): void;
 }): JSX.Element {
   const headingId = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +75,23 @@ export function EvidenceModal({
             </button>
           </div>
           <p className="evidence-category">{strings.evidence}</p>
-          <p>{evidence.description}</p>
+          <p>
+            <VocabularyText
+              text={evidence.description}
+              translationVi={evidence.descriptionVi}
+              spans={evidence.vocabularySpans}
+              contextId={`evidence:${evidence.id}:description`}
+              catalogue={vocabulary}
+              mode={translationMode}
+              strings={strings}
+              onEncounter={onEncounter}
+              onInspect={onInspect}
+              onRevealTranslation={onRevealTranslation}
+              onModeChange={onTranslationModeChange}
+              tutorialSeen={vocabularyTutorialSeen}
+              onTutorialSeen={onVocabularyTutorialSeen}
+            />
+          </p>
         </div>
       </PaperPanel>
     </div>

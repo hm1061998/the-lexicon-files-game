@@ -29,6 +29,19 @@ const uiStringsSchema = z
     notebookEmptyVocabulary: z.string().min(1),
     evidenceEmpty: z.string().min(1),
     openNotebook: z.string().min(1),
+    vocabularyMode: z.string().min(1),
+    vocabularyModeBeginner: z.string().min(1),
+    vocabularyModeLearning: z.string().min(1),
+    vocabularyModeImmersion: z.string().min(1),
+    inspectVocabulary: z.string().min(1),
+    revealTranslation: z.string().min(1),
+    vocabularyMeaning: z.string().min(1),
+    vocabularyContext: z.string().min(1),
+    vocabularyStageSeen: z.string().min(1),
+    vocabularyTutorial: z.string().min(1),
+    vocabularyLearningError: z.string().min(1),
+    vocabularyResetTitle: z.string().min(1),
+    vocabularyResetBody: z.string().min(1),
   })
   .strict();
 

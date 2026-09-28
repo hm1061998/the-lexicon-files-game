@@ -24,4 +24,17 @@ export interface UiStrings {
   readonly notebookEmptyVocabulary: string;
   readonly evidenceEmpty: string;
   readonly openNotebook: string;
+  readonly vocabularyMode: string;
+  readonly vocabularyModeBeginner: string;
+  readonly vocabularyModeLearning: string;
+  readonly vocabularyModeImmersion: string;
+  readonly inspectVocabulary: string;
+  readonly revealTranslation: string;
+  readonly vocabularyMeaning: string;
+  readonly vocabularyContext: string;
+  readonly vocabularyStageSeen: string;
+  readonly vocabularyTutorial: string;
+  readonly vocabularyLearningError: string;
+  readonly vocabularyResetTitle: string;
+  readonly vocabularyResetBody: string;
 }

@@ -171,7 +171,8 @@ export function parseCaseDefinition(
     appendSchemaIssues(issues, `${source}/evidences.json`, evidencesResult.error);
   }
   if (!factsResult.success) appendSchemaIssues(issues, `${source}/facts.json`, factsResult.error);
-  if (!vocabularyResult.success) appendSchemaIssues(issues, `${source}/vocabulary.json`, vocabularyResult.error);
+  if (!vocabularyResult.success)
+    appendSchemaIssues(issues, `${source}/vocabulary.json`, vocabularyResult.error);
   scenesResult.forEach((result, index) => {
     if (!result.success) {
       appendSchemaIssues(issues, `${source}/sceneRaws.${index}`, result.error);
@@ -249,7 +250,8 @@ export function parseCaseDefinition(
   evidences.forEach((evidence, index) => {
     const spans = evidence.vocabularySpans ?? [];
     const ids = [...new Set(spans.map(({ vocabularyId }) => vocabularyId))];
-    if (spans.length > 0) vocabularyContexts.push({ id: `evidence:${evidence.id}:description`, vocabularyIds: ids });
+    if (spans.length > 0)
+      vocabularyContexts.push({ id: `evidence:${evidence.id}:description`, vocabularyIds: ids });
     if (evidence.caseId !== caseData.id) {
       issues.push(`evidences.${index}.caseId: expected "${caseData.id}"`);
     }
@@ -259,15 +261,34 @@ export function parseCaseDefinition(
     });
   });
 
-  dialoguesResult.data.dialogues.forEach((tree) => tree.nodes.forEach((node) => {
-    if (node.vocabularySpans?.length) vocabularyContexts.push({ id: `dialogue:${tree.id}:${node.id}:text`, vocabularyIds: [...new Set(node.vocabularySpans.map(({ vocabularyId }) => vocabularyId))] });
-  }));
-  issues.push(...validateVocabularyReferences({
-    source,
-    catalogue: vocabulary,
-    evidenceContexts: evidences.map((entry) => ({ id: `evidence:${entry.id}:description`, text: entry.description, spans: entry.vocabularySpans, vocabularyIds: entry.vocabularyIds })),
-    dialogueContexts: dialoguesResult.data.dialogues.flatMap((tree) => tree.nodes.map((node) => ({ id: `dialogue:${tree.id}:${node.id}:text`, text: node.text, spans: node.vocabularySpans }))),
-  }));
+  dialoguesResult.data.dialogues.forEach((tree) =>
+    tree.nodes.forEach((node) => {
+      if (node.vocabularySpans?.length)
+        vocabularyContexts.push({
+          id: `dialogue:${tree.id}:${node.id}:text`,
+          vocabularyIds: [...new Set(node.vocabularySpans.map(({ vocabularyId }) => vocabularyId))],
+        });
+    }),
+  );
+  issues.push(
+    ...validateVocabularyReferences({
+      source,
+      catalogue: vocabulary,
+      evidenceContexts: evidences.map((entry) => ({
+        id: `evidence:${entry.id}:description`,
+        text: entry.description,
+        spans: entry.vocabularySpans,
+        vocabularyIds: entry.vocabularyIds,
+      })),
+      dialogueContexts: dialoguesResult.data.dialogues.flatMap((tree) =>
+        tree.nodes.map((node) => ({
+          id: `dialogue:${tree.id}:${node.id}:text`,
+          text: node.text,
+          spans: node.vocabularySpans,
+        })),
+      ),
+    }),
+  );
 
   facts.forEach((fact, index) => {
     fact.sourceEvidenceIds.forEach((id) => {

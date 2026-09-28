@@ -9,6 +9,7 @@ import type {
 } from '@lexicon/shared-types';
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './dialogue.css';
+import { VocabularyText } from '../vocabulary/VocabularyText';
 const FOCUSABLE =
   'button:not(:disabled), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 export type DialogueViewProps = {
@@ -22,6 +23,14 @@ export type DialogueViewProps = {
   onChoose(action: DialogueAction): void;
   onClose(): void;
   returnFocusRef: { readonly current: HTMLElement | null };
+  vocabulary?: import('@lexicon/shared-types').CaseDefinition['vocabulary'];
+  translationMode?: import('@lexicon/shared-types').TranslationMode;
+  onEncounter?(vocabularyId: string, contextId: string): void;
+  onInspect?(vocabularyId: string, contextId: string): void;
+  onRevealTranslation?(vocabularyId: string, contextId: string): void;
+  onTranslationModeChange?(mode: import('@lexicon/shared-types').TranslationMode): void;
+  vocabularyTutorialSeen?: boolean;
+  onVocabularyTutorialSeen?(): void;
 };
 export function DialogueView({
   speakerName,
@@ -34,6 +43,14 @@ export function DialogueView({
   onChoose,
   onClose,
   returnFocusRef,
+  vocabulary = [],
+  translationMode = 'Learning',
+  onEncounter = () => undefined,
+  onInspect = () => undefined,
+  onRevealTranslation = () => undefined,
+  onTranslationModeChange,
+  vocabularyTutorialSeen = true,
+  onVocabularyTutorialSeen,
 }: DialogueViewProps): JSX.Element {
   const title = useId(),
     dialogRef = useRef<HTMLDivElement>(null),
@@ -78,7 +95,21 @@ export function DialogueView({
             </button>
           </div>
           <p ref={textRef} tabIndex={-1} lang="en" className="dialogue-text">
-            {node.text}
+            <VocabularyText
+              text={node.text}
+              translationVi={node.translationVi}
+              spans={node.vocabularySpans}
+              contextId={`dialogue:${session.treeId}:${node.id}:text`}
+              catalogue={vocabulary}
+              mode={translationMode}
+              strings={strings}
+              onEncounter={onEncounter}
+              onInspect={onInspect}
+              onRevealTranslation={onRevealTranslation}
+              onModeChange={onTranslationModeChange}
+              tutorialSeen={vocabularyTutorialSeen}
+              onTutorialSeen={onVocabularyTutorialSeen}
+            />
           </p>
           {error && (
             <p role="alert">
@@ -102,6 +133,9 @@ export function DialogueView({
                 }}
               >
                 {choice.text}
+                {translationMode === 'Beginner' && choice.translationVi && (
+                  <small className="dialogue-choice-translation">{choice.translationVi}</small>
+                )}
               </button>
             ))}
           </div>

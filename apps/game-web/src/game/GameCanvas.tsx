@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   CaseDefinition,
   GameEventMap,
@@ -28,6 +28,15 @@ import { NotebookPanel } from '../notebook/NotebookPanel';
 import { createGameStore, type GameStore } from '../state/gameStore';
 import { GameStoreProvider, useGameStore } from '../state/GameStoreContext';
 import { createGame } from './createGame';
+import {
+  createLearningRepository,
+  type LearningLoadResult,
+} from '../persistence/learningRepository';
+import { createDefaultLearningRecord } from '../persistence/learningMigration';
+import { createLearningStore } from '../state/learningStore';
+import { LearningStoreProvider } from '../state/LearningStoreContext';
+import { connectLearningAutosave } from '../persistence/connectLearningAutosave';
+import { useLearningStore } from '../state/LearningStoreContext';
 
 type StartContent = { scene: SceneDefinition; caseDefinition: CaseDefinition; strings: UiStrings };
 type LoadResult = { ok: true; content: StartContent } | { ok: false; error: Error };
@@ -55,9 +64,21 @@ function loadStartContent(): LoadResult {
 export function GameCanvas() {
   const result = useMemo(loadStartContent, []);
   const repository = useMemo(createSaveRepository, []);
+  const learningRepository = useMemo(createLearningRepository, []);
+  const [learningLoad, setLearningLoad] = useState<LearningLoadResult | null>(null);
   const [bootstrap, setBootstrap] = useState<GameBootstrapResult | { status: 'loading' }>({
     status: 'loading',
   });
+
+  useEffect(() => {
+    if (!result.ok) return;
+    void learningRepository
+      .loadLearning(
+        result.content.caseDefinition.vocabulary,
+        result.content.caseDefinition.vocabularyContexts,
+      )
+      .then(setLearningLoad);
+  }, [result, learningRepository]);
 
   useEffect(() => {
     if (!result.ok) return;
@@ -93,6 +114,8 @@ export function GameCanvas() {
   if (bootstrap.status === 'loading') {
     return <div role="status">{result.content.strings.loadingGame}</div>;
   }
+
+  if (!learningLoad) return <div role="status">{result.content.strings.loadingGame}</div>;
 
   if (bootstrap.status === 'confirmation-required') {
     return (
@@ -141,6 +164,19 @@ export function GameCanvas() {
       autosaveEnabled={bootstrap.autosaveEnabled}
       {...(persistenceWarning ? { persistenceWarning } : {})}
       repository={repository}
+      learningRepository={learningRepository}
+      learningRecord={
+        learningLoad.status === 'confirmation-required'
+          ? createDefaultLearningRecord()
+          : learningLoad.record
+      }
+      learningPersistenceInitiallyEnabled={
+        learningLoad.status === 'loaded' || learningLoad.status === 'missing'
+      }
+      learningRecoveryRequired={
+        learningLoad.status === 'confirmation-required' ? learningLoad.reason : null
+      }
+      learningPersistenceError={learningLoad.status === 'memory-only' ? learningLoad.error : null}
     />
   );
 }
@@ -177,15 +213,32 @@ function GameRoot({
   autosaveEnabled,
   persistenceWarning,
   repository,
+  learningRepository,
+  learningRecord,
+  learningPersistenceInitiallyEnabled,
+  learningRecoveryRequired,
+  learningPersistenceError,
 }: {
   content: StartContent;
   initialState: ReturnType<typeof createCaseState>;
   autosaveEnabled: boolean;
   persistenceWarning?: string;
   repository: SaveRepository;
+  learningRepository: ReturnType<typeof createLearningRepository>;
+  learningRecord: ReturnType<typeof createDefaultLearningRecord>;
+  learningPersistenceInitiallyEnabled: boolean;
+  learningRecoveryRequired: string | null;
+  learningPersistenceError: string | null;
 }) {
   const { scene, caseDefinition, strings } = content;
   const containerRef = useRef<HTMLDivElement>(null);
+  const [learningPersistenceEnabled, setLearningPersistenceEnabled] = useState(
+    learningPersistenceInitiallyEnabled,
+  );
+  const [showLearningRecovery, setShowLearningRecovery] = useState(
+    Boolean(learningRecoveryRequired),
+  );
+  const [learningWriteError, setLearningWriteError] = useState<string | null>(null);
   const { store, bus } = useMemo(
     () => ({
       store: createGameStore({
@@ -196,6 +249,16 @@ function GameRoot({
       bus: createEventBus<GameEventMap>(),
     }),
     [caseDefinition, initialState, persistenceWarning],
+  );
+  const learning = useMemo(
+    () =>
+      createLearningStore({
+        catalogue: caseDefinition.vocabulary,
+        contexts: caseDefinition.vocabularyContexts,
+        initialRecord: learningRecord,
+        bus,
+      }),
+    [caseDefinition, learningRecord, bus],
   );
   usePauseShortcut(store);
   useNotebookShortcut(store);
@@ -228,6 +291,18 @@ function GameRoot({
     };
   }, [scene, bus, store, caseDefinition, autosaveEnabled, repository, strings]);
 
+  useEffect(() => {
+    if (!learningPersistenceEnabled) return;
+    return connectLearningAutosave(
+      learning,
+      (record) => learningRepository.saveLearning(record),
+      (error) => {
+        const detail = error instanceof Error ? error.message : String(error);
+        setLearningWriteError(`${strings.vocabularyLearningError} ${detail}`);
+      },
+    );
+  }, [learning, learningRepository, learningPersistenceEnabled, strings.vocabularyLearningError]);
+
   return (
     <div className="game-root" style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <div
@@ -237,12 +312,49 @@ function GameRoot({
         style={{ width: '100%', height: '100%' }}
       />
       <GameStoreProvider store={store}>
-        <Hud strings={strings} />
-        <PersistenceNotice strings={strings} />
-        <DialogueLayer strings={strings} returnFocusRef={containerRef} />
-        <PauseLayer strings={strings} store={store} />
-        <EvidenceLayer strings={strings} />
-        <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
+        <LearningStoreProvider store={learning}>
+          {showLearningRecovery && learningRecoveryRequired && (
+            <aside role="alert" className="learning-recovery-notice">
+              <p>
+                {strings.vocabularyLearningError} {learningRecoveryRequired}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  void learningRepository
+                    .createFreshLearningAfterConfirmation()
+                    .then(() => {
+                      setLearningPersistenceEnabled(true);
+                      setShowLearningRecovery(false);
+                      setLearningWriteError(null);
+                    })
+                    .catch((error: unknown) => {
+                      setLearningWriteError(
+                        error instanceof Error ? error.message : strings.vocabularyLearningError,
+                      );
+                    });
+                }}
+              >
+                {strings.vocabularyResetTitle}
+              </button>
+              <button type="button" onClick={() => setShowLearningRecovery(false)}>
+                {strings.cancel}
+              </button>
+            </aside>
+          )}
+          {(learningPersistenceError || learningWriteError) && (
+            <aside role="status" className="learning-recovery-notice">
+              {learningWriteError ??
+                `${strings.vocabularyLearningError} ${learningPersistenceError}`}
+            </aside>
+          )}
+          <Hud strings={strings} />
+          <PersistenceNotice strings={strings} />
+          <DialogueLayer strings={strings} returnFocusRef={containerRef} />
+          <PauseLayer strings={strings} store={store} />
+          <EvidenceLayer strings={strings} />
+          <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
+        </LearningStoreProvider>
       </GameStoreProvider>
     </div>
   );
@@ -254,9 +366,41 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
     state.caseDefinition.evidences.find((item) => item.id === state.activeEvidenceId),
   );
   const store = useGameStore((state) => state);
+  const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
+  const translationMode = useLearningStore((state) => state.translationMode);
+  const setTranslationMode = useLearningStore((state) => state.setTranslationMode);
+  const vocabularyTutorialSeen = useLearningStore((state) => state.vocabularyTutorialSeen);
+  const markVocabularyTutorialSeen = useLearningStore((state) => state.markVocabularyTutorialSeen);
+  const onEncounter = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onInspect = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'inspectVocabulary', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onRevealTranslation = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
   if (activeEvidenceId === null || !evidence) return null;
   return (
-    <EvidenceModal evidence={evidence} strings={strings} onClose={() => store.closeEvidence()} />
+    <EvidenceModal
+      evidence={evidence}
+      strings={strings}
+      onClose={() => store.closeEvidence()}
+      vocabulary={store.caseDefinition.vocabulary}
+      translationMode={translationMode}
+      onEncounter={onEncounter}
+      onInspect={onInspect}
+      onRevealTranslation={onRevealTranslation}
+      onTranslationModeChange={setTranslationMode}
+      vocabularyTutorialSeen={vocabularyTutorialSeen}
+      onVocabularyTutorialSeen={markVocabularyTutorialSeen}
+    />
   );
 }
 
@@ -271,6 +415,8 @@ function NotebookLayer({
   const caseState = useGameStore((state) => state.caseState);
   const activeTab = useGameStore((state) => state.notebookTab);
   const store = useGameStore((state) => state);
+  const learningProfile = useLearningStore((state) => state.profile);
+  const learning = useLearningStore((state) => state);
   if (!notebookOpen) return null;
   return (
     <NotebookPanel
@@ -280,6 +426,11 @@ function NotebookLayer({
       strings={strings}
       onSelectTab={(tab) => store.setNotebookTab(tab)}
       onClose={() => store.toggleNotebook()}
+      profile={learningProfile}
+      translationMode={learning.translationMode}
+      onRevealTranslation={(vocabularyId, contextId) =>
+        learning.dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId })
+      }
     />
   );
 }
@@ -296,6 +447,14 @@ function PersistenceNotice({ strings }: { strings: UiStrings }): JSX.Element | n
 
 function PauseLayer({ strings, store }: { strings: UiStrings; store: GameStore }) {
   const paused = useGameStore((state) => state.paused);
+  const learning = useLearningStore((state) => state);
   if (!paused) return null;
-  return <PauseMenu strings={strings} onResume={() => store.getState().setPaused(false)} />;
+  return (
+    <PauseMenu
+      strings={strings}
+      translationMode={learning.translationMode}
+      onTranslationModeChange={learning.setTranslationMode}
+      onResume={() => store.getState().setPaused(false)}
+    />
+  );
 }

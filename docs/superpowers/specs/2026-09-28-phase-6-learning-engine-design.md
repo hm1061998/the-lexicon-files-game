@@ -1,6 +1,6 @@
 # Phase 6 — Learning Engine
 
-Trạng thái: **đề xuất, chưa được duyệt**. Người dùng yêu cầu “tiếp tục” sau Phase 5 đã push dev. Git khảo sát: `dev` sạch tại `f4ac2be`, khớp `origin/dev`. Đây là subsystem mới nên dùng nhánh architectural của brainstorming. Tài liệu này là phương án cụ thể để review, chưa cho phép implementation hoặc writing-plans.
+Trạng thái: **đã duyệt — phương án A**. Người dùng chốt phương án A, duyệt plan sáu task và chọn thực thi inline. Implementation Phase 6 đang diễn ra trong managed worktree riêng, bắt đầu từ checkpoint plan `77846e1`; chưa push hoặc tích hợp vào `dev`.
 
 Nguồn: docs/02 §§4–7, 11–12, 24–26, 29–31; docs/03 §15; roadmap §25; ARCHITECTURE.md. Không sửa product rules hoặc lời khai/truth đã author.
 

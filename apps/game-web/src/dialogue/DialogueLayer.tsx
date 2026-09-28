@@ -2,6 +2,8 @@ import type { UiStrings } from '@lexicon/shared-types';
 import { getAvailableChoices } from '@lexicon/game-core';
 import { useGameStore } from '../state/GameStoreContext';
 import { DialogueView } from './DialogueView';
+import { useLearningStore } from '../state/LearningStoreContext';
+import { useCallback } from 'react';
 export function DialogueLayer({
   strings,
   returnFocusRef,
@@ -10,6 +12,26 @@ export function DialogueLayer({
   returnFocusRef: { readonly current: HTMLElement | null };
 }): JSX.Element | null {
   const state = useGameStore((s) => s);
+  const dispatchLearning = useLearningStore((s) => s.dispatchLearning);
+  const translationMode = useLearningStore((s) => s.translationMode);
+  const setTranslationMode = useLearningStore((s) => s.setTranslationMode);
+  const vocabularyTutorialSeen = useLearningStore((s) => s.vocabularyTutorialSeen);
+  const markVocabularyTutorialSeen = useLearningStore((s) => s.markVocabularyTutorialSeen);
+  const onEncounter = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onInspect = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'inspectVocabulary', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onRevealTranslation = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
   const session = state.dialogueSession;
   if (!session)
     return state.dialogueError ? (
@@ -38,6 +60,14 @@ export function DialogueLayer({
       onChoose={state.chooseDialogue}
       onClose={state.closeDialogue}
       returnFocusRef={returnFocusRef}
+      vocabulary={state.caseDefinition.vocabulary}
+      translationMode={translationMode}
+      onEncounter={onEncounter}
+      onInspect={onInspect}
+      onRevealTranslation={onRevealTranslation}
+      onTranslationModeChange={setTranslationMode}
+      vocabularyTutorialSeen={vocabularyTutorialSeen}
+      onVocabularyTutorialSeen={markVocabularyTutorialSeen}
     />
   );
 }

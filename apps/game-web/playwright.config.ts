@@ -4,6 +4,10 @@ export default defineConfig({
   // Phaser advances with rendered frames; competing browser canvases make timed movement checks unstable.
   workers: 1,
   testDir: './e2e',
-  use: { baseURL: 'http://localhost:5173' },
-  webServer: { command: 'npm run dev', port: 5173, reuseExistingServer: true },
+  use: { baseURL: 'http://127.0.0.1:5174' },
+  webServer: {
+    command: 'npm run dev -- --force --host 127.0.0.1 --port 5174 --strictPort',
+    port: 5174,
+    reuseExistingServer: false,
+  },
 });

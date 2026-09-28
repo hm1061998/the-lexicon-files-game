@@ -8,12 +8,12 @@
       "description": "The meeting began at 8:00 PM. Anna left early for a client call, and Leo stepped outside for several minutes.",
       "vocabularyIds": ["meeting", "leave", "early", "client", "outside", "several"],
       "vocabularySpans": [
-        {"start":4,"end":11,"vocabularyId":"meeting"},
-        {"start":35,"end":39,"vocabularyId":"leave"},
-        {"start":40,"end":45,"vocabularyId":"early"},
-        {"start":52,"end":58,"vocabularyId":"client"},
-        {"start":81,"end":88,"vocabularyId":"outside"},
-        {"start":93,"end":100,"vocabularyId":"several"}
+        { "start": 4, "end": 11, "vocabularyId": "meeting" },
+        { "start": 35, "end": 39, "vocabularyId": "leave" },
+        { "start": 40, "end": 45, "vocabularyId": "early" },
+        { "start": 52, "end": 58, "vocabularyId": "client" },
+        { "start": 81, "end": 88, "vocabularyId": "outside" },
+        { "start": 93, "end": 100, "vocabularyId": "several" }
       ],
       "descriptionVi": "Cuộc họp bắt đầu lúc 8 giờ tối. Anna rời đi sớm để gọi cho một khách hàng, còn Leo bước ra ngoài trong vài phút.",
       "relatedFactIds": ["meeting_started"]

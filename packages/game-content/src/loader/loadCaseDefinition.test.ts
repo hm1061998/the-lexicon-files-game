@@ -7,10 +7,35 @@ describe('loadCaseDefinition', () => {
     const definition = loadCaseDefinition('case-001');
     expect(definition.scenes.map((scene) => scene.id)).toEqual(['main_office']);
     expect(definition.vocabulary).toHaveLength(20);
+    expect(definition.vocabulary.map(({ id }) => id)).toEqual([
+      'meeting',
+      'client',
+      'early',
+      'leave',
+      'return',
+      'before',
+      'end',
+      'report',
+      'confidential',
+      'folder',
+      'access',
+      'security',
+      'entry',
+      'exit',
+      'log',
+      'receipt',
+      'purchase',
+      'outside',
+      'several',
+      'certain',
+    ]);
     expect(definition.vocabularyContexts).toContainEqual({
       id: 'evidence:meeting_minutes:description',
       vocabularyIds: expect.arrayContaining(['meeting', 'leave', 'client']),
     });
+    expect(
+      definition.dialogues.find((tree) => tree.id === 'anna_initial')?.nodes[0]?.vocabularySpans,
+    ).toHaveLength(4);
     expect(definition.evidences.map((item) => item.id)).toEqual(['meeting_minutes']);
     expect(definition.facts.map((item) => item.id)).toEqual([
       'meeting_started',

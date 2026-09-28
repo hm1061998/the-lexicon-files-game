@@ -1,0 +1,37 @@
+.vocabulary-reader {
+  position: relative;
+}
+.vocabulary-word {
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+  font: inherit;
+}
+.vocabulary-word:focus-visible {
+  outline: 2px solid #343434;
+  outline-offset: 2px;
+}
+.vocabulary-translation {
+  display: block;
+  margin-top: 0.5rem;
+}
+.vocabulary-tutorial {
+  font-size: 0.9em;
+  font-style: italic;
+}
+.vocabulary-popover {
+  display: grid;
+  gap: 0.4rem;
+  position: absolute;
+  z-index: 20;
+  min-width: 14rem;
+  padding: 0.75rem;
+  background: #fffdf7;
+  border: 1px solid #716d64;
+  box-shadow: 0 4px 16px #0002;
+}

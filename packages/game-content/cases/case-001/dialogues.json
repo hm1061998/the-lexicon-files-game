@@ -9,27 +9,31 @@
           "id": "entry",
           "speakerId": "anna",
           "text": "I left the meeting early. I had a call with a client.",
+          "translationVi": "Tôi rời cuộc họp sớm. Tôi có cuộc gọi với một khách hàng.",
           "vocabularySpans": [
-            {"start":2,"end":6,"vocabularyId":"leave"},
-            {"start":11,"end":18,"vocabularyId":"meeting"},
-            {"start":19,"end":24,"vocabularyId":"early"},
-            {"start":46,"end":52,"vocabularyId":"client"}
+            { "start": 2, "end": 6, "vocabularyId": "leave" },
+            { "start": 11, "end": 18, "vocabularyId": "meeting" },
+            { "start": 19, "end": 24, "vocabularyId": "early" },
+            { "start": 46, "end": 52, "vocabularyId": "client" }
           ],
           "terminal": false,
           "choices": [
             {
               "id": "q1",
               "text": "What time did you leave?",
+              "translationVi": "Bạn rời đi lúc mấy giờ?",
               "nextNodeId": "answer1"
             },
             {
               "id": "q2",
               "text": "Did you return later?",
+              "translationVi": "Sau đó bạn có quay lại không?",
               "nextNodeId": "answer2"
             },
             {
               "id": "q3",
               "text": "Who was still in the room?",
+              "translationVi": "Ai vẫn còn ở trong phòng?",
               "nextNodeId": "answer3"
             }
           ]

@@ -23,5 +23,18 @@
   "openNotebook": "Mở sổ tay",
   "investigator": "Điều tra viên",
   "dialogue": "Lời khai",
-  "dialogueError": "Không thể tiếp tục hội thoại."
+  "dialogueError": "Không thể tiếp tục hội thoại.",
+  "vocabularyMode": "Chế độ dịch",
+  "vocabularyModeBeginner": "Cơ bản",
+  "vocabularyModeLearning": "Đang học",
+  "vocabularyModeImmersion": "Đắm chìm",
+  "inspectVocabulary": "Xem nghĩa từ",
+  "revealTranslation": "Hiện bản dịch",
+  "vocabularyMeaning": "Nghĩa tiếng Anh",
+  "vocabularyContext": "Ngữ cảnh",
+  "vocabularyStageSeen": "Đã gặp",
+  "vocabularyTutorial": "Nhấn vào từ được gạch chân để xem nghĩa.",
+  "vocabularyLearningError": "Chưa thể lưu tiến trình học từ vựng.",
+  "vocabularyResetTitle": "Đặt lại tiến trình từ vựng",
+  "vocabularyResetBody": "Hồ sơ học từ vựng sẽ được sao lưu trước khi đặt lại."
 }
