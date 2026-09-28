@@ -1,6 +1,6 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T10:37:43+07:00
+updated_at: 2026-09-28T14:00:00+07:00
 phase: phase-0a
 status: complete
 result_commit: 22ac78bb68d5e2e43a32980bba7e0430e04cb7e8
@@ -22,7 +22,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
 
 ## Current Status
 
-- Phase 0A hoàn thành trên branch `dev`; chưa push hoặc merge vào `main`.
+- Phase 0A hoàn thành, đã verify lại tại `63f32ae` và đã push `dev` lên `origin/dev`; chưa merge vào `main`.
 
 ## Completed
 
@@ -31,6 +31,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
 - Parser/validator thuần cùng 19 unit tests được commit tại `d26e3b4`.
 - CLI, Nx targets, tài liệu vận hành và initial memory được commit tại `b669446`.
 - Review hardening cho list budget và linked artifact paths được commit tại `22ac78b`.
+- Handoff review được chốt tại `63f32ae`; verification cuối chạy lại PASS.
 
 ## In Progress
 
@@ -48,7 +49,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
 
 ## Next Actions
 
-- Xin duyệt push branch `dev`; chỉ lập kế hoạch Phase 0B sau khi người dùng yêu cầu.
+- Chờ người dùng quyết định merge `dev` vào `main` hoặc bắt đầu Phase 0B.
 
 ## Verification
 
