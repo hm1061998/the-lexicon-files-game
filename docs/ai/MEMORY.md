@@ -1,77 +1,81 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T19:06:15+07:00
+updated_at: 2026-09-28T19:49:47+07:00
 phase: phase-5
-status: proposed
-result_commit: 4ca40fc
+status: complete
+result_commit: 30fb676
 active_spec: docs/superpowers/specs/2026-09-28-phase-5-dialogue-design.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-5-dialogue.md
 ---
 
 ## Metadata
 
-- Schema version 1; snapshot được duy trì bằng Git.
+- Schema version 1; snapshot được duy trì bằng Git. Báo cáo và danh sách files: docs/ai/2026-09-28-phase-5-dialogue-verification.md.
 
 ## Current Phase
 
-- Phase 5 — Dialogue (roadmap §24), spec đã duyệt; plan đề xuất chờ review, chưa bắt đầu implementation.
+- Phase 5 — Dialogue (roadmap §24) đã hoàn thành theo spec/plan được duyệt, thực thi inline.
 
 ## Active Goal
 
-- Triển khai phạm vi Phase 5 phương án A đã chốt, sau khi người dùng review plan tiếng Việt và chọn cách thực thi.
+- Bàn giao Phase 5 đã verify; chờ yêu cầu phase tiếp theo hoặc workflow push.
 
 ## Current Status
 
-- Git đầu phiên: checkout dev sạch, HEAD 2595afd, khớp origin/dev. Phase 4 đã push; dòng memory cũ “còn push” là stale.
-- Người dùng duyệt spec/phương án A bằng “chốt theo đề xuất của bạn”. Spec cập nhật và plan 7 tasks commit tại 4ca40fc; plan chưa được duyệt, chưa sửa code game và chưa push tài liệu.
-- Content chỉ có Main Office và Anna placeholder; dialogues JSON trống, loader/types chưa có NPC/dialogue. Save version 1 kiểm tra đúng tập objective keys nên objective mới cần migration.
+- Git reconcile: dev bắt đầu implementation tại 813cbf8; Tasks 1–7 và review fix đã commit, kết quả tại 30fb676. origin/dev vẫn ở checkpoint Phase 4 2595afd; các commit Phase 5 giữ local, chưa push/merge main.
+- Anna/Leo/David dialogue từ authored JSON chạy qua pure runner, store/typed bridge và panel accessible. Conditions/effects nguyên tử, stale revisions bị loại, ba interview hoàn thành talk_to_everyone.
+- Save schema 2 migration từ schema 1, backup trước write, giữ evidence/objective cũ; session transient không lưu.
+- Một reviewer độc lập: 1 Important nhấp đúp bỏ qua response/Which folder, đã sửa RED→GREEN và toàn suite xanh; không Critical/Minor mới.
 
 ## Completed
 
-- Phase 0A, 0B, 1, 2 hoàn thành; xem Git history.
-- Phase 3 hoàn thành tại 200399b: contracts, loader, pure reducer, bridge/store/HUD và review fix.
-- Phase 4 hoàn thành tại 7d4405a: evidence mẫu, modal/notebook, IndexedDB backup/recovery, bootstrap/autosave và E2E reload; đồng bộ remote tới checkpoint 2595afd.
+- Phase 0A, 0B, 1, 2: xem Git history.
+- Phase 3 tại 200399b: contracts, loader, reducer, bridge/store/HUD và review fix.
+- Phase 4 tại 7d4405a, đã đồng bộ remote tới 2595afd: evidence mẫu, modal/notebook, IndexedDB backup/recovery, bootstrap/autosave.
+- Phase 5 tại 30fb676: graph validation/build gate, ba NPC/trees, runner/progress, migration, UI/input/focus, E2E và review fix. Plan checkboxes hoàn tất.
 
 ## In Progress
 
-- Writing-plans Phase 5: plan đã viết và tự rà coverage/interfaces/review focus; chờ review plan và lựa chọn execution.
+- Không còn task implementation Phase 5; Phase 6 chưa bắt đầu.
 
 ## Active Decisions
 
 - Product/case truth và copy theo docs/01–03; phase theo roadmap; dependency boundaries theo ARCHITECTURE.md.
-- Spec/plan cần duyệt viết bằng tiếng Việt; approval spec cho phép lập plan, chưa tự cho phép execution plan chưa được review.
-- npm + Nx là workflow bắt buộc; không thay package manager.
-- Core state là nguồn evidence/facts/objectives/flags; UI transient không nằm trong save.
-- Phase 4 chỉ có meeting_minutes làm mẫu end-to-end, evidenceTotal vẫn 5; People/Vocabulary đang là khung.
-- Gameplay local-first; không sửa backend hoặc thực hiện phase sau ngoài phạm vi được duyệt.
-- Ba NPC trong Main Office prototype và conditional David bằng fixture trước Phase 8 đã duyệt; vị trí tạm không thay layout vertical slice cuối cùng.
+- Spec/plan review bằng tiếng Việt. Người dùng đã duyệt Phase 5 và chọn inline; dùng checkout dev theo lựa chọn đã lưu.
+- npm + Nx bắt buộc; không thêm dependency/đổi lockfile. Runtime npm 10.9.7 local tại .superpowers/runtime/npm-10.9.7/bin, cần thêm vào PATH cùng C:/Windows/System32; NX_DAEMON=false khi chạy checks.
+- State nghiệp vụ chỉ ở core; UI session/revision transient. Revision tăng đơn điệu từng store để loại callbacks cũ qua reopen.
+- Save record schemaVersion=2; IndexedDB database version vẫn 1. Legacy authored contract cases/case-001/save-v1.json kiểm tra đúng IDs/keys trước migrate.
+- Ba NPC/Main Office/ph_npc là prototype đã duyệt; conditional David bằng save fixture trước detector Phase 8. Không tự thêm contradiction discovery hoặc accusation.
+- Meeting Minutes vẫn evidence mẫu duy nhất collectible, evidenceTotal=5; statement facts không tăng evidence count; People/Vocabulary giữ khung.
+- Playwright workers=1 vì movement checks phụ thuộc frames; đổi tốc độ lấy tính ổn định, không giảm assertions.
+- Gameplay local-first, backend không đổi. Phase sau chỉ làm khi được yêu cầu.
 
 ## Blockers
 
-- Chưa có blocker implementation đã xác nhận; đang ở bước review plan.
-- Môi trường hiện tại: Node v24.19.0; npm/npx không có trên PATH, không tìm thấy local Prettier ở node_modules/prettier/bin/prettier.cjs. Cần xác định runtime/dependencies trước verification implementation.
+- Không có blocker Phase 5 còn lại. Bundle warning >500 kB tồn tại, build vẫn pass.
 
 ## Next Actions
 
-- Người dùng review plan Phase 5 và xác nhận cách thực thi; đề xuất inline/native vì tasks chia sẻ contracts chặt.
-- Trước execution áp dụng using-git-worktrees; checkout dev của Phase 4 là quyết định riêng cho phase đó, tôn trọng lựa chọn mới nếu người dùng chỉ định.
-- Xác định npm/runtime/dependencies khi bắt đầu implementation; chạy lệnh DoD thật và báo mọi lệnh bị chặn.
-- Chỉ push spec/plan sau khi người dùng xác nhận theo docs/ai/README.md.
+- Chờ yêu cầu Phase 6 — Learning Engine; nếu bắt đầu, đọc docs/02 và roadmap §25 rồi brainstorming/spec/plan trước code.
+- Chỉ push/merge các commit Phase 5 khi có workflow người dùng giao.
+- Khi chạy npm ở cùng môi trường, thêm .superpowers/runtime/npm-10.9.7/bin và C:/Windows/System32 vào PATH. Playwright cần quyền dừng cây server do nó tạo.
 
 ## Verification
 
-- Phiên này chỉ thay tài liệu: staged Git whitespace check spec/plan không có lỗi; memory CLI chạy trực tiếp bằng node tools/ai-memory/src/cli.mjs PASS sau cập nhật. Không chạy lint/test/build game, không tuyên bố implementation Phase 5 hoàn tất.
-- Prettier không chạy được: MODULE_NOT_FOUND cho node_modules/prettier/bin/prettier.cjs. npm/npx không có trên PATH.
-- Phase 4 verification lịch sử: Vitest 158/158, Playwright 21/21, ESLint/tsc/Prettier/Vite build pass; bundle warning >500 kB. Chưa chạy lại trong phiên này; root npm scripts khi đó cũng không chạy được.
+- Bản sửa cuối: npm run lint PASS (7 projects, không warning ESLint); npm run test PASS (204 Vitest + 30 memory tests); npm run build PASS (122 modules, JS 1,735.23 kB / gzip 416.27 kB, warning >500 kB).
+- npm run test:e2e PASS 29/29 (1.9m); npm run format:check PASS; git diff --check PASS. Memory check PASS sau snapshot cập nhật trước commit.
+- 46 Vitest và 8 E2E tests thêm so với Phase 4. Kiểm viewport 1280×720, 1920×1080; keyboard/focus/locks, v1 migration, conditional flag missing/false/true, save/reload và nhấp đúp vật lý.
+- npm ci dùng package-lock.json hiện có. Evidence/logs/screenshot tại .superpowers/evidence/phase-5-dialogue/ (gitignored). Backend không đổi, không chạy .NET.
 
 ## Latest Handoff
 
-- Spec Phase 5 đã duyệt, plan 7 tasks local tại 4ca40fc chờ review; chưa push. Bước kế tiếp review plan/execution. Phase 4 còn một Minor focus restoration đã hoãn; Phase 5 thiết kế focus handling cho dialogue.
+- Phase 5 complete tại 30fb676, memory commit kế tiếp trỏ kết quả này. Dev giữ local, chưa push. Review fix đã qua RED→GREEN và whole suite, không rereview.
+- Minor evidence focus restoration Phase 4 vẫn hoãn ngoài scope Phase 5; dialogue có focus restoration riêng đã kiểm. Mọi rulings/limitations/files được ghi trong báo cáo verification.
 
 ## Required Reading
 
 - AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md.
 - docs/superpowers/specs/2026-09-28-phase-5-dialogue-design.md.
 - docs/superpowers/plans/2026-09-28-phase-5-dialogue.md.
-- docs/03_CASE_001_VERTICAL_SLICE_SPEC.md §7, §9–§12; docs/04_CODEX_IMPLEMENTATION_ROADMAP.md §24.
-- Spec và plan Phase 4 để giữ behavior/persistence đã có.
+- docs/ai/2026-09-28-phase-5-dialogue-verification.md.
+- docs/03_CASE_001_VERTICAL_SLICE_SPEC.md §7, §9–§12; docs/04_CODEX_IMPLEMENTATION_ROADMAP.md §24–§25; docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md trước Phase 6.
