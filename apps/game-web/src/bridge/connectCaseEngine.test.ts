@@ -44,4 +44,30 @@ describe('connectCaseEngine', () => {
 
     expect(store.getState().caseState).toBe(before);
   });
+
+  it('applies one interaction once after StrictMode setup-cleanup-setup', () => {
+    const definition = loadCaseDefinition('case-001');
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition: definition });
+    const applyCaseEffects = store.getState().applyCaseEffects;
+    let applications = 0;
+    store.setState({
+      applyCaseEffects(effects) {
+        applications += 1;
+        return applyCaseEffects(effects);
+      },
+    });
+
+    const firstCleanup = connectCaseEngine(bus, store, definition);
+    firstCleanup();
+    const finalCleanup = connectCaseEngine(bus, store, definition);
+
+    bus.emit('interaction:triggered', { interactableId: 'objective_note' });
+
+    expect(applications).toBe(1);
+    expect(store.getState().caseState.objectiveStatuses[definition.initialObjectiveId]).toBe(
+      'completed',
+    );
+    finalCleanup();
+  });
 });

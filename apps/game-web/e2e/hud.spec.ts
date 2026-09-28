@@ -104,10 +104,15 @@ test('HUD shows objective and case progress', async ({ page }) => {
 test('reading the objective note completes the active objective', async ({ page }) => {
   await openWorld(page);
   await expect(page.getByText('Tìm hiểu điều gì đã xảy ra với bản báo cáo')).toBeVisible();
+  await page.locator('canvas').evaluate((canvas) => {
+    canvas.dataset.marker = 'objective-transition';
+  });
   await hold(page, 'd', 800);
   await expect(page.getByText('Đọc ghi chú')).toBeVisible();
   await page.keyboard.press('e');
   await expect(page.getByText('Tìm hiểu điều gì đã xảy ra với bản báo cáo')).toHaveCount(0);
+  await expect(page.locator('canvas')).toHaveCount(1);
+  await expect(page.locator('canvas[data-marker="objective-transition"]')).toHaveCount(1);
 });
 
 test('Esc typed in a page input does not pause', async ({ page }) => {

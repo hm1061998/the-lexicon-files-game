@@ -198,6 +198,19 @@ export function parseCaseDefinition(
     }
   }
 
+  const interactionIds = new Set<string>();
+  scenes.forEach((scene, sceneIndex) => {
+    scene.assets.forEach((asset, assetIndex) => {
+      if (!asset.interaction) return;
+      if (interactionIds.has(asset.id)) {
+        issues.push(
+          `scenes.${sceneIndex}.assets.${assetIndex}.id: duplicate interaction id "${asset.id}" across scenes`,
+        );
+      }
+      interactionIds.add(asset.id);
+    });
+  });
+
   evidences.forEach((evidence, index) => {
     if (evidence.caseId !== caseData.id) {
       issues.push(`evidences.${index}.caseId: expected "${caseData.id}"`);

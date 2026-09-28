@@ -130,6 +130,22 @@ describe('parseCaseDefinition', () => {
     );
   });
 
+  it('checks every source evidence reference on a fact', () => {
+    expectValidationIssue(
+      {
+        factsRaw: {
+          facts: [
+            {
+              ...fact,
+              sourceEvidenceIds: ['meeting_minutes', 'missing_evidence'],
+            },
+          ],
+        },
+      },
+      'unknown evidence id "missing_evidence"',
+    );
+  });
+
   it('rejects evidence that references a missing related fact', () => {
     expectValidationIssue(
       { evidencesRaw: { evidences: [{ ...evidence, relatedFactIds: ['missing_fact'] }] } },
@@ -139,6 +155,29 @@ describe('parseCaseDefinition', () => {
 
   it('rejects a scene ID that has no registered scene definition', () => {
     expectValidationIssue({ sceneRaws: [] }, 'sceneIds');
+  });
+
+  it('rejects duplicate interaction IDs across scenes', () => {
+    const firstScene = sceneWithEffects([
+      { type: 'completeObjective', objectiveId: 'find_what_happened' },
+    ]) as { id: string; assets: Array<{ id: string }> };
+    const secondScene = structuredClone(mainOffice) as {
+      id: string;
+      assets: Array<{ id: string }>;
+      [key: string]: unknown;
+    };
+    secondScene.id = 'annex';
+    secondScene.assets = [
+      structuredClone(firstScene.assets.find((asset) => asset.id === 'objective_note')!),
+    ];
+
+    expectValidationIssue(
+      {
+        caseRaw: { ...caseRaw, sceneIds: ['main_office', 'annex'] },
+        sceneRaws: [firstScene, secondScene],
+      },
+      'duplicate interaction id "objective_note"',
+    );
   });
 
   it('rejects a condition that references unknown evidence', () => {

@@ -105,6 +105,65 @@ describe('evaluateCondition', () => {
 });
 
 describe('applyEffects', () => {
+  it('does not reveal a fact before its unlock condition is met', () => {
+    const result = applyEffects(definition, initialState, [
+      { type: 'unlockFact', factId: 'meeting_started' },
+    ]);
+
+    expect(result).toEqual({ ok: true, state: initialState, events: [] });
+  });
+
+  it('waits for all evidence in a compound fact unlock condition', () => {
+    const multiEvidenceDefinition: CaseDefinition = {
+      ...definition,
+      evidences: [
+        ...definition.evidences,
+        {
+          id: 'attendance_sheet',
+          caseId: definition.id,
+          name: 'Attendance Sheet',
+          category: 'document',
+          description: 'A list of attendees.',
+          relatedFactIds: ['meeting_started'],
+        },
+      ],
+      facts: [
+        {
+          ...definition.facts[0]!,
+          sourceEvidenceIds: ['meeting_minutes', 'attendance_sheet'],
+          unlockCondition: {
+            type: 'all',
+            conditions: [
+              { type: 'hasEvidence', evidenceId: 'meeting_minutes' },
+              { type: 'hasEvidence', evidenceId: 'attendance_sheet' },
+            ],
+          },
+        },
+      ],
+    };
+
+    const noEvidence = applyEffects(multiEvidenceDefinition, initialState, [
+      { type: 'unlockFact', factId: 'meeting_started' },
+    ]);
+    expect(noEvidence).toEqual({ ok: true, state: initialState, events: [] });
+    if (!noEvidence.ok) return;
+
+    const oneEvidence = applyEffects(multiEvidenceDefinition, noEvidence.state, [
+      { type: 'addEvidence', evidenceId: 'meeting_minutes' },
+    ]);
+    expect(oneEvidence.ok && oneEvidence.state.discoveredFactIds).toEqual([]);
+    if (!oneEvidence.ok) return;
+
+    const bothEvidence = applyEffects(multiEvidenceDefinition, oneEvidence.state, [
+      { type: 'addEvidence', evidenceId: 'attendance_sheet' },
+    ]);
+    expect(bothEvidence.ok && bothEvidence.state.discoveredFactIds).toEqual(['meeting_started']);
+    expect(bothEvidence.ok && bothEvidence.events).toContainEqual({
+      type: 'factUnlocked',
+      factId: 'meeting_started',
+    });
+  });
+
   it('applies ordered effects and unlocks facts whose conditions become true', () => {
     const result = applyEffects(definition, initialState, [
       { type: 'addEvidence', evidenceId: 'meeting_minutes' },
@@ -137,9 +196,9 @@ describe('applyEffects', () => {
 
   it('unlocks a requested fact and does not duplicate state or events', () => {
     const first = applyEffects(definition, initialState, [
+      { type: 'addEvidence', evidenceId: 'meeting_minutes' },
       { type: 'unlockFact', factId: 'meeting_started' },
       { type: 'setFlag', key: 'note_read', value: true },
-      { type: 'addEvidence', evidenceId: 'meeting_minutes' },
     ]);
     expect(first.ok).toBe(true);
     if (!first.ok) return;

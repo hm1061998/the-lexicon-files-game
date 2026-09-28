@@ -73,10 +73,14 @@ export function applyEffects(
         break;
       }
       case 'unlockFact': {
-        if (!definition.facts.some((fact) => fact.id === effect.factId)) {
+        const fact = definition.facts.find((item) => item.id === effect.factId);
+        if (!fact) {
           return errorResult(state, { code: 'unknownFact', id: effect.factId });
         }
-        if (!hasId(draft.discoveredFactIds, effect.factId)) {
+        if (
+          !hasId(draft.discoveredFactIds, effect.factId) &&
+          evaluateCondition(draft, fact.unlockCondition)
+        ) {
           draft.discoveredFactIds.push(effect.factId);
           events.push({ type: 'factUnlocked', factId: effect.factId });
         }
