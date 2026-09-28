@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T21:00:00+07:00
+updated_at: 2026-09-29T00:30:00+07:00
 phase: phase-2
-status: proposed
-result_commit: f618bec
+status: complete
+result_commit: 74ad5e4
 active_spec: docs/superpowers/specs/2026-09-28-phase-2-react-hud-integration-design.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 ---
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 
 ## Current Phase
 
-- Phase 2 — React HUD Integration (roadmap §21); Phase 1 đã hoàn thành.
+- Phase 2 — React HUD Integration (roadmap §21).
 
 ## Active Goal
 
@@ -22,17 +22,15 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 
 ## Current Status
 
-- Spec Phase 2 đã duyệt; plan 5 task đã viết, chờ người dùng review và chọn cách thực thi.
+- Phase 2 hoàn thành bằng subagent-driven, final review sạch, đã push `dev`; người dùng tự merge `main`.
 
 ## Completed
 
-- Phase 0A, Phase 0B hoàn thành (xem Git history).
-- Task 1 `c9dc6e3`: Zod scene schema, loader, `main_office.json`.
-- Task 2 `326be6a`: typed event bus.
-- Task 3 `cb1dccc`: system thuần input/direction/depth/interaction.
-- Task 4 `bff9dd8`: WorldScene data-driven, placeholder texture, collision, depth, camera, debug hook dev, panel lỗi content.
-- Task 5 `cc29bae`: InteractionTracker, marker đỏ, event nearby/cleared.
-- Final fix `f618bec`: WASD không bị Phaser nuốt khi gõ input; counter debug chỉ ở dev.
+- Phase 0A, 0B, 1 hoàn thành (xem Git history).
+- Task 1 `a12768a`: content case summary, objectives, `ui/vi.json`, scene `prompt`.
+- Task 2 `3e570c2`: GameEventMap (prompt, triggered), Zustand store per-mount, `connectBusToStore`.
+- Task 3 `40f3fdb`, `332d2a2`: primitive `PaperPanel`/`Keycap`/palette CSS, HUD components, PauseMenu + focus trap.
+- Task 4 `74ad5e4`: GameCanvas tích hợp HUD, Esc pause (`usePauseShortcut`), Phaser input lock, phím E emit `interaction:triggered`, 6 e2e mới.
 
 ## In Progress
 
@@ -41,11 +39,11 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 ## Active Decisions
 
 - WASD theo trục màn hình; placeholder hình học runtime (art thật ở Phase 11); Arcade Physics collider chữ nhật.
-- Một `wall_back` ngang thay cho cặp tường trái/phải trong spec §4.
-- `fps.panicMax: 0` để tránh Phaser cap delta lúc khởi động.
-- Debug hook `window.__lexiconDebug` chỉ có ở dev (thêm `teleport`, `nearbyEvents`).
-- Phase 2: UI tiếng Việt từ content; store Zustand per-mount là nguồn UI; key hints chỉ E và Esc.
-- Deferred minor: registry cast chưa guard, `depthOf` trả NaN với id lạ, formatIssue thiếu expected/received, test không được tsc typecheck, CORS chưa test preflight.
+- UI tiếng Việt lấy từ content; key hints chỉ E và Esc cho tới khi có J/M.
+- Phaser nhận `InputLockSource { isInputLocked() }`, không import Zustand.
+- Esc chỉ do `usePauseShortcut` xử lý; PauseMenu chỉ giữ focus trap Tab.
+- `interaction:triggered` chưa có handler — Phase 3/4 gắn case engine.
+- Deferred minor: `useBusToStore` là dead code; `:focus-visible` global nằm trong hud.css; stale WorldScene có thể emit nearby 1 frame khi StrictMode remount nếu spawn trong radius; palette.css/palette.ts đồng bộ tay; thiếu `loadUiStrings.test.ts`; registry cast chưa guard; `depthOf` NaN; test không được tsc typecheck; CORS chưa test preflight.
 
 ## Blockers
 
@@ -53,23 +51,23 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 
 ## Next Actions
 
-- Người dùng review plan Phase 2 và chọn Subagent-driven hoặc Native.
+- Chờ người dùng yêu cầu bắt đầu Phase 3 (Case Engine).
 
 ## Verification
 
 - `npm run lint` — PASS 7 project.
-- `npm run test` — PASS 7 project.
+- `npm run test` — PASS 7 project (game-web 57 unit).
 - `npm run build` — PASS; không có `__lexiconDebug` trong dist.
 - `npm run format:check` — PASS.
-- `npm run test:e2e` — PASS 10/10.
+- `npm run test:e2e` — PASS 16/16.
 - `npm run memory:check` — PASS.
 
 ## Latest Handoff
 
-- Phase 1 xong; HUD có thể nghe `interaction:nearby`/`interaction:cleared` từ bus tạo trong `GameCanvas`.
+- Phase 2 xong; Phase 3 nối `interaction:triggered` vào case engine và thay nguồn objective/evidence trong store.
 
 ## Required Reading
 
 - `AGENTS.md`
-- `docs/superpowers/specs/2026-09-28-phase-1-game-world-prototype-design.md`
-- `docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md`
+- `docs/superpowers/specs/2026-09-28-phase-2-react-hud-integration-design.md`
+- `docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md`
