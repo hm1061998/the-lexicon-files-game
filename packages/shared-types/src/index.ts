@@ -21,3 +21,14 @@ export type {
   CaseTransitionResult,
 } from './case-engine';
 export * from './events';
+
+export type {
+  NPCDefinition,
+  DialogueChoice,
+  DialogueNode,
+  DialogueTree,
+  DialogueSession,
+  DialogueAction,
+  DialogueError,
+  DialogueTransitionResult,
+} from './dialogue';

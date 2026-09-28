@@ -11,6 +11,8 @@ const definition: CaseDefinition = {
   evidenceTotal: 5,
   initialObjectiveId: 'find_what_happened',
   scenes: [],
+  npcs: [],
+  dialogues: [],
   evidences: [
     {
       id: 'meeting_minutes',

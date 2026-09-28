@@ -8,6 +8,8 @@ import type {
   ObjectiveDefinition,
 } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
+import { npcSchema, dialogueTreeSchema } from './dialogue';
+import { validateDialogueReferences } from '../validation/dialogueReferences';
 import { conditionSchema } from './caseEngine';
 import { sceneDefinitionSchema } from './scene';
 
@@ -21,7 +23,14 @@ const caseRawSchema = z
   })
   .strict();
 
-const objectiveSchema = z.object({ id: z.string().min(1), text: z.string().min(1) }).strict();
+const objectiveSchema = z
+  .object({
+    id: z.string().min(1),
+    text: z.string().min(1),
+    initialStatus: z.enum(['locked', 'active']).optional(),
+    completionCondition: conditionSchema.optional(),
+  })
+  .strict();
 
 const evidenceSchema = z
   .object({
@@ -41,7 +50,8 @@ const factSchema = z
   .object({
     id: z.string().min(1),
     text: z.string().min(1),
-    sourceEvidenceIds: z.array(z.string().min(1)).min(1),
+    sourceEvidenceIds: z.array(z.string().min(1)),
+    sourceDialogueIds: z.array(z.string().min(1)).optional(),
     unlockCondition: conditionSchema,
   })
   .strict();
@@ -56,6 +66,8 @@ type ParseCaseDefinitionInput = {
   evidencesRaw: unknown;
   factsRaw: unknown;
   sceneRaws: readonly unknown[];
+  npcsRaw: unknown;
+  dialoguesRaw: unknown;
 };
 
 function formatIssue(issue: z.ZodIssue): string {
@@ -127,6 +139,14 @@ export function parseCaseDefinition(
   input: ParseCaseDefinitionInput,
   source: string,
 ): CaseDefinition {
+  const npcsResult = z
+    .object({ npcs: z.array(npcSchema) })
+    .strict()
+    .safeParse(input.npcsRaw);
+  const dialoguesResult = z
+    .object({ dialogues: z.array(dialogueTreeSchema) })
+    .strict()
+    .safeParse(input.dialoguesRaw);
   const caseResult = caseRawSchema.safeParse(input.caseRaw);
   const objectivesResult = objectivesRawSchema.safeParse(input.objectivesRaw);
   const evidencesResult = evidencesRawSchema.safeParse(input.evidencesRaw);
@@ -134,6 +154,9 @@ export function parseCaseDefinition(
   const scenesResult = input.sceneRaws.map((scene) => sceneDefinitionSchema.safeParse(scene));
 
   const issues: string[] = [];
+  if (!npcsResult.success) appendSchemaIssues(issues, `${source}/npcs.json`, npcsResult.error);
+  if (!dialoguesResult.success)
+    appendSchemaIssues(issues, `${source}/dialogues.json`, dialoguesResult.error);
   if (!caseResult.success) appendSchemaIssues(issues, `${source}/case.json`, caseResult.error);
   if (!objectivesResult.success) {
     appendSchemaIssues(issues, `${source}/objectives.json`, objectivesResult.error);
@@ -149,6 +172,8 @@ export function parseCaseDefinition(
   });
 
   if (
+    !npcsResult.success ||
+    !dialoguesResult.success ||
     !caseResult.success ||
     !objectivesResult.success ||
     !evidencesResult.success ||
@@ -252,6 +277,21 @@ export function parseCaseDefinition(
     });
   });
 
+  validateDialogueReferences(
+    {
+      npcs: npcsResult.data.npcs,
+      dialogues: dialoguesResult.data.dialogues,
+      scenes,
+      facts,
+      evidences,
+      objectives,
+    },
+    issues,
+    (condition, path) =>
+      validateConditionReferences(condition, evidenceIds, factIds, objectiveIds, path, issues),
+    (effect, path) =>
+      validateEffectReferences(effect, evidenceIds, factIds, objectiveIds, path, issues),
+  );
   if (issues.length > 0) throw new ContentValidationError(source, issues);
 
   const scenesInCaseOrder = caseData.sceneIds.map((id) => sceneById.get(id)!);
@@ -261,6 +301,8 @@ export function parseCaseDefinition(
     evidenceTotal: caseData.evidenceTotal,
     initialObjectiveId: caseData.initialObjectiveId,
     scenes: scenesInCaseOrder,
+    npcs: npcsResult.data.npcs,
+    dialogues: dialoguesResult.data.dialogues,
     evidences,
     facts,
     objectives,

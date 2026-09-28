@@ -20,6 +20,7 @@ const interactionAreaSchema = z
     radius: z.number().positive(),
     prompt: z.string().min(1),
     effects: z.array(effectSchema).optional(),
+    npcId: z.string().min(1).optional(),
   })
   .strict();
 

@@ -59,6 +59,8 @@ const definition = {
   evidenceTotal: 5,
   initialObjectiveId: objective.id,
   scenes: [],
+  npcs: [],
+  dialogues: [],
   evidences: [evidence],
   facts: [fact],
   objectives: [objective],

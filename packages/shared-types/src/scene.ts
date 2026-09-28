@@ -15,6 +15,7 @@ export interface InteractionArea {
   readonly y: number;
   readonly radius: number;
   readonly prompt: string;
+  readonly npcId?: string | undefined;
   readonly effects?: readonly Effect[] | undefined;
 }
 

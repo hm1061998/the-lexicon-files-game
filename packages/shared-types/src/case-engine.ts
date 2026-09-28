@@ -1,3 +1,4 @@
+import type { NPCDefinition, DialogueTree } from './dialogue';
 import type { SceneDefinition } from './scene';
 
 export type EvidenceCategory = 'document' | 'audio' | 'photo' | 'object' | 'statement' | 'digital';
@@ -5,6 +6,8 @@ export type EvidenceCategory = 'document' | 'audio' | 'photo' | 'object' | 'stat
 export interface ObjectiveDefinition {
   readonly id: string;
   readonly text: string;
+  readonly initialStatus?: 'locked' | 'active' | undefined;
+  readonly completionCondition?: Condition | undefined;
 }
 
 export interface EvidenceDefinition {
@@ -23,6 +26,7 @@ export interface FactDefinition {
   readonly id: string;
   readonly text: string;
   readonly sourceEvidenceIds: readonly string[];
+  readonly sourceDialogueIds?: readonly string[] | undefined;
   readonly unlockCondition: Condition;
 }
 
@@ -47,6 +51,8 @@ export interface CaseDefinition {
   readonly evidenceTotal: number;
   readonly initialObjectiveId: string;
   readonly scenes: readonly SceneDefinition[];
+  readonly npcs: readonly NPCDefinition[];
+  readonly dialogues: readonly DialogueTree[];
   readonly evidences: readonly EvidenceDefinition[];
   readonly facts: readonly FactDefinition[];
   readonly objectives: readonly ObjectiveDefinition[];

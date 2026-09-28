@@ -1,0 +1,66 @@
+import type { CaseDomainEvent, Condition, Effect, GameState } from './case-engine';
+export interface NPCDefinition {
+  readonly id: string;
+  readonly name: string;
+  readonly role: string;
+  readonly dialogueTreeId: string;
+}
+export interface DialogueChoice {
+  readonly id: string;
+  readonly text: string;
+  readonly nextNodeId: string;
+  readonly condition?: Condition | undefined;
+  readonly effects?: readonly Effect[] | undefined;
+}
+export interface DialogueNode {
+  readonly id: string;
+  readonly speakerId: string;
+  readonly text: string;
+  readonly condition?: Condition | undefined;
+  readonly effects?: readonly Effect[] | undefined;
+  readonly choices: readonly DialogueChoice[];
+  readonly terminal: boolean;
+}
+export interface DialogueTree {
+  readonly id: string;
+  readonly npcId: string;
+  readonly entryNodeId: string;
+  readonly nodes: readonly DialogueNode[];
+  readonly completionFlag: string;
+  readonly completionCondition: Condition;
+}
+export interface DialogueSession {
+  readonly treeId: string;
+  readonly npcId: string;
+  readonly nodeId: string;
+  readonly revision: number;
+}
+export interface DialogueAction {
+  readonly nodeId: string;
+  readonly revision: number;
+  readonly choiceId: string;
+}
+export interface DialogueError {
+  readonly code:
+    | 'unknownNpc'
+    | 'unknownTree'
+    | 'unknownNode'
+    | 'unknownChoice'
+    | 'staleAction'
+    | 'conditionNotMet'
+    | 'effectFailed';
+  readonly detail: string;
+}
+export type DialogueTransitionResult =
+  | {
+      readonly ok: true;
+      readonly state: GameState;
+      readonly session: DialogueSession;
+      readonly events: readonly CaseDomainEvent[];
+    }
+  | {
+      readonly ok: false;
+      readonly state: GameState;
+      readonly session: DialogueSession | null;
+      readonly error: DialogueError;
+    };

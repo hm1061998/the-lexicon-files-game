@@ -39,6 +39,8 @@ type RawInput = {
   evidencesRaw: unknown;
   factsRaw: unknown;
   sceneRaws: readonly unknown[];
+  npcsRaw: unknown;
+  dialoguesRaw: unknown;
 };
 
 function sceneWithEffects(effects: readonly unknown[]): unknown {
@@ -59,6 +61,8 @@ function sceneWithEffects(effects: readonly unknown[]): unknown {
 function makeInput(changes: Partial<RawInput> = {}): RawInput {
   return {
     caseRaw,
+    npcsRaw: { npcs: [] },
+    dialoguesRaw: { dialogues: [] },
     objectivesRaw,
     evidencesRaw,
     factsRaw,
