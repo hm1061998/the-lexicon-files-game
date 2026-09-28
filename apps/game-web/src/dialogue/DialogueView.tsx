@@ -39,6 +39,7 @@ export function DialogueView({
     dialogRef = useRef<HTMLDivElement>(null),
     textRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
+    const fallbackFocus = returnFocusRef.current;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     function trap(event: KeyboardEvent) {
       if (event.key !== 'Tab') return;
@@ -56,7 +57,7 @@ export function DialogueView({
     return () => {
       window.removeEventListener('keydown', trap);
       if (previous?.isConnected && previous !== document.body) previous.focus();
-      else returnFocusRef.current?.focus();
+      else if (fallbackFocus?.isConnected) fallbackFocus.focus();
     };
   }, [returnFocusRef]);
   useEffect(() => {
