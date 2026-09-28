@@ -1,9 +1,9 @@
 import { renderToString } from 'react-dom/server';
 import { createStore } from 'zustand/vanilla';
 import { describe, expect, it } from 'vitest';
-import { loadCaseSummary, loadUiStrings } from '@lexicon/game-content';
+import { loadCaseDefinition, loadUiStrings } from '@lexicon/game-content';
 import { GameStoreProvider } from '../state/GameStoreContext';
-import { createGameStore, type GameState } from '../state/gameStore';
+import { createGameStore, type GameStoreState } from '../state/gameStore';
 import { ObjectivePanel } from './ObjectivePanel';
 import { CaseProgress } from './CaseProgress';
 import { InteractionPrompt } from './InteractionPrompt';
@@ -11,37 +11,37 @@ import { KeyHints } from './KeyHints';
 import { PauseMenu } from '../pause/PauseMenu';
 
 const strings = loadUiStrings('vi');
-const caseSummary = loadCaseSummary('case-001');
+const caseDefinition = loadCaseDefinition('case-001');
 
 describe('ObjectivePanel', () => {
   it('shows heading and objective text', () => {
-    const store = createGameStore({ caseSummary });
+    const store = createGameStore({ caseDefinition });
     const html = renderToString(
       <GameStoreProvider store={store}>
         <ObjectivePanel strings={strings} />
       </GameStoreProvider>,
     );
     expect(html).toContain(strings.objectiveHeading);
-    expect(html).toContain(caseSummary.initialObjective.text);
+    expect(html).toContain(caseDefinition.objectives[0]?.text);
   });
 });
 
 describe('CaseProgress', () => {
   it('shows 0/5 with caseFile label', () => {
-    const store = createGameStore({ caseSummary });
+    const store = createGameStore({ caseDefinition });
     const html = renderToString(
       <GameStoreProvider store={store}>
         <CaseProgress strings={strings} />
       </GameStoreProvider>,
     );
     expect(html).toContain(strings.caseFile);
-    expect(html).toContain(`0/${caseSummary.evidenceTotal}`);
+    expect(html).toContain(`0/${caseDefinition.evidenceTotal}`);
   });
 });
 
 describe('InteractionPrompt', () => {
   it('renders nothing when nearby is null', () => {
-    const store = createGameStore({ caseSummary });
+    const store = createGameStore({ caseDefinition });
     const html = renderToString(
       <GameStoreProvider store={store}>
         <InteractionPrompt strings={strings} />
@@ -53,8 +53,8 @@ describe('InteractionPrompt', () => {
   it('shows [E] and prompt when nearby', () => {
     // renderToString uses zustand's getInitialState() as the server snapshot, so the
     // "nearby" value must be present in the store's initial state, not set afterwards.
-    const store = createStore<GameState>((set) => ({
-      ...createGameStore({ caseSummary }).getState(),
+    const store = createStore<GameStoreState>((set) => ({
+      ...createGameStore({ caseDefinition }).getState(),
       nearby: { id: 'objective_note', prompt: 'Đọc ghi chú' },
       setNearby(n) {
         set({ nearby: n });

@@ -1,6 +1,6 @@
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { ContentValidationError, loadSceneDefinition } from '@lexicon/game-content';
+import { ContentValidationError, loadCaseDefinition } from '@lexicon/game-content';
 import { App } from './App';
 
 // Phaser requires a browser `window`; the real canvas is covered by e2e tests.
@@ -9,7 +9,7 @@ vi.mock('./game/createGame', () => ({ createGame: vi.fn() }));
 // Real loader by default; individual tests may override one call.
 vi.mock('@lexicon/game-content', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@lexicon/game-content')>();
-  return { ...actual, loadSceneDefinition: vi.fn(actual.loadSceneDefinition) };
+  return { ...actual, loadCaseDefinition: vi.fn(actual.loadCaseDefinition) };
 });
 
 describe('App', () => {
@@ -25,7 +25,7 @@ describe('App', () => {
   });
 
   it('GameCanvas renders a readable error for invalid content', () => {
-    vi.mocked(loadSceneDefinition).mockImplementationOnce(() => {
+    vi.mocked(loadCaseDefinition).mockImplementationOnce(() => {
       throw new ContentValidationError('bad.json', ['spawn: Required']);
     });
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});

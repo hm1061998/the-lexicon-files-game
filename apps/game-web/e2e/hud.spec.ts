@@ -101,6 +101,15 @@ test('HUD shows objective and case progress', async ({ page }) => {
   await expect(page.getByText('0/5')).toBeVisible();
 });
 
+test('reading the objective note completes the active objective', async ({ page }) => {
+  await openWorld(page);
+  await expect(page.getByText('Tìm hiểu điều gì đã xảy ra với bản báo cáo')).toBeVisible();
+  await hold(page, 'd', 800);
+  await expect(page.getByText('Đọc ghi chú')).toBeVisible();
+  await page.keyboard.press('e');
+  await expect(page.getByText('Tìm hiểu điều gì đã xảy ra với bản báo cáo')).toHaveCount(0);
+});
+
 test('Esc typed in a page input does not pause', async ({ page }) => {
   await openWorld(page);
   await page.evaluate(() => {

@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef } from 'react';
-import type { CaseSummary, GameEventMap, SceneDefinition, UiStrings } from '@lexicon/shared-types';
+import type { CaseDefinition, GameEventMap, SceneDefinition, UiStrings } from '@lexicon/shared-types';
 import {
   ContentValidationError,
   DEFAULT_START,
-  loadCaseSummary,
-  loadSceneDefinition,
+  loadCaseDefinition,
   loadUiStrings,
 } from '@lexicon/game-content';
 import { createEventBus } from '../bridge/eventBus';
 import { connectBusToStore } from '../bridge/connectBusToStore';
+import { connectCaseEngine } from '../bridge/connectCaseEngine';
 import { Hud } from '../hud/Hud';
 import { PauseMenu } from '../pause/PauseMenu';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
@@ -16,16 +16,19 @@ import { createGameStore, type GameStore } from '../state/gameStore';
 import { GameStoreProvider, useGameStore } from '../state/GameStoreContext';
 import { createGame } from './createGame';
 
-type StartContent = { scene: SceneDefinition; caseSummary: CaseSummary; strings: UiStrings };
+type StartContent = { scene: SceneDefinition; caseDefinition: CaseDefinition; strings: UiStrings };
 type LoadResult = { ok: true; content: StartContent } | { ok: false; error: Error };
 
 function loadStartContent(): LoadResult {
   try {
+    const caseDefinition = loadCaseDefinition(DEFAULT_START.caseId);
+    const scene = caseDefinition.scenes.find(({ id }) => id === DEFAULT_START.sceneId);
+    if (!scene) throw new Error(`Start scene "${DEFAULT_START.sceneId}" is missing from case`);
     return {
       ok: true,
       content: {
-        scene: loadSceneDefinition(DEFAULT_START.caseId, DEFAULT_START.sceneId),
-        caseSummary: loadCaseSummary(DEFAULT_START.caseId),
+        scene,
+        caseDefinition,
         strings: loadUiStrings('vi'),
       },
     };
@@ -53,11 +56,11 @@ export function GameCanvas() {
 }
 
 function GameRoot({ content }: { content: StartContent }) {
-  const { scene, caseSummary, strings } = content;
+  const { scene, caseDefinition, strings } = content;
   const containerRef = useRef<HTMLDivElement>(null);
   const { store, bus } = useMemo(
-    () => ({ store: createGameStore({ caseSummary }), bus: createEventBus<GameEventMap>() }),
-    [caseSummary],
+    () => ({ store: createGameStore({ caseDefinition }), bus: createEventBus<GameEventMap>() }),
+    [caseDefinition],
   );
   usePauseShortcut(store);
 
@@ -65,6 +68,7 @@ function GameRoot({ content }: { content: StartContent }) {
     const container = containerRef.current;
     if (!container) return;
     const disconnect = connectBusToStore(bus, store);
+    const disconnectCaseEngine = connectCaseEngine(bus, store, caseDefinition);
     const game = createGame(container, {
       scene,
       bus,
@@ -73,8 +77,9 @@ function GameRoot({ content }: { content: StartContent }) {
     return () => {
       game.destroy(true);
       disconnect();
+      disconnectCaseEngine();
     };
-  }, [scene, bus, store]);
+  }, [scene, bus, store, caseDefinition]);
 
   return (
     <div className="game-root" style={{ position: 'relative', width: '100vw', height: '100vh' }}>

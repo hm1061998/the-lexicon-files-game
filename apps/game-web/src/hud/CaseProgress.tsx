@@ -3,8 +3,8 @@ import type { UiStrings } from '@lexicon/shared-types';
 import { useGameStore } from '../state/GameStoreContext';
 
 export function CaseProgress({ strings }: { strings: UiStrings }): JSX.Element {
-  const evidenceCollected = useGameStore((state) => state.evidenceCollected);
-  const evidenceTotal = useGameStore((state) => state.evidenceTotal);
+  const evidenceCollected = useGameStore((state) => state.caseState.evidenceIds.length);
+  const evidenceTotal = useGameStore((state) => state.caseState.evidenceTotal);
 
   return (
     <PaperPanel className="hud-case-progress">

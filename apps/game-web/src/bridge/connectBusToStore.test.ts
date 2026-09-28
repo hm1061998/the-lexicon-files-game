@@ -1,20 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import type { CaseSummary, GameEventMap } from '@lexicon/shared-types';
+import type { GameEventMap } from '@lexicon/shared-types';
+import { loadCaseDefinition } from '@lexicon/game-content';
 import { createEventBus } from './eventBus';
 import { connectBusToStore } from './connectBusToStore';
 import { createGameStore } from '../state/gameStore';
 
-const caseSummary: CaseSummary = {
-  id: 'case-test',
-  title: 'Test Case',
-  evidenceTotal: 5,
-  initialObjective: { id: 'obj-1', text: 'Do the thing' },
-};
+const caseDefinition = loadCaseDefinition('case-001');
 
 describe('connectBusToStore', () => {
   it('nearby event sets store.nearby', () => {
     const bus = createEventBus<GameEventMap>();
-    const store = createGameStore({ caseSummary });
+    const store = createGameStore({ caseDefinition });
     connectBusToStore(bus, store);
 
     bus.emit('interaction:nearby', { interactableId: 'note', prompt: 'Read the note' });
@@ -24,7 +20,7 @@ describe('connectBusToStore', () => {
 
   it('cleared event resets nearby', () => {
     const bus = createEventBus<GameEventMap>();
-    const store = createGameStore({ caseSummary });
+    const store = createGameStore({ caseDefinition });
     connectBusToStore(bus, store);
 
     bus.emit('interaction:nearby', { interactableId: 'note', prompt: 'Read the note' });
@@ -35,7 +31,7 @@ describe('connectBusToStore', () => {
 
   it('disconnect stops syncing', () => {
     const bus = createEventBus<GameEventMap>();
-    const store = createGameStore({ caseSummary });
+    const store = createGameStore({ caseDefinition });
     const disconnect = connectBusToStore(bus, store);
 
     disconnect();

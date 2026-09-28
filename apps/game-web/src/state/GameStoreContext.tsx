@@ -1,6 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { useStore } from 'zustand';
-import type { GameState, GameStore } from './gameStore';
+import type { GameStoreState, GameStore } from './gameStore';
 
 const GameStoreContext = createContext<GameStore | null>(null);
 
@@ -14,7 +14,7 @@ export function GameStoreProvider({
   return <GameStoreContext.Provider value={store}>{children}</GameStoreContext.Provider>;
 }
 
-export function useGameStore<T>(selector: (state: GameState) => T): T {
+export function useGameStore<T>(selector: (state: GameStoreState) => T): T {
   const store = useContext(GameStoreContext);
   if (!store) {
     throw new Error('useGameStore must be used within a GameStoreProvider');
