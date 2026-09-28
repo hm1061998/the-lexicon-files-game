@@ -5,3 +5,4 @@ export type {
   SceneAssetDefinition,
   SceneDefinition,
 } from './scene';
+export * from './events';
