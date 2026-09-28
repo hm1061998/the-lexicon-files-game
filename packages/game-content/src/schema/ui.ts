@@ -4,6 +4,9 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 
 const uiStringsSchema = z
   .object({
+    investigator: z.string().min(1),
+    dialogue: z.string().min(1),
+    dialogueError: z.string().min(1),
     objectiveHeading: z.string().min(1),
     caseFile: z.string().min(1),
     interact: z.string().min(1),

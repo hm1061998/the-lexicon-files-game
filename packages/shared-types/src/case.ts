@@ -1,4 +1,7 @@
 export interface UiStrings {
+  readonly investigator: string;
+  readonly dialogue: string;
+  readonly dialogueError: string;
   readonly objectiveHeading: string;
   readonly caseFile: string;
   readonly interact: string;

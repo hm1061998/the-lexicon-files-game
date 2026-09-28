@@ -18,6 +18,7 @@ import { connectCaseEngine } from '../bridge/connectCaseEngine';
 import { connectAutosave } from '../persistence/connectAutosave';
 import { createSaveRepository, type SaveRepository } from '../persistence/saveRepository';
 import { loadGameBootstrap, type GameBootstrapResult } from './bootstrapGame';
+import { DialogueLayer } from '../dialogue/DialogueLayer';
 import { Hud } from '../hud/Hud';
 import { PauseMenu } from '../pause/PauseMenu';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
@@ -229,10 +230,16 @@ function GameRoot({
 
   return (
     <div className="game-root" style={{ position: 'relative', width: '100vw', height: '100vh' }}>
-      <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+      <div
+        ref={containerRef}
+        tabIndex={-1}
+        aria-label={strings.caseFile}
+        style={{ width: '100%', height: '100%' }}
+      />
       <GameStoreProvider store={store}>
         <Hud strings={strings} />
         <PersistenceNotice strings={strings} />
+        <DialogueLayer strings={strings} returnFocusRef={containerRef} />
         <PauseLayer strings={strings} store={store} />
         <EvidenceLayer strings={strings} />
         <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
