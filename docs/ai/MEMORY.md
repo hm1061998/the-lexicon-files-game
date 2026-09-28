@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T22:31:34+07:00
+updated_at: 2026-09-28T22:43:09+07:00
 phase: phase-6
 status: proposed
-result_commit: 297eb98
+result_commit: 1740877
 active_spec: docs/superpowers/specs/2026-09-28-phase-6-learning-engine-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
 ---
 
 ## Metadata
@@ -14,7 +14,7 @@ active_plan: none
 
 ## Current Phase
 
-- Phase 6 — Learning Engine (roadmap §25): khảo sát/brainstorming và draft written spec, chưa được duyệt.
+- Phase 6 — Learning Engine (roadmap §25): written spec phương án A đã được duyệt; implementation plan đã soạn/commit và chờ người dùng review cùng lựa chọn execution.
 
 ## Active Goal
 
@@ -22,7 +22,7 @@ active_plan: none
 
 ## Current Status
 
-- Người dùng yêu cầu “tiếp tục” sau push Phase 5. Git đầu phiên dev sạch tại f4ac2be, khớp origin/dev. Draft Phase 6 commit local 297eb98; chưa push.
+- Người dùng yêu cầu “tiếp tục” sau push Phase 5. Git đầu phiên dev sạch tại f4ac2be, khớp origin/dev. Spec Phase 6 commit local 297eb98, plan commit local 1740877; chưa push.
 - learning-engine/src/index.ts export rỗng; vocabulary.json là {}; loader chưa đọc vocabulary; notebook Vocabulary empty state; learning profile/settings chưa lưu.
 - Spec đề xuất phương án A đủ 20 catalogue words của docs/03 §15, annotations trong evidence description/dialogue node text, modes Beginner/Learning/Immersion, profile/recovery riêng với case save.
 - Điểm chờ duyệt: gameplay hiện chỉ unknown→seen; tra từ không là bằng chứng recognized/mastered. Từ chưa xuất hiện trong prototype không được tự thêm notebook.
@@ -33,11 +33,11 @@ active_plan: none
 - Phase 0A, 0B, 1, 2: xem Git history.
 - Phase 3 tại 200399b; Phase 4 tại 7d4405a, remote checkpoint 2595afd.
 - Phase 5 complete tại 30fb676: ba NPC/dialogue, runner/progress, validation/build gate, save schema 2 migration, accessible UI/input/focus, physical double-click review fix. Push origin/dev thành công tới f4ac2be gồm memory; xem docs/ai/2026-09-28-phase-5-dialogue-verification.md.
-- Phase 6 đã đọc docs/02, Case #001 vocabulary targets, roadmap §25 và architecture; viết/tự rà draft architectural spec tại 297eb98.
+- Phase 6 đã đọc docs/02, Case #001 vocabulary targets, roadmap §25 và architecture; spec phương án A tại 297eb98 đã được người dùng duyệt. Plan sáu tasks/TDD tại 1740877 đã tự rà format/paths/review focus; chưa được duyệt để thực thi.
 
 ## In Progress
 
-- Brainstorming architectural: review written spec Phase 6. Chưa có approved scope hoặc implementation plan Phase 6.
+- Writing-plans hoàn tất cho scope Phase 6 đã duyệt; plan đang chờ người dùng review/chọn cách execution.
 
 ## Active Decisions
 
@@ -57,18 +57,18 @@ active_plan: none
 
 ## Next Actions
 
-- Người dùng review docs/superpowers/specs/2026-09-28-phase-6-learning-engine-design.md; chốt phương án A và seen-only hoặc yêu cầu đổi scope.
-- Sau duyệt spec, dùng writing-plans viết plan Phase 6 tiếng Việt; trình review/chọn execution rồi mới code.
+- Người dùng review docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md, xác nhận scope và chọn inline/subagent-driven.
+- Chỉ sau plan approval/execution choice mới bắt đầu Phase 6 implementation.
 - Chỉ push draft tài liệu Phase 6 sau khi được xác nhận; push dev Phase 5 đã hoàn thành.
 
 ## Verification
 
-- Phiên Phase 6 chỉ thay tài liệu: Prettier check draft spec PASS, Git whitespace check PASS; memory check PASS sau cập nhật snapshot. Không chạy lint/test/build product vì chưa implementation, không tuyên bố Phase 6 complete.
+- Phiên Phase 6 chỉ thay tài liệu: Prettier check spec/plan PASS, Git whitespace check PASS; memory check PASS sau snapshot. Không chạy lint/test/build product vì chưa implementation; không tuyên bố Phase 6 complete.
 - Phase 5 verification lịch sử ở bản sửa cuối: lint7 projects PASS, 204 Vitest +30 memory tests, build122 modules PASS (bundle warning >500 kB), E2E29/29 (1.9m), format/memory/whitespace PASS. Không chạy lại các suite này trong phiên brainstorming.
 
 ## Latest Handoff
 
-- Draft Phase 6 tại 297eb98 local, chưa push/duyệt. Scope A: catalogue20, contextual inspect/modes/notebook/profile; actual stages tối đa seen khi chưa assessment. Chờ written-spec approval rồi plan, không coi “tiếp tục” là duyệt artifact chưa tồn tại.
+- Spec A tại 297eb98 đã được duyệt; plan tại 1740877 local, chờ review/execution choice, chưa push. Scope A: catalogue20, contextual inspect/modes/notebook/profile; actual stages tối đa seen khi chưa assessment. Chờ written-spec approval rồi plan, không coi “tiếp tục” là duyệt artifact chưa tồn tại.
 - Phase 5 đã push tới f4ac2be. Minor evidence focus restoration Phase 4 vẫn hoãn; dialogue có restoration riêng đã verify.
 
 ## Required Reading
