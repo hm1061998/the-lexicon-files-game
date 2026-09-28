@@ -11,7 +11,7 @@ Không được cố xây toàn bộ game trong một lần.
 # 2. Stack
 
 ```text
-Monorepo: Nx or pnpm workspace
+Monorepo: npm workspaces + Nx
 Frontend: React + TypeScript + Vite
 Game: Phaser 3
 State: Zustand

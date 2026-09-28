@@ -830,7 +830,7 @@ Learning system MVP đạt yêu cầu khi:
 - click word hiển thị definition;
 - evidence có vocabulary metadata;
 - notebook hiển thị từ đã gặp;
-- hint có 3 cấp;
+- hint có 4 cấp;
 - audio replay được;
 - subtitle configurable;
 - case report hiển thị learning summary;

@@ -285,7 +285,7 @@ Khi gần object:
 
 ```text
 ◇
-[E] Read meeting report
+[E] Read meeting minutes
 ```
 
 Object types:

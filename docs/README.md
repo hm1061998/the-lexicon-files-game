@@ -38,9 +38,37 @@ Bộ tài liệu này được thiết kế để đưa trực tiếp cho Codex 
    - ASP.NET Core / EF Core / PostgreSQL
    - Auth, save sync, API conventions, testing, security
 
+6. `art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`
+   - Character, scene và asset runtime contract
+   - Camera, anchor, collider, depth, export và naming
+
+7. `architecture/ARCHITECTURE.md`
+   - Kiến trúc tổng hợp và dependency rules
+
+8. `concept/*.webp`
+   - Visual target; xem `concept/README.md` để biết giới hạn sử dụng
+
+## Thứ tự ưu tiên khi tài liệu mâu thuẫn
+
+Áp dụng tài liệu chuyên biệt cho đúng phạm vi của quyết định:
+
+| Phạm vi | Nguồn authoritative |
+|---|---|
+| Product/gameplay rule | `01_GAME_DESIGN_DOCUMENT.md` |
+| Learning rule | `02_ENGLISH_LEARNING_SYSTEM_DESIGN.md` |
+| Case #001 truth, content và dialogue | `03_CASE_001_VERTICAL_SLICE_SPEC.md` |
+| Phase, scope triển khai và Definition of Done | `04_CODEX_IMPLEMENTATION_ROADMAP.md` |
+| Backend | `05_DOTNET_BACKEND_TECHNICAL_DESIGN.md` |
+| Asset runtime, kích thước, anchor, collider và export | `art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md` |
+| Dependency/import boundary | `architecture/ARCHITECTURE.md` |
+| Package manager và agent workflow | `AGENTS.md` |
+
+Ảnh trong `concept/` là visual target, không phải numeric runtime contract. Khi annotation trong ảnh khác tài liệu `art/06`, tài liệu `art/06` thắng. Nếu hai nguồn authoritative cùng phạm vi vẫn mâu thuẫn, dừng triển khai và yêu cầu làm rõ thay vì tự chọn.
+
 ## Stack đề xuất
 
 ```text
+Monorepo: npm workspaces + Nx
 Frontend shell/UI: React + TypeScript
 Game engine: Phaser 3
 State: Zustand

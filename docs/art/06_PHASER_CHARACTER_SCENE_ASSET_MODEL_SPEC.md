@@ -170,6 +170,8 @@ nếu cần chi tiết hơn.
 
 Tất cả character frame phải dùng cùng canvas size.
 
+> **Runtime contract:** Các annotation kích thước, anchor và collider trong ảnh concept chỉ dùng để minh họa visual target. Các giá trị trong tài liệu này là authoritative cho implementation và asset export.
+
 ---
 
 # 7. Character Body Proportion
@@ -911,16 +913,16 @@ Ví dụ:
       }
     },
     {
-      "id": "meeting_report",
+      "id": "meeting_minutes",
       "type": "interactable",
-      "texture": "evidence_meeting_report",
+      "texture": "evidence_meeting_minutes",
       "x": 1410,
       "y": 760,
       "origin": [0.5, 0.8],
       "interaction": {
         "radius": 90,
         "action": "readEvidence",
-        "evidenceId": "meeting_report_01"
+        "evidenceId": "meeting_minutes_01"
       }
     }
   ]
@@ -955,9 +957,9 @@ Ví dụ:
     "type": "image",
     "url": "/assets/environment/meeting/table_01.webp"
   },
-  "meeting_report_01": {
+  "meeting_minutes_01": {
     "type": "image",
-    "url": "/assets/evidence/meeting_report.webp"
+    "url": "/assets/evidence/meeting_minutes.webp"
   }
 }
 ```
@@ -1001,7 +1003,7 @@ scene_office_wall_left.webp
 ## Evidence
 
 ```text
-evidence_meeting_report.webp
+evidence_meeting_minutes.webp
 evidence_security_log.webp
 ```
 
@@ -1453,13 +1455,13 @@ Meeting Room
 ├── cabinet
 ├── plant
 ├── coffee mug
-└── report document
+└── meeting minutes
 ```
 
 Primary evidence:
 
 ```text
-meeting report
+meeting minutes
 ```
 
 ---
@@ -1558,7 +1560,7 @@ Mỗi scene có manifest preload:
     "meeting_wall_back",
     "meeting_table_01",
     "meeting_chair_01",
-    "meeting_report"
+    "meeting_minutes"
   ],
   "characters": [
     "player_detective"

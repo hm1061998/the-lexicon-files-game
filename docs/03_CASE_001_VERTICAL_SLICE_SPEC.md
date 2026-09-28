@@ -470,6 +470,8 @@ Complete when contradiction selected.
 Submit your conclusion
 ```
 
+Activate when challenge dialogue completes and `david_took_report` is unlocked.
+
 Complete on correct accusation.
 
 ---
@@ -528,7 +530,7 @@ Responses:
 
 ### 2
 
-> About ten minutes later.
+> Around eight forty.
 
 ### 3
 
@@ -616,17 +618,24 @@ Player option:
 
 David:
 
-> ...
+> The Quarterly Risk Report. I found an error I had missed and panicked. I took it to correct it before anyone noticed.
 
-New fact:
+New facts:
 
 ```text
 david_collected_folder
+david_took_report
 ```
 
 ---
 
 # 13. Final Deduction
+
+Available when:
+
+```text
+david_took_report unlocked
+```
 
 Screen:
 

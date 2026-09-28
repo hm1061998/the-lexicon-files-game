@@ -1,6 +1,6 @@
 # The Lexicon Files — Architecture
 
-> Tài liệu này tổng hợp kiến trúc từ `docs/01`–`06`. Khi mâu thuẫn, **docs gốc thắng**; cập nhật file này cho khớp.
+> Tài liệu này tổng hợp kiến trúc từ `docs/01`–`06`. Khi mâu thuẫn, áp dụng bảng nguồn authoritative trong `docs/README.md`, rồi cập nhật file này cho khớp.
 
 ## 1. Nguyên tắc nền
 
@@ -161,7 +161,7 @@ Dependency: `Api → Infrastructure → Application → Domain`. Cloud save dùn
 
 | Chủ đề | Quyết định | Nguồn |
 |---|---|---|
-| Package manager / monorepo | **npm + Nx** (npm workspaces). Cấm pnpm/yarn/bun | 04 §2 ("Nx or pnpm") → chốt Nx; rule trong AGENTS.md §3 |
+| Package manager / monorepo | **npm + Nx** (npm workspaces). Cấm pnpm/yarn/bun | 04 §2; rule trong AGENTS.md §3 |
 | Physics | Phaser Arcade | 06 §31 |
 | Dialogue | custom JSON | README |
 | Validation content | Zod, fail build | 04 §35 |
