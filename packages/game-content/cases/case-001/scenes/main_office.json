@@ -1,0 +1,64 @@
+{
+  "id": "main_office",
+  "size": { "width": 2400, "height": 1600 },
+  "worldBounds": { "x": 0, "y": 0, "width": 2400, "height": 1600 },
+  "spawn": { "x": 1200, "y": 1100 },
+  "assets": [
+    {
+      "id": "floor",
+      "type": "background",
+      "texture": "ph_floor",
+      "x": 1200,
+      "y": 800,
+      "origin": [0.5, 0.5],
+      "depth": -1000,
+      "depthBias": 0
+    },
+    {
+      "id": "wall_back",
+      "type": "wall",
+      "texture": "ph_wall",
+      "x": 1200,
+      "y": 420,
+      "depthBias": 0,
+      "collision": { "type": "rect", "x": -1200, "y": -40, "width": 2400, "height": 40 }
+    },
+    {
+      "id": "player_desk",
+      "type": "prop",
+      "texture": "ph_desk",
+      "x": 1200,
+      "y": 800,
+      "depthBias": 0,
+      "collision": { "type": "rect", "x": -110, "y": -40, "width": 220, "height": 60 }
+    },
+    {
+      "id": "objective_note",
+      "type": "interactable",
+      "texture": "ph_note",
+      "x": 1400,
+      "y": 1100,
+      "depthBias": 0,
+      "interaction": { "x": 0, "y": 0, "radius": 90 }
+    },
+    {
+      "id": "anna",
+      "type": "npc",
+      "texture": "ph_npc",
+      "x": 800,
+      "y": 1000,
+      "depthBias": 0,
+      "collision": { "type": "rect", "x": -15, "y": -9, "width": 30, "height": 18 },
+      "interaction": { "x": 0, "y": 0, "radius": 90 }
+    },
+    {
+      "id": "hallway_door",
+      "type": "interactable",
+      "texture": "ph_door",
+      "x": 2100,
+      "y": 700,
+      "depthBias": 0,
+      "interaction": { "x": 0, "y": 20, "radius": 80 }
+    }
+  ]
+}
