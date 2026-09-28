@@ -17,6 +17,7 @@ const interactionAreaSchema = z
     x: z.number(),
     y: z.number(),
     radius: z.number().positive(),
+    prompt: z.string().min(1),
   })
   .strict();
 

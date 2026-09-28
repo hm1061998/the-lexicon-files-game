@@ -39,7 +39,7 @@
       "x": 1400,
       "y": 1100,
       "depthBias": 0,
-      "interaction": { "x": 0, "y": 0, "radius": 90 }
+      "interaction": { "x": 0, "y": 0, "radius": 90, "prompt": "Đọc ghi chú" }
     },
     {
       "id": "anna",
@@ -49,7 +49,7 @@
       "y": 1000,
       "depthBias": 0,
       "collision": { "type": "rect", "x": -15, "y": -9, "width": 30, "height": 18 },
-      "interaction": { "x": 0, "y": 0, "radius": 90 }
+      "interaction": { "x": 0, "y": 0, "radius": 90, "prompt": "Nói chuyện với Anna" }
     },
     {
       "id": "hallway_door",
@@ -58,7 +58,7 @@
       "x": 2100,
       "y": 700,
       "depthBias": 0,
-      "interaction": { "x": 0, "y": 20, "radius": 80 }
+      "interaction": { "x": 0, "y": 20, "radius": 80, "prompt": "Ra hành lang" }
     }
   ]
 }

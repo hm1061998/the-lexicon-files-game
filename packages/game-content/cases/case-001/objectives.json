@@ -1,1 +1,8 @@
-{}
+{
+  "objectives": [
+    {
+      "id": "find_what_happened",
+      "text": "Tìm hiểu điều gì đã xảy ra với bản báo cáo"
+    }
+  ]
+}

@@ -12,6 +12,7 @@ export interface InteractionArea {
   readonly x: number;
   readonly y: number;
   readonly radius: number;
+  readonly prompt: string;
 }
 
 export interface SceneAssetDefinition {

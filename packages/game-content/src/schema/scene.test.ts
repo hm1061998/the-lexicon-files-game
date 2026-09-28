@@ -69,6 +69,21 @@ describe('parseSceneDefinition', () => {
     }
   });
 
+  it('rejects interaction without prompt', () => {
+    const raw = mainOffice as { assets: Array<Record<string, unknown>> };
+    const assets = raw.assets.map((asset, index) =>
+      index === 3 ? { ...asset, interaction: { x: 0, y: 0, radius: 90 } } : asset,
+    );
+    try {
+      parseSceneDefinition({ ...raw, assets }, 'main_office.json');
+      throw new Error('expected parseSceneDefinition to throw');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ContentValidationError);
+      const validationError = err as ContentValidationError;
+      expect(validationError.issues.some((issue) => issue.includes('prompt'))).toBe(true);
+    }
+  });
+
   it('error message names the source file', () => {
     const raw = { ...(mainOffice as Record<string, unknown>) };
     delete raw.spawn;

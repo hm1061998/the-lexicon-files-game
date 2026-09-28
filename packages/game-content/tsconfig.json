@@ -4,7 +4,7 @@
     "rootDir": ".",
     "outDir": "dist"
   },
-  "include": ["src", "cases/**/*.json"],
+  "include": ["src", "cases/**/*.json", "ui/**/*.json"],
   "references": [
     {
       "path": "../shared-types"
