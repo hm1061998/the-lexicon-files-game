@@ -1,10 +1,10 @@
 ---
 schema_version: 1
 updated_at: 2026-09-28T21:00:00+07:00
-phase: phase-1
-status: complete
+phase: phase-2
+status: proposed
 result_commit: f618bec
-active_spec: docs/superpowers/specs/2026-09-28-phase-1-game-world-prototype-design.md
+active_spec: docs/superpowers/specs/2026-09-28-phase-2-react-hud-integration-design.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 ---
 
@@ -14,15 +14,15 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Current Phase
 
-- Phase 1 — Game World Prototype (roadmap §20).
+- Phase 2 — React HUD Integration (roadmap §21); Phase 1 đã hoàn thành.
 
 ## Active Goal
 
-- Player đi quanh Main Office dựng từ JSON, có collision, depth sort, camera, interaction radius.
+- HUD React (objective, hồ sơ, prompt, key hints, pause) nối Phaser qua bus + Zustand.
 
 ## Current Status
 
-- Phase 1 hoàn thành bằng subagent-driven, final review xong, đã push `dev`; người dùng tự merge `main`.
+- Spec Phase 2 đã viết; chờ người dùng review spec trước khi lập plan.
 
 ## Completed
 
@@ -44,6 +44,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 - Một `wall_back` ngang thay cho cặp tường trái/phải trong spec §4.
 - `fps.panicMax: 0` để tránh Phaser cap delta lúc khởi động.
 - Debug hook `window.__lexiconDebug` chỉ có ở dev (thêm `teleport`, `nearbyEvents`).
+- Phase 2: UI tiếng Việt từ content; store Zustand per-mount là nguồn UI; key hints chỉ E và Esc.
 - Deferred minor: registry cast chưa guard, `depthOf` trả NaN với id lạ, formatIssue thiếu expected/received, test không được tsc typecheck, CORS chưa test preflight.
 
 ## Blockers
@@ -52,7 +53,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Next Actions
 
-- Chờ người dùng yêu cầu bắt đầu Phase 2 (React HUD Integration).
+- Người dùng review spec Phase 2; sau đó lập plan bằng writing-plans.
 
 ## Verification
 
