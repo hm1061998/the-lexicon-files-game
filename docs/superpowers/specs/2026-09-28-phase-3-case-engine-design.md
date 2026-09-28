@@ -1,92 +1,92 @@
-# Phase 3 — Case Engine Design
+# Phase 3 — Thiết kế Case Engine
 
-Status: approach approved by the user on 2026-09-28; awaiting spec review. Implements roadmap `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §22. Architectural boundaries follow `docs/architecture/ARCHITECTURE.md` §§1–4 and root `AGENTS.md`.
+Trạng thái: người dùng đã chọn ranh giới package cách 2 ngày 2026-09-28; đang chờ duyệt spec. Triển khai roadmap `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §22. Ranh giới kiến trúc theo `docs/architecture/ARCHITECTURE.md` §§1–4 và `AGENTS.md` gốc.
 
-## 1. Goal and acceptance
+## 1. Mục tiêu và tiêu chí nghiệm thu
 
-Build the content-driven foundation for Case #001 and a framework-free case engine that can initialize case state, activate and complete objectives, evaluate conditions, and unlock facts. Case data must remain outside React and Phaser.
+Xây nền tảng content-driven cho Case #001 và case engine thuần framework để khởi tạo state, kích hoạt/hoàn thành objective, đánh giá condition và mở fact. Case data không nằm trong React hoặc Phaser.
 
-Acceptance:
+Tiêu chí nghiệm thu:
 
-- `game-content` loads and validates a complete case definition from registered JSON files, including references between case, scene, evidence, fact, and objective records.
-- `game-core` receives the validated definition as an argument and produces state transitions and domain events without importing content JSON or UI/runtime frameworks.
-- Objective state and facts exposed to the HUD come from the game state/reducer path rather than being duplicated as initial-only React store values.
-- Unit tests cover valid and invalid content, condition evaluation, objective transitions, fact unlocking, and framework-free imports.
-- Case #001 content stays deliberately small: its current initial objective plus one representative evidence/fact pair and the existing Main Office scene reference. This is contract/test content, not the complete vertical-slice content set.
+- `game-content` nạp và validate một case hoàn chỉnh từ các file JSON đã đăng ký, bao gồm tham chiếu giữa case, scene, evidence, fact và objective.
+- `game-core` nhận definition đã validate qua tham số và tạo state transition cùng domain event; không import content JSON hoặc framework UI/runtime.
+- Objective state và fact mà HUD hiển thị lấy từ game state/reducer, không bị nhân đôi thành giá trị khởi tạo riêng trong React store.
+- Unit test bao phủ content hợp lệ/không hợp lệ, đánh giá condition, chuyển trạng thái objective, mở fact và kiểm tra import không phụ thuộc framework.
+- Content Case #001 được giữ tối thiểu: objective khởi đầu hiện có, một cặp evidence/fact đại diện và tham chiếu scene Main Office. Đây là dữ liệu để kiểm tra contract/test, chưa phải bộ content đầy đủ của vertical slice.
 
-## 2. Package boundaries
+## 2. Ranh giới package
 
-Use the existing dependency direction:
+Giữ chiều phụ thuộc hiện tại:
 
 ```text
 shared-types  ←  game-content (Zod + JSON)
-      ↑                 
-  game-core              
-      ↑                  
+      ↑
+  game-core
+      ↑
  apps/game-web (bridge/store/HUD)
 ```
 
-- `packages/shared-types` owns framework-free contracts for case, evidence, fact, objective, condition, effect, game state, and domain events.
-- `packages/game-content` owns Zod schemas, cross-file/reference validation, the registered Case #001 JSON, and a loader that assembles a `CaseDefinition`.
-- `packages/game-core` owns pure condition evaluation and state transitions. It accepts `CaseDefinition`; it does not import `game-content`, JSON, React, Phaser, Zustand, DOM, or IndexedDB.
-- `apps/game-web` handles `interaction:triggered`, invokes the core transition path, and mirrors the resulting state into the existing per-mount Zustand store. Phaser continues to emit typed bus events only; it does not own case logic.
+- `packages/shared-types` định nghĩa contract framework-free cho case, evidence, fact, objective, condition, effect, game state và domain event.
+- `packages/game-content` sở hữu Zod schema, validate tham chiếu giữa các file, JSON Case #001 đã đăng ký và loader lắp thành `CaseDefinition`.
+- `packages/game-core` sở hữu việc đánh giá condition và state transition thuần. Core nhận `CaseDefinition`; không import `game-content`, JSON, React, Phaser, Zustand, DOM hoặc IndexedDB.
+- `apps/game-web` xử lý `interaction:triggered`, gọi core transition và đồng bộ state kết quả vào Zustand store theo từng lần mount. Phaser chỉ phát typed bus event; không chứa case logic.
 
-## 3. Data contracts and validation
+## 3. Data contract và validation
 
-Define readonly shared types for:
+Định nghĩa các shared type chỉ đọc (readonly):
 
-- `CaseDefinition`: the Phase 3 subset of the data-driven case contract: identity/title, scenes, evidence/fact/objective definitions, and `initialObjectiveId`. Broader case fields such as NPC dialogue, contradictions, and conclusion are added with their roadmap phases.
-- `EvidenceDefinition`: ID, case ID, name, category, description, and related fact IDs; optional asset/NPC/vocabulary metadata remains optional per the game design document.
-- `FactDefinition`: ID, text, source evidence IDs, and a `Condition` unlock rule.
-- `ObjectiveDefinition`: ID and display text. Runtime status is held in `GameState` (`locked`, `active`, or `completed`); transitions are driven by effects, not content callbacks.
-- `Condition`: the roadmap discriminated union `hasEvidence`, `hasFact`, `objectiveCompleted`, `flag`, `all`, and `any`.
-- `Effect`: the roadmap discriminated union `addEvidence`, `unlockFact`, `setFlag`, `activateObjective`, and `completeObjective`.
+- `CaseDefinition`: phần contract case thuộc Phase 3 gồm ID/tiêu đề, scene, evidence, fact, objective và `initialObjectiveId`. Các trường rộng hơn như NPC dialogue, contradiction và conclusion sẽ được thêm ở phase tương ứng trong roadmap.
+- `EvidenceDefinition`: ID, case ID, tên, category, mô tả và danh sách fact liên quan; metadata asset/NPC/vocabulary tùy chọn theo game design document.
+- `FactDefinition`: ID, nội dung, evidence nguồn và điều kiện mở khóa `Condition`.
+- `ObjectiveDefinition`: ID và nội dung hiển thị. Trạng thái runtime (`locked`, `active`, `completed`) thuộc `GameState`; effect điều khiển việc chuyển trạng thái, không dùng callback trong content.
+- `Condition`: discriminated union trong roadmap gồm `hasEvidence`, `hasFact`, `objectiveCompleted`, `flag`, `all`, `any`.
+- `Effect`: discriminated union trong roadmap gồm `addEvidence`, `unlockFact`, `setFlag`, `activateObjective`, `completeObjective`.
 
-`game-content` parses each file with strict Zod schemas and then validates cross-file references: case IDs, initial objective, evidence/fact/objective IDs, fact source evidence IDs, scene IDs, and IDs embedded in conditions/effects. Invalid content raises `ContentValidationError` with source and readable field paths. It must not silently drop invalid records.
+`game-content` parse từng file bằng Zod strict rồi validate tham chiếu chéo: case ID, objective ban đầu, evidence/fact/objective ID, evidence nguồn của fact, scene ID, và các ID được nhúng trong condition/effect. Content sai phải ném `ContentValidationError` kèm nguồn và field path dễ đọc; không được âm thầm bỏ bản ghi lỗi.
 
-The loader returns one assembled `CaseDefinition` for the engine. It does not expose imported JSON objects or make the engine responsible for file lookup.
+Loader trả về một `CaseDefinition` đã lắp ghép cho engine. Loader không để lộ object JSON thô và engine không tự tìm file content.
 
-## 4. State and engine behavior
+## 4. State và hành vi engine
 
-`createCaseState(definition)` returns a fresh `GameState` with the initial objective active, other objectives locked, and evidence, facts, and flags empty. State collections are represented with serializable arrays/records rather than mutable global state.
+`createCaseState(definition)` tạo `GameState` mới: objective đầu tiên active, objective còn lại locked, evidence/fact/flag ban đầu rỗng. Collection trong state dùng array/record có thể serialize, không dùng mutable global state.
 
-Pure engine operations follow `(state, input) → { state, events }`:
+Engine thuần theo dạng `(state, input) → { state, events }`:
 
-- `evaluateCondition(state, condition)` recursively evaluates the full condition union; empty `all` is true and empty `any` is false.
-- `applyEffects(state, effects)` applies the effect union in order, then checks fact unlock conditions against the resulting state. Repeating an already-satisfied effect is idempotent.
-- Objective activation only affects known, non-completed objectives. Completing an objective requires it to be active. Invalid IDs or invalid transitions produce a typed failure result without partially mutating state.
-- Facts unlock once, when their condition becomes true; the result includes a domain event so consumers can update HUD/notebook projections later.
-- `addEvidence` is a core state effect so the declared Phase 3 Effect union is executable; this phase does not add the player-facing collection modal/notebook or wire every evidence interactable. Those remain Phase 4 work.
+- `evaluateCondition(state, condition)` đánh giá đệ quy toàn bộ condition union; `all` rỗng trả true, `any` rỗng trả false.
+- `applyEffects(state, effects)` áp dụng effect theo thứ tự rồi kiểm tra điều kiện mở fact trên state kết quả. Lặp lại effect đã đạt trạng thái tương ứng phải idempotent.
+- Chỉ kích hoạt objective đã biết và chưa completed. Chỉ hoàn thành objective đang active. ID hoặc transition không hợp lệ trả kết quả lỗi có kiểu và không làm state thay đổi một phần.
+- Fact chỉ mở một lần khi condition đúng; kết quả có domain event để consumer cập nhật HUD/notebook projection về sau.
+- `addEvidence` là effect thuần của core để toàn bộ Effect union đã khai báo có thể thực thi. Phase này chưa thêm modal/notebook thu thập evidence cho người chơi và chưa nối mọi interactable evidence; các phần đó thuộc Phase 4.
 
-Domain events are returned with the transition and do not directly access the event bus. The app bridge may publish them after committing state. No time, random value, browser storage, or Phaser object is read by the engine.
+Domain event được trả về cùng transition, không truy cập trực tiếp event bus. App bridge có thể phát event sau khi cập nhật state. Engine không đọc thời gian, random, browser storage hay Phaser object.
 
-## 5. App integration
+## 5. Tích hợp ứng dụng
 
-Replace the HUD store's independent initial objective/evidence values with a projection of the initialized case state. Keep the store per `GameCanvas` mount. Add declarative effects to the objective note's interaction content; an app-side handler resolves those effects when it receives `interaction:triggered` and calls `game-core`. Phaser continues to emit only the interactable ID and remains unaware of case definitions/effects.
+Thay các giá trị objective/evidence khởi tạo độc lập trong HUD store bằng projection từ case state đã khởi tạo. Store tiếp tục được tạo theo từng lần mount `GameCanvas`. Thêm effect khai báo trong content cho interaction của objective note; app-side handler tra effect đó khi nhận `interaction:triggered` rồi gọi `game-core`. Phaser chỉ phát ID interactable, không biết case definition hay effect.
 
-For this phase, Case #001's objective note demonstrates the objective/effect path and the sample evidence/fact pair demonstrates loading and unlock behavior in unit tests. The scene JSON remains a scene definition assembled into the loaded case definition by the content loader. No React evidence modal, notebook, persistence, dialogue UI, or full investigation progression is included.
+Trong phase này, objective note của Case #001 minh họa luồng objective/effect; cặp evidence/fact mẫu dùng để kiểm tra loader và unlock trong unit test. Scene JSON vẫn là scene definition được content loader lắp vào case definition. Không bao gồm evidence modal React, notebook, persistence, dialogue UI hoặc toàn bộ investigation progression.
 
-## 6. Error handling
+## 6. Xử lý lỗi
 
-- Content parse/reference errors use `ContentValidationError` and remain developer-readable through the existing startup error surface.
-- Engine inputs reference-checked against the loaded definition fail explicitly and leave state unchanged.
-- Repeated unlock/add operations remain idempotent and do not duplicate IDs or domain events.
-- Unknown condition/effect variants are prevented by strict schemas and exhaustive TypeScript switches; no `eval` or string-dispatched functions.
+- Lỗi parse/tham chiếu content dùng `ContentValidationError` và hiển thị được cho developer qua startup error surface hiện có.
+- Input engine có tham chiếu ID không tồn tại trong definition phải báo lỗi rõ ràng và giữ nguyên state.
+- Lặp unlock/add phải idempotent, không thêm ID hoặc domain event trùng.
+- Strict schema và TypeScript exhaustive switch chặn condition/effect variant không biết; không dùng `eval` hoặc dispatch function bằng chuỗi tùy ý.
 
-## 7. Testing
+## 7. Kiểm thử
 
-Vitest coverage belongs to the corresponding package:
+Vitest test đặt trong package tương ứng:
 
-- `shared-types`: compile/use contract and stable public exports.
-- `game-content`: each valid fixture, malformed fields, and broken cross-file references (especially unknown initial objective, missing evidence source, and unknown condition/effect IDs).
-- `game-core`: fresh initialization, all/any/leaf conditions, ordered effects, activation/completion rules, fact unlock after condition becomes true, idempotency, and unchanged state on invalid transition.
-- `game-web`: interaction event invokes the app handler, state projection updates HUD values, and the Phaser canvas remains mounted while store state changes.
-- Framework-free import check remains in `game-core`.
+- `shared-types`: contract có thể import/sử dụng và public export ổn định.
+- `game-content`: fixture hợp lệ, field sai và tham chiếu chéo hỏng; trọng tâm gồm initial objective không tồn tại, evidence nguồn bị thiếu và ID trong condition/effect không hợp lệ.
+- `game-core`: khởi tạo mới, condition lá/all/any, effect theo thứ tự, quy tắc activate/complete, fact mở khi condition đúng, idempotency và state không đổi nếu transition không hợp lệ.
+- `game-web`: interaction event gọi app handler, state projection cập nhật HUD và Phaser canvas vẫn mount khi store đổi.
+- Giữ kiểm tra import framework-free trong `game-core`.
 
-The phase DoD follows root `AGENTS.md`: run `npm run lint`, `npm run test`, and `npm run build`; also `npm run format:check`, `npm run test:e2e`, and `npm run memory:check` as established by the preceding phase. Record actual outputs in the plan/handoff. Do not claim a check passed unless it was run.
+DoD của phase theo `AGENTS.md` gốc: chạy `npm run lint`, `npm run test`, `npm run build`; đồng thời chạy `npm run format:check`, `npm run test:e2e` và `npm run memory:check` như Phase 2. Ghi output thực tế trong plan/handoff; không tuyên bố pass nếu chưa chạy.
 
-## 8. Scope boundary
+## 8. Ranh giới phạm vi
 
-Included: shared data contracts, content schemas/loader, pure case state/condition/effect/objective/fact behavior, minimal Case #001 fixture content, and app bridge/store projection needed for the objective event path.
+Bao gồm: shared data contract, content schema/loader, case state thuần cùng condition/effect/objective/fact behavior, fixture Case #001 tối thiểu và bridge/store projection cần cho luồng objective event.
 
-Deferred: complete Case #001 evidence/fact/objective corpus, evidence modal/notebook, full interactable-to-evidence authoring, dialogue runner, learning engine, contradictions, timeline, save/persistence, and backend/API integration.
+Để sau: bộ evidence/fact/objective Case #001 đầy đủ, evidence modal/notebook, authoring đầy đủ cho interactable-evidence, dialogue runner, learning engine, contradiction, timeline, save/persistence và backend/API.
