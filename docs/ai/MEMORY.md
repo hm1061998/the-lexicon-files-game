@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T00:30:00+07:00
-phase: phase-2
-status: complete
-result_commit: 74ad5e4
-active_spec: docs/superpowers/specs/2026-09-28-phase-2-react-hud-integration-design.md
-active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
+updated_at: 2026-09-28T14:28:00+07:00
+phase: phase-3
+status: in_progress
+result_commit: 7f9ca6b
+active_spec: docs/superpowers/specs/2026-09-28-phase-3-case-engine-design.md
+active_plan: none
 ---
 
 ## Metadata
@@ -14,15 +14,16 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 
 ## Current Phase
 
-- Phase 2 — React HUD Integration (roadmap §21).
+- Phase 3 — Case Engine (roadmap §22).
 
 ## Active Goal
 
-- HUD React (objective, hồ sơ, prompt, key hints, pause) nối Phaser qua bus + Zustand.
+- Hoàn thiện thiết kế và triển khai Phase 3 Case Engine theo spec, sau khi người dùng duyệt spec và plan.
 
 ## Current Status
 
-- Phase 2 hoàn thành bằng subagent-driven, final review sạch, đã push `dev`; người dùng tự merge `main`.
+- Phase 2 hoàn thành bằng subagent-driven, đã push `dev`; người dùng tự merge `main`.
+- Phase 3 design spec đã được tạo và commit `7f9ca6b`; người dùng chọn package boundary cách 2 (`shared-types` contract, `game-content` validation/loading, `game-core` pure engine). Đang chờ user review spec trước khi viết plan.
 
 ## Completed
 
@@ -34,7 +35,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 
 ## In Progress
 
-- Không có hạng mục đang mở.
+- Phase 3: spec đã commit; chưa có implementation plan hoặc code.
 
 ## Active Decisions
 
@@ -43,6 +44,8 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 - Phaser nhận `InputLockSource { isInputLocked() }`, không import Zustand.
 - Esc chỉ do `usePauseShortcut` xử lý; PauseMenu chỉ giữ focus trap Tab.
 - `interaction:triggered` chưa có handler — Phase 3/4 gắn case engine.
+- Phase 3 content Case #001 giữ tối thiểu: initial objective hiện có, một evidence/fact mẫu và scene Main Office; chưa điền corpus đầy đủ.
+- Data contracts ở `shared-types`, Zod/JSON/loader ở `game-content`, pure reducer ở `game-core`; app bridge/store chỉ chiếu state, Phaser chỉ emit typed event.
 - Deferred minor: `useBusToStore` là dead code; `:focus-visible` global nằm trong hud.css; stale WorldScene có thể emit nearby 1 frame khi StrictMode remount nếu spawn trong radius; palette.css/palette.ts đồng bộ tay; thiếu `loadUiStrings.test.ts`; registry cast chưa guard; `depthOf` NaN; test không được tsc typecheck; CORS chưa test preflight.
 
 ## Blockers
@@ -51,9 +54,12 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 
 ## Next Actions
 
-- Chờ người dùng yêu cầu bắt đầu Phase 3 (Case Engine).
+- Người dùng review `docs/superpowers/specs/2026-09-28-phase-3-case-engine-design.md`.
+- Khi được duyệt, viết implementation plan Phase 3 rồi chờ user review/chọn execution method.
 
 ## Verification
+
+- Latest verified phase: Phase 2. Phase 3 design has not been implemented or verified yet.
 
 - `npm run lint` — PASS 7 project.
 - `npm run test` — PASS 7 project (game-web 57 unit).
