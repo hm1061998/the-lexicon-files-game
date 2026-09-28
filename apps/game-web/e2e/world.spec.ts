@@ -88,6 +88,25 @@ test('nearby event fires once per entry', async ({ page }) => {
   expect(count).toBe(1);
 });
 
+test('typing WASD into a page input does not move the player or get swallowed', async ({
+  page,
+}) => {
+  await openWorld(page);
+  await page.evaluate(() => {
+    const input = document.createElement('input');
+    input.id = 'lexicon-test-input';
+    document.body.appendChild(input);
+  });
+  const before = await player(page);
+  await page.focus('#lexicon-test-input');
+  await page.keyboard.type('wa');
+  const value = await page.locator('#lexicon-test-input').inputValue();
+  expect(value).toBe('wa');
+  const after = await player(page);
+  expect(after.x).toBeCloseTo(before.x, 0);
+  expect(after.y).toBeCloseTo(before.y, 0);
+});
+
 test('single canvas and no console errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (msg) => {

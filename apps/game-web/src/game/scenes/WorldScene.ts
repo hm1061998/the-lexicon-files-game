@@ -44,9 +44,11 @@ export class WorldScene extends Phaser.Scene {
     this.depths.clear();
     this.interactionTracker = new InteractionTracker(this.bus);
     this.nearbyEventCount = 0;
-    this.unsubscribeNearby = this.bus.on('interaction:nearby', () => {
-      this.nearbyEventCount += 1;
-    });
+    if (import.meta.env.DEV) {
+      this.unsubscribeNearby = this.bus.on('interaction:nearby', () => {
+        this.nearbyEventCount += 1;
+      });
+    }
 
     const b = def.worldBounds;
     this.physics.world.setBounds(b.x, b.y, b.width, b.height);
@@ -74,7 +76,7 @@ export class WorldScene extends Phaser.Scene {
     camera.startFollow(this.player, true);
 
     const keyboard = this.input.keyboard;
-    if (keyboard) this.keys = keyboard.addKeys('W,A,S,D') as MovementKeyMap;
+    if (keyboard) this.keys = keyboard.addKeys('W,A,S,D', false) as MovementKeyMap;
 
     this.marker = this.add.sprite(0, 0, 'ph_marker');
     this.marker.setDepth(MARKER_DEPTH);
