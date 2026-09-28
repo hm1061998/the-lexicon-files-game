@@ -1,10 +1,10 @@
 ---
 schema_version: 1
 updated_at: 2026-09-28T17:00:00+07:00
-phase: phase-0b
-status: complete
+phase: phase-1
+status: proposed
 result_commit: dfc3cfd
-active_spec: docs/04_CODEX_IMPLEMENTATION_ROADMAP.md
+active_spec: docs/superpowers/specs/2026-09-28-phase-1-game-world-prototype-design.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 ---
 
@@ -14,15 +14,15 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Current Phase
 
-- Phase 0B — Project Foundation gap closure (roadmap §19).
+- Phase 1 — Game World Prototype (roadmap §20); Phase 0B đã hoàn thành.
 
 ## Active Goal
 
-- Đưa repo đạt đủ Deliverables và Acceptance của Phase 0.
+- Player đi quanh Main Office dựng từ JSON, có collision, depth sort, camera, interaction radius.
 
 ## Current Status
 
-- Phase 0B hoàn thành và final review xong trên `dev`, đã push; chưa merge vào `main`.
+- Spec Phase 1 đã viết; chờ người dùng review spec trước khi lập plan.
 
 ## Completed
 
@@ -43,6 +43,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 - Không tắt warnings-as-errors; OpenApi nâng lên bản đã vá.
 - Unit test React dùng `renderToString` + mock `createGame`; Phaser được phủ bằng Playwright.
 - Chưa đăng ký DbContext Postgres cho tới khi có entity.
+- Phase 1: WASD theo trục màn hình; placeholder hình học runtime (không giống concept art, art thật ở Phase 11); Arcade Physics collider chữ nhật.
 - Deferred minor Phase 0A: fence dài hơn 3 ký tự và danh sách material files trong handoff.
 
 ## Blockers
@@ -51,7 +52,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Next Actions
 
-- Chờ người dùng yêu cầu bắt đầu Phase 1 (người dùng tự merge `dev` vào `main`).
+- Người dùng review spec Phase 1; sau đó lập plan bằng writing-plans.
 
 ## Verification
 
