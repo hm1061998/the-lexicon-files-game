@@ -1,1 +1,12 @@
-{}
+{
+  "evidences": [
+    {
+      "id": "meeting_minutes",
+      "caseId": "case-001",
+      "name": "Meeting Minutes",
+      "category": "document",
+      "description": "The meeting began at 8:00 PM. Anna left early for a client call, and Leo stepped outside for several minutes.",
+      "relatedFactIds": ["meeting_started"]
+    }
+  ]
+}

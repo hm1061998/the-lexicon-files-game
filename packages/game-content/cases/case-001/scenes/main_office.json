@@ -39,7 +39,13 @@
       "x": 1400,
       "y": 1100,
       "depthBias": 0,
-      "interaction": { "x": 0, "y": 0, "radius": 90, "prompt": "Đọc ghi chú" }
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 90,
+        "prompt": "Đọc ghi chú",
+        "effects": [{ "type": "completeObjective", "objectiveId": "find_what_happened" }]
+      }
     },
     {
       "id": "anna",

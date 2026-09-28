@@ -8,6 +8,7 @@ const caseRawSchema = z
     title: z.string().min(1),
     evidenceTotal: z.number().int().min(0),
     initialObjectiveId: z.string().min(1),
+    sceneIds: z.array(z.string().min(1)).optional(),
   })
   .strict();
 

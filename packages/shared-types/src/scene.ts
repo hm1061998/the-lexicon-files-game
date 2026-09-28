@@ -15,7 +15,7 @@ export interface InteractionArea {
   readonly y: number;
   readonly radius: number;
   readonly prompt: string;
-  readonly effects?: readonly Effect[];
+  readonly effects?: readonly Effect[] | undefined;
 }
 
 export interface SceneAssetDefinition {

@@ -2,5 +2,6 @@
   "id": "case-001",
   "title": "The Missing Report",
   "evidenceTotal": 5,
-  "initialObjectiveId": "find_what_happened"
+  "initialObjectiveId": "find_what_happened",
+  "sceneIds": ["main_office"]
 }

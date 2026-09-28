@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { SceneDefinition } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
+import { effectSchema } from './caseEngine';
 
 const rectCollisionSchema = z
   .object({
@@ -18,6 +19,7 @@ const interactionAreaSchema = z
     y: z.number(),
     radius: z.number().positive(),
     prompt: z.string().min(1),
+    effects: z.array(effectSchema).optional(),
   })
   .strict();
 

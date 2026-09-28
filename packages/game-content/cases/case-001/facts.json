@@ -1,1 +1,10 @@
-{}
+{
+  "facts": [
+    {
+      "id": "meeting_started",
+      "text": "The meeting began at 8:00 PM.",
+      "sourceEvidenceIds": ["meeting_minutes"],
+      "unlockCondition": { "type": "hasEvidence", "evidenceId": "meeting_minutes" }
+    }
+  ]
+}
