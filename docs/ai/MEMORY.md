@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T15:51:00+07:00
-phase: phase-3
-status: complete
-result_commit: 200399b
-active_spec: docs/superpowers/specs/2026-09-28-phase-3-case-engine-design.md
-active_plan: docs/superpowers/plans/2026-09-28-phase-3-case-engine.md
+updated_at: 2026-09-28T16:49:07+07:00
+phase: phase-4
+status: in_progress
+result_commit: fcb534f
+active_spec: docs/superpowers/specs/2026-09-28-phase-4-evidence-notebook-design.md
+active_plan: docs/superpowers/plans/2026-09-28-phase-4-evidence-notebook.md
 ---
 
 ## Metadata
@@ -14,67 +14,62 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-3-case-engine.md
 
 ## Current Phase
 
-- Phase 3 — Case Engine (roadmap §22).
+- Phase 4 — Evidence + Notebook (roadmap §23).
 
 ## Active Goal
 
-- Phase 3 đã được người dùng duyệt và hoàn tất trên nhánh `dev` hiện tại.
+- Thực thi Phase 4 inline trên nhánh `dev` hiện tại theo plan đã duyệt; push sau khi hoàn tất và verification đạt.
 
 ## Current Status
 
-- Đã hoàn thành Tasks 1–5 về types, content loader, core reducer, bridge/Zustand/HUD, verification và fresh review toàn nhánh. Không còn finding Critical/Important; một Minor được deferred. Chưa bắt đầu Phase 4.
-- Spec và plan Phase 3 đã được duyệt. Cả hai viết bằng tiếng Việt theo yêu cầu người dùng.
+- Spec và plan Phase 4 viết bằng tiếng Việt, được người dùng duyệt và commit tại `fcb534f`.
+- Implementation chưa bắt đầu; workspace sạch trước checkpoint, bắt đầu từ Task 1 trong plan.
+- Lần thực thi dùng checkout hiện tại theo yêu cầu người dùng, không tạo worktree.
 
 ## Completed
 
 - Phase 0A, 0B, 1 và 2 hoàn thành (xem Git history).
-- Phase 3 Task 1 `6cc78f1`: shared contracts Case Engine.
-- Phase 3 Task 2 `ec7fe95`: schema, loader và content Case #001 tối thiểu.
-- Phase 3 Task 3 `007121e`: reducer thuần cho state, condition/effect và objective.
-- Phase 3 Task 4 `1679dce`: interaction bridge, Zustand projection, HUD và E2E objective flow.
-- Verification cleanup `defeabb`: sửa lint/type fixture, import thừa và định dạng Phase 3.
-- Review fix `200399b`: chỉ mở fact khi đủ unlock condition, chặn ID interaction trùng giữa scenes và tăng coverage StrictMode/canvas.
+- Phase 3 hoàn thành tại `200399b`: shared contracts, content loader, pure reducer, app bridge/store/HUD, verification và review fix.
 
 ## In Progress
 
-- Không có. Phase 3 review/fix pass hoàn tất tại `200399b`.
+- Phase 4 implementation trên `dev`; Task 1 chưa bắt đầu.
 
 ## Active Decisions
 
-- WASD theo trục màn hình; placeholder hình học runtime (art thật ở Phase 11); Arcade Physics collider chữ nhật.
-- UI tiếng Việt lấy từ content; key hints chỉ E và Esc cho tới khi có J/M.
-- Phaser nhận `InputLockSource { isInputLocked() }`, không import Zustand.
-- Esc chỉ do `usePauseShortcut` xử lý; PauseMenu chỉ giữ focus trap Tab.
-- `interaction:triggered` giữ payload `{ interactableId }`; bridge resolve effects từ `CaseDefinition`.
-- Phase 3 content Case #001 giữ tối thiểu: initial objective hiện có, một evidence/fact mẫu và scene Main Office.
-- Data contracts ở `shared-types`, Zod/JSON/loader ở `game-content`, pure reducer ở `game-core`; app bridge/store chỉ chiếu state, Phaser chỉ emit typed event.
-- Spec và plan cần người dùng duyệt phải được viết bằng tiếng Việt để người dùng đọc.
-- Thực thi Phase 3 inline trên `dev`; không tự push hoặc merge.
-- Deferred Minor: lỗi tham chiếu trong condition lồng nhau chưa chỉ đúng leaf path `conditions[index]`.
+- Phase 4 chỉ dùng evidence `meeting_minutes` hiện có làm mẫu end-to-end; giữ `evidenceTotal: 5` và không thêm corpus khác.
+- Evidence IDs nằm trong `game-core.GameState`; Zustand chỉ projection state nghiệp vụ và giữ UI transient riêng.
+- Một save hiện hành cho Case #001 ở IndexedDB qua `idb`; schema version, backup dữ liệu lỗi, không ghi đè bằng save mới nếu chưa xác nhận.
+- Nạp save trước khi mount Phaser; autosave khi `caseState` đổi, không lưu UI-only state.
+- EvidenceModal mở khi evidence mới được thêm; `J` mở notebook mặc định tab Evidence; People/Vocabulary chỉ là khung.
+- Modal/notebook khóa input; Escape đóng overlay trước khi pause; shortcut bỏ qua trường nhập liệu.
+- Phaser chỉ phát typed event; content JSON/Zod là nguồn UI copy và effect.
+- Spec/plan cần duyệt luôn viết bằng tiếng Việt.
+- Dùng npm + Nx; không thêm dependency; không sửa backend trong phase này.
 
 ## Blockers
 
-- `npm` không có trong PATH của phiên chạy, nên wrapper `npm run`/Nx package-script thất bại. Dùng trực tiếp Nx/Node CLIs và Playwright; các kiểm tra tương ứng đều chạy được.
+- Chưa có blocker đã xác nhận.
 
 ## Next Actions
 
-- Chờ người dùng yêu cầu công việc Phase 4; không tự push/merge.
+- Hoàn thành Task 1: thêm tương tác content cho `meeting_minutes` và test loader.
+- Tiếp tục lần lượt Tasks 2–6 theo active plan; giữ TDD và chạy verification từng task.
+- Cập nhật ledger dưới `.superpowers/sdd/2026-09-28-phase-4-evidence-notebook/` sau mỗi task/decision.
+- Chạy DoD Phase 4, review toàn nhánh, cập nhật memory rồi push `dev` theo yêu cầu.
 
 ## Verification
 
-- Vitest monorepo: PASS 112/112 trên 6 workspace (shared-types 1, game-content 33, game-core 14, learning-engine 2, ui 3, game-web 59).
-- Playwright E2E: PASS 17/17, gồm objective note hoàn tất objective và canvas không remount.
-- ESLint: PASS toàn bộ 6 workspace và AI-memory tooling.
-- `tsc -b --pretty false`: PASS; production Vite build PASS (100 modules; bundle JS 1,701.85 kB, có cảnh báo chunk >500 kB).
-- Prettier `--check .`: PASS. AI memory `memory:check`: PASS; `memory:test`: PASS 30/30.
-- `npm run lint/test/build/format:check/test:e2e` không gọi được vì thiếu npm; đã chạy CLI tương ứng trực tiếp. Playwright dùng Vite server mở từ `apps/game-web`.
+- Phase 4 chưa có verification implementation; spec/plan commit `fcb534f` là checkpoint hiện tại.
+- Phase 3 verification/review đã pass tại `200399b`; xem lịch sử phiên bản trước của memory và Git history.
 
 ## Latest Handoff
 
-- Phase 3 implementation/review fix đã commit tới `200399b`, verification xanh và memory đã được handoff; nhánh `dev` chưa push.
+- Branch `dev` hiện ở `fcb534f`, một commit ahead of `origin/dev`; chỉ có spec/plan Phase 4 được commit, code chưa bắt đầu. Tiếp tục Task 1.
 
 ## Required Reading
 
 - `AGENTS.md`
-- `docs/superpowers/specs/2026-09-28-phase-3-case-engine-design.md`
-- `docs/superpowers/plans/2026-09-28-phase-3-case-engine.md`
+- `apps/game-web/AGENTS.md`
+- `docs/superpowers/specs/2026-09-28-phase-4-evidence-notebook-design.md`
+- `docs/superpowers/plans/2026-09-28-phase-4-evidence-notebook.md`
