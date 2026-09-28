@@ -167,6 +167,8 @@ test('collecting evidence opens modal, locks movement, and adds it to the notebo
   await page.keyboard.press('j');
   await expect(page.getByRole('heading', { name: 'Sổ tay điều tra' })).toBeVisible();
   await expect(page.getByText('Meeting Minutes')).toBeVisible();
+  await expect(page.getByLabel('Chế độ dịch')).toBeVisible();
+  await expect(page.getByRole('button', { name: /meeting\. Xem nghĩa từ/ })).toBeVisible();
   await page.getByRole('button', { name: 'Nhân vật' }).click();
   await expect(page.getByText('Chưa có nhân vật nào được ghi nhận.')).toBeVisible();
   await page.keyboard.press('Escape');

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type {
   TranslationMode,
   UiStrings,
@@ -39,7 +39,10 @@ export function VocabularyText({
   const [active, setActive] = useState<string | null>(null);
   const [translationRevealed, setTranslationRevealed] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const instanceId = useId();
   const trigger = useRef<HTMLButtonElement>(null);
+  const popup = useRef<HTMLSpanElement>(null);
+  const popupId = `${instanceId}-details`;
   const valid = useMemo(() => [...(spans ?? [])].sort((a, b) => a.start - b.start), [spans]);
   useEffect(() => {
     for (const span of valid) onEncounter(span.vocabularyId, contextId);
@@ -48,6 +51,9 @@ export function VocabularyText({
     setActive(null);
     setTranslationRevealed(false);
   }, [mode]);
+  useEffect(() => {
+    if (active) popup.current?.focus();
+  }, [active]);
   useEffect(() => {
     if (!active) return;
     const handleEscape = (event: KeyboardEvent) => {
@@ -71,9 +77,13 @@ export function VocabularyText({
     parts.push(
       <button
         key={span.vocabularyId}
+        id={`${instanceId}-${span.vocabularyId}`}
         ref={active === span.vocabularyId ? trigger : undefined}
         className="vocabulary-word"
         type="button"
+        aria-haspopup="dialog"
+        aria-expanded={active === span.vocabularyId}
+        aria-controls={active === span.vocabularyId ? popupId : undefined}
         aria-label={`${text.slice(span.start, span.end)}. ${strings.inspectVocabulary}`}
         onClick={() => {
           onInspect(entry.id, contextId);
@@ -111,12 +121,22 @@ export function VocabularyText({
         <span className="vocabulary-translation">{translationVi}</span>
       )}
       {entry && (
-        <span className="vocabulary-popover" role="dialog" aria-label={entry.lemma}>
+        <span
+          id={popupId}
+          ref={popup}
+          className="vocabulary-popover"
+          role="dialog"
+          tabIndex={-1}
+          aria-label={entry.lemma}
+        >
           {showTutorial && (
             <span className="vocabulary-tutorial">{strings.vocabularyTutorial}</span>
           )}
           <strong>{entry.lemma}</strong>
+          <span>{entry.partOfSpeech}</span>
           <span>{entry.definitionEn}</span>
+          {entry.synonyms?.length ? <span>{entry.synonyms.join(', ')}</span> : null}
+          {entry.examples[0] ? <span>{entry.examples[0]}</span> : null}
           {mode === 'Beginner' ? (
             <span>{entry.translationVi}</span>
           ) : mode === 'Learning' ? (

@@ -123,6 +123,4 @@ Acceptance Phase 6 phương án A: vocab_seen được track từ reading contex
 
 ## 10. Review và bước tiếp theo
 
-Người dùng review và duyệt **written spec này**, đặc biệt phương án A/seen-only và catalogue 20 từ với chỉ subset encountered trong prototype. Sau duyệt mới dùng writing-plans tạo plan tiếng Việt và trình review/chọn execution; chưa viết code product/dependency.
-
-Draft chỉ commit local, không push khi chưa được người dùng xác nhận. Memory ghi phase-6/proposed; Phase 5 implementation đã push và vẫn complete.
+Người dùng đã duyệt **phương án A/seen-only**, plan sáu task và chọn thực thi inline. Implementation Phase 6 đã hoàn thành trong managed worktree; verification và code review được ghi tại `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`. Thay đổi hiện chỉ có trong local commits của worktree, chưa push hoặc tích hợp vào `dev`.

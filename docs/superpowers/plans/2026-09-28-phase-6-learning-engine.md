@@ -162,8 +162,8 @@
 - [x] **2. Run focused E2E RED** using local Playwright browser with `npm run test:e2e -- --grep learning`. Expected: new learning flow assertions fail against current empty vocabulary UI/profile implementation.
 - [x] **3. Implement/fix integration gaps** at store/context boundaries from real browser trace; never weaken assertions or alter Case #001 truth to satisfy test.
 - [x] **4. Run all verification.** `npm run lint`; `npm run test`; `npm run build`; `npm run typecheck`; `npm run format:check`; `npm run test:e2e`; `npm run memory:check`; `git diff --check`. Expected: all commands exit 0, new E2E and prior dialogue/HUD/world tests pass, build gate validates full content. No `dotnet` commands because backend is unchanged.
-- [ ] **5. Review whole diff.** Use `requesting-code-review`; inspect content references, profile DB recovery isolation, strict-mode deduplication, hidden context tracking, mode leakage and overlay focus. Fix Critical/Important findings test-first and rerun affected tests plus whole suite; ledger Minor findings.
-- [ ] **6. Commit and update memory.** Commit implementation/report/plan checkboxes first; update `MEMORY.md` in a following commit with the implementation commit as `result_commit`. Keep commits local unless the user authorizes push.
+- [x] **5. Review whole diff.** Independent review found no Critical and five Important findings; all were fixed, covered by regression tests, and reverified with the full suite. No Minor finding remains outstanding.
+- [x] **6. Commit and update memory.** Implementation, review fixes, and verification are committed before the following `MEMORY.md` update commit. Commits remain local in the managed worktree.
 
 ## Plan Review Notes
 
@@ -174,4 +174,4 @@
 
 ## Handoff
 
-Phương án A trong spec đã được người dùng duyệt. Review plan và chọn cách thực thi trước khi bắt đầu implementation; mặc định đề xuất inline vì các thay đổi cùng chia sẻ content/type/store/persistence interfaces.
+Phương án A trong spec và plan sáu task đã được người dùng duyệt; execution inline được chọn. Implementation và independent review fixes hoàn tất trong managed worktree; verification tại `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.

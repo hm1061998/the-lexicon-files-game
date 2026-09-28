@@ -8,6 +8,7 @@ import type {
   UiStrings,
 } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
+import { VocabularyText } from '../vocabulary/VocabularyText';
 import './notebook.css';
 
 const TABS: readonly {
@@ -29,6 +30,9 @@ export function NotebookPanel({
   profile,
   translationMode = 'Learning',
   onRevealTranslation = () => undefined,
+  onEncounter = () => undefined,
+  onInspect = () => undefined,
+  onTranslationModeChange = () => undefined,
 }: {
   caseDefinition: CaseDefinition;
   caseState: GameState;
@@ -39,6 +43,9 @@ export function NotebookPanel({
   profile?: LanguageProfile;
   translationMode?: TranslationMode;
   onRevealTranslation?(vocabularyId: string, contextId: string): void;
+  onEncounter?(vocabularyId: string, contextId: string): void;
+  onInspect?(vocabularyId: string, contextId: string): void;
+  onTranslationModeChange?(mode: TranslationMode): void;
 }): JSX.Element {
   const headingId = useId();
   const [revealedVocabularyId, setRevealedVocabularyId] = useState<string | null>(null);
@@ -51,6 +58,17 @@ export function NotebookPanel({
     <div className="notebook-overlay">
       <PaperPanel as="div" className="notebook-panel">
         <section aria-labelledby={headingId}>
+          <label className="vocabulary-mode">
+            {strings.vocabularyMode}
+            <select
+              value={translationMode}
+              onChange={(event) => onTranslationModeChange(event.target.value as TranslationMode)}
+            >
+              <option value="Beginner">{strings.vocabularyModeBeginner}</option>
+              <option value="Learning">{strings.vocabularyModeLearning}</option>
+              <option value="Immersion">{strings.vocabularyModeImmersion}</option>
+            </select>
+          </label>
           <header className="notebook-header">
             <h2 id={headingId}>{strings.notebook}</h2>
             <button type="button" onClick={onClose} aria-label={strings.close}>
@@ -79,9 +97,23 @@ export function NotebookPanel({
                     .map((entry) => (
                       <li key={entry.id}>
                         <h3>
-                          {entry.lemma} <small>{strings.vocabularyStageSeen}</small>
+                          {entry.lemma}{' '}
+                          <small>
+                            {profile?.vocabulary[entry.id]?.stage === 'seen'
+                              ? strings.vocabularyStageSeen
+                              : profile?.vocabulary[entry.id]?.stage}
+                          </small>
                         </h3>
+                        <p>{entry.partOfSpeech}</p>
                         <p>{entry.definitionEn}</p>
+                        {entry.examples.map((example) => (
+                          <p key={example}>{example}</p>
+                        ))}
+                        <ul>
+                          {profile?.vocabulary[entry.id]?.contextsSeen.map((contextId) => (
+                            <li key={contextId}>{contextId}</li>
+                          ))}
+                        </ul>
                         {translationMode === 'Beginner' ? (
                           <p>{entry.translationVi}</p>
                         ) : translationMode === 'Learning' && revealedVocabularyId === entry.id ? (
@@ -110,7 +142,20 @@ export function NotebookPanel({
                   {discovered.map((item) => (
                     <li key={item.id}>
                       <h3>{item.name}</h3>
-                      <p>{item.description}</p>
+                      <p>
+                        <VocabularyText
+                          text={item.description}
+                          translationVi={item.descriptionVi}
+                          spans={item.vocabularySpans}
+                          contextId={`evidence:${item.id}:description`}
+                          catalogue={caseDefinition.vocabulary}
+                          mode={translationMode}
+                          strings={strings}
+                          onEncounter={onEncounter}
+                          onInspect={onInspect}
+                          onRevealTranslation={onRevealTranslation}
+                        />
+                      </p>
                     </li>
                   ))}
                 </ul>

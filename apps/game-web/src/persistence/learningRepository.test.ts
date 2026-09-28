@@ -72,4 +72,28 @@ describe('separate learning repository', () => {
       'Invalid vocabulary context progress',
     );
   });
+
+  it('rejects encounter counts that do not match unique seen contexts', () => {
+    const record = createDefaultLearningRecord();
+    const inconsistent = {
+      ...record,
+      profile: {
+        ...record.profile,
+        vocabulary: {
+          leave: {
+            vocabularyId: 'leave',
+            stage: 'seen',
+            encounterCount: 2,
+            correctRecognitionCount: 0,
+            incorrectRecognitionCount: 0,
+            lastSeenAt: '2026-09-28T00:00:00.000Z',
+            contextsSeen: ['dialogue:anna:entry:text'],
+          },
+        },
+      },
+    };
+    expect(() =>
+      parseLearningRecord(inconsistent, ['leave'], ['dialogue:anna:entry:text']),
+    ).toThrow('Invalid vocabulary progress values');
+  });
 });

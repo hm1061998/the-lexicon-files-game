@@ -90,6 +90,30 @@ describe('learning reducer', () => {
     });
   });
 
+  it('preserves an already achieved stage when recording another context', () => {
+    const profile = createInitialLanguageProfile();
+    profile.vocabulary.leave = {
+      vocabularyId: 'leave',
+      stage: 'understood',
+      encounterCount: 1,
+      correctRecognitionCount: 0,
+      incorrectRecognitionCount: 0,
+      lastSeenAt: '2026-09-28T00:00:00.000Z',
+      contextsSeen: [contexts[0]!.id],
+    };
+    const result = applyLearningAction(
+      profile,
+      catalogue,
+      contexts,
+      { type: 'encounterContext', vocabularyId: 'leave', contextId: contexts[1]!.id },
+      '2026-09-29T00:00:00.000Z',
+    );
+    expect(result.ok && result.profile.vocabulary.leave).toMatchObject({
+      stage: 'understood',
+      encounterCount: 2,
+    });
+  });
+
   it('requires seen context for inspection and counts explicit translation only', () => {
     const profile = createInitialLanguageProfile();
     const earlyInspect = applyLearningAction(

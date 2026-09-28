@@ -416,7 +416,24 @@ function NotebookLayer({
   const activeTab = useGameStore((state) => state.notebookTab);
   const store = useGameStore((state) => state);
   const learningProfile = useLearningStore((state) => state.profile);
-  const learning = useLearningStore((state) => state);
+  const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
+  const setTranslationMode = useLearningStore((state) => state.setTranslationMode);
+  const translationMode = useLearningStore((state) => state.translationMode);
+  const onEncounter = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onInspect = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'inspectVocabulary', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onRevealTranslation = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
   if (!notebookOpen) return null;
   return (
     <NotebookPanel
@@ -427,10 +444,11 @@ function NotebookLayer({
       onSelectTab={(tab) => store.setNotebookTab(tab)}
       onClose={() => store.toggleNotebook()}
       profile={learningProfile}
-      translationMode={learning.translationMode}
-      onRevealTranslation={(vocabularyId, contextId) =>
-        learning.dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId })
-      }
+      translationMode={translationMode}
+      onRevealTranslation={onRevealTranslation}
+      onEncounter={onEncounter}
+      onInspect={onInspect}
+      onTranslationModeChange={setTranslationMode}
     />
   );
 }

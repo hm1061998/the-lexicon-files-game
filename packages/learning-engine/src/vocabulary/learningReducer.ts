@@ -45,9 +45,12 @@ export function applyLearningAction(
   const current = profile.vocabulary[action.vocabularyId];
   if (action.type === 'encounterContext') {
     if (current?.contextsSeen.includes(action.contextId)) return { ok: true, profile, events: [] };
+    const stages = ['unknown', 'seen', 'recognized', 'understood', 'used', 'mastered'] as const;
+    const stage =
+      current && stages.indexOf(current.stage) > stages.indexOf('seen') ? current.stage : 'seen';
     const progress: VocabularyProgress = {
       vocabularyId: action.vocabularyId,
-      stage: 'seen',
+      stage,
       encounterCount: (current?.encounterCount ?? 0) + 1,
       correctRecognitionCount: current?.correctRecognitionCount ?? 0,
       incorrectRecognitionCount: current?.incorrectRecognitionCount ?? 0,

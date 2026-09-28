@@ -82,7 +82,7 @@ export function parseLearningRecord(
     if (
       !stages.includes(progress.stage as (typeof stages)[number]) ||
       !nonnegativeInteger(progress.encounterCount) ||
-      progress.encounterCount < progress.contextsSeen.length ||
+      progress.encounterCount !== progress.contextsSeen.length ||
       !nonnegativeInteger(progress.correctRecognitionCount) ||
       !nonnegativeInteger(progress.incorrectRecognitionCount) ||
       typeof progress.lastSeenAt !== 'string' ||
