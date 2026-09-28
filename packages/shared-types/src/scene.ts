@@ -1,3 +1,5 @@
+import type { Effect } from './case-engine';
+
 export type SceneAssetType = 'background' | 'wall' | 'prop' | 'interactable' | 'npc';
 
 export interface RectCollision {
@@ -13,6 +15,7 @@ export interface InteractionArea {
   readonly y: number;
   readonly radius: number;
   readonly prompt: string;
+  readonly effects?: readonly Effect[];
 }
 
 export interface SceneAssetDefinition {
