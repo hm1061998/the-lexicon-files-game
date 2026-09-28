@@ -166,11 +166,15 @@ describe('applyEffects', () => {
   });
 
   it('rejects an unknown evidence or fact ID', () => {
-    expect(applyEffects(definition, initialState, [{ type: 'addEvidence', evidenceId: 'missing' }])).toMatchObject({
+    expect(
+      applyEffects(definition, initialState, [{ type: 'addEvidence', evidenceId: 'missing' }]),
+    ).toMatchObject({
       ok: false,
       error: { code: 'unknownEvidence', id: 'missing' },
     });
-    expect(applyEffects(definition, initialState, [{ type: 'unlockFact', factId: 'missing' }])).toMatchObject({
+    expect(
+      applyEffects(definition, initialState, [{ type: 'unlockFact', factId: 'missing' }]),
+    ).toMatchObject({
       ok: false,
       error: { code: 'unknownFact', id: 'missing' },
     });

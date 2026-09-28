@@ -20,9 +20,11 @@ describe('createGameStore', () => {
     const definition = loadCaseDefinition('case-001');
     const store = createGameStore({ caseDefinition: definition });
 
-    const result = store.getState().applyCaseEffects([
-      { type: 'completeObjective', objectiveId: definition.initialObjectiveId },
-    ]);
+    const result = store
+      .getState()
+      .applyCaseEffects([
+        { type: 'completeObjective', objectiveId: definition.initialObjectiveId },
+      ]);
 
     expect(result.ok).toBe(true);
     expect(store.getState().caseState.objectiveStatuses[definition.initialObjectiveId]).toBe(

@@ -86,6 +86,7 @@ const event: CaseDomainEvent = { type: 'objectiveCompleted', objectiveId: object
 const error: CaseEngineError = { code: 'objectiveNotActive', id: objective.id };
 const transition: CaseTransitionResult = { ok: true, state, events: [event] };
 const status: ObjectiveStatus = 'active';
+void [conditions, interaction, error, transition, status];
 
 export type CaseEngineTypeFixture = {
   conditions: typeof conditions;

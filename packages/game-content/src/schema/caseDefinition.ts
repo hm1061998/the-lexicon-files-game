@@ -8,7 +8,7 @@ import type {
   ObjectiveDefinition,
 } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
-import { conditionSchema, effectSchema } from './caseEngine';
+import { conditionSchema } from './caseEngine';
 import { sceneDefinitionSchema } from './scene';
 
 const caseRawSchema = z
@@ -162,7 +162,9 @@ export function parseCaseDefinition(
   const objectives = objectivesResult.data.objectives as ObjectiveDefinition[];
   const evidences = evidencesResult.data.evidences as EvidenceDefinition[];
   const facts = factsResult.data.facts as FactDefinition[];
-  const scenes = scenesResult.map((result) => (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] }).data);
+  const scenes = scenesResult.map(
+    (result) => (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] }).data,
+  );
 
   const collections: ReadonlyArray<{ label: string; ids: readonly string[] }> = [
     { label: 'sceneIds', ids: caseData.sceneIds },
@@ -183,7 +185,9 @@ export function parseCaseDefinition(
   const sceneById = new Map(scenes.map((scene) => [scene.id, scene]));
 
   if (!objectiveIds.has(caseData.initialObjectiveId)) {
-    issues.push(`case.json.initialObjectiveId: unknown objective id "${caseData.initialObjectiveId}"`);
+    issues.push(
+      `case.json.initialObjectiveId: unknown objective id "${caseData.initialObjectiveId}"`,
+    );
   }
   for (const id of caseData.sceneIds) {
     if (!sceneById.has(id)) issues.push(`case.json.sceneIds: no scene definition for "${id}"`);
@@ -199,7 +203,8 @@ export function parseCaseDefinition(
       issues.push(`evidences.${index}.caseId: expected "${caseData.id}"`);
     }
     evidence.relatedFactIds.forEach((id) => {
-      if (!factIds.has(id)) issues.push(`evidences.${index}.relatedFactIds: unknown fact id "${id}"`);
+      if (!factIds.has(id))
+        issues.push(`evidences.${index}.relatedFactIds: unknown fact id "${id}"`);
     });
   });
 

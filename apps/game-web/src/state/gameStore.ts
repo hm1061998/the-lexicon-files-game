@@ -1,5 +1,10 @@
 import { createStore, type StoreApi } from 'zustand/vanilla';
-import type { CaseDefinition, Effect, GameState as CaseState, CaseTransitionResult } from '@lexicon/shared-types';
+import type {
+  CaseDefinition,
+  Effect,
+  GameState as CaseState,
+  CaseTransitionResult,
+} from '@lexicon/shared-types';
 import { applyEffects, createCaseState } from '@lexicon/game-core';
 
 export type GameStoreState = {

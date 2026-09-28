@@ -62,7 +62,9 @@ function makeInput(changes: Partial<RawInput> = {}): RawInput {
     objectivesRaw,
     evidencesRaw,
     factsRaw,
-    sceneRaws: [sceneWithEffects([{ type: 'completeObjective', objectiveId: 'find_what_happened' }])],
+    sceneRaws: [
+      sceneWithEffects([{ type: 'completeObjective', objectiveId: 'find_what_happened' }]),
+    ],
     ...changes,
   };
 }
@@ -115,7 +117,10 @@ describe('parseCaseDefinition', () => {
   });
 
   it('rejects an initial objective that is not defined', () => {
-    expectValidationIssue({ caseRaw: { ...caseRaw, initialObjectiveId: 'missing' } }, 'initialObjectiveId');
+    expectValidationIssue(
+      { caseRaw: { ...caseRaw, initialObjectiveId: 'missing' } },
+      'initialObjectiveId',
+    );
   });
 
   it('rejects a fact that references missing source evidence', () => {
@@ -140,7 +145,9 @@ describe('parseCaseDefinition', () => {
     expectValidationIssue(
       {
         factsRaw: {
-          facts: [{ ...fact, unlockCondition: { type: 'hasEvidence', evidenceId: 'missing_evidence' } }],
+          facts: [
+            { ...fact, unlockCondition: { type: 'hasEvidence', evidenceId: 'missing_evidence' } },
+          ],
         },
       },
       'evidenceId',
@@ -149,7 +156,11 @@ describe('parseCaseDefinition', () => {
 
   it('rejects a condition that references an unknown fact', () => {
     expectValidationIssue(
-      { factsRaw: { facts: [{ ...fact, unlockCondition: { type: 'hasFact', factId: 'missing_fact' } }] } },
+      {
+        factsRaw: {
+          facts: [{ ...fact, unlockCondition: { type: 'hasFact', factId: 'missing_fact' } }],
+        },
+      },
       'factId',
     );
   });
@@ -158,7 +169,12 @@ describe('parseCaseDefinition', () => {
     expectValidationIssue(
       {
         factsRaw: {
-          facts: [{ ...fact, unlockCondition: { type: 'objectiveCompleted', objectiveId: 'missing_objective' } }],
+          facts: [
+            {
+              ...fact,
+              unlockCondition: { type: 'objectiveCompleted', objectiveId: 'missing_objective' },
+            },
+          ],
         },
       },
       'objectiveId',
@@ -181,7 +197,9 @@ describe('parseCaseDefinition', () => {
   });
 
   it('rejects an interaction effect that references an unknown objective', () => {
-    const sceneRaw = sceneWithEffects([{ type: 'completeObjective', objectiveId: 'missing_objective' }]);
+    const sceneRaw = sceneWithEffects([
+      { type: 'completeObjective', objectiveId: 'missing_objective' },
+    ]);
     expectValidationIssue({ sceneRaws: [sceneRaw] }, 'objectiveId');
   });
 });

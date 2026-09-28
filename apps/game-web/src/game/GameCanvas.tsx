@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef } from 'react';
-import type { CaseDefinition, GameEventMap, SceneDefinition, UiStrings } from '@lexicon/shared-types';
+import type {
+  CaseDefinition,
+  GameEventMap,
+  SceneDefinition,
+  UiStrings,
+} from '@lexicon/shared-types';
 import {
   ContentValidationError,
   DEFAULT_START,
