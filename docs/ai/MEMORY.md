@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T14:44:00+07:00
+updated_at: 2026-09-28T14:51:00+07:00
 phase: phase-3
 status: in_progress
-result_commit: 7f9ca6b
+result_commit: 7166423
 active_spec: docs/superpowers/specs/2026-09-28-phase-3-case-engine-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-09-28-phase-3-case-engine.md
 ---
 
 ## Metadata
@@ -23,7 +23,7 @@ active_plan: none
 ## Current Status
 
 - Phase 2 hoàn thành bằng subagent-driven, đã push `dev`; người dùng tự merge `main`.
-- Phase 3 design spec đã được tạo ở `7f9ca6b`, sau đó được chuyển sang tiếng Việt theo yêu cầu người dùng; đang chờ user review spec trước khi viết plan.
+- Phase 3 design spec được người dùng duyệt; implementation plan tiếng Việt đã tạo và commit `7166423`. Đang chờ user review plan và chọn execution method trước khi triển khai.
 
 ## Completed
 
@@ -35,7 +35,7 @@ active_plan: none
 
 ## In Progress
 
-- Phase 3: spec đã commit; chưa có implementation plan hoặc code.
+- Phase 3: spec đã duyệt; plan đã commit; chưa có implementation code.
 
 ## Active Decisions
 
@@ -55,8 +55,8 @@ active_plan: none
 
 ## Next Actions
 
-- Người dùng review `docs/superpowers/specs/2026-09-28-phase-3-case-engine-design.md`.
-- Khi được duyệt, viết implementation plan Phase 3 rồi chờ user review/chọn execution method.
+- Người dùng review `docs/superpowers/plans/2026-09-28-phase-3-case-engine.md` và chọn execution method.
+- Sau khi plan được duyệt, dùng skill execution tương ứng rồi triển khai Phase 3.
 
 ## Verification
 
@@ -76,5 +76,5 @@ active_plan: none
 ## Required Reading
 
 - `AGENTS.md`
-- `docs/superpowers/specs/2026-09-28-phase-2-react-hud-integration-design.md`
-- `docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md`
+- `docs/superpowers/specs/2026-09-28-phase-3-case-engine-design.md`
+- `docs/superpowers/plans/2026-09-28-phase-3-case-engine.md`
