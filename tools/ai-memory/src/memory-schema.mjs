@@ -1,3 +1,5 @@
+import { posix, win32 } from 'node:path';
+
 const ALLOWED_STATUSES = [
   'not_started',
   'proposed',
@@ -114,13 +116,42 @@ function parseSections(lines) {
   return sections;
 }
 
+const LIST_ITEM_PATTERN = /^\s*(?:[-*+]|\d{1,9}[.)])\s+(\S.*)$/;
+
+function listItems(section = '') {
+  const items = [];
+  let fenceMarker;
+
+  for (const line of section.split('\n')) {
+    const fenceMatch = line.match(/^\s*(```|~~~)/);
+    if (fenceMatch) {
+      const marker = fenceMatch[1];
+      fenceMarker = fenceMarker === marker ? undefined : (fenceMarker ?? marker);
+      continue;
+    }
+
+    if (fenceMarker !== undefined) continue;
+
+    const itemMatch = line.match(LIST_ITEM_PATTERN);
+    if (itemMatch) items.push(itemMatch[1].trim());
+  }
+
+  return items;
+}
+
 function countListItems(section = '') {
-  return section.split('\n').filter((line) => /^\s*[-*+]\s+\S/.test(line)).length;
+  return listItems(section).length;
 }
 
 function firstListItem(section = '') {
-  const line = section.split('\n').find((candidate) => /^\s*[-*+]\s+\S/.test(candidate));
-  return line?.replace(/^\s*[-*+]\s+/, '').trim() ?? '';
+  return listItems(section)[0] ?? '';
+}
+
+function isRepositoryRelativePath(path) {
+  if (posix.isAbsolute(path) || win32.isAbsolute(path)) return false;
+
+  const normalized = posix.normalize(path.replaceAll('\\', '/'));
+  return normalized !== '..' && !normalized.startsWith('../');
 }
 
 export function parseMemory(source) {
@@ -184,6 +215,11 @@ export function validateMemory(source, options) {
   for (const field of ['active_spec', 'active_plan']) {
     const relativePath = parsed.metadata[field];
     if (!relativePath || relativePath === 'none') continue;
+
+    if (!isRepositoryRelativePath(relativePath)) {
+      errors.push(`${field} must be a repository-relative path: ${relativePath}.`);
+      continue;
+    }
 
     try {
       if (!options.pathExists(relativePath)) {

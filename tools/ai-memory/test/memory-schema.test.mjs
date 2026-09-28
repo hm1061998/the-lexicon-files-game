@@ -165,6 +165,24 @@ test('rejects more than five next actions', () => {
   assert.match(result.errors.join('\n'), /Next Actions.*5/);
 });
 
+test('rejects mixed ordered and unordered next actions over the limit', () => {
+  const items = ['1. First action', '2) Second action', '- Third action', '* Fourth action', '+ Fifth action', '6. Sixth action'].join('\n');
+  const source = createMemory().replace('- Next Actions value', items);
+  const result = validate(source);
+
+  assert.match(result.errors.join('\n'), /Next Actions.*5/);
+  assert.equal(result.nextAction, 'First action');
+});
+
+test('ignores list-shaped lines inside fenced blocks when enforcing budgets', () => {
+  const items = ['- Real action', '```text', '1. Example one', '2. Example two', '3. Example three', '4. Example four', '5. Example five', '```'].join('\n');
+  const source = createMemory().replace('- Next Actions value', items);
+  const result = validate(source);
+
+  assert.equal(result.valid, true);
+  assert.equal(result.nextAction, 'Real action');
+});
+
 test('rejects more than ten active decisions', () => {
   const items = Array.from({ length: 11 }, (_, index) => `- Decision ${index + 1}`).join('\n');
   const source = createMemory().replace('- Active Decisions value', items);
@@ -172,6 +190,20 @@ test('rejects more than ten active decisions', () => {
 
   assert.match(result.errors.join('\n'), /Active Decisions.*10/);
 });
+
+for (const linkedPath of [
+  '/tmp/plan.md',
+  'C:\\outside\\plan.md',
+  '..\\outside\\plan.md',
+  '../outside/plan.md',
+]) {
+  test(`rejects non-repository-relative linked path ${linkedPath}`, () => {
+    const source = createMemory().replace('active_plan: none', `active_plan: ${linkedPath}`);
+    const result = validate(source, { pathExists: () => true });
+
+    assert.match(result.errors.join('\n'), /active_plan.*repository-relative/i);
+  });
+}
 
 test('does not accept a required heading found only inside a fence', () => {
   const source = createMemory()

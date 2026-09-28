@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
+import { dirname, resolve } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
-import { runValidation } from '../src/cli.mjs';
+import { repositoryFileExists, runValidation } from '../src/cli.mjs';
+
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
 const VALID_MEMORY = `---
 schema_version: 1
@@ -98,4 +102,11 @@ test('Git adapter failure returns one with result_commit context', () => {
   assert.equal(result.exitCode, 1);
   assert.deepEqual(result.stdout, []);
   assert.match(result.stderr[0], /result_commit.*git unavailable/);
+});
+
+test('repository file adapter accepts files only within the repository', () => {
+  assert.equal(repositoryFileExists(REPO_ROOT, 'package.json'), true);
+  assert.equal(repositoryFileExists(REPO_ROOT, 'docs'), false);
+  assert.equal(repositoryFileExists(REPO_ROOT, resolve(REPO_ROOT, 'package.json')), false);
+  assert.equal(repositoryFileExists(REPO_ROOT, '../package.json'), false);
 });

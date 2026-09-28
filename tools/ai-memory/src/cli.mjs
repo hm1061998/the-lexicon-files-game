@@ -1,13 +1,27 @@
 import { Buffer } from 'node:buffer';
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readFileSync, statSync } from 'node:fs';
+import { dirname, posix, relative, resolve, sep, win32 } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { validateMemory } from './memory-schema.mjs';
 
 const DEFAULT_MEMORY_PATH = 'docs/ai/MEMORY.md';
+
+export function repositoryFileExists(repoRoot, relativePath) {
+  if (posix.isAbsolute(relativePath) || win32.isAbsolute(relativePath)) return false;
+
+  const target = resolve(repoRoot, relativePath.replaceAll('\\', '/'));
+  const fromRoot = relative(repoRoot, target);
+  if (fromRoot === '' || fromRoot === '..' || fromRoot.startsWith(`..${sep}`)) return false;
+
+  try {
+    return statSync(target).isFile();
+  } catch {
+    return false;
+  }
+}
 
 export function runValidation(options) {
   const memoryPath = options.memoryPath ?? DEFAULT_MEMORY_PATH;
@@ -45,7 +59,7 @@ function createDefaultOptions() {
     repoRoot,
     memoryPath: DEFAULT_MEMORY_PATH,
     readFile: (path) => readFileSync(path, 'utf8'),
-    pathExists: (relativePath) => existsSync(resolve(repoRoot, relativePath)),
+    pathExists: (relativePath) => repositoryFileExists(repoRoot, relativePath),
     commitExists: (commit) => {
       const result = spawnSync(
         'git',
