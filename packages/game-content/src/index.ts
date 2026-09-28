@@ -8,3 +8,5 @@ export { loadUiStrings } from './loader/loadUiStrings';
 export { ContentValidationError } from './loader/ContentValidationError';
 
 export { validateRegisteredContent } from './validation/validateRegisteredContent';
+export { loadLegacySaveContract } from './loader/loadLegacySaveContract';
+export type { LegacySaveContract } from './loader/loadLegacySaveContract';

@@ -65,7 +65,7 @@ describe('saveRepository', () => {
     const loaded = await repository.loadSave(definition.id, definition);
 
     expect(record).toBeDefined();
-    expect(record).toMatchObject({ schemaVersion: 1, caseId: definition.id });
+    expect(record).toMatchObject({ schemaVersion: 2, caseId: definition.id });
     expect(record.updatedAt).toEqual(expect.any(Number));
     expect(record.state).toEqual(state);
     expect(loaded).toEqual({ status: 'loaded', state });
@@ -81,14 +81,14 @@ describe('saveRepository', () => {
 
     expect(record).toBeDefined();
     expect(record?.caseId).toBe('case-001');
-    expect(record?.schemaVersion).toBe(1);
+    expect(record?.schemaVersion).toBe(2);
   });
 
   it('backs up malformed state before requiring confirmation', async () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw: SaveRecord = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       caseId: definition.id,
       state: { ...createCaseState(definition), evidenceIds: ['not-defined'] } as GameState,
       updatedAt: 42,
@@ -108,7 +108,7 @@ describe('saveRepository', () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       caseId: definition.id,
       state: corrupt(createCaseState(definition)),
       updatedAt: 42,
@@ -127,7 +127,7 @@ describe('saveRepository', () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       caseId: 'case-999',
       state: createCaseState(definition),
       updatedAt: 42,
@@ -146,7 +146,7 @@ describe('saveRepository', () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       caseId: definition.id,
       state: { ...createCaseState(definition), notebookOpen: true },
       updatedAt: 42,
@@ -188,7 +188,7 @@ describe('saveRepository', () => {
     const fresh = await repository.createFreshSaveAfterConfirmation(definition.id, definition);
     expect(fresh).toEqual(createCaseState(definition));
     expect(database.saves.get(definition.id)).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       state: fresh,
     });
   });

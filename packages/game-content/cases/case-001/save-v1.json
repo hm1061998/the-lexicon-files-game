@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "case-001",
+  "caseTitle": "The Missing Report",
+  "evidenceTotal": 5,
+  "objectiveIds": ["find_what_happened"],
+  "evidenceIds": ["meeting_minutes"],
+  "factIds": ["meeting_started"]
+}
