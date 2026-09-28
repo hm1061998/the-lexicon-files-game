@@ -32,3 +32,4 @@ Kiến trúc tổng hợp: [docs/architecture/ARCHITECTURE.md](docs/architecture
 - Rule chung: [AGENTS.md](AGENTS.md) (Claude Code đọc qua [CLAUDE.md](CLAUDE.md)).
 - Rule theo khu vực: [apps/game-web/AGENTS.md](apps/game-web/AGENTS.md), [apps/api/AGENTS.md](apps/api/AGENTS.md).
 - Skills: `.claude/skills` và `.agents/skills`. Spec/plan lưu tại `docs/superpowers/{specs,plans}`.
+- Project memory: [docs/ai/README.md](docs/ai/README.md), trạng thái hiện hành tại [docs/ai/MEMORY.md](docs/ai/MEMORY.md).

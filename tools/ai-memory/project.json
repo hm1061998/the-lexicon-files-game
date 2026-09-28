@@ -1,0 +1,29 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "ai-memory",
+  "sourceRoot": "tools/ai-memory/src",
+  "projectType": "application",
+  "targets": {
+    "check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ai-memory/src/cli.mjs",
+        "cwd": "."
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --test tools/ai-memory/test/memory-schema.test.mjs tools/ai-memory/test/cli.test.mjs",
+        "cwd": "."
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint \"tools/ai-memory/**/*.mjs\"",
+        "cwd": "."
+      }
+    }
+  }
+}

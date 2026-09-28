@@ -14,6 +14,8 @@
     "test": "nx run-many -t test",
     "test:e2e": "nx run @lexicon/game-web:test:e2e",
     "lint": "nx run-many -t lint",
+    "memory:check": "nx run ai-memory:check",
+    "memory:test": "nx run ai-memory:test",
     "typecheck": "tsc -b",
     "format": "prettier --write .",
     "affected": "nx affected -t lint test build",

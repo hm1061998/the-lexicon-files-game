@@ -17,6 +17,10 @@ Rule chung cho mọi coding agent (Codex, Claude Code, …). Rule theo khu vực
 
 Không tự ý thay đổi product rule trong docs. Nếu thấy docs mâu thuẫn hoặc thiếu → hỏi, không đoán.
 
+### AI project memory
+
+Với công việc có thể ảnh hưởng code, plan, tiến độ, quyết định hoặc blocker: đọc `docs/ai/README.md` và `docs/ai/MEMORY.md`, sau đó reconcile với Git trước khi làm. Kết thúc phiên phải cập nhật memory theo protocol trong `docs/ai/README.md`; không lặp lại protocol tại đây.
+
 ## 2. Workflow (skills trong `.claude/skills` / `.agents/skills`)
 
 Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (`using-superpowers`).

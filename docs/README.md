@@ -48,6 +48,10 @@ Bộ tài liệu này được thiết kế để đưa trực tiếp cho Codex 
 8. `concept/*.webp`
    - Visual target; xem `concept/README.md` để biết giới hạn sử dụng
 
+9. `ai/README.md` và `ai/MEMORY.md`
+   - Quy trình project memory cho coding agent
+   - Phase, plan, tiến độ, blocker và handoff hiện hành
+
 ## Thứ tự ưu tiên khi tài liệu mâu thuẫn
 
 Áp dụng tài liệu chuyên biệt cho đúng phạm vi của quyết định:
