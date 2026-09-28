@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T15:00:00+07:00
+updated_at: 2026-09-28T17:00:00+07:00
 phase: phase-0b
-status: proposed
-result_commit: 7f33b31
+status: verified
+result_commit: 6b77df2
 active_spec: docs/04_CODEX_IMPLEMENTATION_ROADMAP.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 ---
@@ -22,43 +22,51 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Current Status
 
-- Đã audit và viết plan Phase 0B; chờ người dùng duyệt plan và chọn cách thực thi.
+- 5 task Phase 0B đã thực thi Native trên `dev` và verify PASS; chờ final review toàn branch.
 
 ## Completed
 
-- Phase 0A hoàn thành và đã push trên `dev` (`63f32ae`, sync memory `7f33b31`).
-- Audit Phase 0 ghi trong plan Phase 0B.
+- Task 1 `e9c4270`: vá NU1903 (OpenApi 10.0.12), `/health`, OpenAPI, CORS, 5 test xUnit.
+- Task 2 `61e317e`: target lint/test cho 7 project, smoke test và test kiến trúc framework-free.
+- Task 3 `e95b9b4`: React mount Phaser (`BootScene`, `GameCanvas`), e2e đúng 1 canvas.
+- Task 4 `6b77df2`: Prettier toàn repo, `format:check`, ignore skill vendored và tsbuildinfo.
+- Task 5: acceptance Phase 0, sửa AGENTS.md §8.
 
 ## In Progress
 
-- Chờ duyệt plan Phase 0B.
+- Final review toàn branch Phase 0B.
 
 ## Active Decisions
 
 - Phase 0B = lấp khoảng trống Phase 0, không làm tính năng Phase 1.
-- Không tắt warnings-as-errors hay NoWarn NU1903; phải nâng/pin package OpenApi đã vá.
+- Không tắt warnings-as-errors; OpenApi nâng lên bản đã vá.
+- Unit test React dùng `renderToString` + mock `createGame`; Phaser được phủ bằng Playwright.
+- Chưa đăng ký DbContext Postgres cho tới khi có entity.
 - Deferred minor Phase 0A: fence dài hơn 3 ký tự và danh sách material files trong handoff.
 
 ## Blockers
 
-- `dotnet build` FAIL do NU1903 (`Microsoft.OpenApi` 2.0.0); được xử lý ở Task 1 của plan.
+- Không có blocker hiện tại.
 
 ## Next Actions
 
-- Người dùng duyệt plan Phase 0B và chọn Subagent-driven hoặc Native.
+- Chạy final review toàn branch; sau đó xin người dùng quyết định merge `dev` vào `main` hoặc bắt đầu Phase 1.
 
 ## Verification
 
-- `npm run lint` — PASS nhưng chỉ chạy `ai-memory`.
-- `npm run test` — PASS nhưng chỉ chạy `ai-memory`.
+- `npm install` — PASS (có audit warnings, chưa xử lý).
+- `npm run lint` — PASS 7 project.
+- `npm run test` — PASS 7 project.
 - `npm run build` — PASS.
-- `npm run typecheck` — PASS.
-- `dotnet build` — FAIL NU1903.
-- `npx prettier --check .` — FAIL 242 file.
+- `npm run format:check` — PASS.
+- `npm run test:e2e` — PASS 1/1.
+- `npm run dev` — HTTP 200 tại `http://localhost:5173`.
+- `dotnet build` — PASS 0 warning; `dotnet test` — PASS 5/5.
+- `npm run memory:check` — PASS.
 
 ## Latest Handoff
 
-- Audit cho thấy lint/test chưa phủ package TS, chưa có Phaser mount, chưa có health endpoint; chi tiết ở plan Phase 0B.
+- Phase 0B đã triển khai đủ plan; rulings nằm trong ledger `.superpowers/sdd/` và báo cáo phiên.
 
 ## Required Reading
 

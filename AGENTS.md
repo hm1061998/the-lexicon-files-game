@@ -96,5 +96,5 @@ Báo cáo gồm: tóm tắt, file thay đổi, test thêm, lệnh đã chạy + 
 ## 8. Môi trường hiện tại
 
 - Windows, Node 22, npm + Nx (npm workspaces).
-- Chưa có .NET 10 SDK trên máy → nếu không build được backend, nói rõ, không tuyên bố đã pass.
-- Repo chưa `git init`.
+- .NET SDK 10.0.401 đã cài (`apps/api/global.json` pin 10.0.100, rollForward `latestFeature`). Nếu backend không build được, nói rõ, không tuyên bố đã pass.
+- Repo dùng Git: branch làm việc `dev`, branch chính `main`, remote `origin`.
