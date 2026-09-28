@@ -8,9 +8,14 @@ export function connectCaseEngine(
   definition: CaseDefinition,
 ): () => void {
   return bus.on('interaction:triggered', ({ interactableId }) => {
+    if (store.getState().inputLocked) return;
     const interaction = definition.scenes
       .flatMap((scene) => scene.assets)
       .find((asset) => asset.id === interactableId)?.interaction;
+    if (interaction?.npcId) {
+      store.getState().startDialogue(interaction.npcId);
+      return;
+    }
     if (interaction?.effects?.length) {
       const result = store.getState().applyCaseEffects(interaction.effects);
       if (!result.ok) return;

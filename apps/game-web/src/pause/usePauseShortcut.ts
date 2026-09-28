@@ -8,7 +8,8 @@ export function handleEscapeShortcut(store: GameStore, event: EscapeEvent): void
   if (!shouldHandleShortcut(event, 'Escape')) return;
   event.preventDefault();
   const state = store.getState();
-  if (state.activeEvidenceId !== null) state.closeEvidence();
+  if (state.dialogueSession !== null) state.closeDialogue();
+  else if (state.activeEvidenceId !== null) state.closeEvidence();
   else if (state.notebookOpen) state.toggleNotebook();
   else state.togglePause();
 }

@@ -11,7 +11,7 @@ type ShortcutEvent = {
 export function handleNotebookShortcut(store: GameStore, event: ShortcutEvent): void {
   if (!shouldHandleShortcut(event, 'j')) return;
   const state = store.getState();
-  if (state.paused || state.activeEvidenceId !== null) return;
+  if (state.paused || state.activeEvidenceId !== null || state.dialogueSession !== null) return;
   event.preventDefault();
   state.toggleNotebook();
 }
