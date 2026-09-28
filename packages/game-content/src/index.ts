@@ -6,3 +6,5 @@ export { loadSceneDefinition, DEFAULT_START } from './loader/loadScene';
 export { loadCaseDefinition } from './loader/loadCaseDefinition';
 export { loadUiStrings } from './loader/loadUiStrings';
 export { ContentValidationError } from './loader/ContentValidationError';
+
+export { validateRegisteredContent } from './validation/validateRegisteredContent';

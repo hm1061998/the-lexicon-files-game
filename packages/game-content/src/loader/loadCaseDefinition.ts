@@ -53,3 +53,5 @@ export function loadCaseDefinition(caseId: string): CaseDefinition {
     `cases/${caseId}`,
   );
 }
+
+export const REGISTERED_CASE_IDS: readonly string[] = Object.keys(caseRegistry);

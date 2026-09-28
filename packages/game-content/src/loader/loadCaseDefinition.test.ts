@@ -7,8 +7,16 @@ describe('loadCaseDefinition', () => {
     const definition = loadCaseDefinition('case-001');
     expect(definition.scenes.map((scene) => scene.id)).toEqual(['main_office']);
     expect(definition.evidences.map((item) => item.id)).toEqual(['meeting_minutes']);
-    expect(definition.facts.map((item) => item.id)).toEqual(['meeting_started']);
-    expect(definition.objectives.map((item) => item.id)).toEqual(['find_what_happened']);
+    expect(definition.facts.map((item) => item.id)).toEqual([
+      'meeting_started',
+      'david_statement_no_entry_after_20_00',
+      'david_collected_folder',
+      'david_took_report',
+    ]);
+    expect(definition.objectives.map((item) => item.id)).toEqual([
+      'find_what_happened',
+      'talk_to_everyone',
+    ]);
   });
 
   it('Case #001 exposes meeting_minutes as a collectible scene interaction', () => {

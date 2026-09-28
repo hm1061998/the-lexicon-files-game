@@ -3,9 +3,10 @@ import { parseCaseDefinition } from './caseDefinition';
 import caseRaw from '../../cases/case-001/case.json';
 import objectivesRaw from '../../cases/case-001/objectives.json';
 import evidencesRaw from '../../cases/case-001/evidences.json';
-import factsRaw from '../../cases/case-001/facts.json';
+import fullFacts from '../../cases/case-001/facts.json';
 import office from '../../cases/case-001/scenes/main_office.json';
 
+const factsRaw = { facts: [fullFacts.facts[0]!] };
 function input() {
   return {
     caseRaw,
@@ -15,14 +16,16 @@ function input() {
     sceneRaws: [
       {
         ...office,
-        assets: office.assets.map((a) =>
-          a.id === 'anna'
-            ? {
-                ...a,
-                interaction: { ...a.interaction, npcId: 'anna' },
-              }
-            : a,
-        ),
+        assets: office.assets
+          .filter((a) => a.type !== 'npc' || a.id === 'anna')
+          .map((a) =>
+            a.id === 'anna'
+              ? {
+                  ...a,
+                  interaction: { ...a.interaction, npcId: 'anna' },
+                }
+              : a,
+          ),
       },
     ],
     npcsRaw: {

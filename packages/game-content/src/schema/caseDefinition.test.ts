@@ -50,11 +50,13 @@ function sceneWithEffects(effects: readonly unknown[]): unknown {
   };
   return {
     ...scene,
-    assets: scene.assets.map((asset) =>
-      asset.id === 'objective_note'
-        ? { ...asset, interaction: { ...asset.interaction, effects } }
-        : asset,
-    ),
+    assets: scene.assets
+      .filter((asset) => asset.id !== 'anna' && asset.id !== 'leo' && asset.id !== 'david')
+      .map((asset) =>
+        asset.id === 'objective_note'
+          ? { ...asset, interaction: { ...asset.interaction, effects } }
+          : asset,
+      ),
   };
 }
 

@@ -1,1 +1,443 @@
-{ "dialogues": [] }
+{
+  "dialogues": [
+    {
+      "id": "anna_initial",
+      "npcId": "anna",
+      "entryNodeId": "entry",
+      "nodes": [
+        {
+          "id": "entry",
+          "speakerId": "anna",
+          "text": "I left the meeting early. I had a call with a client.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "q1",
+              "text": "What time did you leave?",
+              "nextNodeId": "answer1"
+            },
+            {
+              "id": "q2",
+              "text": "Did you return later?",
+              "nextNodeId": "answer2"
+            },
+            {
+              "id": "q3",
+              "text": "Who was still in the room?",
+              "nextNodeId": "answer3"
+            }
+          ]
+        },
+        {
+          "id": "answer1",
+          "speakerId": "anna",
+          "text": "A little after eight fifteen.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "anna_q1_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "answer2",
+          "speakerId": "anna",
+          "text": "No. I went directly to my desk.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "anna_q2_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "answer3",
+          "speakerId": "anna",
+          "text": "Leo and the team were still there.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "anna_q3_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "completionFlag": "anna_interviewed",
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "anna_q1_read",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "anna_q2_read",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "anna_q3_read",
+            "value": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "leo_initial",
+      "npcId": "leo",
+      "entryNodeId": "entry",
+      "nodes": [
+        {
+          "id": "entry",
+          "speakerId": "leo",
+          "text": "I stepped outside to take a phone call.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "q1",
+              "text": "When did you leave?",
+              "nextNodeId": "answer1"
+            },
+            {
+              "id": "q2",
+              "text": "When did you return?",
+              "nextNodeId": "answer2"
+            },
+            {
+              "id": "q3",
+              "text": "Did you see David?",
+              "nextNodeId": "answer3"
+            }
+          ]
+        },
+        {
+          "id": "answer1",
+          "speakerId": "leo",
+          "text": "Around eight twenty-five.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "leo_q1_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "answer2",
+          "speakerId": "leo",
+          "text": "Around eight forty.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "leo_q2_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "answer3",
+          "speakerId": "leo",
+          "text": "I saw him in the hallway before I went outside.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "leo_q3_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "completionFlag": "leo_interviewed",
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "leo_q1_read",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "leo_q2_read",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "leo_q3_read",
+            "value": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "david_initial",
+      "npcId": "david",
+      "entryNodeId": "entry",
+      "nodes": [
+        {
+          "id": "entry",
+          "speakerId": "david",
+          "text": "I didn't enter the meeting room after eight.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "q1",
+              "text": "Where were you?",
+              "nextNodeId": "answer1"
+            },
+            {
+              "id": "q2",
+              "text": "Did you see the report?",
+              "nextNodeId": "answer2"
+            },
+            {
+              "id": "q3",
+              "text": "Are you sure you didn't enter the room?",
+              "nextNodeId": "answer3",
+              "condition": {
+                "type": "flag",
+                "key": "david_contradiction_found",
+                "value": false
+              }
+            },
+            {
+              "id": "q3_unlocked",
+              "text": "Are you sure you didn't enter the room?",
+              "nextNodeId": "answer3_unlocked",
+              "condition": {
+                "type": "flag",
+                "key": "david_contradiction_found",
+                "value": true
+              }
+            },
+            {
+              "id": "challenge",
+              "text": "But the security log shows that you entered at 8:32.",
+              "nextNodeId": "collect_folder",
+              "condition": {
+                "type": "flag",
+                "key": "david_contradiction_found",
+                "value": true
+              }
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "david_statement_read",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "answer1",
+          "speakerId": "david",
+          "text": "I was working at my desk.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "david_q1_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "answer2",
+          "speakerId": "david",
+          "text": "I saw it during the meeting, but not afterward.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "david_q2_read",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "answer3",
+          "speakerId": "david",
+          "text": "Yes. I'm certain.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "david_q3_read",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "condition": {
+            "type": "flag",
+            "key": "david_contradiction_found",
+            "value": false
+          }
+        },
+        {
+          "id": "answer3_unlocked",
+          "speakerId": "david",
+          "text": "...I may have gone in for a moment.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "david_q3_read",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "condition": {
+            "type": "flag",
+            "key": "david_contradiction_found",
+            "value": true
+          }
+        },
+        {
+          "id": "collect_folder",
+          "speakerId": "david",
+          "text": "I only went in to collect a folder.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "which_folder",
+              "text": "Which folder?",
+              "nextNodeId": "confession"
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "david_folder_statement_read",
+              "value": true
+            }
+          ],
+          "condition": {
+            "type": "flag",
+            "key": "david_contradiction_found",
+            "value": true
+          }
+        },
+        {
+          "id": "confession",
+          "speakerId": "david",
+          "text": "The Quarterly Risk Report. I found an error I had missed and panicked. I took it to correct it before anyone noticed.",
+          "terminal": true,
+          "choices": [],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "david_confession_read",
+              "value": true
+            }
+          ],
+          "condition": {
+            "type": "flag",
+            "key": "david_contradiction_found",
+            "value": true
+          }
+        }
+      ],
+      "completionFlag": "david_interviewed",
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "david_q1_read",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "david_q2_read",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "david_q3_read",
+            "value": true
+          }
+        ]
+      }
+    }
+  ]
+}

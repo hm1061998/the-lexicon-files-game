@@ -4,7 +4,43 @@
       "id": "meeting_started",
       "text": "The meeting began at 8:00 PM.",
       "sourceEvidenceIds": ["meeting_minutes"],
-      "unlockCondition": { "type": "hasEvidence", "evidenceId": "meeting_minutes" }
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "meeting_minutes"
+      }
+    },
+    {
+      "id": "david_statement_no_entry_after_20_00",
+      "text": "David says he didn't enter the meeting room after eight.",
+      "sourceEvidenceIds": [],
+      "sourceDialogueIds": ["david_initial"],
+      "unlockCondition": {
+        "type": "flag",
+        "key": "david_statement_read",
+        "value": true
+      }
+    },
+    {
+      "id": "david_collected_folder",
+      "text": "David went in to collect a folder.",
+      "sourceEvidenceIds": [],
+      "sourceDialogueIds": ["david_initial"],
+      "unlockCondition": {
+        "type": "flag",
+        "key": "david_folder_statement_read",
+        "value": true
+      }
+    },
+    {
+      "id": "david_took_report",
+      "text": "David took the Quarterly Risk Report.",
+      "sourceEvidenceIds": [],
+      "sourceDialogueIds": ["david_initial"],
+      "unlockCondition": {
+        "type": "flag",
+        "key": "david_confession_read",
+        "value": true
+      }
     }
   ]
 }

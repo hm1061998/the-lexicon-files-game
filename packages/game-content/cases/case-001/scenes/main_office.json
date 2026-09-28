@@ -1,8 +1,19 @@
 {
   "id": "main_office",
-  "size": { "width": 2400, "height": 1600 },
-  "worldBounds": { "x": 0, "y": 0, "width": 2400, "height": 1600 },
-  "spawn": { "x": 1200, "y": 1100 },
+  "size": {
+    "width": 2400,
+    "height": 1600
+  },
+  "worldBounds": {
+    "x": 0,
+    "y": 0,
+    "width": 2400,
+    "height": 1600
+  },
+  "spawn": {
+    "x": 1200,
+    "y": 1100
+  },
   "assets": [
     {
       "id": "floor",
@@ -21,7 +32,13 @@
       "x": 1200,
       "y": 420,
       "depthBias": 0,
-      "collision": { "type": "rect", "x": -1200, "y": -40, "width": 2400, "height": 40 }
+      "collision": {
+        "type": "rect",
+        "x": -1200,
+        "y": -40,
+        "width": 2400,
+        "height": 40
+      }
     },
     {
       "id": "player_desk",
@@ -30,7 +47,13 @@
       "x": 1200,
       "y": 800,
       "depthBias": 0,
-      "collision": { "type": "rect", "x": -110, "y": -40, "width": 220, "height": 60 }
+      "collision": {
+        "type": "rect",
+        "x": -110,
+        "y": -40,
+        "width": 220,
+        "height": 60
+      }
     },
     {
       "id": "objective_note",
@@ -44,7 +67,12 @@
         "y": 0,
         "radius": 90,
         "prompt": "Đọc ghi chú",
-        "effects": [{ "type": "completeObjective", "objectiveId": "find_what_happened" }]
+        "effects": [
+          {
+            "type": "completeObjective",
+            "objectiveId": "find_what_happened"
+          }
+        ]
       }
     },
     {
@@ -59,7 +87,12 @@
         "y": 0,
         "radius": 90,
         "prompt": "Đọc biên bản cuộc họp",
-        "effects": [{ "type": "addEvidence", "evidenceId": "meeting_minutes" }]
+        "effects": [
+          {
+            "type": "addEvidence",
+            "evidenceId": "meeting_minutes"
+          }
+        ]
       }
     },
     {
@@ -69,8 +102,21 @@
       "x": 800,
       "y": 1000,
       "depthBias": 0,
-      "collision": { "type": "rect", "x": -15, "y": -9, "width": 30, "height": 18 },
-      "interaction": { "x": 0, "y": 0, "radius": 90, "prompt": "Nói chuyện với Anna" }
+      "collision": {
+        "type": "rect",
+        "x": -15,
+        "y": -9,
+        "width": 30,
+        "height": 18
+      },
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 90,
+        "prompt": "Nói chuyện với Anna",
+        "npcId": "anna"
+      },
+      "origin": [0.5, 0.88]
     },
     {
       "id": "hallway_door",
@@ -79,7 +125,58 @@
       "x": 2100,
       "y": 700,
       "depthBias": 0,
-      "interaction": { "x": 0, "y": 20, "radius": 80, "prompt": "Ra hành lang" }
+      "interaction": {
+        "x": 0,
+        "y": 20,
+        "radius": 80,
+        "prompt": "Ra hành lang"
+      }
+    },
+    {
+      "id": "leo",
+      "type": "npc",
+      "texture": "ph_npc",
+      "x": 1600,
+      "y": 1100,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -15,
+        "y": -9,
+        "width": 30,
+        "height": 18
+      },
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 90,
+        "prompt": "Nói chuyện với Leo",
+        "npcId": "leo"
+      },
+      "origin": [0.5, 0.88]
+    },
+    {
+      "id": "david",
+      "type": "npc",
+      "texture": "ph_npc",
+      "x": 1850,
+      "y": 900,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -15,
+        "y": -9,
+        "width": 30,
+        "height": 18
+      },
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 90,
+        "prompt": "Nói chuyện với David",
+        "npcId": "david"
+      },
+      "origin": [0.5, 0.88]
     }
   ]
 }

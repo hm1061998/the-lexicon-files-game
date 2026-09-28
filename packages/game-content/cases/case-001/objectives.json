@@ -3,6 +3,31 @@
     {
       "id": "find_what_happened",
       "text": "Tìm hiểu điều gì đã xảy ra với bản báo cáo"
+    },
+    {
+      "id": "talk_to_everyone",
+      "text": "Talk to Anna, Leo, and David",
+      "initialStatus": "active",
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "anna_interviewed",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "leo_interviewed",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "david_interviewed",
+            "value": true
+          }
+        ]
+      }
     }
   ]
 }
