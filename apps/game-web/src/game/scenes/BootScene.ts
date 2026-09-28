@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-
-/** Palette "Ink Black" — docs/art/06 §palette. */
-const INK_BLACK = '#2A2521';
+import { PALETTE } from '../constants';
+import { generatePlaceholderTextures } from '../textures';
+import { WorldScene } from './WorldScene';
 
 export class BootScene extends Phaser.Scene {
   static readonly KEY = 'Boot';
@@ -11,6 +11,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor(INK_BLACK);
+    this.cameras.main.setBackgroundColor(PALETTE.inkBlack);
+    generatePlaceholderTextures(this);
+    this.scene.start(WorldScene.KEY);
   }
 }
