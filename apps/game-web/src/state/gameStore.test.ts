@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { loadCaseDefinition } from '@lexicon/game-content';
+import { createCaseState } from '@lexicon/game-core';
 import { createGameStore } from './gameStore';
 
 describe('createGameStore', () => {
@@ -30,5 +31,94 @@ describe('createGameStore', () => {
     expect(store.getState().caseState.objectiveStatuses[definition.initialObjectiveId]).toBe(
       'completed',
     );
+  });
+
+  it('uses a restored core state when provided', () => {
+    const definition = loadCaseDefinition('case-001');
+    const restored = {
+      ...createCaseState(definition),
+      evidenceIds: ['meeting_minutes'],
+    };
+
+    const store = createGameStore({ caseDefinition: definition, initialState: restored });
+
+    expect(store.getState().caseState).toBe(restored);
+  });
+
+  it('starts with the Evidence notebook tab closed and unlocked', () => {
+    const definition = loadCaseDefinition('case-001');
+    const state = createGameStore({ caseDefinition: definition }).getState();
+
+    expect(state.activeEvidenceId).toBeNull();
+    expect(state.notebookOpen).toBe(false);
+    expect(state.notebookTab).toBe('evidence');
+    expect(state.inputLocked).toBe(false);
+  });
+
+  it('locks input while evidence is open and unlocks it when closed', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+
+    store.getState().openEvidence('meeting_minutes');
+    expect(store.getState().activeEvidenceId).toBe('meeting_minutes');
+    expect(store.getState().inputLocked).toBe(true);
+
+    store.getState().closeEvidence();
+    expect(store.getState().activeEvidenceId).toBeNull();
+    expect(store.getState().inputLocked).toBe(false);
+  });
+
+  it('locks input while notebook is open and allows selecting its tab', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+
+    store.getState().toggleNotebook();
+    store.getState().setNotebookTab('people');
+
+    expect(store.getState().notebookTab).toBe('people');
+    expect(store.getState().notebookOpen).toBe(true);
+    expect(store.getState().inputLocked).toBe(true);
+
+    store.getState().toggleNotebook();
+    expect(store.getState().inputLocked).toBe(false);
+  });
+
+  it('reopens the notebook on Evidence after closing it from another tab', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+
+    store.getState().toggleNotebook();
+    store.getState().setNotebookTab('people');
+    store.getState().toggleNotebook();
+    store.getState().toggleNotebook();
+
+    expect(store.getState().notebookOpen).toBe(true);
+    expect(store.getState().notebookTab).toBe('evidence');
+  });
+
+  it('does not notify store subscribers when opening the same evidence twice', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+    let notifications = 0;
+    store.subscribe(() => {
+      notifications += 1;
+    });
+
+    store.getState().openEvidence('meeting_minutes');
+    const afterFirstOpen = notifications;
+    store.getState().openEvidence('meeting_minutes');
+
+    expect(notifications).toBe(afterFirstOpen);
+  });
+
+  it('keeps persistence errors separate from the core case state', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+    const caseState = store.getState().caseState;
+
+    store.getState().setPersistenceError('save failed');
+
+    expect(store.getState().caseState).toBe(caseState);
+    expect(store.getState().persistenceError).toBe('save failed');
   });
 });

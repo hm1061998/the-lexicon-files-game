@@ -48,6 +48,21 @@
       }
     },
     {
+      "id": "meeting_minutes",
+      "type": "interactable",
+      "texture": "ph_note",
+      "x": 1000,
+      "y": 1100,
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 90,
+        "prompt": "Đọc biên bản cuộc họp",
+        "effects": [{ "type": "addEvidence", "evidenceId": "meeting_minutes" }]
+      }
+    },
+    {
       "id": "anna",
       "type": "npc",
       "texture": "ph_npc",

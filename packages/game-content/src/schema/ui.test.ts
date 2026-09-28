@@ -9,6 +9,15 @@ describe('parseUiStrings', () => {
     expect(strings.objectiveHeading).toBe('Mục tiêu hiện tại');
   });
 
+  it('provides localized bootstrap and save recovery strings', () => {
+    const strings = parseUiStrings(viStrings, 'ui/vi.json');
+    expect(strings.loadingGame).toBe('Đang mở hồ sơ...');
+    expect(strings.saveRecoveryTitle).toBeTruthy();
+    expect(strings.createFreshSave).toBeTruthy();
+    expect(strings.notebook).toBe('Sổ tay điều tra');
+    expect(strings.openNotebook).toBeTruthy();
+  });
+
   it('rejects missing key', () => {
     const raw = { ...(viStrings as Record<string, unknown>) };
     delete raw.resume;

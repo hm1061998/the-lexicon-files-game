@@ -74,6 +74,21 @@
   gap: 16px;
 }
 
+.hud-persistence-notice {
+  position: absolute;
+  bottom: 72px;
+  left: 16px;
+  z-index: 2;
+  max-width: 480px;
+  padding: 12px;
+  border: 1px solid var(--lexicon-border);
+  background: var(--lexicon-paper);
+  color: var(--lexicon-ink);
+  font-size: 14px;
+  line-height: 1.5;
+  pointer-events: auto;
+}
+
 :focus-visible {
   outline: 2px solid var(--lexicon-border);
   outline-offset: 2px;

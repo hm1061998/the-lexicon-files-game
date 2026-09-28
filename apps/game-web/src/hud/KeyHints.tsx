@@ -8,6 +8,9 @@ export function KeyHints({ strings }: { strings: UiStrings }): JSX.Element {
         <Keycap>E</Keycap> — {strings.interact}
       </span>
       <span className="hud-key-hint">
+        <Keycap>J</Keycap> — {strings.openNotebook}
+      </span>
+      <span className="hud-key-hint">
         <Keycap>Esc</Keycap> — {strings.pause}
       </span>
     </PaperPanel>

@@ -1,0 +1,63 @@
+.notebook-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  background: rgba(42, 37, 33, 0.38);
+  color: var(--lexicon-ink);
+  font-size: 16px;
+}
+
+.notebook-panel {
+  width: min(460px, 100%);
+  height: 100%;
+  overflow: auto;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+.notebook-header,
+.notebook-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.notebook-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.notebook-panel button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 4px;
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.notebook-tabs {
+  justify-content: flex-start;
+  margin-top: 20px;
+  border-bottom: 1px solid var(--lexicon-border);
+}
+
+.notebook-tabs button[aria-current='page'] {
+  border-bottom-width: 3px;
+}
+
+.notebook-content li + li {
+  margin-top: 16px;
+}
+
+.notebook-content h3,
+.notebook-content p {
+  margin: 0 0 8px;
+}

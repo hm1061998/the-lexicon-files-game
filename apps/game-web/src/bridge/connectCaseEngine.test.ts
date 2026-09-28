@@ -20,6 +20,32 @@ describe('connectCaseEngine', () => {
     expect(store.getState().caseState.evidenceIds).toEqual([]);
   });
 
+  it('opens evidence only for the first successful collection event', () => {
+    const definition = loadCaseDefinition('case-001');
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition: definition });
+    const originalOpenEvidence = store.getState().openEvidence;
+    const opened: string[] = [];
+    store.setState({
+      openEvidence(id) {
+        opened.push(id);
+        originalOpenEvidence(id);
+      },
+    });
+    connectCaseEngine(bus, store, definition);
+
+    bus.emit('interaction:triggered', { interactableId: 'meeting_minutes' });
+    expect(store.getState().activeEvidenceId).toBe('meeting_minutes');
+    expect(opened).toEqual(['meeting_minutes']);
+
+    store.getState().closeEvidence();
+    bus.emit('interaction:triggered', { interactableId: 'meeting_minutes' });
+
+    expect(store.getState().activeEvidenceId).toBeNull();
+    expect(store.getState().caseState.evidenceIds).toEqual(['meeting_minutes']);
+    expect(opened).toEqual(['meeting_minutes']);
+  });
+
   it('does not change case state for an interaction without effects', () => {
     const definition = loadCaseDefinition('case-001');
     const bus = createEventBus<GameEventMap>();

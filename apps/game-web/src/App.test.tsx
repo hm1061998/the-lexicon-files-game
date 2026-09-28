@@ -19,9 +19,9 @@ describe('App', () => {
     expect(html).not.toContain('role="alert"');
   });
 
-  it('renders HUD with objective text', () => {
+  it('renders a loading status until save bootstrap completes', () => {
     const html = renderToString(<App />);
-    expect(html).toContain('Tìm hiểu điều gì đã xảy ra với bản báo cáo');
+    expect(html).toContain('Đang mở hồ sơ...');
   });
 
   it('GameCanvas renders a readable error for invalid content', () => {

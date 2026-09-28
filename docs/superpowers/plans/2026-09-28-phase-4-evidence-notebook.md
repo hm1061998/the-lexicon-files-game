@@ -40,19 +40,19 @@
 - Dùng contract `SceneAssetDefinition.interaction.effects` và effect `{ type: 'addEvidence', evidenceId: string }` hiện có.
 - Loader phải trả scene `main_office` có interactable ID `meeting_minutes`, tham chiếu tới evidence hiện có cùng ID.
 
-- [ ] **Bước 1: Viết test content thất bại trước khi sửa JSON**
+- [x] **Bước 1: Viết test content thất bại trước khi sửa JSON**
 
 Thêm test `Case #001 exposes meeting_minutes as a collectible scene interaction`; assert rằng loader trả asset `meeting_minutes`, interaction có prompt khác rỗng và effects chứa đúng `{ type: 'addEvidence', evidenceId: 'meeting_minutes' }`.
 
-- [ ] **Bước 2: Chạy test để xác nhận thất bại**
+- [x] **Bước 2: Chạy test để xác nhận thất bại**
 
 Chạy `npx nx run @lexicon/game-content:test` từ root. Kết quả mong đợi: target FAIL ở test mới vì scene chưa có asset/interact effect.
 
-- [ ] **Bước 3: Thêm interactable content tối thiểu**
+- [x] **Bước 3: Thêm interactable content tối thiểu**
 
 Trong `main_office.json`, thêm asset `meeting_minutes` dùng texture placeholder `ph_note`, đặt tại `(1000, 1100)` để test có thể teleport player vào bán kính interaction, và effect `addEvidence` trỏ tới evidence JSON hiện có. Giữ `evidenceTotal: 5` như contract vertical slice; không thêm evidence khác.
 
-- [ ] **Bước 4: Chạy content test**
+- [x] **Bước 4: Chạy content test**
 
 Chạy lại lệnh ở Bước 2. Kết quả mong đợi: target PASS và loader không báo lỗi cross-reference.
 
@@ -70,27 +70,27 @@ Chạy lại lệnh ở Bước 2. Kết quả mong đợi: target PASS và load
 - `connectCaseEngine(bus, store, definition)` giữ signature hiện tại; chỉ gọi `openEvidence(id)` cho domain event `evidenceAdded` trong transition thành công. Duplicate interaction không được mở modal.
 - `inputLocked` luôn phản ánh `paused || activeEvidenceId !== null || notebookOpen`; mọi action mở/đóng state liên quan phải cập nhật giá trị nhất quán.
 
-- [ ] **Bước 1: Viết test store thất bại**
+- [x] **Bước 1: Viết test store thất bại**
 
 Trong `gameStore.test.ts`, thêm test hydrate state đã truyền vào; thêm test UI state mặc định; thêm test mở/đóng evidence/notebook, đổi tab và input lock; thêm test mở evidence lần hai không đổi state UI nếu cùng ID.
 
-- [ ] **Bước 2: Chạy test store để xác nhận thất bại**
+- [x] **Bước 2: Chạy test store để xác nhận thất bại**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở các test mới do API/action chưa tồn tại.
 
-- [ ] **Bước 3: Viết test bridge thất bại**
+- [x] **Bước 3: Viết test bridge thất bại**
 
 Trong `connectCaseEngine.test.ts`, xác nhận tương tác `meeting_minutes` gọi transition và mở evidence modal đúng ID; tương tác lặp giữ modal đóng sau khi đã đóng và không thêm evidence/event lần hai.
 
-- [ ] **Bước 4: Chạy test bridge để xác nhận thất bại**
+- [x] **Bước 4: Chạy test bridge để xác nhận thất bại**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở test mới vì bridge chưa ánh xạ domain event sang UI action.
 
-- [ ] **Bước 5: Cập nhật store và bridge tối thiểu**
+- [x] **Bước 5: Cập nhật store và bridge tối thiểu**
 
 Thêm state/action đã nêu; cho phép inject `initialState`; trong bridge chỉ mở modal từ `evidenceAdded` mới. Không chuyển logic engine sang Zustand và không lưu UI state trong `CaseState`.
 
-- [ ] **Bước 6: Chạy test store và bridge**
+- [x] **Bước 6: Chạy test store và bridge**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PASS.
 
@@ -103,31 +103,32 @@ Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PAS
 **Interfaces:**
 - `SaveRecord`: `{ schemaVersion: 1; caseId: string; state: GameState; updatedAt: number }`.
 - `SaveRepository` có `loadSave(caseId, definition)`, `saveGameState(state)` và `createFreshSaveAfterConfirmation(caseId, definition)`; `loadSave` trả một trong `{ status: 'missing' }`, `{ status: 'loaded'; state: GameState }`, `{ status: 'confirmation-required'; reason: string }`, `{ status: 'unavailable'; error: string }`.
-- `createSaveRepository(openDatabase = openDB): SaveRepository` cho phép inject IndexedDB factory trong test; `GameCanvas` tạo repository một lần, còn việc mở DB chỉ diễn ra khi gọi phương thức repository, không mở DB lúc import module.
+- `SaveDatabase` port gồm `getSave(caseId): Promise<unknown | undefined>`, `putSave(record): Promise<void>` và `addBackup(backup): Promise<void>`; `SaveDatabaseFactory = () => Promise<SaveDatabase>`.
+- `createSaveRepository(openDatabase = openSaveDatabase): SaveRepository` cho phép inject database port trong test; adapter production `openSaveDatabase` dùng `idb` để mở IndexedDB; `GameCanvas` tạo repository một lần, còn việc mở DB chỉ diễn ra khi gọi phương thức repository.
 - `createFreshSaveAfterConfirmation` tạo và lưu state mới; chỉ được gọi từ action xác nhận rõ ràng trên UI.
 - IndexedDB database tên `lexicon-game-saves`, version 1; object store `saves` keyed bởi `caseId` và `backups` keyed bởi ID backup; dùng `idb` đã cài.
 
-- [ ] **Bước 1: Viết test load/save cơ bản thất bại**
+- [x] **Bước 1: Viết test load/save cơ bản thất bại**
 
 Thêm test `returns missing when no record exists`, `round-trips only the GameState fields`, và `preserves caseId and schemaVersion`; dùng một IndexedDB test double inject qua factory để không thêm dependency.
 
-- [ ] **Bước 2: Chạy test để xác nhận thất bại**
+- [x] **Bước 2: Chạy test để xác nhận thất bại**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở test mới vì module/API chưa có.
 
-- [ ] **Bước 3: Viết test dữ liệu save lỗi/version lạ thất bại**
+- [x] **Bước 3: Viết test dữ liệu save lỗi/version lạ thất bại**
 
 Thêm test `backs up malformed state before requiring confirmation` và `does not overwrite unsupported schemaVersion`; assert backup chứa raw record, trạng thái trả về là `confirmation-required` và bản save gốc chưa bị thay. Validate đúng `caseId`, `caseTitle`, `evidenceTotal`, danh sách evidence/fact không trùng và chỉ chứa ID đã định nghĩa, objective keys/status khớp definition, flags là record boolean.
 
-- [ ] **Bước 4: Viết test lỗi IndexedDB thất bại**
+- [x] **Bước 4: Viết test lỗi IndexedDB thất bại**
 
-Thêm test load/save khi `openDB` reject; assert load trả `unavailable` có thông tin lỗi, save reject để caller hiển thị cảnh báo, không gọi tạo save mới.
+Thêm test khi `SaveDatabaseFactory` reject; assert load trả `unavailable` có thông tin lỗi, save reject để caller hiển thị cảnh báo, không gọi tạo save mới.
 
-- [ ] **Bước 5: Cài repository typed và schema validation**
+- [x] **Bước 5: Cài repository typed và schema validation**
 
 Dùng `idb` transaction để mở database `lexicon-game-saves` version 1, đọc/ghi save theo `caseId`, lưu bản raw vào backups trước khi báo save không hợp lệ. Validate version/case ID/state theo Bước 3 trước khi trả `loaded`; triển khai switch migration chỉ cho version đã hỗ trợ và không sửa record cũ trước khi migration thành công. Phase này chưa có save legacy: version không hỗ trợ sẽ yêu cầu xác nhận tạo save mới.
 
-- [ ] **Bước 6: Chạy test repository**
+- [x] **Bước 6: Chạy test repository**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PASS, bao gồm trường hợp IDB unavailable và không overwrite.
 
@@ -135,7 +136,9 @@ Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PAS
 
 **Files:**
 - Sửa: `apps/game-web/src/game/GameCanvas.tsx`
-- Sửa: `apps/game-web/src/game/GameCanvas.test.tsx` (tạo nếu chưa có)
+- Tạo: `apps/game-web/src/game/bootstrapGame.ts`
+- Tạo: `apps/game-web/src/game/bootstrapGame.test.ts`
+- Sửa: `apps/game-web/src/App.test.tsx`
 - Tạo: `apps/game-web/src/persistence/connectAutosave.ts`
 - Tạo: `apps/game-web/src/persistence/connectAutosave.test.ts`
 - Sửa: `apps/game-web/src/state/gameStore.ts`
@@ -145,33 +148,35 @@ Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PAS
 - Sửa: `packages/game-content/ui/vi.json`
 
 **Interfaces:**
-- `GameCanvas` bootstrap content/save bất đồng bộ trước khi render `GameRoot`; `GameRoot` nhận `initialState: CaseState` và khởi tạo store bằng state này.
+- `GameCanvas` bootstrap content/save bất đồng bộ trước khi render `GameRoot`; `GameRoot` nhận `initialState: CaseState` và `autosaveEnabled: boolean`, rồi khởi tạo store bằng state này.
+- `loadGameBootstrap(definition, repository)` trả `ready` có restored/fresh state và autosave enabled cho `loaded`/`missing`, `memory-only` có fresh state và autosave disabled cho `unavailable`, hoặc `confirmation-required` cho save cần recovery consent.
+- Autosave bật sau khi load status là `missing`/`loaded` hoặc sau khi người dùng xác nhận tạo save mới; nếu status ban đầu là `unavailable`, cho phép chơi bằng memory state nhưng không ghi cho tới lần khởi động có thể đọc save. Điều này tránh ghi đè save chưa đọc được.
 - `connectAutosave(store, saveGameState, onError): () => void` subscribe Zustand; gọi save khi tham chiếu `caseState` thay đổi sau transition, không gọi cho state UI hoặc transition idempotent; tuần tự hóa các lần ghi để save cũ không hoàn tất sau save mới; unsubscribe khi unmount.
 - Thêm store state/action lỗi persistence có thể hiển thị, nhưng action này không đổi `caseState`.
 
-- [ ] **Bước 1: Viết test autosave thất bại**
+- [x] **Bước 1: Viết test autosave thất bại**
 
 Test `autosaves only when caseState changes`, `does not autosave UI-only changes`, `does not autosave duplicate evidence`, `serializes writes in state order`, `reports save failures without losing in-memory state`, và `unsubscribes on cleanup`.
 
-- [ ] **Bước 2: Chạy test autosave để xác nhận thất bại**
+- [x] **Bước 2: Chạy test autosave để xác nhận thất bại**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở test mới vì module chưa tồn tại.
 
-- [ ] **Bước 3: Viết test bootstrap thất bại**
+- [x] **Bước 3: Viết test bootstrap thất bại**
 
-Test thứ tự `load save → create store from restored state → mount canvas`; test save missing dùng `createCaseState`; test save invalid hiển thị xác nhận và không mount Phaser trước khi người dùng xác nhận; test IDB unavailable hiển thị cảnh báo đọc được nhưng vẫn cho phép gameplay trong bộ nhớ. Thêm các `UiStrings`/Zod keys `saveUnavailable`, `saveWriteFailed`, `saveRecoveryTitle`, `saveRecoveryBody`, `createFreshSave`, `cancel` và UI test cho cảnh báo lỗi lưu/xác nhận tạo save mới.
+Test `loadGameBootstrap` cho save loaded → restored state, save missing → `createCaseState` với autosave bật, invalid → confirmation-required, unavailable → memory-only state/autosave tắt. `App.test.tsx` xác nhận có loading status trước khi effect hoàn tất; thứ tự không mount Phaser trước bootstrap được E2E xác nhận ở Task 6. Thêm các `UiStrings`/Zod keys `loadingGame`, `saveUnavailable`, `saveWriteFailed`, `saveRecoveryTitle`, `saveRecoveryBody`, `createFreshSave`, `cancel` và schema test cho các keys bắt buộc.
 
-- [ ] **Bước 4: Chạy test bootstrap để xác nhận thất bại**
+- [x] **Bước 4: Chạy test bootstrap để xác nhận thất bại**
 
-Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở test mới vì GameCanvas đang bootstrap đồng bộ.
+Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở test mới vì helper/bootstrap API chưa tồn tại.
 
-- [ ] **Bước 5: Cài autosave và bootstrap**
+- [x] **Bước 5: Cài autosave và bootstrap**
 
-Gắn `connectAutosave` trong effect của `GameRoot`, cleanup subscription khi unmount. Đổi `GameCanvas` thành các trạng thái loading, game, storage warning và confirmation-required; chỉ mount Phaser khi đã có `CaseState` để khôi phục hoặc người dùng xác nhận tạo mới. Khi lưu thất bại, giữ state trong store và hiển thị cảnh báo không che gameplay.
+Gắn `connectAutosave` trong effect của `GameRoot` chỉ khi `autosaveEnabled` đúng, cleanup subscription khi unmount. Đổi `GameCanvas` thành các trạng thái loading, game, storage warning và confirmation-required; chỉ mount Phaser khi đã có `CaseState` để khôi phục, chưa có save, hoặc người dùng xác nhận tạo mới. Khi load ban đầu unavailable, tạo state memory-only và không subscribe autosave. Khi lưu thất bại sau khi autosave đã được cho phép, giữ state trong store và hiển thị cảnh báo không che gameplay.
 
-- [ ] **Bước 6: Chạy test autosave/bootstrap và bridge hiện có**
+- [x] **Bước 6: Chạy test autosave/bootstrap và bridge hiện có**
 
-Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PASS; test xác nhận canvas chỉ tạo sau khi restore xong.
+Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PASS; unit test xác nhận bootstrap decisions và E2E ở Task 6 xác nhận canvas chỉ mount sau khi restore xong.
 
 ### Task 5: Xây EvidenceModal, notebook và keyboard flow
 
@@ -199,27 +204,27 @@ Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: toàn bộ test app PAS
 - Thêm `UiStrings`/Zod keys `notebook`, `evidence`, `people`, `vocabulary`, `close`, `notebookEmptyPeople`, `notebookEmptyVocabulary`, `evidenceEmpty` và `openNotebook`; nội dung tiếng Việt đặt ở `packages/game-content/ui/vi.json`.
 - `J` do `useNotebookShortcut` xử lý qua `shouldHandleShortcut`; Escape vẫn có một owner: modal/notebook đóng trước, chỉ toggle pause khi không có overlay.
 
-- [ ] **Bước 1: Viết test component thất bại**
+- [x] **Bước 1: Viết test component thất bại**
 
 Test modal hiển thị đúng evidence theo content, giữ focus trong dialog, đóng bằng nút; test notebook chỉ hiện evidence đã discovered, chọn tab, thể hiện People/Vocabulary empty state và nút đóng.
 
-- [ ] **Bước 2: Chạy test component để xác nhận thất bại**
+- [x] **Bước 2: Chạy test component để xác nhận thất bại**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở test mới do components chưa tồn tại.
 
-- [ ] **Bước 3: Viết test keyboard thất bại**
+- [x] **Bước 3: Viết test keyboard thất bại**
 
 Test `J toggles notebook when focus is not typing`, `J is ignored in input/textarea/contenteditable`, `Escape closes evidence/notebook before pausing`, `Escape in typing target does nothing`; assert đóng overlay giải phóng `inputLocked`.
 
-- [ ] **Bước 4: Chạy test keyboard để xác nhận thất bại**
+- [x] **Bước 4: Chạy test keyboard để xác nhận thất bại**
 
 Chạy `npx nx run @lexicon/game-web:test`. Mong đợi: target FAIL ở test mới.
 
-- [ ] **Bước 5: Thêm UI strings, components và shortcut**
+- [x] **Bước 5: Thêm UI strings, components và shortcut**
 
 Thêm UI strings và Zod validation cho tab/modal; render modal và notebook trong `GameRoot` bằng store selectors; giữ visual theo paper/notebook patterns hiện có và palette tokens của `@lexicon/ui`. Dùng focus trap đã có ở `src/pause/focusTrap.ts`. Esc đóng evidence rồi notebook theo thứ tự, nếu không overlay thì xử lý pause như hiện nay; không thêm listener Esc thứ hai.
 
-- [ ] **Bước 6: Chạy test UI, shortcut và content strings**
+- [x] **Bước 6: Chạy test UI, shortcut và content strings**
 
 Chạy `npx nx run @lexicon/game-web:test` và `npx nx run @lexicon/game-content:test`. Mong đợi: cả hai target PASS.
 
@@ -234,27 +239,27 @@ Chạy `npx nx run @lexicon/game-web:test` và `npx nx run @lexicon/game-content
 - E2E dùng debug API hiện tại `window.__lexiconDebug` và không gọi Phaser internals từ React.
 - Không đổi package manager; không sửa backend.
 
-- [ ] **Bước 1: Thêm E2E cho collect/modal/notebook**
+- [x] **Bước 1: Thêm E2E cho collect/modal/notebook**
 
 Test đi tới asset `meeting_minutes`, nhấn E, xác nhận modal có đúng tên/mô tả content, canvas vẫn chỉ một instance, movement dừng; nhấn Escape, mở notebook bằng J và xác nhận evidence xuất hiện. Nhấn E lần nữa sau đóng modal để xác nhận không modal trùng/duplicate.
 
-- [ ] **Bước 2: Thêm E2E persistence qua reload**
+- [x] **Bước 2: Thêm E2E persistence qua reload**
 
 Test dùng context IndexedDB sạch, thu evidence, reload, xác nhận notebook vẫn liệt kê evidence và modal không tự bật khi restore. Thêm trường hợp IndexedDB bị chặn nếu Playwright browser context cho phép cấu hình ổn định; nếu không, giữ kiểm chứng unavailable ở unit test Task 3/4.
 
-- [ ] **Bước 3: Thêm E2E shortcut và focus/input lock**
+- [x] **Bước 3: Thêm E2E shortcut và focus/input lock**
 
 Xác nhận J mở/đóng notebook, input nhận ký tự J/E/Escape mà không bị shortcut chiếm, movement không tiếp tục khi overlay mở và được khôi phục khi đóng.
 
-- [ ] **Bước 4: Chạy E2E Phase 4**
+- [x] **Bước 4: Chạy E2E Phase 4**
 
 Chạy `npm run test:e2e` từ root theo workflow repo. Mong đợi: toàn bộ E2E Phase 1–4 PASS, không có console/page error.
 
-- [ ] **Bước 5: Chạy Definition of Done toàn repo**
+- [x] **Bước 5: Chạy Definition of Done toàn repo**
 
 Chạy lần lượt `npm run lint`, `npm run test`, `npm run build`, `npm run format:check`, `npm run test:e2e`, `npm run memory:check`. Ghi output thật vào handoff/memory; nếu npm script không chạy trong môi trường hiện tại, dùng Nx/Node CLI tương đương theo đúng lệnh có sẵn trong repo và ghi rõ hạn chế, không báo PASS thay thế.
 
-- [ ] **Bước 6: Tự review diff và trạng thái Git**
+- [x] **Bước 6: Tự review diff và trạng thái Git**
 
 Chạy `git diff --check`, rà lại spec §1–§5 với test/task tương ứng, xác nhận `git status` chỉ chứa thay đổi Phase 4. Sau review và xác nhận DoD, commit Phase 4 implementation; cập nhật AI memory ở commit kế tiếp theo protocol.
 

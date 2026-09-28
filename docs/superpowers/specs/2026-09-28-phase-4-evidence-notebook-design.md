@@ -1,6 +1,6 @@
 # Phase 4 — Evidence & Notebook
 
-Trạng thái: bản thiết kế chờ người dùng duyệt. Triển khai roadmap `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §23. Các product rule trong Game Design Document, Vertical Slice Spec, Architecture và `AGENTS.md` là authoritative.
+Trạng thái: đã được người dùng duyệt. Triển khai roadmap `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §23. Các product rule trong Game Design Document, Vertical Slice Spec, Architecture và `AGENTS.md` là authoritative.
 
 ## 1. Mục tiêu và tiêu chí nghiệm thu
 

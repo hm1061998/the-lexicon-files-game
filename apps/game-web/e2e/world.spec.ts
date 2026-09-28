@@ -73,12 +73,11 @@ test('player behind desk draws below it', async ({ page }) => {
 
 test('entering the note radius reports it nearby', async ({ page }) => {
   await openWorld(page);
-  await hold(page, 'd', 800);
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1400, 1100));
   const nearWhileIn = await page.evaluate(() => window.__lexiconDebug!.nearby());
   expect(nearWhileIn).toBe('objective_note');
-  await hold(page, 'a', 1500);
-  const nearAfterLeaving = await page.evaluate(() => window.__lexiconDebug!.nearby());
-  expect(nearAfterLeaving).toBeNull();
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1800, 1100));
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBeNull();
 });
 
 test('nearby event fires once per entry', async ({ page }) => {

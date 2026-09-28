@@ -4,5 +4,21 @@
   "interact": "Tương tác",
   "pause": "Tạm dừng",
   "paused": "Đã tạm dừng",
-  "resume": "Tiếp tục"
+  "resume": "Tiếp tục",
+  "loadingGame": "Đang mở hồ sơ...",
+  "saveUnavailable": "Không thể đọc dữ liệu lưu. Phiên này sẽ chỉ lưu trong bộ nhớ.",
+  "saveWriteFailed": "Chưa thể lưu tiến trình. Trạng thái hiện tại vẫn còn trong phiên này.",
+  "saveRecoveryTitle": "Không thể khôi phục tiến trình",
+  "saveRecoveryBody": "Dữ liệu save cũ đã được sao lưu. Bạn có thể tạo save mới; thao tác này không thể khôi phục tiến trình cũ.",
+  "createFreshSave": "Tạo save mới",
+  "cancel": "Hủy",
+  "notebook": "Sổ tay điều tra",
+  "evidence": "Chứng cứ",
+  "people": "Nhân vật",
+  "vocabulary": "Từ vựng",
+  "close": "Đóng",
+  "notebookEmptyPeople": "Chưa có nhân vật nào được ghi nhận.",
+  "notebookEmptyVocabulary": "Từ vựng sẽ xuất hiện khi bạn khám phá hồ sơ.",
+  "evidenceEmpty": "Chưa thu thập được chứng cứ nào.",
+  "openNotebook": "Mở sổ tay"
 }

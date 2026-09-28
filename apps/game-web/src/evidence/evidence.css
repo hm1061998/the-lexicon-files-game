@@ -1,0 +1,52 @@
+.evidence-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(42, 37, 33, 0.6);
+  color: var(--lexicon-ink);
+  font-size: 16px;
+}
+
+.evidence-modal {
+  width: min(560px, 100%);
+  padding: 24px;
+  line-height: 1.5;
+}
+
+.evidence-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.evidence-modal h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.evidence-modal button,
+.evidence-modal a {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 4px;
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.evidence-category {
+  margin: 16px 0 4px;
+  font-size: 14px;
+}
+
+.evidence-modal p:last-child {
+  margin-bottom: 0;
+}

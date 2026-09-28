@@ -12,7 +12,11 @@ export function connectCaseEngine(
       .flatMap((scene) => scene.assets)
       .find((asset) => asset.id === interactableId)?.interaction;
     if (interaction?.effects?.length) {
-      store.getState().applyCaseEffects(interaction.effects);
+      const result = store.getState().applyCaseEffects(interaction.effects);
+      if (!result.ok) return;
+      for (const event of result.events) {
+        if (event.type === 'evidenceAdded') store.getState().openEvidence(event.evidenceId);
+      }
     }
   });
 }

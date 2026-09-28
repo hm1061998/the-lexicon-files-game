@@ -11,6 +11,15 @@ describe('loadCaseDefinition', () => {
     expect(definition.objectives.map((item) => item.id)).toEqual(['find_what_happened']);
   });
 
+  it('Case #001 exposes meeting_minutes as a collectible scene interaction', () => {
+    const definition = loadCaseDefinition('case-001');
+    const scene = definition.scenes.find((item) => item.id === 'main_office');
+    const interaction = scene?.assets.find((item) => item.id === 'meeting_minutes')?.interaction;
+
+    expect(interaction?.prompt).toBeTruthy();
+    expect(interaction?.effects).toEqual([{ type: 'addEvidence', evidenceId: 'meeting_minutes' }]);
+  });
+
   it('throws a content validation error naming an unknown case', () => {
     try {
       loadCaseDefinition('case-999');
