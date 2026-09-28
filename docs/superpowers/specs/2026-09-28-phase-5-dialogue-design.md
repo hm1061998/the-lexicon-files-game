@@ -1,6 +1,6 @@
 # Phase 5 — Dialogue
 
-Trạng thái: **đề xuất, chưa được duyệt**. Tiếp tục sau Phase 4 tại `7d4405a`; checkout khảo sát là `dev`, HEAD `2595afd`. Phạm vi theo roadmap §24; nội dung Case #001 theo `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §7, §9–§12. Đây là bản thiết kế để người dùng review trước khi viết plan và code.
+Trạng thái: **đã được người dùng duyệt ngày 2026-09-28**, theo phương án A qua chỉ thị “chốt theo đề xuất của bạn”. Tiếp tục sau Phase 4 tại `7d4405a`; checkout khảo sát là `dev`, HEAD `2595afd`. Phạm vi theo roadmap §24; nội dung Case #001 theo `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §7, §9–§12. Spec đã duyệt cho phép viết plan; plan cần review trước khi triển khai code.
 
 ## 1. Mục tiêu
 
@@ -14,15 +14,15 @@ Hiện trạng đã đối chiếu với Git:
 - Bridge đang giải interaction thành effects; store đã có input lock, evidence/notebook UI và autosave theo thay đổi `caseState`.
 - Save schema version 1 kiểm tra đúng tập objective keys. Thêm objective cần migration rõ ràng để save Phase 4 không bị coi là hỏng.
 
-## 2. Phương án và phạm vi cần duyệt
+## 2. Phương án và phạm vi đã duyệt
 
-**Đề xuất A:** thêm ba NPC tương tác trong scene Main Office prototype hiện tại; làm runner, content, UI và persistence đầy đủ cho dialogue. Kiểm thử điều kiện contradiction bằng fixture ở core/integration/E2E, chưa thêm cách mở contradiction trong gameplay. Cách này giữ một phase tập trung và cả ba NPC đều chơi được, nhưng vị trí tạm của Leo/David cần người dùng xác nhận vì Case spec chưa chốt vị trí hai NPC này.
+**Phương án A đã chốt:** thêm ba NPC tương tác trong scene Main Office prototype hiện tại; làm runner, content, UI và persistence đầy đủ cho dialogue. Kiểm thử điều kiện contradiction bằng fixture ở core/integration/E2E, chưa thêm cách mở contradiction trong gameplay. Vị trí tạm của Leo/David đã được người dùng chấp thuận cho prototype, không thay thế layout ba scene của vertical slice cuối cùng.
 
 **Phương án B:** dựng thêm Meeting Room/Archive và scene transition để đặt NPC ở nhiều phòng. Thế giới gần vertical slice hơn nhưng đưa thêm một hệ thống ngoài dialogue vào phase, tăng phạm vi và verification.
 
 **Phương án C:** chỉ Anna tương tác trong world, Leo/David chạy qua test fixtures. Thay đổi nhỏ hơn nhưng chưa đáp ứng acceptance ba cây dialogue chơi được; không đề xuất dùng làm kết quả hoàn tất Phase 5.
 
-Các phần dưới mô tả **phương án A để review**, chưa coi vị trí NPC hay ranh giới kiểm thử là quyết định đã duyệt. Không sửa product rule, số lượng năm evidence hoặc timeline/truth của Case #001.
+Các phần dưới mô tả **phương án A đã duyệt**. Không sửa product rule, số lượng năm evidence hoặc timeline/truth của Case #001.
 
 ## 3. Content và contract
 
@@ -86,4 +86,4 @@ Các phần dưới mô tả **phương án A để review**, chưa coi vị tr�
 
 ## 9. Bước tiếp theo
 
-Người dùng review phạm vi phương án A, vị trí NPC prototype và giới hạn conditional dialogue trước Phase 8. Sau khi spec được duyệt mới dùng writing-plans để lập plan tiếng Việt và trình chọn cách thực thi. Bản spec này chưa cho phép triển khai code hoặc push.
+Dùng writing-plans lập plan tiếng Việt, trình review và chọn cách thực thi trước khi triển khai code. Chỉ push tài liệu đã được người dùng xác nhận theo protocol memory.
