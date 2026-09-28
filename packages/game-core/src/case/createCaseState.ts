@@ -4,7 +4,9 @@ export function createCaseState(definition: CaseDefinition): GameState {
   const objectiveStatuses: Record<string, ObjectiveStatus> = {};
   for (const objective of definition.objectives) {
     objectiveStatuses[objective.id] =
-      objective.id === definition.initialObjectiveId ? 'active' : 'locked';
+      objective.id === definition.initialObjectiveId
+        ? 'active'
+        : (objective.initialStatus ?? 'locked');
   }
 
   return {
