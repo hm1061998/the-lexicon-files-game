@@ -5,7 +5,7 @@ phase: phase-2
 status: proposed
 result_commit: f618bec
 active_spec: docs/superpowers/specs/2026-09-28-phase-2-react-hud-integration-design.md
-active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
+active_plan: docs/superpowers/plans/2026-09-28-phase-2-react-hud-integration.md
 ---
 
 ## Metadata
@@ -22,7 +22,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Current Status
 
-- Spec Phase 2 đã viết; chờ người dùng review spec trước khi lập plan.
+- Spec Phase 2 đã duyệt; plan 5 task đã viết, chờ người dùng review và chọn cách thực thi.
 
 ## Completed
 
@@ -53,7 +53,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Next Actions
 
-- Người dùng review spec Phase 2; sau đó lập plan bằng writing-plans.
+- Người dùng review plan Phase 2 và chọn Subagent-driven hoặc Native.
 
 ## Verification
 
