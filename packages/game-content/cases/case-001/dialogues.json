@@ -9,6 +9,12 @@
           "id": "entry",
           "speakerId": "anna",
           "text": "I left the meeting early. I had a call with a client.",
+          "vocabularySpans": [
+            {"start":2,"end":6,"vocabularyId":"leave"},
+            {"start":11,"end":18,"vocabularyId":"meeting"},
+            {"start":19,"end":24,"vocabularyId":"early"},
+            {"start":46,"end":52,"vocabularyId":"client"}
+          ],
           "terminal": false,
           "choices": [
             {

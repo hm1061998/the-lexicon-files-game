@@ -5,6 +5,7 @@ import objectivesRaw from '../../cases/case-001/objectives.json';
 import evidencesRaw from '../../cases/case-001/evidences.json';
 import fullFacts from '../../cases/case-001/facts.json';
 import office from '../../cases/case-001/scenes/main_office.json';
+import vocabularyRaw from '../../cases/case-001/vocabulary.json';
 
 const factsRaw = { facts: [fullFacts.facts[0]!] };
 function input() {
@@ -63,7 +64,7 @@ function input() {
 }
 type Input = ReturnType<typeof input>;
 function parse(value: unknown) {
-  return parseCaseDefinition(value as Input, 'cases/test');
+  return parseCaseDefinition({ ...value, vocabularyRaw } as Input, 'cases/test');
 }
 function changed(change: (v: Input) => void) {
   const value = structuredClone(input());

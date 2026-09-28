@@ -6,6 +6,11 @@ describe('loadCaseDefinition', () => {
   it('loads the minimal case, including its scene, evidence, fact, and objective', () => {
     const definition = loadCaseDefinition('case-001');
     expect(definition.scenes.map((scene) => scene.id)).toEqual(['main_office']);
+    expect(definition.vocabulary).toHaveLength(20);
+    expect(definition.vocabularyContexts).toContainEqual({
+      id: 'evidence:meeting_minutes:description',
+      vocabularyIds: expect.arrayContaining(['meeting', 'leave', 'client']),
+    });
     expect(definition.evidences.map((item) => item.id)).toEqual(['meeting_minutes']);
     expect(definition.facts.map((item) => item.id)).toEqual([
       'meeting_started',

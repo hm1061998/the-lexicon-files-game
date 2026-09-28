@@ -1,4 +1,9 @@
 export type {
+  CEFRLevel, TranslationMode, VocabularyStage, VocabularyEntry,
+  VocabularySpan, VocabularyContextDefinition, VocabularyProgress, LanguageProfile,
+  LearningAction, LearningDomainEvent, LearningError,
+} from './learning';
+export type {
   SceneAssetType,
   RectCollision,
   InteractionArea,

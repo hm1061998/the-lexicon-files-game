@@ -1,5 +1,6 @@
 import type { NPCDefinition, DialogueTree } from './dialogue';
 import type { SceneDefinition } from './scene';
+import type { VocabularyContextDefinition, VocabularyEntry, VocabularySpan } from './learning';
 
 export type EvidenceCategory = 'document' | 'audio' | 'photo' | 'object' | 'statement' | 'digital';
 
@@ -19,6 +20,8 @@ export interface EvidenceDefinition {
   readonly relatedFactIds: readonly string[];
   readonly relatedNpcIds?: readonly string[];
   readonly vocabularyIds?: readonly string[];
+  readonly descriptionVi?: string | undefined;
+  readonly vocabularySpans?: readonly VocabularySpan[] | undefined;
   readonly imageAsset?: string;
 }
 
@@ -56,6 +59,8 @@ export interface CaseDefinition {
   readonly evidences: readonly EvidenceDefinition[];
   readonly facts: readonly FactDefinition[];
   readonly objectives: readonly ObjectiveDefinition[];
+  readonly vocabulary: readonly VocabularyEntry[];
+  readonly vocabularyContexts: readonly VocabularyContextDefinition[];
 }
 
 export type ObjectiveStatus = 'locked' | 'active' | 'completed';

@@ -1,11 +1,13 @@
 import { z } from 'zod';
 import { conditionSchema, effectSchema } from './caseEngine';
+import { vocabularySpanSchema } from './learning';
 const id = z.string().min(1);
 export const npcSchema = z.object({ id, name: id, role: id, dialogueTreeId: id }).strict();
 const choiceSchema = z
   .object({
     id,
     text: id,
+    translationVi: id.optional(),
     nextNodeId: id,
     condition: conditionSchema.optional(),
     effects: z.array(effectSchema).optional(),
@@ -16,6 +18,8 @@ const nodeSchema = z
     id,
     speakerId: id,
     text: id,
+    translationVi: id.optional(),
+    vocabularySpans: z.array(vocabularySpanSchema).optional(),
     terminal: z.boolean(),
     choices: z.array(choiceSchema),
     condition: conditionSchema.optional(),

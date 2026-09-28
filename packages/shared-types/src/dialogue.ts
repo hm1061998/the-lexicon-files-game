@@ -1,4 +1,5 @@
 import type { CaseDomainEvent, Condition, Effect, GameState } from './case-engine';
+import type { VocabularySpan } from './learning';
 export interface NPCDefinition {
   readonly id: string;
   readonly name: string;
@@ -8,6 +9,7 @@ export interface NPCDefinition {
 export interface DialogueChoice {
   readonly id: string;
   readonly text: string;
+  readonly translationVi?: string | undefined;
   readonly nextNodeId: string;
   readonly condition?: Condition | undefined;
   readonly effects?: readonly Effect[] | undefined;
@@ -16,6 +18,8 @@ export interface DialogueNode {
   readonly id: string;
   readonly speakerId: string;
   readonly text: string;
+  readonly translationVi?: string | undefined;
+  readonly vocabularySpans?: readonly VocabularySpan[] | undefined;
   readonly condition?: Condition | undefined;
   readonly effects?: readonly Effect[] | undefined;
   readonly choices: readonly DialogueChoice[];

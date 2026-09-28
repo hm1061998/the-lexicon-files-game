@@ -12,6 +12,8 @@ import { npcSchema, dialogueTreeSchema } from './dialogue';
 import { validateDialogueReferences } from '../validation/dialogueReferences';
 import { conditionSchema } from './caseEngine';
 import { sceneDefinitionSchema } from './scene';
+import { vocabularyCatalogueSchema, vocabularySpanSchema } from './learning';
+import { validateVocabularyReferences } from '../validation/vocabularyReferences';
 
 const caseRawSchema = z
   .object({
@@ -39,6 +41,8 @@ const evidenceSchema = z
     name: z.string().min(1),
     category: z.enum(['document', 'audio', 'photo', 'object', 'statement', 'digital']),
     description: z.string().min(1),
+    descriptionVi: z.string().min(1).optional(),
+    vocabularySpans: z.array(vocabularySpanSchema).optional(),
     relatedFactIds: z.array(z.string().min(1)),
     relatedNpcIds: z.array(z.string().min(1)).optional(),
     vocabularyIds: z.array(z.string().min(1)).optional(),
@@ -68,6 +72,7 @@ type ParseCaseDefinitionInput = {
   sceneRaws: readonly unknown[];
   npcsRaw: unknown;
   dialoguesRaw: unknown;
+  vocabularyRaw: unknown;
 };
 
 function formatIssue(issue: z.ZodIssue): string {
@@ -151,6 +156,7 @@ export function parseCaseDefinition(
   const objectivesResult = objectivesRawSchema.safeParse(input.objectivesRaw);
   const evidencesResult = evidencesRawSchema.safeParse(input.evidencesRaw);
   const factsResult = factsRawSchema.safeParse(input.factsRaw);
+  const vocabularyResult = vocabularyCatalogueSchema.safeParse(input.vocabularyRaw);
   const scenesResult = input.sceneRaws.map((scene) => sceneDefinitionSchema.safeParse(scene));
 
   const issues: string[] = [];
@@ -165,6 +171,7 @@ export function parseCaseDefinition(
     appendSchemaIssues(issues, `${source}/evidences.json`, evidencesResult.error);
   }
   if (!factsResult.success) appendSchemaIssues(issues, `${source}/facts.json`, factsResult.error);
+  if (!vocabularyResult.success) appendSchemaIssues(issues, `${source}/vocabulary.json`, vocabularyResult.error);
   scenesResult.forEach((result, index) => {
     if (!result.success) {
       appendSchemaIssues(issues, `${source}/sceneRaws.${index}`, result.error);
@@ -178,6 +185,7 @@ export function parseCaseDefinition(
     !objectivesResult.success ||
     !evidencesResult.success ||
     !factsResult.success ||
+    !vocabularyResult.success ||
     scenesResult.some((result) => !result.success)
   ) {
     throw new ContentValidationError(source, issues);
@@ -187,6 +195,7 @@ export function parseCaseDefinition(
   const objectives = objectivesResult.data.objectives as ObjectiveDefinition[];
   const evidences = evidencesResult.data.evidences as EvidenceDefinition[];
   const facts = factsResult.data.facts as FactDefinition[];
+  const vocabulary = vocabularyResult.data.vocabulary;
   const scenes = scenesResult.map(
     (result) => (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] }).data,
   );
@@ -205,6 +214,7 @@ export function parseCaseDefinition(
   }
 
   const objectiveIds = new Set(objectives.map(({ id }) => id));
+  const vocabularyContexts: { id: string; vocabularyIds: readonly string[] }[] = [];
   const evidenceIds = new Set(evidences.map(({ id }) => id));
   const factIds = new Set(facts.map(({ id }) => id));
   const sceneById = new Map(scenes.map((scene) => [scene.id, scene]));
@@ -237,6 +247,9 @@ export function parseCaseDefinition(
   });
 
   evidences.forEach((evidence, index) => {
+    const spans = evidence.vocabularySpans ?? [];
+    const ids = [...new Set(spans.map(({ vocabularyId }) => vocabularyId))];
+    if (spans.length > 0) vocabularyContexts.push({ id: `evidence:${evidence.id}:description`, vocabularyIds: ids });
     if (evidence.caseId !== caseData.id) {
       issues.push(`evidences.${index}.caseId: expected "${caseData.id}"`);
     }
@@ -245,6 +258,16 @@ export function parseCaseDefinition(
         issues.push(`evidences.${index}.relatedFactIds: unknown fact id "${id}"`);
     });
   });
+
+  dialoguesResult.data.dialogues.forEach((tree) => tree.nodes.forEach((node) => {
+    if (node.vocabularySpans?.length) vocabularyContexts.push({ id: `dialogue:${tree.id}:${node.id}:text`, vocabularyIds: [...new Set(node.vocabularySpans.map(({ vocabularyId }) => vocabularyId))] });
+  }));
+  issues.push(...validateVocabularyReferences({
+    source,
+    catalogue: vocabulary,
+    evidenceContexts: evidences.map((entry) => ({ id: `evidence:${entry.id}:description`, text: entry.description, spans: entry.vocabularySpans, vocabularyIds: entry.vocabularyIds })),
+    dialogueContexts: dialoguesResult.data.dialogues.flatMap((tree) => tree.nodes.map((node) => ({ id: `dialogue:${tree.id}:${node.id}:text`, text: node.text, spans: node.vocabularySpans }))),
+  }));
 
   facts.forEach((fact, index) => {
     fact.sourceEvidenceIds.forEach((id) => {
@@ -306,5 +329,7 @@ export function parseCaseDefinition(
     evidences,
     facts,
     objectives,
+    vocabulary,
+    vocabularyContexts,
   };
 }

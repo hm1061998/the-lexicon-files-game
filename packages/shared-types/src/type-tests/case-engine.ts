@@ -64,6 +64,8 @@ const definition = {
   evidences: [evidence],
   facts: [fact],
   objectives: [objective],
+  vocabulary: [],
+  vocabularyContexts: [],
 } satisfies CaseDefinition;
 
 const state = {
