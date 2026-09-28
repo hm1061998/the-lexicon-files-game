@@ -1,3 +1,5 @@
+import { GameCanvas } from './game/GameCanvas';
+
 export function App() {
-  return <div>The Lexicon Files</div>;
+  return <GameCanvas />;
 }

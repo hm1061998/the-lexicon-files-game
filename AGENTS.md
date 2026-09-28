@@ -4,16 +4,16 @@ Rule chung cho mọi coding agent (Codex, Claude Code, …). Rule theo khu vực
 
 ## 1. Đọc trước khi làm
 
-| File | Vai trò |
-|---|---|
-| `docs/01_GAME_DESIGN_DOCUMENT.md` | Product rules |
-| `docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md` | Learning rules |
-| `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` | MVP content contract |
-| `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` | Phase, Definition of Done |
-| `docs/05_DOTNET_BACKEND_TECHNICAL_DESIGN.md` | Backend rules |
-| `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md` | Asset/scene/character contract |
-| `docs/architecture/ARCHITECTURE.md` | Kiến trúc tổng hợp, dependency rules |
-| `docs/concept/*.webp` | Visual target |
+| File                                                     | Vai trò                              |
+| -------------------------------------------------------- | ------------------------------------ |
+| `docs/01_GAME_DESIGN_DOCUMENT.md`                        | Product rules                        |
+| `docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md`              | Learning rules                       |
+| `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md`                | MVP content contract                 |
+| `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`                | Phase, Definition of Done            |
+| `docs/05_DOTNET_BACKEND_TECHNICAL_DESIGN.md`             | Backend rules                        |
+| `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md` | Asset/scene/character contract       |
+| `docs/architecture/ARCHITECTURE.md`                      | Kiến trúc tổng hợp, dependency rules |
+| `docs/concept/*.webp`                                    | Visual target                        |
 
 Không tự ý thay đổi product rule trong docs. Nếu thấy docs mâu thuẫn hoặc thiếu → hỏi, không đoán.
 
@@ -25,18 +25,18 @@ Với công việc có thể ảnh hưởng code, plan, tiến độ, quyết đ
 
 Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (`using-superpowers`).
 
-| Tình huống | Skill |
-|---|---|
-| Feature/hành vi mới, chưa rõ thiết kế | `brainstorming` → spec vào `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` |
-| Có spec, bắt đầu một phase | `writing-plans` → plan vào `docs/superpowers/plans/YYYY-MM-DD-<phase>.md` |
-| Thực thi plan | `subagent-driven-development` (có subagent) hoặc `executing-plans` |
-| Các task độc lập | `dispatching-parallel-agents` |
-| Viết code logic | `test-driven-development` — test trước, đặc biệt cho `game-core`, `learning-engine`, content validation, Domain/Application |
-| Bug / test fail | `systematic-debugging` — tìm root cause trước khi sửa |
-| React HUD / notebook / modal | `ui-ux-pro-max` (nhưng palette/typography theo docs/art/06, không theo gợi ý chung) |
-| Trước khi báo "xong" | `verification-before-completion` |
-| Review | `requesting-code-review` / `receiving-code-review` |
-| Tách nhánh / kết thúc nhánh | `using-git-worktrees` / `finishing-a-development-branch` |
+| Tình huống                            | Skill                                                                                                                       |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Feature/hành vi mới, chưa rõ thiết kế | `brainstorming` → spec vào `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`                                            |
+| Có spec, bắt đầu một phase            | `writing-plans` → plan vào `docs/superpowers/plans/YYYY-MM-DD-<phase>.md`                                                   |
+| Thực thi plan                         | `subagent-driven-development` (có subagent) hoặc `executing-plans`                                                          |
+| Các task độc lập                      | `dispatching-parallel-agents`                                                                                               |
+| Viết code logic                       | `test-driven-development` — test trước, đặc biệt cho `game-core`, `learning-engine`, content validation, Domain/Application |
+| Bug / test fail                       | `systematic-debugging` — tìm root cause trước khi sửa                                                                       |
+| React HUD / notebook / modal          | `ui-ux-pro-max` (nhưng palette/typography theo docs/art/06, không theo gợi ý chung)                                         |
+| Trước khi báo "xong"                  | `verification-before-completion`                                                                                            |
+| Review                                | `requesting-code-review` / `receiving-code-review`                                                                          |
+| Tách nhánh / kết thúc nhánh           | `using-git-worktrees` / `finishing-a-development-branch`                                                                    |
 
 **Một phase một lần.** Không làm phase sau khi chưa được yêu cầu. Không giao cả 12 phase trong một lượt.
 
@@ -88,6 +88,7 @@ npm run lint
 npm run test
 npm run build
 ```
+
 Backend (khi có thay đổi trong `apps/api`): `dotnet build` + `dotnet test`.
 
 Báo cáo gồm: tóm tắt, file thay đổi, test thêm, lệnh đã chạy + kết quả, hạn chế còn lại. Không đánh dấu complete nếu chỉ có UI mock hoặc test chưa chạy.
@@ -95,5 +96,5 @@ Báo cáo gồm: tóm tắt, file thay đổi, test thêm, lệnh đã chạy + 
 ## 8. Môi trường hiện tại
 
 - Windows, Node 22, npm + Nx (npm workspaces).
-- Chưa có .NET 10 SDK trên máy → nếu không build được backend, nói rõ, không tuyên bố đã pass.
-- Repo chưa `git init`.
+- .NET SDK 10.0.401 đã cài (`apps/api/global.json` pin 10.0.100, rollForward `latestFeature`). Nếu backend không build được, nói rõ, không tuyên bố đã pass.
+- Repo dùng Git: branch làm việc `dev`, branch chính `main`, remote `origin`.

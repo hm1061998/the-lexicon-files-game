@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T10:37:43+07:00
-phase: phase-0a
+updated_at: 2026-09-28T17:00:00+07:00
+phase: phase-0b
 status: complete
-result_commit: 22ac78bb68d5e2e43a32980bba7e0430e04cb7e8
-active_spec: docs/superpowers/specs/2026-09-28-durable-ai-memory-design.md
-active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
+result_commit: dfc3cfd
+active_spec: docs/04_CODEX_IMPLEMENTATION_ROADMAP.md
+active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 ---
 
 ## Metadata
@@ -14,33 +14,36 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
 
 ## Current Phase
 
-- Phase 0A — Durable AI Memory.
+- Phase 0B — Project Foundation gap closure (roadmap §19).
 
 ## Active Goal
 
-- Duy trì handoff bền vững, ngắn gọn và kiểm tra được giữa các phiên AI.
+- Đưa repo đạt đủ Deliverables và Acceptance của Phase 0.
 
 ## Current Status
 
-- Phase 0A hoàn thành trên branch `dev`; chưa push hoặc merge vào `main`.
+- Phase 0B hoàn thành và final review xong trên `dev`, đã push; chưa merge vào `main`.
 
 ## Completed
 
-- Spec được duyệt và push tại `8d6b903`.
-- Plan tiếng Việt được duyệt và push tại `b4ce5d5`.
-- Parser/validator thuần cùng 19 unit tests được commit tại `d26e3b4`.
-- CLI, Nx targets, tài liệu vận hành và initial memory được commit tại `b669446`.
-- Review hardening cho list budget và linked artifact paths được commit tại `22ac78b`.
+- Task 1 `e9c4270`: vá NU1903 (OpenApi 10.0.12), `/health`, OpenAPI, CORS, 5 test xUnit.
+- Task 2 `61e317e`: target lint/test cho 7 project, smoke test và test kiến trúc framework-free.
+- Task 3 `e95b9b4`: React mount Phaser (`BootScene`, `GameCanvas`), e2e đúng 1 canvas.
+- Task 4 `6b77df2`: Prettier toàn repo, `format:check`, ignore skill vendored và tsbuildinfo.
+- Task 5: acceptance Phase 0, sửa AGENTS.md §8.
+- Final review (opus): 1 Important đã sửa (bỏ track tsbuildinfo); 2 minor deferred: test không được tsc typecheck, CORS test chưa phủ preflight.
 
 ## In Progress
 
-- Không có hạng mục triển khai đang mở trong Phase 0A.
+- Không có hạng mục đang mở.
 
 ## Active Decisions
 
-- Memory dùng một snapshot mutable; Git history lưu trạng thái cũ.
-- Validation không dependency, không network và không gọi AI.
-- Deferred minor: fence dài hơn 3 ký tự và danh sách material files trong handoff.
+- Phase 0B = lấp khoảng trống Phase 0, không làm tính năng Phase 1.
+- Không tắt warnings-as-errors; OpenApi nâng lên bản đã vá.
+- Unit test React dùng `renderToString` + mock `createGame`; Phaser được phủ bằng Playwright.
+- Chưa đăng ký DbContext Postgres cho tới khi có entity.
+- Deferred minor Phase 0A: fence dài hơn 3 ký tự và danh sách material files trong handoff.
 
 ## Blockers
 
@@ -48,24 +51,26 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
 
 ## Next Actions
 
-- Xin duyệt push branch `dev`; chỉ lập kế hoạch Phase 0B sau khi người dùng yêu cầu.
+- Chờ người dùng yêu cầu bắt đầu Phase 1 (người dùng tự merge `dev` vào `main`).
 
 ## Verification
 
-- `node --test tools/ai-memory/test/memory-schema.test.mjs` — PASS 25/25.
-- `npm run memory:test` — PASS 30/30.
-- `npm run memory:check` — PASS.
-- `npm run lint` — PASS.
-- `npm run test` — PASS 30/30.
+- `npm install` — PASS (có audit warnings, chưa xử lý).
+- `npm run lint` — PASS 7 project.
+- `npm run test` — PASS 7 project.
 - `npm run build` — PASS.
-- `git diff --check` — PASS.
+- `npm run format:check` — PASS.
+- `npm run test:e2e` — PASS 1/1.
+- `npm run dev` — HTTP 200 tại `http://localhost:5173`.
+- `dotnet build` — PASS 0 warning; `dotnet test` — PASS 5/5.
+- `npm run memory:check` — PASS.
 
 ## Latest Handoff
 
-- Phase 0A đã sửa toàn bộ finding quan trọng từ review; không triển khai Phase 0B hoặc merge `main` khi chưa được yêu cầu.
+- Phase 0B đã triển khai đủ plan; rulings nằm trong ledger `.superpowers/sdd/` và báo cáo phiên.
 
 ## Required Reading
 
 - `AGENTS.md`
-- `docs/superpowers/specs/2026-09-28-durable-ai-memory-design.md`
-- `docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md`
+- `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`
+- `docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md`

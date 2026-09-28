@@ -5,5 +5,11 @@
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
-  "dependencies": { "@lexicon/shared-types": "*" }
+  "dependencies": {
+    "@lexicon/shared-types": "*"
+  },
+  "scripts": {
+    "lint": "eslint src",
+    "test": "vitest run"
+  }
 }

@@ -3,6 +3,7 @@
 Áp dụng thêm cho frontend. Rule gốc: `/AGENTS.md`. Chi tiết asset: `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`.
 
 ## Phaser (`src/game`)
+
 - `WorldScene` generic, dựng từ `SceneDefinition` JSON; không hardcode props trong scene class.
 - World position = feet / floor contact. Character origin `(0.5, 0.88)`, depth `= y + depthBias`.
 - Collider là footprint nhỏ (Arcade Physics). Không dùng full sprite làm collider.
@@ -15,6 +16,7 @@
 - `shutdown`/`destroy` phải gỡ mọi listener bus/input/timer.
 
 ## React (`src/hud`, `notebook`, `dialogue`, …)
+
 - Không truy cập `Phaser.Game`/scene trực tiếp; dùng `bridge/` hooks + store.
 - Không re-render/mount lại canvas khi state UI thay đổi.
 - Font ≥ 14px, focus visible, modal có focus trap, điều khiển được bằng bàn phím.
@@ -22,10 +24,12 @@
 - Text/ID hiển thị lấy từ content, không hardcode.
 
 ## State & persistence
+
 - Zustand store bọc reducer của `game-core`; không nhân bản logic engine trong store.
 - IndexedDB qua `persistence/`; auto-save khi evidence / objective / dialogue / scene / contradiction thay đổi.
 - Save hỏng: backup → migrate → chỉ tạo save mới sau khi user xác nhận.
 
 ## Test
+
 - Logic: Vitest ở package tương ứng, không test logic qua Phaser.
 - E2E Playwright (`e2e/`): luồng start case → evidence → NPC → security log → contradiction → accuse David → case closed → reload.
