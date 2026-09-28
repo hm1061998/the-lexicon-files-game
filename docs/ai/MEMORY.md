@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T17:00:00+07:00
+updated_at: 2026-09-28T21:00:00+07:00
 phase: phase-1
-status: proposed
-result_commit: dfc3cfd
+status: complete
+result_commit: f618bec
 active_spec: docs/superpowers/specs/2026-09-28-phase-1-game-world-prototype-design.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 ---
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Current Phase
 
-- Phase 1 — Game World Prototype (roadmap §20); Phase 0B đã hoàn thành.
+- Phase 1 — Game World Prototype (roadmap §20).
 
 ## Active Goal
 
@@ -22,16 +22,17 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Current Status
 
-- Spec Phase 1 đã duyệt; plan 6 task đã viết, chờ người dùng review và chọn cách thực thi.
+- Phase 1 hoàn thành bằng subagent-driven, final review xong, đã push `dev`; người dùng tự merge `main`.
 
 ## Completed
 
-- Task 1 `e9c4270`: vá NU1903 (OpenApi 10.0.12), `/health`, OpenAPI, CORS, 5 test xUnit.
-- Task 2 `61e317e`: target lint/test cho 7 project, smoke test và test kiến trúc framework-free.
-- Task 3 `e95b9b4`: React mount Phaser (`BootScene`, `GameCanvas`), e2e đúng 1 canvas.
-- Task 4 `6b77df2`: Prettier toàn repo, `format:check`, ignore skill vendored và tsbuildinfo.
-- Task 5: acceptance Phase 0, sửa AGENTS.md §8.
-- Final review (opus): 1 Important đã sửa (bỏ track tsbuildinfo); 2 minor deferred: test không được tsc typecheck, CORS test chưa phủ preflight.
+- Phase 0A, Phase 0B hoàn thành (xem Git history).
+- Task 1 `c9dc6e3`: Zod scene schema, loader, `main_office.json`.
+- Task 2 `326be6a`: typed event bus.
+- Task 3 `cb1dccc`: system thuần input/direction/depth/interaction.
+- Task 4 `bff9dd8`: WorldScene data-driven, placeholder texture, collision, depth, camera, debug hook dev, panel lỗi content.
+- Task 5 `cc29bae`: InteractionTracker, marker đỏ, event nearby/cleared.
+- Final fix `f618bec`: WASD không bị Phaser nuốt khi gõ input; counter debug chỉ ở dev.
 
 ## In Progress
 
@@ -39,12 +40,11 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Active Decisions
 
-- Phase 0B = lấp khoảng trống Phase 0, không làm tính năng Phase 1.
-- Không tắt warnings-as-errors; OpenApi nâng lên bản đã vá.
-- Unit test React dùng `renderToString` + mock `createGame`; Phaser được phủ bằng Playwright.
-- Chưa đăng ký DbContext Postgres cho tới khi có entity.
-- Phase 1: WASD theo trục màn hình; placeholder hình học runtime (không giống concept art, art thật ở Phase 11); Arcade Physics collider chữ nhật.
-- Deferred minor Phase 0A: fence dài hơn 3 ký tự và danh sách material files trong handoff.
+- WASD theo trục màn hình; placeholder hình học runtime (art thật ở Phase 11); Arcade Physics collider chữ nhật.
+- Một `wall_back` ngang thay cho cặp tường trái/phải trong spec §4.
+- `fps.panicMax: 0` để tránh Phaser cap delta lúc khởi động.
+- Debug hook `window.__lexiconDebug` chỉ có ở dev (thêm `teleport`, `nearbyEvents`).
+- Deferred minor: registry cast chưa guard, `depthOf` trả NaN với id lạ, formatIssue thiếu expected/received, test không được tsc typecheck, CORS chưa test preflight.
 
 ## Blockers
 
@@ -52,26 +52,23 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md
 
 ## Next Actions
 
-- Người dùng review plan Phase 1 và chọn Subagent-driven hoặc Native.
+- Chờ người dùng yêu cầu bắt đầu Phase 2 (React HUD Integration).
 
 ## Verification
 
-- `npm install` — PASS (có audit warnings, chưa xử lý).
 - `npm run lint` — PASS 7 project.
 - `npm run test` — PASS 7 project.
-- `npm run build` — PASS.
+- `npm run build` — PASS; không có `__lexiconDebug` trong dist.
 - `npm run format:check` — PASS.
-- `npm run test:e2e` — PASS 1/1.
-- `npm run dev` — HTTP 200 tại `http://localhost:5173`.
-- `dotnet build` — PASS 0 warning; `dotnet test` — PASS 5/5.
+- `npm run test:e2e` — PASS 10/10.
 - `npm run memory:check` — PASS.
 
 ## Latest Handoff
 
-- Phase 0B đã triển khai đủ plan; rulings nằm trong ledger `.superpowers/sdd/` và báo cáo phiên.
+- Phase 1 xong; HUD có thể nghe `interaction:nearby`/`interaction:cleared` từ bus tạo trong `GameCanvas`.
 
 ## Required Reading
 
 - `AGENTS.md`
-- `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`
-- `docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md`
+- `docs/superpowers/specs/2026-09-28-phase-1-game-world-prototype-design.md`
+- `docs/superpowers/plans/2026-09-28-phase-1-game-world-prototype.md`
