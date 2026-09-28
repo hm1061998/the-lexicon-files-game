@@ -247,3 +247,46 @@ test('closing an unread branch and reloading does not complete an interview', as
   expect((await saved(page))?.state.flags.david_q1_read).toBeUndefined();
   expect((await saved(page))?.state.flags.david_interviewed).toBeUndefined();
 });
+
+test('physical double clicks cannot skip responses or select the next question', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openWorld(page);
+  await talk(page, 'anna');
+  await page
+    .getByRole('button', { name: 'Who was still in the room?', exact: true })
+    .dblclick({ delay: 120 });
+  await expect(page.getByRole('button', { name: 'Tiếp tục hỏi', exact: true })).toBeVisible();
+  expect((await saved(page))?.state.flags.anna_q3_read).toBeUndefined();
+  await page.getByRole('button', { name: 'Tiếp tục hỏi', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(async () => (await saved(page))?.state.flags.anna_q3_read).toBe(true);
+
+  await seed(page, {
+    schemaVersion: 2,
+    caseId: definition.id,
+    updatedAt: 42,
+    state: { ...createCaseState(definition), flags: { david_contradiction_found: true } },
+  });
+  await talk(page, 'david');
+  await page
+    .getByRole('button', {
+      name: 'But the security log shows that you entered at 8:32.',
+      exact: true,
+    })
+    .dblclick({ delay: 120 });
+  const folder = page.getByRole('button', { name: 'Which folder?', exact: true });
+  await expect(folder).toBeVisible();
+  await expect
+    .poll(async () =>
+      (await saved(page))?.state.discoveredFactIds.includes('david_collected_folder'),
+    )
+    .toBe(true);
+  expect((await saved(page))?.state.discoveredFactIds).not.toContain('david_took_report');
+  await folder.focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('dialog')).toContainText(
+    'I took it to correct it before anyone noticed.',
+  );
+});

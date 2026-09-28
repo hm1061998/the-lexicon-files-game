@@ -90,13 +90,16 @@ export function DialogueView({
               <button
                 type="button"
                 key={choice.id}
-                onClick={() =>
+                onClick={(event) => {
+                  // A replacement choice can occupy the same spot during a double click.
+                  // Keyboard activation has detail 0 and remains available immediately.
+                  if (event.detail > 1) return;
                   onChoose({
                     nodeId: session.nodeId,
                     revision: session.revision,
                     choiceId: choice.id,
-                  })
-                }
+                  });
+                }}
               >
                 {choice.text}
               </button>
