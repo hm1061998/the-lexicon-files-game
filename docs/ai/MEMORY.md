@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T14:00:00+07:00
-phase: phase-0a
-status: complete
-result_commit: 22ac78bb68d5e2e43a32980bba7e0430e04cb7e8
-active_spec: docs/superpowers/specs/2026-09-28-durable-ai-memory-design.md
-active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
+updated_at: 2026-09-28T15:00:00+07:00
+phase: phase-0b
+status: proposed
+result_commit: 7f33b31
+active_spec: docs/04_CODEX_IMPLEMENTATION_ROADMAP.md
+active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 ---
 
 ## Metadata
@@ -14,59 +14,54 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md
 
 ## Current Phase
 
-- Phase 0A — Durable AI Memory.
+- Phase 0B — Project Foundation gap closure (roadmap §19).
 
 ## Active Goal
 
-- Duy trì handoff bền vững, ngắn gọn và kiểm tra được giữa các phiên AI.
+- Đưa repo đạt đủ Deliverables và Acceptance của Phase 0.
 
 ## Current Status
 
-- Phase 0A hoàn thành, đã verify lại tại `63f32ae` và đã push `dev` lên `origin/dev`; chưa merge vào `main`.
+- Đã audit và viết plan Phase 0B; chờ người dùng duyệt plan và chọn cách thực thi.
 
 ## Completed
 
-- Spec được duyệt và push tại `8d6b903`.
-- Plan tiếng Việt được duyệt và push tại `b4ce5d5`.
-- Parser/validator thuần cùng 19 unit tests được commit tại `d26e3b4`.
-- CLI, Nx targets, tài liệu vận hành và initial memory được commit tại `b669446`.
-- Review hardening cho list budget và linked artifact paths được commit tại `22ac78b`.
-- Handoff review được chốt tại `63f32ae`; verification cuối chạy lại PASS.
+- Phase 0A hoàn thành và đã push trên `dev` (`63f32ae`, sync memory `7f33b31`).
+- Audit Phase 0 ghi trong plan Phase 0B.
 
 ## In Progress
 
-- Không có hạng mục triển khai đang mở trong Phase 0A.
+- Chờ duyệt plan Phase 0B.
 
 ## Active Decisions
 
-- Memory dùng một snapshot mutable; Git history lưu trạng thái cũ.
-- Validation không dependency, không network và không gọi AI.
-- Deferred minor: fence dài hơn 3 ký tự và danh sách material files trong handoff.
+- Phase 0B = lấp khoảng trống Phase 0, không làm tính năng Phase 1.
+- Không tắt warnings-as-errors hay NoWarn NU1903; phải nâng/pin package OpenApi đã vá.
+- Deferred minor Phase 0A: fence dài hơn 3 ký tự và danh sách material files trong handoff.
 
 ## Blockers
 
-- Không có blocker hiện tại.
+- `dotnet build` FAIL do NU1903 (`Microsoft.OpenApi` 2.0.0); được xử lý ở Task 1 của plan.
 
 ## Next Actions
 
-- Chờ người dùng quyết định merge `dev` vào `main` hoặc bắt đầu Phase 0B.
+- Người dùng duyệt plan Phase 0B và chọn Subagent-driven hoặc Native.
 
 ## Verification
 
-- `node --test tools/ai-memory/test/memory-schema.test.mjs` — PASS 25/25.
-- `npm run memory:test` — PASS 30/30.
-- `npm run memory:check` — PASS.
-- `npm run lint` — PASS.
-- `npm run test` — PASS 30/30.
+- `npm run lint` — PASS nhưng chỉ chạy `ai-memory`.
+- `npm run test` — PASS nhưng chỉ chạy `ai-memory`.
 - `npm run build` — PASS.
-- `git diff --check` — PASS.
+- `npm run typecheck` — PASS.
+- `dotnet build` — FAIL NU1903.
+- `npx prettier --check .` — FAIL 242 file.
 
 ## Latest Handoff
 
-- Phase 0A đã sửa toàn bộ finding quan trọng từ review; không triển khai Phase 0B hoặc merge `main` khi chưa được yêu cầu.
+- Audit cho thấy lint/test chưa phủ package TS, chưa có Phaser mount, chưa có health endpoint; chi tiết ở plan Phase 0B.
 
 ## Required Reading
 
 - `AGENTS.md`
-- `docs/superpowers/specs/2026-09-28-durable-ai-memory-design.md`
-- `docs/superpowers/plans/2026-09-28-phase-0a-durable-ai-memory.md`
+- `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`
+- `docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md`
