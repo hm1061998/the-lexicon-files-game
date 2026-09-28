@@ -20,15 +20,7 @@ export function PauseMenu({
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent): void {
       const dialog = dialogRef.current;
-      if (!dialog) {
-        return;
-      }
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        onResume();
-        return;
-      }
-      if (event.key !== 'Tab') {
+      if (!dialog || event.key !== 'Tab') {
         return;
       }
       const focusables = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
@@ -42,7 +34,7 @@ export function PauseMenu({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onResume]);
+  }, []);
 
   return (
     <div className="pause-menu-overlay">

@@ -1,4 +1,5 @@
 import type { ElementType, ReactNode } from 'react';
+import './paper-panel.css';
 
 export function PaperPanel({
   as: Component = 'div',

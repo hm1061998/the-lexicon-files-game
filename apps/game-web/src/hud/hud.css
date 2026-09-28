@@ -3,7 +3,7 @@
   inset: 0;
   pointer-events: none;
   font-size: 14px;
-  color: #2a2521;
+  color: var(--lexicon-ink);
 }
 
 .hud-objective-panel {
@@ -12,9 +12,6 @@
   left: 16px;
   max-width: 320px;
   pointer-events: auto;
-  background: #d8c5a4;
-  border: 1px solid #3e342b;
-  border-radius: 4px;
   padding: 12px;
 }
 
@@ -35,7 +32,7 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  border: 2px solid #a4412d;
+  border: 2px solid var(--lexicon-investigation-red);
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -45,9 +42,6 @@
   top: 16px;
   right: 16px;
   pointer-events: auto;
-  background: #cdba97;
-  border: 1px solid #3e342b;
-  border-radius: 4px;
   padding: 8px 12px;
   display: flex;
   gap: 8px;
@@ -60,9 +54,6 @@
   left: 50%;
   transform: translateX(-50%);
   pointer-events: auto;
-  background: #d8c5a4;
-  border: 1px solid #3e342b;
-  border-radius: 4px;
   padding: 8px 16px;
   display: flex;
   align-items: center;
@@ -78,24 +69,12 @@
   left: 50%;
   transform: translateX(-50%);
   pointer-events: auto;
-  background: #cdba97;
-  border: 1px solid #3e342b;
-  border-radius: 4px;
   padding: 6px 12px;
   display: flex;
   gap: 16px;
 }
 
-.keycap {
-  display: inline-block;
-  padding: 2px 6px;
-  border: 1px solid #3e342b;
-  border-radius: 3px;
-  background: #d8c5a4;
-  font-weight: 600;
-}
-
 :focus-visible {
-  outline: 2px solid #3e342b;
+  outline: 2px solid var(--lexicon-border);
   outline-offset: 2px;
 }

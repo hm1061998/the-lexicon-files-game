@@ -1,0 +1,13 @@
+/*
+ * Canonical CSS custom properties for the game palette. Values must stay in
+ * sync with `palette.ts` (`PALETTE`) — this file is the CSS-side source of
+ * truth, consumers should reference these variables instead of hardcoding
+ * hex values.
+ */
+:root {
+  --lexicon-paper: #d8c5a4;
+  --lexicon-beige: #cdba97;
+  --lexicon-ink: #2a2521;
+  --lexicon-border: #3e342b;
+  --lexicon-investigation-red: #a4412d;
+}

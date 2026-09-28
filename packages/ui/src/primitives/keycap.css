@@ -1,0 +1,11 @@
+@import '../theme/palette.css';
+
+.keycap {
+  display: inline-block;
+  padding: 2px 6px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 3px;
+  background: var(--lexicon-paper);
+  color: var(--lexicon-ink);
+  font-weight: 600;
+}

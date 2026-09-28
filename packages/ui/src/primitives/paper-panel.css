@@ -1,0 +1,8 @@
+@import '../theme/palette.css';
+
+.paper-panel {
+  background: var(--lexicon-paper);
+  border: 1px solid var(--lexicon-border);
+  border-radius: 4px;
+  color: var(--lexicon-ink);
+}

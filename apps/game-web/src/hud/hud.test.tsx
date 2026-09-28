@@ -78,8 +78,7 @@ describe('KeyHints', () => {
     expect(html).toContain('Esc');
     expect(html).toContain(strings.interact);
     expect(html).toContain(strings.pause);
-    expect(html).not.toContain('>J<');
-    expect(html).not.toContain('>M<');
+    expect(html.match(/class="hud-key-hint"/g)).toHaveLength(2);
   });
 });
 
