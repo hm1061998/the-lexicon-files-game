@@ -1,81 +1,80 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T19:52:11+07:00
-phase: phase-5
-status: complete
-result_commit: 30fb676
-active_spec: docs/superpowers/specs/2026-09-28-phase-5-dialogue-design.md
-active_plan: docs/superpowers/plans/2026-09-28-phase-5-dialogue.md
+updated_at: 2026-09-28T22:31:34+07:00
+phase: phase-6
+status: proposed
+result_commit: 297eb98
+active_spec: docs/superpowers/specs/2026-09-28-phase-6-learning-engine-design.md
+active_plan: none
 ---
 
 ## Metadata
 
-- Schema version 1; snapshot được duy trì bằng Git. Báo cáo và danh sách files: docs/ai/2026-09-28-phase-5-dialogue-verification.md.
+- Schema version 1; snapshot duy trì bằng Git.
 
 ## Current Phase
 
-- Phase 5 — Dialogue (roadmap §24) đã hoàn thành theo spec/plan được duyệt, thực thi inline.
+- Phase 6 — Learning Engine (roadmap §25): khảo sát/brainstorming và draft written spec, chưa được duyệt.
 
 ## Active Goal
 
-- Phase 5 đã verify và push lên origin/dev theo yêu cầu người dùng; chờ yêu cầu phase tiếp theo.
+- Thêm learning theo ngữ cảnh trong evidence/dialogue hiện có: click-to-learn, translation modes, vocabulary notebook và profile giữ sau reload. Chờ duyệt spec trước writing-plans/code.
 
 ## Current Status
 
-- Git reconcile: dev bắt đầu implementation tại 813cbf8; Tasks 1–7 và review fix đã commit, kết quả tại 30fb676. Người dùng yêu cầu push dev; git push origin dev thành công từ 2595afd tới e5ea2f3, git ls-remote xác nhận đúng SHA. Không merge main.
-- Anna/Leo/David dialogue từ authored JSON chạy qua pure runner, store/typed bridge và panel accessible. Conditions/effects nguyên tử, stale revisions bị loại, ba interview hoàn thành talk_to_everyone.
-- Save schema 2 migration từ schema 1, backup trước write, giữ evidence/objective cũ; session transient không lưu.
-- Một reviewer độc lập: 1 Important nhấp đúp bỏ qua response/Which folder, đã sửa RED→GREEN và toàn suite xanh; không Critical/Minor mới.
+- Người dùng yêu cầu “tiếp tục” sau push Phase 5. Git đầu phiên dev sạch tại f4ac2be, khớp origin/dev. Draft Phase 6 commit local 297eb98; chưa push.
+- learning-engine/src/index.ts export rỗng; vocabulary.json là {}; loader chưa đọc vocabulary; notebook Vocabulary empty state; learning profile/settings chưa lưu.
+- Spec đề xuất phương án A đủ 20 catalogue words của docs/03 §15, annotations trong evidence description/dialogue node text, modes Beginner/Learning/Immersion, profile/recovery riêng với case save.
+- Điểm chờ duyệt: gameplay hiện chỉ unknown→seen; tra từ không là bằng chứng recognized/mastered. Từ chưa xuất hiện trong prototype không được tự thêm notebook.
+- Không sửa product code, dependency hoặc product rules; chưa lập plan implementation.
 
 ## Completed
 
 - Phase 0A, 0B, 1, 2: xem Git history.
-- Phase 3 tại 200399b: contracts, loader, reducer, bridge/store/HUD và review fix.
-- Phase 4 tại 7d4405a, đã đồng bộ remote tới 2595afd: evidence mẫu, modal/notebook, IndexedDB backup/recovery, bootstrap/autosave.
-- Phase 5 tại 30fb676: graph validation/build gate, ba NPC/trees, runner/progress, migration, UI/input/focus, E2E và review fix. Plan checkboxes hoàn tất.
+- Phase 3 tại 200399b; Phase 4 tại 7d4405a, remote checkpoint 2595afd.
+- Phase 5 complete tại 30fb676: ba NPC/dialogue, runner/progress, validation/build gate, save schema 2 migration, accessible UI/input/focus, physical double-click review fix. Push origin/dev thành công tới f4ac2be gồm memory; xem docs/ai/2026-09-28-phase-5-dialogue-verification.md.
+- Phase 6 đã đọc docs/02, Case #001 vocabulary targets, roadmap §25 và architecture; viết/tự rà draft architectural spec tại 297eb98.
 
 ## In Progress
 
-- Không còn task implementation Phase 5; Phase 6 chưa bắt đầu.
+- Brainstorming architectural: review written spec Phase 6. Chưa có approved scope hoặc implementation plan Phase 6.
 
 ## Active Decisions
 
-- Product/case truth và copy theo docs/01–03; phase theo roadmap; dependency boundaries theo ARCHITECTURE.md.
-- Spec/plan review bằng tiếng Việt. Người dùng đã duyệt Phase 5 và chọn inline; dùng checkout dev theo lựa chọn đã lưu.
-- npm + Nx bắt buộc; không thêm dependency/đổi lockfile. Runtime npm 10.9.7 local tại .superpowers/runtime/npm-10.9.7/bin, cần thêm vào PATH cùng C:/Windows/System32; NX_DAEMON=false khi chạy checks.
-- State nghiệp vụ chỉ ở core; UI session/revision transient. Revision tăng đơn điệu từng store để loại callbacks cũ qua reopen.
-- Save record schemaVersion=2; IndexedDB database version vẫn 1. Legacy authored contract cases/case-001/save-v1.json kiểm tra đúng IDs/keys trước migrate.
-- Ba NPC/Main Office/ph_npc là prototype đã duyệt; conditional David bằng save fixture trước detector Phase 8. Không tự thêm contradiction discovery hoặc accusation.
-- Meeting Minutes vẫn evidence mẫu duy nhất collectible, evidenceTotal=5; statement facts không tăng evidence count; People/Vocabulary giữ khung.
-- Playwright workers=1 vì movement checks phụ thuộc frames; đổi tốc độ lấy tính ổn định, không giảm assertions.
-- Gameplay local-first, backend không đổi. Phase sau chỉ làm khi được yêu cầu.
+- Product/case truth theo docs/01–03; phase theo roadmap; dependency boundaries theo ARCHITECTURE.md. Không tự sửa rule khi thiếu/mâu thuẫn.
+- Spec/plan bằng tiếng Việt; spec approval cho phép writing-plans, plan cần review và chọn execution trước code.
+- npm + Nx bắt buộc; runtime local .superpowers/runtime/npm-10.9.7/bin + C:/Windows/System32 trong PATH; NX_DAEMON=false khi checks. Không thêm dependency/đổi lockfile.
+- Gameplay local-first; core engines TS thuần; learning không đặt trong Phaser. Backend ngoài scope Phase 6.
+- GameState/save schema 2 giữ evidence/facts/objectives/flags; session UI transient. Phase 6 đề xuất profile/settings repository riêng để không thay case save.
+- Phase 5 ba NPC/Main Office/ph_npc prototype đã duyệt; conditional David chỉ fixture trước Phase 8. Không làm detector/accusation trong Phase 6.
+- Meeting Minutes vẫn evidence collectible mẫu duy nhất, evidenceTotal=5. Catalogue 20 từ không tự đồng nghĩa encountered=20.
+- Phase 6 phương án A/seen-only, dedupe context, authored spans/translations và learning database riêng hiện là đề xuất trong spec, chưa quyết định triển khai.
+- Playwright workers=1 do movement theo frames; bản sửa Phase 5 đã pass whole suite.
 
 ## Blockers
 
-- Không có blocker Phase 5 còn lại. Bundle warning >500 kB tồn tại, build vẫn pass.
+- Không có blocker kỹ thuật đã xác nhận. Scope/stage policy Phase 6 chờ duyệt written spec; chưa phải lỗi implementation.
 
 ## Next Actions
 
-- Chờ yêu cầu Phase 6 — Learning Engine; nếu bắt đầu, đọc docs/02 và roadmap §25 rồi brainstorming/spec/plan trước code.
-- Phase 5 đã push dev; chỉ merge main khi người dùng giao workflow đó.
-- Khi chạy npm ở cùng môi trường, thêm .superpowers/runtime/npm-10.9.7/bin và C:/Windows/System32 vào PATH. Playwright cần quyền dừng cây server do nó tạo.
+- Người dùng review docs/superpowers/specs/2026-09-28-phase-6-learning-engine-design.md; chốt phương án A và seen-only hoặc yêu cầu đổi scope.
+- Sau duyệt spec, dùng writing-plans viết plan Phase 6 tiếng Việt; trình review/chọn execution rồi mới code.
+- Chỉ push draft tài liệu Phase 6 sau khi được xác nhận; push dev Phase 5 đã hoàn thành.
 
 ## Verification
 
-- Bản sửa cuối: npm run lint PASS (7 projects, không warning ESLint); npm run test PASS (204 Vitest + 30 memory tests); npm run build PASS (122 modules, JS 1,735.23 kB / gzip 416.27 kB, warning >500 kB).
-- npm run test:e2e PASS 29/29 (1.9m); npm run format:check PASS; git diff --check PASS. Memory check PASS sau snapshot cập nhật trước commit; push dev đã xác minh bằng git ls-remote.
-- 46 Vitest và 8 E2E tests thêm so với Phase 4. Kiểm viewport 1280×720, 1920×1080; keyboard/focus/locks, v1 migration, conditional flag missing/false/true, save/reload và nhấp đúp vật lý.
-- npm ci dùng package-lock.json hiện có. Evidence/logs/screenshot tại .superpowers/evidence/phase-5-dialogue/ (gitignored). Backend không đổi, không chạy .NET.
+- Phiên Phase 6 chỉ thay tài liệu: Prettier check draft spec PASS, Git whitespace check PASS; memory check PASS sau cập nhật snapshot. Không chạy lint/test/build product vì chưa implementation, không tuyên bố Phase 6 complete.
+- Phase 5 verification lịch sử ở bản sửa cuối: lint7 projects PASS, 204 Vitest +30 memory tests, build122 modules PASS (bundle warning >500 kB), E2E29/29 (1.9m), format/memory/whitespace PASS. Không chạy lại các suite này trong phiên brainstorming.
 
 ## Latest Handoff
 
-- Phase 5 complete tại 30fb676, memory checkpoint e5ea2f3 đã push origin/dev; snapshot này ghi nhận kết quả push. result_commit vẫn trỏ implementation 30fb676. Review fix đã qua RED→GREEN và whole suite, không rereview.
-- Minor evidence focus restoration Phase 4 vẫn hoãn ngoài scope Phase 5; dialogue có focus restoration riêng đã kiểm. Mọi rulings/limitations/files được ghi trong báo cáo verification.
+- Draft Phase 6 tại 297eb98 local, chưa push/duyệt. Scope A: catalogue20, contextual inspect/modes/notebook/profile; actual stages tối đa seen khi chưa assessment. Chờ written-spec approval rồi plan, không coi “tiếp tục” là duyệt artifact chưa tồn tại.
+- Phase 5 đã push tới f4ac2be. Minor evidence focus restoration Phase 4 vẫn hoãn; dialogue có restoration riêng đã verify.
 
 ## Required Reading
 
 - AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md.
-- docs/superpowers/specs/2026-09-28-phase-5-dialogue-design.md.
-- docs/superpowers/plans/2026-09-28-phase-5-dialogue.md.
-- docs/ai/2026-09-28-phase-5-dialogue-verification.md.
-- docs/03_CASE_001_VERTICAL_SLICE_SPEC.md §7, §9–§12; docs/04_CODEX_IMPLEMENTATION_ROADMAP.md §24–§25; docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md trước Phase 6.
+- docs/superpowers/specs/2026-09-28-phase-6-learning-engine-design.md.
+- docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md §§4–7, 11–12, 24–26, 29–31; docs/03_CASE_001_VERTICAL_SLICE_SPEC.md §15; docs/04_CODEX_IMPLEMENTATION_ROADMAP.md §25.
+- docs/architecture/ARCHITECTURE.md; docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md.
+- Phase 5 spec/plan và docs/ai/2026-09-28-phase-5-dialogue-verification.md để giữ behavior/save/input.
