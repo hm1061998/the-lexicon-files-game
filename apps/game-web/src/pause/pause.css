@@ -1,0 +1,33 @@
+.pause-menu-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(42, 37, 33, 0.6);
+  font-size: 14px;
+}
+
+.pause-menu {
+  background: #d8c5a4;
+  border: 1px solid #3e342b;
+  border-radius: 4px;
+  padding: 24px;
+  min-width: 240px;
+  text-align: center;
+}
+
+.pause-menu h2 {
+  margin: 0 0 16px;
+  color: #2a2521;
+}
+
+.pause-menu button {
+  font-size: 14px;
+  padding: 8px 16px;
+  border: 1px solid #3e342b;
+  border-radius: 4px;
+  background: #cdba97;
+  color: #2a2521;
+  cursor: pointer;
+}
