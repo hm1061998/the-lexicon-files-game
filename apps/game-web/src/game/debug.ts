@@ -2,6 +2,7 @@ export type LexiconDebug = {
   player(): { x: number; y: number; depth: number };
   depthOf(id: string): number;
   nearby(): string | null;
+  nearbyEvents(): number;
   teleport(x: number, y: number): void;
 };
 

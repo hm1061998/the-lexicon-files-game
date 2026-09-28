@@ -4,6 +4,7 @@ type DebugApi = {
   player(): { x: number; y: number; depth: number };
   depthOf(id: string): number;
   nearby(): string | null;
+  nearbyEvents(): number;
   teleport(x: number, y: number): void;
 };
 
@@ -68,6 +69,23 @@ test('player behind desk draws below it', async ({ page }) => {
     desk: window.__lexiconDebug!.depthOf('player_desk'),
   }));
   expect(depths.player).toBeLessThan(depths.desk);
+});
+
+test('entering the note radius reports it nearby', async ({ page }) => {
+  await openWorld(page);
+  await hold(page, 'd', 800);
+  const nearWhileIn = await page.evaluate(() => window.__lexiconDebug!.nearby());
+  expect(nearWhileIn).toBe('objective_note');
+  await hold(page, 'a', 1500);
+  const nearAfterLeaving = await page.evaluate(() => window.__lexiconDebug!.nearby());
+  expect(nearAfterLeaving).toBeNull();
+});
+
+test('nearby event fires once per entry', async ({ page }) => {
+  await openWorld(page);
+  await hold(page, 'd', 800);
+  const count = await page.evaluate(() => window.__lexiconDebug!.nearbyEvents());
+  expect(count).toBe(1);
 });
 
 test('single canvas and no console errors', async ({ page }) => {

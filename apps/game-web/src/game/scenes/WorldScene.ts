@@ -5,11 +5,17 @@ import { createPlayer, movePlayer, type PlayerSprite } from '../entities/Player'
 import { installDebugHook } from '../debug';
 import { computeDepth } from '../systems/depth';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
-import { findNearestInteractable, type InteractableArea } from '../systems/interaction';
+import type { InteractableArea } from '../systems/interaction';
+import { InteractionTracker } from '../systems/InteractionTracker';
 
 export type WorldOptions = { scene: SceneDefinition; bus: EventBus<GameEventMap> };
 
 type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
+
+const MARKER_DEPTH = 10000;
+const MARKER_OFFSET_Y = -90;
+const MARKER_FLOAT_DISTANCE = 4;
+const MARKER_FLOAT_DURATION_MS = 1000;
 
 export class WorldScene extends Phaser.Scene {
   static readonly KEY = 'World';
@@ -19,7 +25,11 @@ export class WorldScene extends Phaser.Scene {
   private bus!: EventBus<GameEventMap>;
   private areas: InteractableArea[] = [];
   private depths = new Map<string, number>();
-  private nearbyId: string | null = null;
+  private interactionTracker!: InteractionTracker;
+  private nearbyEventCount = 0;
+  private marker!: Phaser.GameObjects.Sprite;
+  private markerTween: Phaser.Tweens.Tween | null = null;
+  private unsubscribeNearby: (() => void) | null = null;
   private uninstallDebug: (() => void) | null = null;
 
   constructor() {
@@ -32,7 +42,11 @@ export class WorldScene extends Phaser.Scene {
     this.bus = options.bus;
     this.areas = [];
     this.depths.clear();
-    this.nearbyId = null;
+    this.interactionTracker = new InteractionTracker(this.bus);
+    this.nearbyEventCount = 0;
+    this.unsubscribeNearby = this.bus.on('interaction:nearby', () => {
+      this.nearbyEventCount += 1;
+    });
 
     const b = def.worldBounds;
     this.physics.world.setBounds(b.x, b.y, b.width, b.height);
@@ -62,10 +76,22 @@ export class WorldScene extends Phaser.Scene {
     const keyboard = this.input.keyboard;
     if (keyboard) this.keys = keyboard.addKeys('W,A,S,D') as MovementKeyMap;
 
+    this.marker = this.add.sprite(0, 0, 'ph_marker');
+    this.marker.setDepth(MARKER_DEPTH);
+    this.marker.setVisible(false);
+    this.markerTween = this.tweens.add({
+      targets: this.marker,
+      y: `-=${MARKER_FLOAT_DISTANCE}`,
+      duration: MARKER_FLOAT_DURATION_MS,
+      yoyo: true,
+      repeat: -1,
+    });
+
     this.uninstallDebug = installDebugHook({
       player: () => ({ x: this.player.x, y: this.player.y, depth: this.player.depth }),
       depthOf: (id) => this.depths.get(id) ?? Number.NaN,
-      nearby: () => this.nearbyId,
+      nearby: () => this.interactionTracker.current,
+      nearbyEvents: () => this.nearbyEventCount,
       teleport: (x, y) => {
         this.player.body.reset(x, y);
         this.player.setDepth(computeDepth(y));
@@ -92,12 +118,14 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private updateNearby(): void {
-    const nearest = findNearestInteractable(this.player, this.areas);
-    const id = nearest?.id ?? null;
-    if (id === this.nearbyId) return;
-    this.nearbyId = id;
-    if (id) this.bus.emit('interaction:nearby', { interactableId: id });
-    else this.bus.emit('interaction:cleared', {});
+    const id = this.interactionTracker.update(this.player, this.areas);
+    const area = id ? this.areas.find((candidate) => candidate.id === id) : undefined;
+    if (area) {
+      this.marker.setPosition(area.x, area.y + MARKER_OFFSET_Y);
+      this.marker.setVisible(true);
+    } else {
+      this.marker.setVisible(false);
+    }
   }
 
   private cleanup(): void {
@@ -105,6 +133,10 @@ export class WorldScene extends Phaser.Scene {
       for (const key of Object.values(this.keys)) this.input.keyboard?.removeKey(key, true);
       this.keys = null;
     }
+    this.markerTween?.destroy();
+    this.markerTween = null;
+    this.unsubscribeNearby?.();
+    this.unsubscribeNearby = null;
     this.uninstallDebug?.();
     this.uninstallDebug = null;
     this.events.off(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
