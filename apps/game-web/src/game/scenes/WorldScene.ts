@@ -8,7 +8,13 @@ import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
 import { InteractionTracker } from '../systems/InteractionTracker';
 
-export type WorldOptions = { scene: SceneDefinition; bus: EventBus<GameEventMap> };
+export type InputLockSource = { isInputLocked(): boolean };
+
+export type WorldOptions = {
+  scene: SceneDefinition;
+  bus: EventBus<GameEventMap>;
+  input: InputLockSource;
+};
 
 type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
 
@@ -23,6 +29,10 @@ export class WorldScene extends Phaser.Scene {
   private player!: PlayerSprite;
   private keys: MovementKeyMap | null = null;
   private bus!: EventBus<GameEventMap>;
+  private inputLock!: InputLockSource;
+  private interactKey: Phaser.Input.Keyboard.Key | null = null;
+  private triggeredEventCount = 0;
+  private unsubscribeTriggered: (() => void) | null = null;
   private areas: InteractableArea[] = [];
   private depths = new Map<string, number>();
   private interactionTracker!: InteractionTracker;
@@ -40,11 +50,16 @@ export class WorldScene extends Phaser.Scene {
     const options = this.registry.get('world') as WorldOptions;
     const def = options.scene;
     this.bus = options.bus;
+    this.inputLock = options.input;
     this.areas = [];
     this.depths.clear();
     this.interactionTracker = new InteractionTracker(this.bus);
     this.nearbyEventCount = 0;
+    this.triggeredEventCount = 0;
     if (import.meta.env.DEV) {
+      this.unsubscribeTriggered = this.bus.on('interaction:triggered', () => {
+        this.triggeredEventCount += 1;
+      });
       this.unsubscribeNearby = this.bus.on('interaction:nearby', () => {
         this.nearbyEventCount += 1;
       });
@@ -77,7 +92,10 @@ export class WorldScene extends Phaser.Scene {
     camera.startFollow(this.player, true);
 
     const keyboard = this.input.keyboard;
-    if (keyboard) this.keys = keyboard.addKeys('W,A,S,D', false) as MovementKeyMap;
+    if (keyboard) {
+      this.keys = keyboard.addKeys('W,A,S,D', false) as MovementKeyMap;
+      this.interactKey = keyboard.addKey('E', false);
+    }
 
     this.marker = this.add.sprite(0, 0, 'ph_marker');
     this.marker.setDepth(MARKER_DEPTH);
@@ -95,6 +113,7 @@ export class WorldScene extends Phaser.Scene {
       depthOf: (id) => this.depths.get(id) ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
+      triggeredEvents: () => this.triggeredEventCount,
       teleport: (x, y) => {
         this.player.body.reset(x, y);
         this.player.setDepth(computeDepth(y));
@@ -107,6 +126,13 @@ export class WorldScene extends Phaser.Scene {
 
   override update(): void {
     if (!this.keys) return;
+    if (this.inputLock.isInputLocked()) {
+      movePlayer(this.player, { x: 0, y: 0 });
+      // Consume a press made while locked so it does not fire after unlock.
+      if (this.interactKey) Phaser.Input.Keyboard.JustDown(this.interactKey);
+      return;
+    }
+    const typing = isTypingTarget(document.activeElement);
     const direction = resolveInputVector(
       {
         up: this.keys.W.isDown,
@@ -114,10 +140,18 @@ export class WorldScene extends Phaser.Scene {
         left: this.keys.A.isDown,
         right: this.keys.D.isDown,
       },
-      isTypingTarget(document.activeElement),
+      typing,
     );
     movePlayer(this.player, direction);
     this.updateNearby();
+    this.updateInteract(typing);
+  }
+
+  private updateInteract(typing: boolean): void {
+    if (!this.interactKey || !Phaser.Input.Keyboard.JustDown(this.interactKey)) return;
+    const id = this.interactionTracker.current;
+    if (id === null || typing) return;
+    this.bus.emit('interaction:triggered', { interactableId: id });
   }
 
   private updateNearby(): void {
@@ -136,10 +170,16 @@ export class WorldScene extends Phaser.Scene {
       for (const key of Object.values(this.keys)) this.input.keyboard?.removeKey(key, true);
       this.keys = null;
     }
+    if (this.interactKey) {
+      this.input.keyboard?.removeKey(this.interactKey, true);
+      this.interactKey = null;
+    }
     this.markerTween?.destroy();
     this.markerTween = null;
     this.unsubscribeNearby?.();
     this.unsubscribeNearby = null;
+    this.unsubscribeTriggered?.();
+    this.unsubscribeTriggered = null;
     this.uninstallDebug?.();
     this.uninstallDebug = null;
     this.events.off(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);

@@ -3,6 +3,7 @@ export type LexiconDebug = {
   depthOf(id: string): number;
   nearby(): string | null;
   nearbyEvents(): number;
+  triggeredEvents(): number;
   teleport(x: number, y: number): void;
 };
 

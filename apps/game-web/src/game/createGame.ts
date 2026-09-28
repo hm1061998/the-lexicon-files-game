@@ -3,6 +3,8 @@ import { PALETTE } from './constants';
 import { BootScene } from './scenes/BootScene';
 import { WorldScene, type WorldOptions } from './scenes/WorldScene';
 
+export type { InputLockSource } from './scenes/WorldScene';
+
 export function createGame(parent: HTMLElement, options: WorldOptions): Phaser.Game {
   return new Phaser.Game({
     type: Phaser.AUTO,

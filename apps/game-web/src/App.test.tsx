@@ -19,6 +19,11 @@ describe('App', () => {
     expect(html).not.toContain('role="alert"');
   });
 
+  it('renders HUD with objective text', () => {
+    const html = renderToString(<App />);
+    expect(html).toContain('Tìm hiểu điều gì đã xảy ra với bản báo cáo');
+  });
+
   it('GameCanvas renders a readable error for invalid content', () => {
     vi.mocked(loadSceneDefinition).mockImplementationOnce(() => {
       throw new ContentValidationError('bad.json', ['spawn: Required']);
