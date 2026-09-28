@@ -19,7 +19,8 @@
     "typecheck": "tsc -b",
     "format": "prettier --write .",
     "affected": "nx affected -t lint test build",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

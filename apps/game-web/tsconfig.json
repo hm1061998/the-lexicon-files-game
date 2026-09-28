@@ -5,13 +5,9 @@
     "noEmit": true,
     "composite": false,
     "declaration": false,
-    "types": [
-      "vite/client"
-    ]
+    "types": ["vite/client"]
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
     {
       "path": "../../packages/shared-types"
@@ -29,8 +25,5 @@
       "path": "../../packages/ui"
     }
   ],
-  "exclude": [
-    "src/**/*.test.tsx",
-    "src/**/*.test.ts"
-  ]
+  "exclude": ["src/**/*.test.tsx", "src/**/*.test.ts"]
 }

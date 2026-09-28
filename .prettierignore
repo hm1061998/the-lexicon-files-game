@@ -2,3 +2,11 @@ dist
 node_modules
 apps/api
 docs
+.claude
+.agents
+.superpowers
+.nx
+package-lock.json
+playwright-report
+test-results
+*.tsbuildinfo

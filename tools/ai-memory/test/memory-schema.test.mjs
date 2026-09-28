@@ -166,7 +166,14 @@ test('rejects more than five next actions', () => {
 });
 
 test('rejects mixed ordered and unordered next actions over the limit', () => {
-  const items = ['1. First action', '2) Second action', '- Third action', '* Fourth action', '+ Fifth action', '6. Sixth action'].join('\n');
+  const items = [
+    '1. First action',
+    '2) Second action',
+    '- Third action',
+    '* Fourth action',
+    '+ Fifth action',
+    '6. Sixth action',
+  ].join('\n');
   const source = createMemory().replace('- Next Actions value', items);
   const result = validate(source);
 
@@ -175,7 +182,16 @@ test('rejects mixed ordered and unordered next actions over the limit', () => {
 });
 
 test('ignores list-shaped lines inside fenced blocks when enforcing budgets', () => {
-  const items = ['- Real action', '```text', '1. Example one', '2. Example two', '3. Example three', '4. Example four', '5. Example five', '```'].join('\n');
+  const items = [
+    '- Real action',
+    '```text',
+    '1. Example one',
+    '2. Example two',
+    '3. Example three',
+    '4. Example four',
+    '5. Example five',
+    '```',
+  ].join('\n');
   const source = createMemory().replace('- Next Actions value', items);
   const result = validate(source);
 

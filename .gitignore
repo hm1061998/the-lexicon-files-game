@@ -15,3 +15,5 @@ obj/
 # Nx
 .nx/cache
 .nx/workspace-data
+*.tsbuildinfo
+.superpowers/
