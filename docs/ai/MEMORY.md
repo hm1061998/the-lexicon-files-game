@@ -51,7 +51,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Next Actions
 
-- Xin người dùng quyết định merge `dev` vào `main` hoặc bắt đầu Phase 1.
+- Chờ người dùng yêu cầu bắt đầu Phase 1 (người dùng tự merge `dev` vào `main`).
 
 ## Verification
 
