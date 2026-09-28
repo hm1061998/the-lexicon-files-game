@@ -1,8 +1,8 @@
 ---
 schema_version: 1
-updated_at: 2026-09-28T22:43:09+07:00
+updated_at: 2026-09-28T22:52:15+07:00
 phase: phase-6
-status: proposed
+status: in_progress
 result_commit: 1740877
 active_spec: docs/superpowers/specs/2026-09-28-phase-6-learning-engine-design.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
 
 ## Current Phase
 
-- Phase 6 — Learning Engine (roadmap §25): written spec phương án A đã được duyệt; implementation plan đã soạn/commit và chờ người dùng review cùng lựa chọn execution.
+- Phase 6 — Learning Engine (roadmap §25): written spec phương án A và plan đã được duyệt; triển khai inline đang chạy trong managed worktree.
 
 ## Active Goal
 
@@ -33,11 +33,11 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
 - Phase 0A, 0B, 1, 2: xem Git history.
 - Phase 3 tại 200399b; Phase 4 tại 7d4405a, remote checkpoint 2595afd.
 - Phase 5 complete tại 30fb676: ba NPC/dialogue, runner/progress, validation/build gate, save schema 2 migration, accessible UI/input/focus, physical double-click review fix. Push origin/dev thành công tới f4ac2be gồm memory; xem docs/ai/2026-09-28-phase-5-dialogue-verification.md.
-- Phase 6 đã đọc docs/02, Case #001 vocabulary targets, roadmap §25 và architecture; spec phương án A tại 297eb98 đã được người dùng duyệt. Plan sáu tasks/TDD tại 1740877 đã tự rà format/paths/review focus; chưa được duyệt để thực thi.
+- Phase 6 đã đọc docs/02, Case #001 vocabulary targets, roadmap §25 và architecture; spec phương án A tại 297eb98 đã được người dùng duyệt. Plan sáu tasks/TDD tại 1740877 đã tự rà format/paths/review focus và được người dùng duyệt cùng lựa chọn inline.
 
 ## In Progress
 
-- Writing-plans hoàn tất cho scope Phase 6 đã duyệt; plan đang chờ người dùng review/chọn cách execution.
+- Writing-plans hoàn tất cho scope Phase 6 đã duyệt; plan đã duyệt, đang triển khai inline trong managed worktree.
 
 ## Active Decisions
 
@@ -57,13 +57,12 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
 
 ## Next Actions
 
-- Người dùng review docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md, xác nhận scope và chọn inline/subagent-driven.
-- Chỉ sau plan approval/execution choice mới bắt đầu Phase 6 implementation.
+- Tiếp tục Task 1 theo plan; cập nhật ledger sau mỗi task và chạy DoD ở Task 6.
 - Chỉ push draft tài liệu Phase 6 sau khi được xác nhận; push dev Phase 5 đã hoàn thành.
 
 ## Verification
 
-- Phiên Phase 6 chỉ thay tài liệu: Prettier check spec/plan PASS, Git whitespace check PASS; memory check PASS sau snapshot. Không chạy lint/test/build product vì chưa implementation; không tuyên bố Phase 6 complete.
+- Phiên Phase 6 chỉ thay tài liệu: Prettier check spec/plan PASS; memory check PASS sau cập nhật snapshot. Baseline worktree: `npm ci` added 336 packages from lockfile; `npm run test` PASS 127/127. npm reported 7 existing dependency advisories (3 moderate, 3 high, 1 critical). Task 1 tests chưa chạy.
 - Phase 5 verification lịch sử ở bản sửa cuối: lint7 projects PASS, 204 Vitest +30 memory tests, build122 modules PASS (bundle warning >500 kB), E2E29/29 (1.9m), format/memory/whitespace PASS. Không chạy lại các suite này trong phiên brainstorming.
 
 ## Latest Handoff
