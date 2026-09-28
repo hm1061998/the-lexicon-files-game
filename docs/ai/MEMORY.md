@@ -2,8 +2,8 @@
 schema_version: 1
 updated_at: 2026-09-28T17:00:00+07:00
 phase: phase-0b
-status: verified
-result_commit: 6b77df2
+status: complete
+result_commit: dfc3cfd
 active_spec: docs/04_CODEX_IMPLEMENTATION_ROADMAP.md
 active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 ---
@@ -22,7 +22,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Current Status
 
-- 5 task Phase 0B đã thực thi Native trên `dev` và verify PASS; chờ final review toàn branch.
+- Phase 0B hoàn thành và final review xong trên `dev`, đã push; chưa merge vào `main`.
 
 ## Completed
 
@@ -31,10 +31,11 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 - Task 3 `e95b9b4`: React mount Phaser (`BootScene`, `GameCanvas`), e2e đúng 1 canvas.
 - Task 4 `6b77df2`: Prettier toàn repo, `format:check`, ignore skill vendored và tsbuildinfo.
 - Task 5: acceptance Phase 0, sửa AGENTS.md §8.
+- Final review (opus): 1 Important đã sửa (bỏ track tsbuildinfo); 2 minor deferred: test không được tsc typecheck, CORS test chưa phủ preflight.
 
 ## In Progress
 
-- Final review toàn branch Phase 0B.
+- Không có hạng mục đang mở.
 
 ## Active Decisions
 
@@ -50,7 +51,7 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-0b-foundation-audit.md
 
 ## Next Actions
 
-- Chạy final review toàn branch; sau đó xin người dùng quyết định merge `dev` vào `main` hoặc bắt đầu Phase 1.
+- Xin người dùng quyết định merge `dev` vào `main` hoặc bắt đầu Phase 1.
 
 ## Verification
 
