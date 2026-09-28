@@ -1,6 +1,6 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T06:35:00+07:00
+updated_at: 2026-09-29T06:42:41+07:00
 phase: phase-6
 status: complete
 result_commit: c24d444
@@ -22,9 +22,9 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
 
 ## Current Status
 
-- Working tree gốc `D:\Works\the-lexicon-files-game` được giữ nguyên; Phase 6 triển khai trong `C:\Users\Minh\.codex\worktrees\phase6-learning-engine\the-lexicon-files-game`.
+- Phase 6 triển khai trong managed worktree rồi fast-forward vào `dev`; local `dev` và `origin/dev` cùng ở `520ee4d`.
 - Plan checkpoint `77846e1`; content `d01b367`; learning reducer `9f25c87`; Phase 6 implementation/verification `9e8a887`; review fixes `c24d444` (result_commit cho memory snapshot này).
-- Chưa push hoặc tích hợp Phase 6 vào `dev`.
+- Phase 6 đã push thành công lên `origin/dev` tại `520ee4d`.
 
 ## Completed
 
@@ -51,11 +51,11 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
 
 ## Blockers
 
-- Không có blocker kỹ thuật. Phase 6 chưa tích hợp/push; chỉ làm bước đó khi có yêu cầu.
+- Không có blocker kỹ thuật. Phase 7 — Audio / Listening là phase tiếp theo trong roadmap; phạm vi/thiết kế chưa duyệt.
 
 ## Next Actions
 
-- Chờ yêu cầu tiếp theo; nếu tiếp tục Phase 6 thì mở worktree/commits nêu trên và review verification ledger trước.
+- Xác nhận audio source strategy và duyệt written design trước khi lập plan Phase 7.
 
 ## Verification
 
@@ -65,7 +65,8 @@ active_plan: docs/superpowers/plans/2026-09-28-phase-6-learning-engine.md
 
 ## Latest Handoff
 
-- Phase 6 local commits are on detached HEAD in `C:\Users\Minh\.codex\worktrees\phase6-learning-engine\the-lexicon-files-game`; main workspace/dev has not been changed by Phase 6. Verification and review ledger: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
+- Phase 6 is integrated and pushed: local/remote `dev` at `520ee4d`. Verification and review ledger: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
+- User said continue after Phase 6; Phase 7 roadmap inspection confirms audio playback/listening task/answer affecting case state. No playable audio asset or existing audio runtime is present; choose source strategy and approve design before implementation.
 - Phase 5 is already pushed through `f4ac2be`. Minor evidence focus restoration Phase 4 remains deferred; dialogue has separate restoration verified.
 
 ## Required Reading
