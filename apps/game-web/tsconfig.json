@@ -1,12 +1,36 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "jsx": "react-jsx", "noEmit": true, "composite": false, "declaration": false, "types": ["vite/client"] },
-  "include": ["src"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "composite": false,
+    "declaration": false,
+    "types": [
+      "vite/client"
+    ]
+  },
+  "include": [
+    "src"
+  ],
   "references": [
-    { "path": "../../packages/shared-types" },
-    { "path": "../../packages/game-core" },
-    { "path": "../../packages/learning-engine" },
-    { "path": "../../packages/game-content" },
-    { "path": "../../packages/ui" }
+    {
+      "path": "../../packages/shared-types"
+    },
+    {
+      "path": "../../packages/game-core"
+    },
+    {
+      "path": "../../packages/learning-engine"
+    },
+    {
+      "path": "../../packages/game-content"
+    },
+    {
+      "path": "../../packages/ui"
+    }
+  ],
+  "exclude": [
+    "src/**/*.test.tsx",
+    "src/**/*.test.ts"
   ]
 }
