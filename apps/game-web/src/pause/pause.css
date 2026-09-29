@@ -20,13 +20,32 @@
 }
 
 .pause-menu button {
-  padding: 8px 16px;
-  border-radius: 4px;
+  min-height: 36px;
+  padding: 8px 20px;
+  border-radius: 3px;
   font-size: var(--lexicon-text-min);
+}
+
+.pause-menu label,
+.pause-menu [role='dialog'] > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+  text-align: left;
+}
+
+.pause-menu [role='dialog'] > button {
+  margin-top: 4px;
 }
 
 .pause-menu select,
 .pause-menu input,
 .pause-menu output {
   font-size: var(--lexicon-text-min);
+}
+
+.pause-menu label:has(> input[type='checkbox']) {
+  justify-content: flex-start;
 }

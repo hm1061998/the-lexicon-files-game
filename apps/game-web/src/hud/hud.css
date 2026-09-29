@@ -11,29 +11,64 @@
   position: absolute;
   top: 16px;
   left: 16px;
-  max-width: 320px;
+  max-width: 340px;
   pointer-events: auto;
-  padding: 12px;
+  padding: 14px 16px 14px 40px;
+  /* Slightly torn lower edge: shallow sawtooth, no blur. */
+  clip-path: polygon(
+    -24px -24px,
+    calc(100% + 8px) -24px,
+    calc(100% + 8px) 92%,
+    100% 92%,
+    96% 97%,
+    91% 93%,
+    85% 98%,
+    78% 94%,
+    70% 98%,
+    62% 93%,
+    54% 98%,
+    45% 94%,
+    36% 98%,
+    27% 93%,
+    18% 98%,
+    9% 94%,
+    0 97%,
+    -24px 97%
+  );
+}
+
+.hud-objective-clip {
+  position: absolute;
+  top: -6px;
+  left: 8px;
+  color: var(--lexicon-ink);
+  pointer-events: none;
 }
 
 .hud-objective-heading {
   margin: 0 0 8px;
-  font-size: 14px;
-  text-transform: uppercase;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--lexicon-border);
+  color: var(--lexicon-investigation-red);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: none;
 }
 
 .hud-objective-text {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin: 0;
+  font-size: 16px;
 }
 
 .hud-objective-marker {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--lexicon-investigation-red);
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--lexicon-border);
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -42,11 +77,32 @@
   position: absolute;
   top: 16px;
   right: 16px;
+  box-sizing: border-box;
+  width: 216px;
   pointer-events: auto;
-  padding: 8px 12px;
+  padding: 4px 12px;
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
+  justify-content: center;
+}
+
+.hud-case-badge svg {
+  flex-shrink: 0;
+  color: var(--lexicon-ink);
+}
+
+.hud-case-progress-label {
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hud-case-progress-count {
+  color: var(--lexicon-investigation-red);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .hud-interaction-prompt {
@@ -66,13 +122,41 @@
 
 .hud-key-hints {
   position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
   pointer-events: auto;
-  padding: 6px 12px;
+  padding: 10px 16px;
   display: flex;
-  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  border-width: 2px 0 0;
+  border-radius: 0;
+  box-shadow: inset 0 1px 0 var(--lexicon-paper);
+}
+
+.hud-key-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 28px;
+  font-size: 16px;
+}
+
+.hud-key-hint + .hud-key-hint {
+  border-left: 1px solid var(--lexicon-border);
+}
+
+.hud-key-hints .keycap {
+  min-width: 26px;
+  padding: 3px 8px;
+  text-align: center;
+  border-width: 2px;
+  border-radius: 6px;
+  box-shadow: none;
+  font-family: var(--lexicon-font-body);
+  font-size: 16px;
 }
 
 .hud-persistence-notice {

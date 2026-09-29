@@ -230,3 +230,14 @@
     gap: 0;
   }
 }
+
+.notebook-panel .vocabulary-mode {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.notebook-panel select {
+  min-height: 44px;
+}

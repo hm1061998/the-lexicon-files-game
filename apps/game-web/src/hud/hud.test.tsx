@@ -26,6 +26,8 @@ describe('ObjectivePanel', () => {
     );
     expect(html).toContain(strings.objectiveHeading);
     expect(html).toContain(caseDefinition.objectives[0]?.text);
+    expect(html).toContain('hud-objective-marker');
+    expect(html).toContain('hud-objective-clip');
   });
 });
 
@@ -39,6 +41,8 @@ describe('CaseProgress', () => {
     );
     expect(html).toContain(strings.caseFile);
     expect(html).toContain(`0/${caseDefinition.evidenceTotal}`);
+    expect(html).toContain('hud-case-badge');
+    expect(html).toContain('<svg');
   });
 });
 

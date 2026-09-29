@@ -5,16 +5,16 @@ export function KeyHints({ strings }: { strings: UiStrings }): JSX.Element {
   return (
     <PaperPanel className="hud-key-hints">
       <span className="hud-key-hint">
-        <Keycap>E</Keycap> — {strings.interact}
+        <Keycap>E</Keycap> {strings.interact}
       </span>
       <span className="hud-key-hint">
-        <Keycap>J</Keycap> — {strings.openNotebook}
+        <Keycap>J</Keycap> {strings.openNotebook}
       </span>
       <span className="hud-key-hint">
-        <Keycap>M</Keycap> — {strings.toggleMap}
+        <Keycap>M</Keycap> {strings.toggleMap}
       </span>
       <span className="hud-key-hint">
-        <Keycap>Esc</Keycap> — {strings.pause}
+        <Keycap>Esc</Keycap> {strings.pause}
       </span>
     </PaperPanel>
   );

@@ -1,4 +1,5 @@
 @import '../theme/palette.css';
+@import './form-controls.css';
 
 .paper-panel {
   background-color: var(--lexicon-paper);
