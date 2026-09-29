@@ -23,7 +23,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11b-backlog-and-character-m
 ## Current Status
 
 - Phase 11B: manifest texture theo scene trong `packages/game-content`; tường thẳng + nội thất; ảnh evidence trong modal; paper overlay CSS; marker/terminal/hằng số/transcript/lint/test hook; sheet đi bộ 8x4 (tạm, sinh bằng code) + hoạt ảnh theo frame; minimap phím `M`. Gate PASS (lint/test/build/typecheck/format/E2E 67 x2 không flaky/memory/unittest 25); ledger `docs/ai/2026-09-30-phase-11b-verification.md` (có đối chiếu concept và sai lệch).
-- Scene vẫn chưa giống concept (thưa nội thất, không phòng phân vùng/nhãn phòng, control pause/sổ tay dùng style trình duyệt). Art AI (gồm nhân vật ChatGPT) đã commit trên `dev` cục bộ, chưa push; `assets/_incoming/` giữ cục bộ. Điều khoản OpenAI của chủ dự án là **bắt buộc trước merge/push**.
+- Scene vẫn chưa giống concept (thưa nội thất, không phòng phân vùng/nhãn phòng, control pause/sổ tay dùng style trình duyệt). Art AI (gồm nhân vật ChatGPT) đã commit trên `dev` cục bộ, chưa push; `assets/_incoming/` giữ cục bộ. Chủ dự án đã xác nhận điều khoản đầu ra OpenAI (chat 2026-09-30); không còn chặn merge/push.
 - Font nội dung `Cambria, "Times New Roman", Georgia, serif`; đã xác nhận dấu thanh tiếng Việt hiển thị đúng.
 
 ## Completed
@@ -55,7 +55,6 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11b-backlog-and-character-m
 
 ## Next Actions
 
-- **Trước merge/push:** chủ dự án xác nhận điều khoản đầu ra OpenAI cho ảnh nhân vật ChatGPT đã commit (nếu không đạt phải gỡ/thay).
 - Người dùng review/merge `dev`; chờ yêu cầu Phase 12 (không tự bắt đầu).
 - Tạo walk sheet thật (8x4) theo `docs/art/07` §Walk sheet, chạy `slice_walk_sheet.py`, thay file cùng tên.
 - Làm giàu scene theo concept: nội thất dày hơn, phòng phân vùng/nhãn phòng, style lại select/slider/checkbox trong pause và sổ tay.
