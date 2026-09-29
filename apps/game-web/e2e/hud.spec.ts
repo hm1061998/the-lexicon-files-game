@@ -199,6 +199,18 @@ test('collecting evidence opens modal, locks movement, and adds it to the notebo
   await expect(page.locator('canvas')).toHaveCount(1);
 });
 
+test('evidence modal shows its artwork', async ({ page }) => {
+  await openWorld(page);
+  await collectMeetingMinutes(page);
+  const art = page.getByRole('dialog').locator('img.evidence-art');
+  await expect(art).toBeVisible();
+  await expect
+    .poll(() => art.evaluate((img: HTMLImageElement) => img.naturalWidth))
+    .toBeGreaterThan(0);
+  await expect(art).toHaveAttribute('alt', '');
+  await expect(art).toHaveAttribute('src', '/assets/evidence/evidence_meeting_minutes.png');
+});
+
 test('discovered evidence survives reload without reopening its modal', async ({ page }) => {
   // Playwright gives each test a fresh browser context, so this IndexedDB starts empty.
   await openWorld(page);

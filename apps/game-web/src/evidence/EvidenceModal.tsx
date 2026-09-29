@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { PaperPanel } from '@lexicon/ui';
 import type { EvidenceDefinition, UiStrings } from '@lexicon/shared-types';
 import { getFocusTrapTarget } from '../pause/focusTrap';
@@ -50,6 +50,8 @@ export function EvidenceModal({
 }): JSX.Element {
   const headingId = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  const showImage = evidence.image !== undefined && failedImage !== evidence.image;
 
   useEffect(() => {
     const previousFocus =
@@ -89,6 +91,14 @@ export function EvidenceModal({
               {strings.close}
             </button>
           </div>
+          {showImage && (
+            <img
+              className="evidence-art"
+              src={evidence.image}
+              alt=""
+              onError={() => setFailedImage(evidence.image ?? null)}
+            />
+          )}
           <p className="evidence-category">{strings.evidence}</p>
           <p>
             <VocabularyText

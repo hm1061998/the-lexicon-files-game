@@ -23,6 +23,14 @@ describe('content texture manifests', () => {
     }
   });
 
+  it('point evidence images at files that exist under public/', () => {
+    for (const definition of cases) {
+      const images = definition.evidences.flatMap(({ image }) => (image ? [image] : []));
+      expect(images.length).toBeGreaterThan(0);
+      for (const url of images) expect(existsSync(`${publicDir}${url}`), url).toBe(true);
+    }
+  });
+
   it('share the paper overlay texture and map all four player facings', () => {
     for (const definition of cases) {
       const shared = new Set(definition.sharedTextures.map(({ key }) => key));

@@ -31,6 +31,8 @@ export interface EvidenceDefinition {
   readonly descriptionVi?: string | undefined;
   readonly vocabularySpans?: readonly VocabularySpan[] | undefined;
   readonly imageAsset?: string;
+  /** Decorative artwork shown in the evidence modal, e.g. `/assets/evidence/x.png`. */
+  readonly image?: string;
 }
 
 export interface FactDefinition {

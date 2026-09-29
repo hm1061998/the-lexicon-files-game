@@ -2,6 +2,7 @@
   "evidences": [
     {
       "id": "leo_phone_recording",
+      "image": "/assets/evidence/evidence_leo_phone_recording.png",
       "caseId": "case-001",
       "name": "Leo's Phone Recording",
       "category": "audio",
@@ -12,6 +13,7 @@
     },
     {
       "id": "meeting_minutes",
+      "image": "/assets/evidence/evidence_meeting_minutes.png",
       "caseId": "case-001",
       "name": "Meeting Minutes",
       "category": "document",
@@ -30,6 +32,7 @@
     },
     {
       "id": "security_access_log",
+      "image": "/assets/evidence/evidence_security_log.png",
       "caseId": "case-001",
       "name": "Security Access Log",
       "category": "digital",

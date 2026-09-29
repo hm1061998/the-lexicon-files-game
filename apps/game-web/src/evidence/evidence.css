@@ -44,6 +44,18 @@
   cursor: pointer;
 }
 
+.evidence-art {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  aspect-ratio: 1;
+  margin: 16px auto 0;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 4px;
+  object-fit: cover;
+}
+
 .evidence-category {
   margin: 16px 0 4px;
   font-size: 14px;
@@ -131,6 +143,10 @@
 @media (max-width: 520px) {
   .evidence-modal {
     padding: 16px;
+  }
+
+  .evidence-art {
+    max-width: 160px;
   }
 
   .listening-task {

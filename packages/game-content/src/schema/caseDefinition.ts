@@ -134,6 +134,11 @@ const evidenceSchema = z
     relatedNpcIds: z.array(z.string().min(1)).optional(),
     vocabularyIds: z.array(z.string().min(1)).optional(),
     imageAsset: z.string().min(1).optional(),
+    image: z
+      .string()
+      .startsWith('/assets/', 'must start with "/assets/"')
+      .refine((url) => !url.includes('..'), 'must not contain ".."')
+      .optional(),
   })
   .strict();
 

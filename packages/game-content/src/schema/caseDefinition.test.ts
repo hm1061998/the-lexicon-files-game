@@ -685,4 +685,12 @@ describe('case conclusion contract', () => {
       `texture key "${first!.key}" maps to different urls`,
     );
   });
+  it('accepts an evidence image under /assets/ and rejects others', () => {
+    const withImage = (image: string) => ({ evidences: [{ ...evidence, image }] });
+    expect(parse({ evidencesRaw: withImage('/assets/evidence/x.png') }).evidences[0]!.image).toBe(
+      '/assets/evidence/x.png',
+    );
+    expectValidationIssue({ evidencesRaw: withImage('evidence/x.png') }, 'image');
+    expectValidationIssue({ evidencesRaw: withImage('/assets/../x.png') }, 'image');
+  });
 });

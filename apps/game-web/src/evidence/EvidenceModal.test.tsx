@@ -17,4 +17,23 @@ describe('EvidenceModal', () => {
     expect(html).toContain(evidence.description);
     expect(html).toContain(strings.close);
   });
+
+  it('shows decorative artwork only when the evidence has an image', () => {
+    const withImage = renderToString(
+      <EvidenceModal
+        evidence={{ ...evidence, image: '/assets/evidence/x.png' }}
+        strings={strings}
+        onClose={() => {}}
+      />,
+    );
+    expect(withImage).toContain('<img');
+    expect(withImage).toContain('src="/assets/evidence/x.png"');
+    expect(withImage).toContain('alt=""');
+    const plain = { ...evidence };
+    delete (plain as { image?: string }).image;
+    const without = renderToString(
+      <EvidenceModal evidence={plain} strings={strings} onClose={() => {}} />,
+    );
+    expect(without).not.toContain('<img');
+  });
 });
