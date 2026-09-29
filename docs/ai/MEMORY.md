@@ -1,98 +1,85 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T13:20:00+07:00
-phase: phase-8
-status: complete
-result_commit: 87b855b
-active_spec: docs/superpowers/specs/2026-09-29-phase-8-timeline-contradiction-design.md
-active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
+updated_at: 2026-09-29T13:37:09+07:00
+phase: phase-9
+status: proposed
+result_commit: 131122c
+active_spec: docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md
+active_plan: none
 ---
 
 ## Metadata
 
-- Schema version 1; snapshot duy trì bằng Git.
+- Snapshot duy trì bằng Git; `result_commit` là commit kết quả gần nhất trước lần cập nhật memory này.
 
 ## Current Phase
 
-- Phase 8 — Timeline + Contradiction (roadmap §27): hoàn tất theo spec/plan đã duyệt. Task 1–6 lần lượt ở `3411ee9`, `648e958`, `654c6c9`, `1547517`, `1f99986`, `87b855b`. Implementation ở local `dev`, chưa push.
+- Phase 9 — Case Completion (roadmap §28). Thiết kế đã chốt; spec đã commit và đang chờ người dùng review. Chưa có plan hoặc code Phase 9.
 
 ## Active Goal
 
-- Phase 8 complete: timeline/contradiction, Archive, migration/save V3, provider commerce trung lập mặc định `free` và E2E tích hợp.
+- Hoàn tất Case #001: buộc tội theo content/core, không mất tiến độ khi sai, đóng case đúng và hiện báo cáo case cùng chỉ số hồ sơ học tập.
 
 ## Current Status
 
-- Branch `dev` has the complete Phase 8 implementation locally, unpushed. Tasks 1–6: `3411ee9`, `648e958`, `654c6c9`, `1547517`, `1f99986`, `87b855b`; their memory handoffs are separate commits. Phase 8 spec/plan remain approved and on origin through `b7823c6` (approval handoff through `8f55078`).
-- Phase 7 complete: functionality, user audio audition, and automated verification passed. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
-- Phase 6 remains complete and pushed to `origin/dev` at `520ee4d`; Phase 5 remains complete through `f4ac2be`.
+- `dev` có commit Phase 9 spec `131122c`; `origin/dev` đang ở `3c67c11`. Phase 8 đã hoàn tất và push, workspace sạch trước khi tạo spec.
+- Phase 8: timeline/contradiction, Archive, save V3 migration, commerce provider trung lập mặc định `free`, notebook và E2E. Hoàn tất/push tại `3c67c11`.
+- Phase 7 hoàn tất và push; user nghe audio và xác nhận test OK. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
+- Phase 6 và Phase 5 hoàn tất; xem verification ledger tương ứng trong `docs/ai/`.
 
 ## Completed
 
-- Phase 0A, 0B, 1, 2: xem Git history.
-- Phase 3 tại `200399b`; Phase 4 tại `7d4405a`, remote checkpoint `2595afd`.
-- Phase 5 complete tại `30fb676`: ba NPC/dialogue, runner/progress, validation/build gate, save schema 2 migration, accessible UI/input/focus, physical double-click review fix. Push origin/dev thành công tới `f4ac2be`; xem `docs/ai/2026-09-28-phase-5-dialogue-verification.md`.
-- Phase 6: catalogue 20 lemmas, UTF-16 content spans/validation, pure seen-only reducer, separate IndexedDB profile/recovery/autosave, accessible inline inspection, Beginner/Learning/Immersion modes, tutorial, encountered-only notebook, E2E reload/recovery. Case truth, evidenceTotal 5, case save schema 2/database 1, API và dependencies không đổi.
-- Independent review: không có Critical; năm Important findings đã sửa (preserve stage, strict encounter/context count, popup focus/ARIA/content, notebook metadata/modes/inline evidence, E2E recovery/hidden-context/keyboard coverage). Review ledger: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
-- Phase 7: authored audio evidence/listening task, pure answer transition and completion flag, Kokoro WAV/provenance, Howler playback/retry/cleanup, mode-aware accessible evidence panel, V1 learning telemetry migration, and 35 E2E tests. `evidenceTotal=5`, no backend/runtime TTS/dependency change. User audition accepted.
-- Phase 7 sign-off: user listened to the recording and confirmed “test ok” on 2026-09-29; plan and verification record the approval. Implementation and handoff pushed to `origin/dev` through `7c29114`.
-- Phase 8 spec/plan and commerce seam were pushed through `b7823c6`; approval/handoff memory is pushed through `8f55078`.
+- Phase 0A–4 đã có trong Git history.
+- Phase 5 dialogue/NPC, validation, save V2 và UI/input; push `f4ac2be`.
+- Phase 6 learning profile, notebook từ vựng, persistence riêng và recovery; verification `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
+- Phase 7 audio listening; verification và user audition đã được ghi nhận.
+- Phase 8 spec/plan, implementation Task 1–6 và handoff đồng bộ với `origin/dev` tại `3c67c11`.
+- Quy định spec và plan phải viết bằng tiếng Việt đã thêm vào `AGENTS.md` ở commit `3d6752d`.
 
 ## In Progress
 
-- Phase 8 Task 1 complete: shared timeline/contradiction/spawn/transition types, strict content schemas and cross-reference checks, Case #001 events/facts/evidence/objectives, Archive placeholder/door/terminal, localized UI strings. Commit `3411ee9`; 82/82 `game-content` tests pass.
-- Phase 8 Task 2 complete: pure timeline placement and contradiction submission transitions, typed validation errors, idempotency and authored flag/objective completion. Commit `648e958`; 37/37 `game-core` tests pass.
-- Phase 8 Task 3 complete: save schema V3, V1/V2 legacy contracts and migrations, scene-ID validation/backup recovery, active-scene store/autosave, typed scene-transition bus and WorldScene restarts at named spawns. IndexedDB database version remains 1. Commit `654c6c9`.
-- Phase 8 Task 4: provider-neutral commerce config; `free` default, injected `commercial`, validation/fallback, no gating or persistence. Commit `1547517`.
-- Phase 8 Task 5: notebook timeline filters availability, places events, and submits discovered facts for contradiction checks via pure reducers. Wrong choices preserve state; correct results persist. Localized feedback, keyboard-operable buttons and visible focus. Commit `1f99986`.
-- Phase 8 Task 6: E2E covers Archive/log/return, wrong then correct timeline and contradiction, David challenge, and Archive reload/save state. Legacy V1/V2 fixtures now match historical contracts and Meeting Minutes expectation matches authored content. Commit `87b855b`.
+- Phase 9 spec tại `docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md`, commit `131122c`; chờ người dùng duyệt file.
+- Sau khi duyệt spec mới dùng skill `writing-plans`; plan phải được người dùng duyệt trước khi thực thi Phase 9.
 
 ## Active Decisions
 
-- Product/case truth theo docs/01–03; phase theo roadmap; dependency boundaries theo ARCHITECTURE.md. Spec và implementation plan viết bằng tiếng Việt theo `AGENTS.md` (commit `3d6752d`). Không tự sửa rule khi thiếu/mâu thuẫn.
-- npm + Nx bắt buộc; local runtime `.superpowers/runtime/npm-10.9.7/bin`, `C:/Windows/System32` trên PATH; `NX_DAEMON=false` khi checks. Không thêm dependency/đổi lockfile.
-- Gameplay local-first; core engines TS thuần; learning reducer không nằm trong Phaser. Backend ngoài scope Phase 6.
-- Case save schema 2/database 1 giữ evidence/facts/objectives/flags; learning profile/settings ở DB riêng.
-- Phase 5 ba NPC/Main Office/ph_npc prototype đã duyệt; conditional David chỉ fixture trước Phase 8. Không làm detector/accusation trong Phase 6.
-- Meeting Minutes vẫn evidence collectible mẫu duy nhất, evidenceTotal=5. Catalogue 20 từ không tự đồng nghĩa encountered=20.
-- Phase 6 phương án A/seen-only: chỉ unique vocabulary/context pair tăng encounter; inspection/translation không promote stage; giữ stage cao hơn nếu profile tương lai đã đạt.
-- Phase 7 scope: một phone recording Leo (20:29), Howler playback/replay, three existing listening modes, data-driven effects, local counters + aggregate time-to-fact, no runtime TTS/API/microphone. Hotspot Main Office `(1200, 1280)`; no Archive scene. Provenance pins model/voice revisions and records upstream repo-level Apache-2.0 metadata plus the absence of separate voice-specific terms. User auditory review accepted.
-- Phase 8: user approved spec with provider-neutral commerce config (`free` default, versioned app-boundary provider, invalid/error fallback to `free`, no client-side content locks, commerce backend/payments out of scope). Revised plan adds provider/bootstrap tests; accusation remains Phase 9.
-- Playwright workers=1 do movement theo frames.
+- Tuân theo product truth trong docs/01–03 và dependency boundaries trong `docs/architecture/ARCHITECTURE.md`; khi tài liệu mâu thuẫn phải hỏi người dùng.
+- Spec và implementation plan viết bằng tiếng Việt theo `AGENTS.md`.
+- Dùng npm + Nx; không pnpm/yarn/bun. Không thêm dependency nếu native đủ dùng.
+- `game-core`/`learning-engine` là TS thuần; UI gọi domain qua store/event boundary; không hardcode sự thật Case #001 trong React/Phaser.
+- Gameplay local-first; không thêm API/backend cho Phase 9.
+- Phase 9: user chọn hợp đồng kết luận trong case content, reducer thuần `game-core`, feedback sai riêng Case #001, không thay đổi state khi sai.
+- Báo cáo Phase 9 dùng tiến độ case và chỉ số tổng hợp `LanguageProfile` hiện tại; phải ghi rõ số liệu học tập là toàn hồ sơ.
+- Đề xuất Phase 9: save V4, giữ IndexedDB database version 1, di trú V1/V2/V3 và bảo toàn tiến độ.
+- Commerce config Phase 8 trung lập, mặc định `free`; không paywall hoặc entitlement client-side.
+- Playwright worker = 1 cho thao tác di chuyển theo frames.
 
 ## Blockers
 
-- None.
+- Chờ người dùng review spec Phase 9; chưa bắt đầu lập plan hoặc code.
 
 ## Next Actions
 
-- Phase 8 is complete locally on `dev`; implementation has not been pushed.
+- Người dùng review `docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md`.
+- Nếu được duyệt, tạo implementation plan tiếng Việt và gửi review trước khi thực thi.
+- Chỉ làm Phase 9; không tiến sang phase khác nếu chưa được yêu cầu.
+- Khi bàn giao, chạy các gate theo `AGENTS.md`, cập nhật verification và memory.
 
 ## Verification
 
-- Phase 8 final gates: `npm run lint` PASS (7 projects; one existing `react-hooks/exhaustive-deps` warning in GameCanvas); `npm run test` PASS (7 projects, game-web 28 files/173 tests); `npm run build` PASS (147 modules; 1,830.88 kB JS / 442.50 kB gzip, chunk-size warning); `npm run typecheck` PASS; `npm run format:check` PASS; `npm run test:e2e` PASS (36 tests, 1 worker); `npm run memory:check` PASS; `git diff --check` PASS. No API/dependency/lockfile changes.
-- Phase 8 Task 5: initial RED confirmed missing store actions and notebook UI. `npx nx test @lexicon/game-web --skip-nx-cache` PASS (28 files, 173 tests); `npx nx test @lexicon/game-content --skip-nx-cache` PASS (11 files, 83 tests); `npm run typecheck` PASS; targeted Prettier check and `git diff --check` PASS. Task 5 commit `1f99986`, not pushed.
-- Phase 8 Task 4 complete: `npx nx test @lexicon/game-web --skip-nx-cache` PASS (28 files, 168 tests); `npm run typecheck` PASS. Default/free, injected/commercial, invalid-mode/version/value and provider-error fallback verified, including preserved loaded evidence/flags. Task 4 commit `1547517`, not pushed.
-- Phase 8 Task 3 complete: `npx nx test @lexicon/game-web --skip-nx-cache` PASS (27 files, 159 tests); `npx nx test @lexicon/game-content --skip-nx-cache` PASS (11 files, 83 tests); `npm run typecheck` PASS; `git diff --check` PASS. Historical V2 contract reconciled from Git before migration tests; Task 3 local commit `654c6c9`, not pushed.
-- Phase 8 Task 2 complete: `npx nx test @lexicon/game-core --skip-nx-cache` PASS (6 files, 37 tests); targeted Prettier and `git diff --check` PASS. RED confirmed absent reducer APIs; a failure exposed and fixed contradiction availability validation order. Task 2 local commit `648e958`, not pushed.
-- Phase 8 Task 1 complete: `npx nx test @lexicon/game-content --skip-nx-cache` PASS (10 files, 82 tests); `git diff --check` and targeted Prettier PASS. RED was observed for missing schema/content and missing NPC cross-reference validation. Baseline `npm run test` PASS (7 targets); npm had to be added from `C:\nvm4w\nodejs` to PATH for Nx child scripts. Task 1 local commit `3411ee9`, not pushed.
-- Phase 7: lint PASS (7 Nx projects); uncached unit/content tests PASS (7 targets; game-web 27 files/148 tests, game-content 10 files/72 tests); build PASS (141 modules; 1,809.14 kB JS / 437.53 kB gzip chunk warning); typecheck PASS; format PASS; full E2E PASS (35 tests, 1 worker); user audio audition accepted; push to `origin/dev` verified at `44e06ff`.
-- Phase 6 final: `npm run lint` PASS (7 Nx projects); `npm run test` PASS (25 files / 136 tests); `npm run build` PASS (134 modules; chunk warning: JS 1,761.37 kB, gzip 423.69 kB); `npm run typecheck` PASS; `npm run format:check` PASS; `npm run test:e2e` PASS (31 tests, 1 worker); `npm run memory:check` PASS; `npm run memory:test` PASS (30); `git diff --check` PASS.
-- Backend checks not run because `apps/api` unchanged. `npm ci` earlier reported 7 existing audit advisories (3 moderate, 3 high, 1 critical); no dependency was changed.
-- Phase 5 historical verification: lint 7 projects; 204 Vitest + 30 memory tests; build 122 modules with >500 kB warning; E2E 29/29; formatting/memory/whitespace pass.
+- Spec Phase 9: tự rà placeholder/nhất quán/phạm vi; `git diff --check` PASS trước commit `131122c`.
+- Phase 8 final: lint PASS (7 projects); test PASS (7 targets; game-web 173 tests); build PASS (147 modules; chunk-size warning); typecheck, format, E2E (36 tests/1 worker), memory check và `git diff --check` PASS. API/dependency/lockfile không đổi.
+- Phase 7: lint, unit/content, build, typecheck, format, E2E (35 tests/1 worker), memory check và user audio audition PASS; push đã xác nhận.
+- Backend checks chỉ cần khi Phase 9 sửa `apps/api`.
 
 ## Latest Handoff
 
-- Phase 8 is complete locally on `dev`; implementation commits are `3411ee9`, `648e958`, `654c6c9`, `1547517`, `1f99986`, `87b855b`. Final gates: lint, unit/content tests, build, typecheck, format, E2E 36/36, memory check and whitespace all pass. No code push was requested.
-- Quy định dự án mới: mọi spec và implementation plan phải viết bằng tiếng Việt; đã ghi vào `AGENTS.md` tại `3d6752d`.
-- User approved the Phase 8 spec and requested plan creation plus push to `dev`; spec, plan, and synchronized memory are on `origin/dev` through `38f0a7d`. Plan review and execution method remain pending; no code yet.
-- Phase 7 is complete and pushed to `origin/dev` through `44e06ff`; user approved the audio audition. Verification ledger: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`. Audio is 4.2 s, 201,644 bytes, mono 24 kHz PCM16; model/voice revisions and checksums are in `.provenance.json`.
-- Phase 6 is integrated and pushed: local/remote `dev` at `520ee4d` (then memory reconciliation `9177cfa`). Verification/review: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
-- Phase 5 is already pushed through `f4ac2be`. Minor evidence focus restoration Phase 4 remains deferred; dialogue has separate restoration verified.
+- Phase 8 đã push và `dev` đồng bộ `origin/dev` tại `3c67c11`.
+- Phase 9 design được chốt sau khi xác nhận câu phản hồi chọn sai theo Case #001. Spec đã commit local tại `131122c`, chưa push; chờ user review. Chưa có implementation plan hoặc code.
 
 ## Required Reading
 
 - `AGENTS.md`, `apps/game-web/AGENTS.md`, `docs/ai/README.md`.
-- `docs/superpowers/specs/2026-09-29-phase-7-audio-listening-design.md`.
-- `docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md` §§4–7, 11–12, 24–26, 29–31; `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §15; `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §25.
-- `docs/architecture/ARCHITECTURE.md`; `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`.
-- Phase 5 spec/plan and `docs/ai/2026-09-28-phase-5-dialogue-verification.md` for behavior/save/input.
+- Active spec/plan theo metadata ở đầu file; Phase 9 hiện chỉ có active spec.
+- Docs/01–05, `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`, `docs/architecture/ARCHITECTURE.md` theo phạm vi phase.
+- Phase 8 spec/plan cho save V3, reducer, content validation và ranh giới commerce.
