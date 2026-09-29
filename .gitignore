@@ -17,3 +17,8 @@ obj/
 .nx/workspace-data
 *.tsbuildinfo
 .superpowers/
+
+# Art pipeline
+__pycache__/
+assets/_incoming/*
+!assets/_incoming/.gitkeep
