@@ -205,13 +205,13 @@ export interface CommerceConfigProvider {
 
 **Các bước:**
 
-- [ ] **Bước 1: Viết test giao diện thất bại** cho label tab, mốc có thứ tự, chỉ hiện event khả dụng, sự kiện 21:05 từ đầu, không hiển thị fact ẩn, lựa chọn bằng bàn phím, focus nhìn thấy, feedback sai và trạng thái đúng đã lưu.
-- [ ] **Bước 2: Chạy `npx nx test @lexicon/game-web`** và xác nhận test tab/giao diện mới fail.
-- [ ] **Bước 3: Mở rộng store** để gọi hai reducer thuần và chỉ cập nhật state khi thành công; duy trì sự kiện đã đặt và contradiction đã lưu khi đổi tab/đóng mở notebook.
-- [ ] **Bước 4: Cài tab và nội dung UI** bằng `NotebookPanel`, semantic button/form controls có tên truy cập; danh sách event/fact lọc từ case state hiện tại.
-- [ ] **Bước 5: Thêm CSS** theo `notebook.css` hiện có: bố cục hồ sơ giấy, trục thời gian rõ, đỏ điều tra chỉ cho lựa chọn và mâu thuẫn đã xác nhận; trạng thái không chỉ phân biệt bằng màu.
-- [ ] **Bước 6: Chạy test UI** bằng `npx nx test @lexicon/game-web`; kỳ vọng keyboard, focus, hidden content, retry và completed state pass.
-- [ ] **Bước 7: Commit** với `feat(game-web): add timeline and contradiction notebook`.
+- [x] **Bước 1: Viết test giao diện thất bại** cho label tab, mốc có thứ tự, chỉ hiện event khả dụng, sự kiện 21:05 từ đầu, không hiển thị fact ẩn, lựa chọn bằng bàn phím, focus nhìn thấy, feedback sai và trạng thái đúng đã lưu.
+- [x] **Bước 2: Chạy `npx nx test @lexicon/game-web`** và xác nhận test tab/giao diện mới fail.
+- [x] **Bước 3: Mở rộng store** để gọi hai reducer thuần và chỉ cập nhật state khi thành công; duy trì sự kiện đã đặt và contradiction đã lưu khi đổi tab/đóng mở notebook.
+- [x] **Bước 4: Cài tab và nội dung UI** bằng `NotebookPanel`, semantic button/form controls có tên truy cập; danh sách event/fact lọc từ case state hiện tại.
+- [x] **Bước 5: Thêm CSS** theo `notebook.css` hiện có: bố cục hồ sơ giấy, trục thời gian rõ, đỏ điều tra chỉ cho lựa chọn và mâu thuẫn đã xác nhận; trạng thái không chỉ phân biệt bằng màu.
+- [x] **Bước 6: Chạy test UI** bằng `npx nx test @lexicon/game-web`; kỳ vọng keyboard, focus, hidden content, retry và completed state pass.
+- [x] **Bước 7: Commit** với `feat(game-web): add timeline and contradiction notebook`.
 
 ## Task 6: Kiểm thử luồng tích hợp Phase 8 và hoàn tất gates
 
