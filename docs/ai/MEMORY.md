@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T11:00:43+07:00
+updated_at: 2026-09-29T11:13:18+07:00
 phase: phase-8
 status: in_progress
-result_commit: eac521e
+result_commit: 550e792
 active_spec: docs/superpowers/specs/2026-09-29-phase-8-timeline-contradiction-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 ---
 
 ## Metadata
@@ -14,7 +14,7 @@ active_plan: none
 
 ## Current Phase
 
-- Phase 8 — Timeline + Contradiction (roadmap §27): bản spec tiếng Việt đã commit local tại `eac521e`; user duyệt hướng data-driven và Archive scene tối thiểu. Đang chờ user review spec trước khi tạo implementation plan.
+- Phase 8 — Timeline + Contradiction (roadmap §27): spec tiếng Việt đã được user duyệt; implementation plan tiếng Việt tại `docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md`, commit `550e792`. Chờ user review plan trước khi triển khai.
 
 ## Active Goal
 
@@ -22,7 +22,7 @@ active_plan: none
 
 ## Current Status
 
-- Branch `dev`: Phase 7 implementation/handoff pushed and verified at `44e06ff`; Phase 8 spec drafts `43f51d2` and Vietnamese revision `eac521e` are local and not pushed. No product code changed in Phase 8.
+- Branch `dev`: Phase 7 implementation/handoff pushed and verified at `44e06ff`; Phase 8 spec/approval/plan commits through `550e792` are local. No product code changed in Phase 8.
 - Phase 7 complete: functionality, user audio audition, and automated verification passed. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
 - Phase 6 remains complete and pushed to `origin/dev` at `520ee4d`; Phase 5 remains complete through `f4ac2be`.
 
@@ -35,11 +35,11 @@ active_plan: none
 - Independent review: không có Critical; năm Important findings đã sửa (preserve stage, strict encounter/context count, popup focus/ARIA/content, notebook metadata/modes/inline evidence, E2E recovery/hidden-context/keyboard coverage). Review ledger: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
 - Phase 7: authored audio evidence/listening task, pure answer transition and completion flag, Kokoro WAV/provenance, Howler playback/retry/cleanup, mode-aware accessible evidence panel, V1 learning telemetry migration, and 35 E2E tests. `evidenceTotal=5`, no backend/runtime TTS/dependency change. User audition accepted.
 - Phase 7 sign-off: user listened to the recording and confirmed “test ok” on 2026-09-29; plan and verification record the approval. Implementation and handoff pushed to `origin/dev` through `7c29114`.
-- Phase 8 scope approved in conversation: data-driven timeline/contradiction flow, minimal Archive scene and route from Main Office; Vietnamese written design committed at `eac521e` and awaits user review.
+- Phase 8 scope and Vietnamese spec approved by user; Vietnamese implementation plan committed at `550e792` and awaits plan review before implementation.
 
 ## In Progress
 
-- Phase 8: bản spec tiếng Việt đã commit local tại `eac521e`; chờ người dùng xem xét trước khi tạo plan.
+- Phase 8: spec đã duyệt; implementation plan tại `docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md` đã tạo. Chờ user review plan/chọn cách thực thi; chưa có code.
 
 ## Active Decisions
 
@@ -51,7 +51,7 @@ active_plan: none
 - Meeting Minutes vẫn evidence collectible mẫu duy nhất, evidenceTotal=5. Catalogue 20 từ không tự đồng nghĩa encountered=20.
 - Phase 6 phương án A/seen-only: chỉ unique vocabulary/context pair tăng encounter; inspection/translation không promote stage; giữ stage cao hơn nếu profile tương lai đã đạt.
 - Phase 7 scope: một phone recording Leo (20:29), Howler playback/replay, three existing listening modes, data-driven effects, local counters + aggregate time-to-fact, no runtime TTS/API/microphone. Hotspot Main Office `(1200, 1280)`; no Archive scene. Provenance pins model/voice revisions and records upstream repo-level Apache-2.0 metadata plus the absence of separate voice-specific terms. User auditory review accepted.
-- Phase 8 design draft: user selected a minimal Archive scene and route to preserve Security Access Log placement; spec proposes authored timeline slots, discovered-facts-only contradiction, scene ID save/migration, no Phase 9 accusation. Await full-spec approval before plan.
+- Phase 8: user approved the Vietnamese spec for a minimal Archive route, authored timeline slots, discovered-facts-only contradiction, and scene ID save/migration; accusation remains Phase 9. Await plan review before implementation.
 - Playwright workers=1 do movement theo frames.
 
 ## Blockers
@@ -60,11 +60,11 @@ active_plan: none
 
 ## Next Actions
 
-- User reviews `docs/superpowers/specs/2026-09-29-phase-8-timeline-contradiction-design.md`; after approval, write and review the Phase 8 implementation plan.
+- User reviews the Phase 8 implementation plan and chooses/approves an execution approach before code work starts.
 
 ## Verification
 
-- Phase 8 design: source documents and current contracts reconciled; Vietnamese translation preserves the approved scope and identifiers; placeholder/contradiction self-review PASS; Prettier check PASS; `memory:check` PASS; `git diff --check` PASS. Written spec awaits user approval; no implementation gates apply yet.
+- Phase 8 plan: spec approved by user; implementation plan created in Vietnamese and self-reviewed against spec, repository files, interfaces, tests, and review risks; Prettier check PASS; `git diff --check` PASS. Memory check will be rerun after this handoff update. No product-code gates apply yet.
 - Phase 7: lint PASS (7 Nx projects); uncached unit/content tests PASS (7 targets; game-web 27 files/148 tests, game-content 10 files/72 tests); build PASS (141 modules; 1,809.14 kB JS / 437.53 kB gzip chunk warning); typecheck PASS; format PASS; full E2E PASS (35 tests, 1 worker); user audio audition accepted; push to `origin/dev` verified at `44e06ff`.
 - Phase 6 final: `npm run lint` PASS (7 Nx projects); `npm run test` PASS (25 files / 136 tests); `npm run build` PASS (134 modules; chunk warning: JS 1,761.37 kB, gzip 423.69 kB); `npm run typecheck` PASS; `npm run format:check` PASS; `npm run test:e2e` PASS (31 tests, 1 worker); `npm run memory:check` PASS; `npm run memory:test` PASS (30); `git diff --check` PASS.
 - Backend checks not run because `apps/api` unchanged. `npm ci` earlier reported 7 existing audit advisories (3 moderate, 3 high, 1 critical); no dependency was changed.
@@ -72,9 +72,9 @@ active_plan: none
 
 ## Latest Handoff
 
-- Bản spec Phase 8 đã được chuyển sang tiếng Việt và commit tại `eac521e`; chờ user xem xét bản viết trước khi tạo plan. Chưa push.
+- Spec Phase 8 đã được user duyệt; spec approval và plan được commit tại `550e792`. User đã yêu cầu push lên `dev`; chưa có implementation code.
 - Quy định dự án mới: mọi spec và implementation plan phải viết bằng tiếng Việt; đã ghi vào `AGENTS.md` tại `3d6752d`.
-- User approved the proposed Phase 8 scope, including a minimal Archive scene and route, but has not reviewed the written spec. Wait for written-spec approval before invoking `writing-plans`; no code/plan/push yet.
+- User approved the Phase 8 spec and requested plan creation plus push to `dev`. Plan review and execution method remain pending; no code yet.
 - Phase 7 is complete and pushed to `origin/dev` through `44e06ff`; user approved the audio audition. Verification ledger: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`. Audio is 4.2 s, 201,644 bytes, mono 24 kHz PCM16; model/voice revisions and checksums are in `.provenance.json`.
 - Phase 6 is integrated and pushed: local/remote `dev` at `520ee4d` (then memory reconciliation `9177cfa`). Verification/review: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
 - Phase 5 is already pushed through `f4ac2be`. Minor evidence focus restoration Phase 4 remains deferred; dialogue has separate restoration verified.
