@@ -38,6 +38,8 @@ Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (
 | Review                                | `requesting-code-review` / `receiving-code-review`                                                                          |
 | Tách nhánh / kết thúc nhánh           | `using-git-worktrees` / `finishing-a-development-branch`                                                                    |
 
+**Ngôn ngữ spec và plan:** Tất cả tài liệu spec trong `docs/superpowers/specs/` và implementation plan trong `docs/superpowers/plans/` phải được viết bằng tiếng Việt.
+
 **Một phase một lần.** Không làm phase sau khi chưa được yêu cầu. Không giao cả 12 phase trong một lượt.
 
 ## 3. Package manager & monorepo (BẮT BUỘC)
