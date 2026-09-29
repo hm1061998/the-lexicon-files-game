@@ -1,17 +1,20 @@
 import type { LanguageProfile, TranslationMode } from '@lexicon/shared-types';
 import { createInitialLanguageProfile } from '@lexicon/learning-engine';
 
-export type LearningRecordV1 = {
-  schemaVersion: 1;
+export type LearningRecordV2 = {
+  schemaVersion: 2;
   profile: LanguageProfile;
-  translationMode: TranslationMode;
   vocabularyTutorialSeen: boolean;
   updatedAt: number;
 };
-export const createDefaultLearningRecord = (): LearningRecordV1 => ({
-  schemaVersion: 1,
+export type ParsedLearningRecord = {
+  record: LearningRecordV2;
+  legacyTranslationMode: TranslationMode | null;
+  migrated: boolean;
+};
+export const createDefaultLearningRecord = (): LearningRecordV2 => ({
+  schemaVersion: 2,
   profile: createInitialLanguageProfile(),
-  translationMode: 'Learning',
   vocabularyTutorialSeen: false,
   updatedAt: Date.now(),
 });
@@ -24,10 +27,11 @@ export function parseLearningRecord(
   raw: unknown,
   catalogueIds: readonly string[],
   contextIds: readonly string[],
-): LearningRecordV1 {
+): ParsedLearningRecord {
   if (!raw || typeof raw !== 'object') throw new Error('Learning record is not an object');
   const record = raw as Record<string, unknown>;
-  if (record.schemaVersion !== 1)
+  const version = record.schemaVersion;
+  if (version !== 1 && version !== 2)
     throw new Error(`Unsupported learning schemaVersion: ${String(record.schemaVersion)}`);
   if (
     Object.keys(record).some(
@@ -35,14 +39,14 @@ export function parseLearningRecord(
         ![
           'schemaVersion',
           'profile',
-          'translationMode',
+          ...(version === 1 ? ['translationMode'] : []),
           'vocabularyTutorialSeen',
           'updatedAt',
         ].includes(key),
     )
   )
     throw new Error('Unexpected learning record fields');
-  if (!modes.includes(record.translationMode as TranslationMode))
+  if (version === 1 && !modes.includes(record.translationMode as TranslationMode))
     throw new Error('Invalid translation mode');
   if (
     typeof record.vocabularyTutorialSeen !== 'boolean' ||
@@ -108,7 +112,13 @@ export function parseLearningRecord(
       throw new Error(`Invalid vocabulary review date: ${id}`);
   }
   return {
-    ...record,
-    profile: { ...profile, listening },
-  } as unknown as LearningRecordV1;
+    record: {
+      schemaVersion: 2,
+      profile: { ...profile, listening },
+      vocabularyTutorialSeen: record.vocabularyTutorialSeen,
+      updatedAt: record.updatedAt,
+    },
+    legacyTranslationMode: version === 1 ? (record.translationMode as TranslationMode) : null,
+    migrated: version === 1,
+  };
 }

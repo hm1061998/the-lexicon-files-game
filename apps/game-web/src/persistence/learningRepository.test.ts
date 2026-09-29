@@ -50,7 +50,11 @@ describe('separate learning repository', () => {
 
   it('strictly parses a valid record and rejects unknown vocabulary/context progress', () => {
     const record = createDefaultLearningRecord();
-    expect(parseLearningRecord(record, [], [])).toEqual(record);
+    expect(parseLearningRecord(record, [], [])).toEqual({
+      record,
+      legacyTranslationMode: null,
+      migrated: false,
+    });
     const corrupted = {
       ...record,
       profile: {
@@ -79,6 +83,7 @@ describe('separate learning repository', () => {
     expect(listening).toBeDefined();
     const legacy = {
       ...record,
+      schemaVersion: 1,
       translationMode: 'Beginner',
       vocabularyTutorialSeen: true,
       profile: {
@@ -96,21 +101,26 @@ describe('separate learning repository', () => {
         },
       },
     };
-    expect(parseLearningRecord(legacy, ['leave'], ['dialogue:anna:entry:text'])).toMatchObject({
-      schemaVersion: 1,
-      translationMode: 'Beginner',
-      vocabularyTutorialSeen: true,
-      profile: {
-        vocabulary: { leave: { stage: 'seen' } },
-        listening: {
-          subtitleUses: 0,
-          correctAnswers: 0,
-          incorrectAnswers: 0,
-          totalTimeToExtractFactMs: 0,
-          timedFacts: 0,
+    const parsed = parseLearningRecord(legacy, ['leave'], ['dialogue:anna:entry:text']);
+    expect(parsed).toMatchObject({
+      legacyTranslationMode: 'Beginner',
+      migrated: true,
+      record: {
+        schemaVersion: 2,
+        vocabularyTutorialSeen: true,
+        profile: {
+          vocabulary: { leave: { stage: 'seen' } },
+          listening: {
+            subtitleUses: 0,
+            correctAnswers: 0,
+            incorrectAnswers: 0,
+            totalTimeToExtractFactMs: 0,
+            timedFacts: 0,
+          },
         },
       },
     });
+    expect(parsed.record).not.toHaveProperty('translationMode');
   });
 
   it('rejects malformed listening counters', () => {
@@ -146,5 +156,57 @@ describe('separate learning repository', () => {
     expect(() =>
       parseLearningRecord(inconsistent, ['leave'], ['dialogue:anna:entry:text']),
     ).toThrow('Invalid vocabulary progress values');
+  });
+
+  it('rejects a V2 record that still carries translationMode', () => {
+    const record = { ...createDefaultLearningRecord(), translationMode: 'Learning' };
+    expect(() => parseLearningRecord(record, [], [])).toThrow('Unexpected learning record fields');
+  });
+
+  it('migrates V1 to V2, backing up the raw V1 before writing V2', async () => {
+    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Immersion' };
+    const order: string[] = [];
+    const saved: unknown = v1;
+    const db: LearningDatabase = {
+      async get() {
+        return saved;
+      },
+      async put(record) {
+        order.push('put');
+        saved = record;
+      },
+      async backup(raw) {
+        order.push(raw === v1 ? 'backup-v1' : 'backup-other');
+      },
+    };
+    const result = await createLearningRepository(async () => db).loadLearning([], []);
+    expect(order).toEqual(['backup-v1', 'put']);
+    expect(result).toMatchObject({ status: 'loaded', legacyTranslationMode: 'Immersion' });
+    expect(saved).not.toHaveProperty('translationMode');
+    expect(saved).toMatchObject({ schemaVersion: 2 });
+    const again = await createLearningRepository(async () => db).loadLearning([], []);
+    expect(again).toMatchObject({ status: 'loaded', legacyTranslationMode: null });
+    expect(order).toEqual(['backup-v1', 'put']);
+  });
+
+  it('keeps the V1 source and reports memory-only when the migration write fails', async () => {
+    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Beginner' };
+    const saved: unknown = v1;
+    const db: LearningDatabase = {
+      async get() {
+        return saved;
+      },
+      async put() {
+        throw new Error('quota');
+      },
+      async backup() {},
+    };
+    const result = await createLearningRepository(async () => db).loadLearning([], []);
+    expect(result).toMatchObject({
+      status: 'memory-only',
+      error: 'quota',
+      legacyTranslationMode: 'Beginner',
+    });
+    expect(saved).toBe(v1);
   });
 });

@@ -1,8 +1,8 @@
 import type { LearningStore } from '../state/learningStore';
-import type { LearningRecordV1 } from './learningMigration';
+import type { LearningRecordV2 } from './learningMigration';
 export function connectLearningAutosave(
   store: LearningStore,
-  save: (record: LearningRecordV1) => Promise<void>,
+  save: (record: LearningRecordV2) => Promise<void>,
   onError: (error: unknown) => void,
 ): () => void {
   let chain = Promise.resolve();
@@ -10,15 +10,13 @@ export function connectLearningAutosave(
   const unsubscribe = store.subscribe((state) => {
     const snapshot = JSON.stringify({
       profile: state.profile,
-      translationMode: state.translationMode,
       vocabularyTutorialSeen: state.vocabularyTutorialSeen,
     });
     if (snapshot === previous) return;
     previous = snapshot;
-    const record: LearningRecordV1 = {
-      schemaVersion: 1,
+    const record: LearningRecordV2 = {
+      schemaVersion: 2,
       profile: state.profile,
-      translationMode: state.translationMode,
       vocabularyTutorialSeen: state.vocabularyTutorialSeen,
       updatedAt: Date.now(),
     };

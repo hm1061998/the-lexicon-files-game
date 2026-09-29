@@ -1,9 +1,10 @@
 import { openDB, type DBSchema } from 'idb';
 import type { VocabularyContextDefinition, VocabularyEntry } from '@lexicon/shared-types';
+import type { TranslationMode } from '@lexicon/shared-types';
 import {
   createDefaultLearningRecord,
   parseLearningRecord,
-  type LearningRecordV1,
+  type LearningRecordV2,
 } from './learningMigration';
 
 interface LearningDbSchema extends DBSchema {
@@ -12,20 +13,29 @@ interface LearningDbSchema extends DBSchema {
 }
 export type LearningDatabase = {
   get(): Promise<unknown | undefined>;
-  put(record: LearningRecordV1): Promise<void>;
+  put(record: LearningRecordV2): Promise<void>;
   backup(raw: unknown): Promise<void>;
 };
 export type LearningLoadResult =
-  | { status: 'loaded' | 'missing'; record: LearningRecordV1 }
+  | {
+      status: 'loaded' | 'missing';
+      record: LearningRecordV2;
+      legacyTranslationMode: TranslationMode | null;
+    }
   | { status: 'confirmation-required'; reason: string }
-  | { status: 'memory-only'; record: LearningRecordV1; error: string };
+  | {
+      status: 'memory-only';
+      record: LearningRecordV2;
+      legacyTranslationMode: TranslationMode | null;
+      error: string;
+    };
 export type LearningRepository = {
   loadLearning(
     catalogue: readonly VocabularyEntry[],
     contexts: readonly VocabularyContextDefinition[],
   ): Promise<LearningLoadResult>;
-  saveLearning(record: LearningRecordV1): Promise<void>;
-  createFreshLearningAfterConfirmation(): Promise<LearningRecordV1>;
+  saveLearning(record: LearningRecordV2): Promise<void>;
+  createFreshLearningAfterConfirmation(): Promise<LearningRecordV2>;
 };
 async function openLearningDb(): Promise<LearningDatabase> {
   const db = await openDB<LearningDbSchema>('lexicon-learning', 1, {
@@ -55,16 +65,15 @@ export function createLearningRepository(
       try {
         const db = await factory();
         currentRaw = await db.get();
-        if (currentRaw === undefined) return { status: 'missing', record: fresh };
+        if (currentRaw === undefined)
+          return { status: 'missing', record: fresh, legacyTranslationMode: null };
+        let parsed: ReturnType<typeof parseLearningRecord>;
         try {
-          return {
-            status: 'loaded',
-            record: parseLearningRecord(
-              currentRaw,
-              catalogue.map((v) => v.id),
-              contexts.map((c) => c.id),
-            ),
-          };
+          parsed = parseLearningRecord(
+            currentRaw,
+            catalogue.map((v) => v.id),
+            contexts.map((c) => c.id),
+          );
         } catch (error) {
           await db.backup(currentRaw);
           return {
@@ -72,10 +81,30 @@ export function createLearningRepository(
             reason: error instanceof Error ? error.message : String(error),
           };
         }
+        if (parsed.migrated) {
+          try {
+            await db.backup(currentRaw);
+            await db.put(parsed.record);
+          } catch (error) {
+            // Source V1 stays untouched; run in memory and report like a Phase 6 write failure.
+            return {
+              status: 'memory-only',
+              record: parsed.record,
+              legacyTranslationMode: parsed.legacyTranslationMode,
+              error: error instanceof Error ? error.message : String(error),
+            };
+          }
+        }
+        return {
+          status: 'loaded',
+          record: parsed.record,
+          legacyTranslationMode: parsed.legacyTranslationMode,
+        };
       } catch (error) {
         return {
           status: 'memory-only',
           record: fresh,
+          legacyTranslationMode: null,
           error: error instanceof Error ? error.message : String(error),
         };
       }

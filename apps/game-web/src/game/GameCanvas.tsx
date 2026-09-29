@@ -3,6 +3,7 @@ import type {
   CaseDefinition,
   GameEventMap,
   LearningAction,
+  TranslationMode,
   UiStrings,
 } from '@lexicon/shared-types';
 import {
@@ -194,6 +195,11 @@ export function GameCanvas({
           ? createDefaultLearningRecord()
           : learningLoad.record
       }
+      initialTranslationMode={
+        learningLoad.status === 'confirmation-required'
+          ? 'Learning'
+          : (learningLoad.legacyTranslationMode ?? 'Learning')
+      }
       learningPersistenceInitiallyEnabled={
         learningLoad.status === 'loaded' || learningLoad.status === 'missing'
       }
@@ -240,6 +246,7 @@ function GameRoot({
   repository,
   learningRepository,
   learningRecord,
+  initialTranslationMode,
   learningPersistenceInitiallyEnabled,
   learningRecoveryRequired,
   learningPersistenceError,
@@ -252,6 +259,7 @@ function GameRoot({
   repository: SaveRepository;
   learningRepository: ReturnType<typeof createLearningRepository>;
   learningRecord: ReturnType<typeof createDefaultLearningRecord>;
+  initialTranslationMode: TranslationMode;
   learningPersistenceInitiallyEnabled: boolean;
   learningRecoveryRequired: string | null;
   learningPersistenceError: string | null;
@@ -286,9 +294,10 @@ function GameRoot({
         catalogue: caseDefinition.vocabulary,
         contexts: caseDefinition.vocabularyContexts,
         initialRecord: learningRecord,
+        initialTranslationMode,
         bus,
       }),
-    [caseDefinition, learningRecord, bus],
+    [caseDefinition, learningRecord, initialTranslationMode, bus],
   );
   usePauseShortcut(store);
   useNotebookShortcut(store);

@@ -6,27 +6,27 @@ import { createDefaultLearningRecord } from './learningMigration';
 import { connectLearningAutosave } from './connectLearningAutosave';
 
 describe('learning autosave', () => {
-  it('serializes rapid mode changes and saves the latest value last', async () => {
+  it('serializes rapid changes, saves the latest value last and omits translationMode', async () => {
     const store = createLearningStore({
       catalogue: [],
       contexts: [],
       initialRecord: createDefaultLearningRecord(),
       bus: createEventBus<GameEventMap>(),
     });
-    const modes: string[] = [];
+    const saves: unknown[] = [];
     const disconnect = connectLearningAutosave(
       store,
       async (record) => {
         await new Promise((resolve) => setTimeout(resolve, 5));
-        modes.push(record.translationMode);
+        saves.push(record);
       },
       () => undefined,
     );
-    store.getState().setTranslationMode('Beginner');
-    store.getState().setTranslationMode('Immersion');
-    expect(store.getState().translationMode).toBe('Immersion');
+    store.getState().markVocabularyTutorialSeen();
     disconnect();
     await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(modes).toEqual(['Beginner', 'Immersion']);
+    expect(saves).toHaveLength(1);
+    expect(saves[0]).toMatchObject({ schemaVersion: 2, vocabularyTutorialSeen: true });
+    expect(saves[0]).not.toHaveProperty('translationMode');
   });
 });

@@ -9,7 +9,7 @@ import type {
   VocabularyEntry,
 } from '@lexicon/shared-types';
 import { applyLearningAction } from '@lexicon/learning-engine';
-import type { LearningRecordV1 } from '../persistence/learningMigration';
+import type { LearningRecordV2 } from '../persistence/learningMigration';
 
 export type LearningStoreState = {
   profile: LanguageProfile;
@@ -27,18 +27,21 @@ export function createLearningStore({
   catalogue,
   contexts,
   initialRecord,
+  initialTranslationMode = 'Learning',
   bus,
   now = () => new Date().toISOString(),
 }: {
   catalogue: readonly VocabularyEntry[];
   contexts: readonly VocabularyContextDefinition[];
-  initialRecord: LearningRecordV1;
+  initialRecord: LearningRecordV2;
+  // Temporary bridge until the settings store owns translationMode (Task 3).
+  initialTranslationMode?: TranslationMode;
   bus: EventBus<GameEventMap>;
   now?: () => string;
 }): LearningStore {
   return createStore<LearningStoreState>((set, get) => ({
     profile: initialRecord.profile,
-    translationMode: initialRecord.translationMode,
+    translationMode: initialTranslationMode,
     vocabularyTutorialSeen: initialRecord.vocabularyTutorialSeen,
     activeWord: null,
     error: null,
