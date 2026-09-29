@@ -1,6 +1,6 @@
 """lexicon_isometric_v1 — tiny code renderer.
 
-Orthographic iso camera (yaw 45°, pitch 35°) or top-down camera, z-buffer
+Orthographic iso camera (yaw 45°, pitch 35°), top-down or front-elevation camera, z-buffer
 rasterisation at 4x supersampling, ink outlines detected from face-id
 boundaries, soft pencil hatching on shadowed faces, light paper grain.
 """
@@ -56,6 +56,14 @@ class Cam:
             self.d = np.array([s * SQ, s * SQ, -c])
             self.c = np.array([c * SQ, c * SQ, s])
             l = -0.62 * self.r - 0.5 * self.d + 0.6 * self.c
+        elif mode == "front":
+            # straight elevation seen from +y, pitched down slightly so shelf tops read;
+            # horizontal world lines stay horizontal on screen (no iso diagonal)
+            p = math.radians(12)
+            self.r = np.array([1., 0, 0])
+            self.d = np.array([0, math.sin(p), -math.cos(p)])
+            self.c = np.array([0, math.cos(p), math.sin(p)])
+            l = np.array([-0.35, 0.8, 0.5])
         else:
             self.r = np.array([1., 0, 0])
             self.d = np.array([0, -1., 0])

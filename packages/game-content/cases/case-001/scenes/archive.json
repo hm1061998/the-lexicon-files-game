@@ -6,9 +6,9 @@
   },
   "worldBounds": {
     "x": 0,
-    "y": 0,
+    "y": 160,
     "width": 2400,
-    "height": 1600
+    "height": 1440
   },
   "spawnPoints": {
     "default": {
@@ -32,6 +32,26 @@
     {
       "key": "tex_door_hallway",
       "url": "/assets/environment/props/prop_door_hallway_01.png"
+    },
+    {
+      "key": "tex_archive_wall",
+      "url": "/assets/environment/archive/scene_archive_wall_back.png"
+    },
+    {
+      "key": "tex_filing_cabinet",
+      "url": "/assets/environment/props/prop_filing_cabinet_01.png"
+    },
+    {
+      "key": "tex_office_chair",
+      "url": "/assets/environment/props/prop_office_chair_01.png"
+    },
+    {
+      "key": "tex_meeting_table",
+      "url": "/assets/environment/props/prop_meeting_table_01.png"
+    },
+    {
+      "key": "tex_office_plant",
+      "url": "/assets/environment/props/prop_office_plant_01.png"
     }
   ],
   "assets": [
@@ -48,7 +68,7 @@
     {
       "id": "PLACEHOLDER_archive_wall",
       "type": "wall",
-      "texture": "ph_wall",
+      "texture": "tex_archive_wall",
       "x": 1200,
       "y": 420,
       "depthBias": 0,
@@ -58,7 +78,8 @@
         "y": -40,
         "width": 2400,
         "height": 40
-      }
+      },
+      "origin": [0.5, 1]
     },
     {
       "id": "PLACEHOLDER_security_terminal",
@@ -112,6 +133,261 @@
       },
       "origin": [0.5, 1],
       "scale": 0.5
+    },
+    {
+      "id": "decor_cabinet_wall_1",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 180,
+      "y": 449,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_wall_2",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 256,
+      "y": 449,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_left_1",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 90,
+      "y": 900,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_left_2",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 90,
+      "y": 990,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_row_1",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 700,
+      "y": 1250,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_row_2",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 780,
+      "y": 1250,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_row_3",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 860,
+      "y": 1250,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_mid_1",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 1860,
+      "y": 760,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_mid_2",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 1940,
+      "y": 760,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_mid_3",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 2020,
+      "y": 760,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_row_4",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 1860,
+      "y": 1300,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_cabinet_row_5",
+      "type": "prop",
+      "texture": "tex_filing_cabinet",
+      "x": 1940,
+      "y": 1300,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -29,
+        "y": -29,
+        "width": 58,
+        "height": 29
+      },
+      "origin": [0.5, 1],
+      "scale": 0.6
+    },
+    {
+      "id": "decor_chair_terminal",
+      "type": "prop",
+      "texture": "tex_office_chair",
+      "x": 1600,
+      "y": 1030,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -14,
+        "y": -14,
+        "width": 27,
+        "height": 14
+      },
+      "origin": [0.5, 1],
+      "scale": 0.5
+    },
+    {
+      "id": "decor_reading_table",
+      "type": "prop",
+      "texture": "tex_meeting_table",
+      "x": 1150,
+      "y": 1480,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -104,
+        "y": -130,
+        "width": 208,
+        "height": 130
+      },
+      "origin": [0.5, 1],
+      "scale": 0.62
+    },
+    {
+      "id": "decor_plant_corner",
+      "type": "prop",
+      "texture": "tex_office_plant",
+      "x": 2340,
+      "y": 444,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -22,
+        "y": -24,
+        "width": 43,
+        "height": 24
+      },
+      "origin": [0.5, 1],
+      "scale": 0.8
     }
   ]
 }

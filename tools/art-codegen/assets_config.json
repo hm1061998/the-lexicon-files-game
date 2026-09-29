@@ -123,10 +123,10 @@
   {
     "src": "assets/_incoming/scene_office_wall_back.png",
     "dest": "environment/office/scene_office_wall_back.png",
-    "targetWidth": 1200,
-    "keyMagenta": true,
+    "targetWidth": 2400,
+    "keyMagenta": false,
     "frame": null,
-    "note": "Source is a diagonal isometric wall slab on magenta; keyed, cropped to alpha bbox, 1200 px wide. Place with origin [0.5,1] at the back edge of the floor; it is an oblique slab (left end top-left, slopes down to right)."
+    "note": "Straight front elevation 2400x260, opaque (scenes.wall, front camera). Place with origin [0.5,1] so the bottom row (baseboard) sits on the back edge of the floor."
   },
   {
     "src": "assets/_incoming/scene_archive_floor.png",
@@ -140,10 +140,10 @@
   {
     "src": "assets/_incoming/scene_archive_wall_back.png",
     "dest": "environment/archive/scene_archive_wall_back.png",
-    "targetWidth": 1200,
-    "keyMagenta": true,
+    "targetWidth": 2400,
+    "keyMagenta": false,
     "frame": null,
-    "note": "Source is a diagonal isometric wall slab on magenta; keyed, cropped to alpha bbox, 1200 px wide. Place with origin [0.5,1] at the back edge of the floor; it is an oblique slab (left end top-left, slopes down to right)."
+    "note": "Straight front elevation 2400x260, opaque (scenes.wall, front camera). Place with origin [0.5,1] so the bottom row (baseboard) sits on the back edge of the floor."
   },
   {
     "src": "assets/_incoming/prop_office_desk_01.png",
@@ -188,7 +188,7 @@
   {
     "src": "assets/_incoming/prop_office_plant_01.png",
     "dest": "environment/props/prop_office_plant_01.png",
-    "targetWidth": 80,
+    "targetWidth": 120,
     "keyMagenta": true,
     "frame": null,
     "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
