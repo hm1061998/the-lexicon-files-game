@@ -15,8 +15,9 @@ import {
   type PlayerSprite,
 } from '../entities/Player';
 import { createShadow, syncShadow } from '../entities/shadow';
-import { CHARACTER_FIGURE_HEIGHT, SCENE_FADE_MS } from '../constants';
+import { CHARACTER_FIGURE_HEIGHT, INTERACTION_RED, SCENE_FADE_MS } from '../constants';
 import { installDebugHook, paperOverlayAlpha } from '../debug';
+import { shouldEmitAnchor, worldToScreen } from '../systems/anchorScreen';
 import { computeDepth } from '../systems/depth';
 import type { Facing } from '../systems/direction';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
@@ -42,6 +43,14 @@ export type WorldOptions = {
 type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
 
 const MARKER_DEPTH = 10000;
+/** Red target outline: above the sprites, just under the marker. */
+const OUTLINE_DEPTH = MARKER_DEPTH - 1;
+const OUTLINE_WIDTH_PX = 2;
+const OUTLINE_PADDING = 6;
+/** Figure width / height of an NPC, used to outline the figure rather than its sprite frame. */
+const NPC_FIGURE_ASPECT = 0.45;
+
+type Bounds = { x: number; y: number; width: number; height: number };
 const MARKER_FLOAT_DISTANCE = 4;
 const MARKER_FLOAT_DURATION_MS = 1000;
 
@@ -61,6 +70,11 @@ export class WorldScene extends Phaser.Scene {
   private areas: InteractableArea[] = [];
   private depths = new Map<string, number>();
   private markerAnchors = new Map<string, number>();
+  private targetBounds = new Map<string, () => Bounds>();
+  private outline: Phaser.GameObjects.Graphics | null = null;
+  private outlineBounds: Bounds | null = null;
+  private lastAnchor: { x: number; y: number } | null = null;
+  private sinceAnchorMs = 0;
   private interactionTracker!: InteractionTracker;
   private nearbyEventCount = 0;
   private marker!: Phaser.GameObjects.Sprite;
@@ -95,6 +109,9 @@ export class WorldScene extends Phaser.Scene {
     this.areas = [];
     this.depths.clear();
     this.markerAnchors.clear();
+    this.targetBounds.clear();
+    this.lastAnchor = null;
+    this.outlineBounds = null;
     this.interactionTracker = new InteractionTracker(this.bus);
     this.nearbyEventCount = 0;
     this.triggeredEventCount = 0;
@@ -125,6 +142,19 @@ export class WorldScene extends Phaser.Scene {
           asset.id,
           markerBaseY(asset.y + asset.interaction.y, visualTop, blockedTop),
         );
+        this.targetBounds.set(asset.id, () => {
+          const box = sprite.getBounds();
+          if (asset.type !== 'npc')
+            return { x: box.left, y: box.top, width: box.width, height: box.height };
+          // Character frames carry transparent margins: outline the figure, not the frame.
+          const width = CHARACTER_FIGURE_HEIGHT * NPC_FIGURE_ASPECT;
+          return {
+            x: asset.x - width / 2,
+            y: asset.y - CHARACTER_FIGURE_HEIGHT,
+            width,
+            height: CHARACTER_FIGURE_HEIGHT,
+          };
+        });
         this.areas.push({
           id: asset.id,
           x: asset.x + asset.interaction.x,
@@ -167,6 +197,9 @@ export class WorldScene extends Phaser.Scene {
     this.marker = this.add.sprite(0, 0, 'ph_marker');
     this.marker.setDepth(MARKER_DEPTH);
     this.marker.setVisible(false);
+    this.outline = this.add.graphics();
+    this.outline.setDepth(OUTLINE_DEPTH);
+    this.outline.setVisible(false);
     this.reducedMotion = options.motion.reducedMotion();
     this.markerTween = this.tweens.add({
       targets: this.markerFloat,
@@ -189,6 +222,7 @@ export class WorldScene extends Phaser.Scene {
       nearbyEvents: () => this.nearbyEventCount,
       triggeredEvents: () => this.triggeredEventCount,
       markerY: () => (this.marker.visible ? this.marker.y : null),
+      highlightBounds: () => (this.outline?.visible ? this.outlineBounds : null),
       markerBaseY: () => (this.marker.visible ? this.markerBaseY : null),
       paperOverlayAlpha,
       requestTransition: (sceneId, spawnId) =>
@@ -211,6 +245,7 @@ export class WorldScene extends Phaser.Scene {
     this.syncMarkerMotion();
     this.applyMarkerPosition();
     this.publishPlayerPosition(delta);
+    this.syncTargetVisuals(delta);
     if (!this.keys) return;
     if (this.inputLock.isInputLocked()) {
       this.playerFacing = movePlayer(
@@ -253,6 +288,72 @@ export class WorldScene extends Phaser.Scene {
     this.lastPublished = next;
     this.sinceLastPublishMs = 0;
     this.bus.emit('player:moved', next);
+  }
+
+  /** Red outline around the nearby target and its published screen anchor (view only). */
+  private syncTargetVisuals(deltaMs: number): void {
+    this.sinceAnchorMs += deltaMs;
+    const id = this.interactionTracker.current;
+    const boundsOf = id ? this.targetBounds.get(id) : undefined;
+    const active = boundsOf && !this.transitioning && !this.inputLock.isInputLocked();
+    if (!active || !this.outline) {
+      this.hideOutline();
+      this.clearAnchor();
+      return;
+    }
+    const box = boundsOf();
+    this.drawOutline(box);
+    const canvas = this.game.canvas.getBoundingClientRect();
+    const camera = this.cameras.main;
+    const anchor = worldToScreen(
+      { x: box.x + box.width, y: box.y },
+      {
+        scrollX: camera.scrollX,
+        scrollY: camera.scrollY,
+        zoom: camera.zoom,
+        width: camera.width,
+        height: camera.height,
+      },
+      { width: canvas.width, height: canvas.height },
+    );
+    if (!shouldEmitAnchor(this.lastAnchor, anchor, this.sinceAnchorMs)) return;
+    this.lastAnchor = anchor;
+    this.sinceAnchorMs = 0;
+    this.bus.emit('interaction:anchor', { interactableId: id!, x: anchor.x, y: anchor.y });
+  }
+
+  private drawOutline(box: Bounds): void {
+    const g = this.outline;
+    if (!g) return;
+    const pad = OUTLINE_PADDING;
+    // Keep a crisp 2 CSS px line however far the canvas is scaled down; no glow, no fill.
+    const width = OUTLINE_WIDTH_PX * this.scale.displayScale.x;
+    this.outlineBounds = {
+      x: box.x - pad,
+      y: box.y - pad,
+      width: box.width + pad * 2,
+      height: box.height + pad * 2,
+    };
+    g.clear();
+    g.lineStyle(width, Phaser.Display.Color.HexStringToColor(INTERACTION_RED).color, 1);
+    g.strokeRect(
+      this.outlineBounds.x,
+      this.outlineBounds.y,
+      this.outlineBounds.width,
+      this.outlineBounds.height,
+    );
+    g.setVisible(true);
+  }
+
+  private hideOutline(): void {
+    this.outlineBounds = null;
+    this.outline?.setVisible(false);
+  }
+
+  private clearAnchor(): void {
+    if (this.lastAnchor === null) return;
+    this.lastAnchor = null;
+    this.bus.emit('interaction:anchor', { interactableId: null });
   }
 
   private syncPlayerShadow(): void {
@@ -306,6 +407,8 @@ export class WorldScene extends Phaser.Scene {
     this.transitioning = true;
     this.fadeInPending = true;
     this.interactionTracker.clear();
+    this.hideOutline();
+    this.clearAnchor();
     this.registry.set('world', { ...this.options, scene, spawnId } satisfies WorldOptions);
     // Restart once the destination textures are loaded (failures only warn) and, unless
     // motion is reduced, the fade-out has finished; the load runs during the fade.
@@ -340,6 +443,10 @@ export class WorldScene extends Phaser.Scene {
       this.fadeOutHandler = null;
     }
     this.interactionTracker?.clear();
+    this.clearAnchor();
+    this.outline?.destroy();
+    this.outline = null;
+    this.outlineBounds = null;
     this.unsubscribeTransition?.();
     this.unsubscribeTransition = null;
     if (this.keys) {

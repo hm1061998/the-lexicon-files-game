@@ -112,7 +112,20 @@
   left: 50%;
   transform: translateX(-50%);
   pointer-events: auto;
+}
+
+/* Anchored to the target: placed by InteractionPrompt (left/top), no centring transform. */
+.hud-interaction-bubble {
+  bottom: auto;
+  transform: none;
+  white-space: nowrap;
+}
+
+.hud-interaction-paper {
   padding: 8px 16px;
+}
+
+.hud-interaction-paper [role='status'] {
   display: flex;
   align-items: center;
 }

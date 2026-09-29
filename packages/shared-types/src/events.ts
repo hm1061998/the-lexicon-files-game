@@ -1,6 +1,8 @@
 export type GameEventMap = {
   'interaction:nearby': { interactableId: string; prompt: string };
   'interaction:cleared': Record<string, never>;
+  /** Screen anchor (CSS px relative to the canvas) for the interaction bubble; null id clears it. */
+  'interaction:anchor': { interactableId: string; x: number; y: number } | { interactableId: null };
   'interaction:triggered': { interactableId: string };
   'player:moved': { x: number; y: number };
   'scene:transitionRequested': { sceneId: string; spawnId: string };

@@ -75,6 +75,9 @@ describe('InteractionPrompt', () => {
     expect(html).toContain('E');
     expect(html).toContain('Đọc ghi chú');
     expect(html).toContain('role="status"');
+    // No anchor published yet: the fixed bottom-centre prompt, not the anchored bubble.
+    expect(html).toContain('hud-interaction-prompt');
+    expect(html).not.toContain('hud-interaction-bubble');
   });
 });
 

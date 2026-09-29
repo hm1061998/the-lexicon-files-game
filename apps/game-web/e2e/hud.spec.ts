@@ -5,6 +5,7 @@ type DebugApi = {
   nearby(): string | null;
   teleport(x: number, y: number): void;
   triggeredEvents(): number;
+  highlightBounds(): { x: number; y: number; width: number; height: number } | null;
 };
 
 declare global {
@@ -456,4 +457,74 @@ test('key bar wraps instead of overflowing at 760px', async ({ page }) => {
     .locator('.hud-key-hints')
     .evaluate((el) => el.scrollWidth > el.clientWidth);
   expect(overflow).toBe(false);
+});
+
+type Rect = { left: number; top: number; right: number; bottom: number };
+
+async function rectOf(page: Page, selector: string): Promise<Rect | null> {
+  return page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+  }, selector);
+}
+
+function intersects(a: Rect, b: Rect): boolean {
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
+
+async function highlight(page: Page) {
+  return page.evaluate(() => window.__lexiconDebug!.highlightBounds());
+}
+
+test('interaction bubble sits by the note, inside the viewport and clear of the HUD', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openWorld(page);
+  await walkToNote(page);
+  const bubble = page.locator('.hud-interaction-bubble');
+  await expect(bubble).toBeVisible();
+  await expect(bubble).toContainText('Đọc ghi chú');
+  await expect(bubble).toHaveAttribute('data-anchor-x', /.+/);
+  const box = (await rectOf(page, '.hud-interaction-bubble'))!;
+  const viewport = { left: 0, top: 0, right: 1280, bottom: 720 };
+  expect(box.left).toBeGreaterThanOrEqual(viewport.left);
+  expect(box.top).toBeGreaterThanOrEqual(viewport.top);
+  expect(box.right).toBeLessThanOrEqual(viewport.right);
+  expect(box.bottom).toBeLessThanOrEqual(viewport.bottom);
+  for (const selector of ['.hud-minimap', '.hud-objective-panel', '.hud-key-hints']) {
+    const other = await rectOf(page, selector);
+    if (other) expect(intersects(box, other), selector).toBe(false);
+  }
+  const ax = Number(await bubble.getAttribute('data-anchor-x'));
+  const ay = Number(await bubble.getAttribute('data-anchor-y'));
+  const nearestX = Math.max(box.left, Math.min(ax, box.right));
+  const nearestY = Math.max(box.top, Math.min(ay, box.bottom));
+  expect(Math.hypot(nearestX - ax, nearestY - ay)).toBeLessThanOrEqual(240);
+});
+
+test('nearby target gets a red outline that clears when leaving, locking or opening the notebook', async ({
+  page,
+}) => {
+  await openWorld(page);
+  expect(await highlight(page)).toBeNull();
+  const start = await page.evaluate(() => window.__lexiconDebug!.player());
+  await walkToNote(page);
+  await expect.poll(() => highlight(page)).not.toBeNull();
+  const bounds = (await highlight(page))!;
+  expect(bounds.width).toBeGreaterThan(0);
+  expect(bounds.height).toBeGreaterThan(0);
+
+  await page.keyboard.press('j');
+  await expect(page.getByRole('heading', { name: 'Sổ tay điều tra' })).toBeVisible();
+  await expect.poll(() => highlight(page)).toBeNull();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('heading', { name: 'Sổ tay điều tra' })).toHaveCount(0);
+  await expect.poll(() => highlight(page)).not.toBeNull();
+
+  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), start);
+  await expect.poll(() => highlight(page)).toBeNull();
+  await expect(page.locator('.hud-interaction-bubble')).toHaveCount(0);
 });

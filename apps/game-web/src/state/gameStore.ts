@@ -27,6 +27,8 @@ export type GameStoreState = {
   caseState: CaseState;
   activeSceneId: string;
   nearby: { id: string; prompt: string } | null;
+  /** Screen anchor (canvas-relative CSS px) of the nearby target, published by Phaser. */
+  interactionAnchor: { x: number; y: number } | null;
   /** Published view of the Phaser player position (Phaser stays the source); null until known. */
   playerPosition: { x: number; y: number } | null;
   /** HUD-only visibility of the minimap; deliberately not saved or in settings. */
@@ -40,6 +42,7 @@ export type GameStoreState = {
   inputLocked: boolean;
   persistenceError: string | null;
   setNearby(n: { id: string; prompt: string } | null): void;
+  setInteractionAnchor(anchor: { x: number; y: number } | null): void;
   setPlayerPosition(position: { x: number; y: number } | null): void;
   /** Toggles the minimap; no-op while input is locked (pause, modal, closed case). */
   toggleMinimap(): void;
@@ -99,6 +102,7 @@ export function createGameStore(init: {
     caseState: initialCaseState,
     activeSceneId: initialScene.id,
     nearby: null,
+    interactionAnchor: null,
     playerPosition: null,
     minimapVisible: true,
     paused: false,
@@ -112,6 +116,9 @@ export function createGameStore(init: {
     persistenceError: init.initialPersistenceError ?? null,
     setNearby(nearby) {
       set({ nearby });
+    },
+    setInteractionAnchor(interactionAnchor) {
+      set({ interactionAnchor });
     },
     setPlayerPosition(playerPosition) {
       set({ playerPosition });
@@ -244,7 +251,8 @@ export function createGameStore(init: {
     transitionScene(sceneId, spawnId) {
       const scene = get().caseDefinition.scenes.find(({ id }) => id === sceneId);
       if (!scene || !scene.spawnPoints[spawnId]) return false;
-      if (get().activeSceneId !== sceneId) set({ activeSceneId: sceneId, playerPosition: null });
+      if (get().activeSceneId !== sceneId)
+        set({ activeSceneId: sceneId, playerPosition: null, interactionAnchor: null });
       return true;
     },
   }));

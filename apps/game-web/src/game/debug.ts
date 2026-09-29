@@ -9,6 +9,8 @@ export type LexiconDebug = {
   triggeredEvents(): number;
   teleport(x: number, y: number): void;
   markerY(): number | null;
+  /** World-space rectangle of the red target outline, or null while it is hidden. */
+  highlightBounds(): { x: number; y: number; width: number; height: number } | null;
   /** Anchor the marker rests on when the float offset is zero, or null while hidden. */
   markerBaseY(): number | null;
   paperOverlayAlpha(): number | null;

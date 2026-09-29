@@ -61,6 +61,32 @@ describe('connectBusToStore', () => {
     expect(store.getState().playerPosition).toBeNull();
   });
 
+  it('interaction:anchor sets and clears interactionAnchor', () => {
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition });
+    connectBusToStore(bus, store);
+
+    bus.emit('interaction:anchor', { interactableId: 'note', x: 10, y: 20 });
+    expect(store.getState().interactionAnchor).toEqual({ x: 10, y: 20 });
+
+    bus.emit('interaction:anchor', { interactableId: null });
+    expect(store.getState().interactionAnchor).toBeNull();
+  });
+
+  it('interaction:cleared and scene transitions clear interactionAnchor', () => {
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition });
+    connectBusToStore(bus, store);
+
+    bus.emit('interaction:anchor', { interactableId: 'note', x: 10, y: 20 });
+    bus.emit('interaction:cleared', {});
+    expect(store.getState().interactionAnchor).toBeNull();
+
+    bus.emit('interaction:anchor', { interactableId: 'note', x: 10, y: 20 });
+    bus.emit('scene:transitionRequested', { sceneId: 'archive', spawnId: 'from_office' });
+    expect(store.getState().interactionAnchor).toBeNull();
+  });
+
   it('disconnect stops syncing', () => {
     const bus = createEventBus<GameEventMap>();
     const store = createGameStore({ caseDefinition });

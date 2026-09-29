@@ -4,6 +4,15 @@ import { createCaseState } from '@lexicon/game-core';
 import { createGameStore } from './gameStore';
 
 describe('createGameStore', () => {
+  it('holds the interaction anchor as a nullable view, cleared on scene change', () => {
+    const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });
+    expect(store.getState().interactionAnchor).toBeNull();
+    store.getState().setInteractionAnchor({ x: 5, y: 6 });
+    expect(store.getState().interactionAnchor).toEqual({ x: 5, y: 6 });
+    store.getState().transitionScene('archive', 'from_office');
+    expect(store.getState().interactionAnchor).toBeNull();
+  });
+
   it('initializes the core case state from the case definition', () => {
     const definition = loadCaseDefinition('case-001');
     const store = createGameStore({ caseDefinition: definition });
