@@ -151,6 +151,8 @@ export class WorldScene extends Phaser.Scene {
       triggeredEvents: () => this.triggeredEventCount,
       markerY: () => (this.marker.visible ? this.marker.y : null),
       paperOverlayAlpha: () => this.paperOverlay?.alpha ?? null,
+      requestTransition: (sceneId, spawnId) =>
+        this.bus.emit('scene:transitionRequested', { sceneId, spawnId }),
       teleport: (x, y) => {
         this.player.body.reset(x, y);
         this.player.setDepth(computeDepth(y));
@@ -246,6 +248,7 @@ export class WorldScene extends Phaser.Scene {
       this.scene.restart();
     };
     camera.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, this.fadeOutHandler);
+    // Camera.fadeOut passes force=true, so it also restarts a fade-in that is still running.
     camera.fadeOut(SCENE_FADE_MS);
   }
 

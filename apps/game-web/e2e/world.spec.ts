@@ -8,6 +8,7 @@ type DebugApi = {
   teleport(x: number, y: number): void;
   markerY(): number | null;
   paperOverlayAlpha(): number | null;
+  requestTransition(sceneId: string, spawnId: string): void;
 };
 
 declare global {
@@ -191,4 +192,34 @@ test('scene transition fades and lands at the spawn; repeated requests restart o
   const after = await player(page);
   expect(after.x).toBeLessThan(2000);
   await expect(page.locator('canvas')).toHaveCount(1);
+});
+
+test('a transition requested during the arrival fade-in still switches scenes', async ({
+  page,
+}) => {
+  await openWorld(page);
+  // Request the return trip in the same tick the archive scene installs its hook, i.e. mid fade-in.
+  const switchedBack = await page.evaluate(
+    () =>
+      new Promise<boolean>((resolve) => {
+        const office = window.__lexiconDebug!;
+        office.requestTransition('archive', 'from_office');
+        let archive: typeof office | undefined;
+        const deadline = performance.now() + 4000;
+        const poll = () => {
+          const current = window.__lexiconDebug;
+          if (!archive && current && current !== office) {
+            archive = current;
+            archive.requestTransition('main_office', 'from_archive');
+          } else if (archive && current && current !== archive) {
+            resolve(true);
+            return;
+          }
+          if (performance.now() > deadline) resolve(false);
+          else requestAnimationFrame(poll);
+        };
+        poll();
+      }),
+  );
+  expect(switchedBack).toBe(true);
 });

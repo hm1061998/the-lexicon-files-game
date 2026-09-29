@@ -7,7 +7,7 @@ export type LexiconDebug = {
   teleport(x: number, y: number): void;
   markerY(): number | null;
   paperOverlayAlpha(): number | null;
-  paperOverlayAlpha(): number | null;
+  requestTransition(sceneId: string, spawnId: string): void;
 };
 
 declare global {
