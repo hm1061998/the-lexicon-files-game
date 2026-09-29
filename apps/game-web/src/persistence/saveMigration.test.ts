@@ -4,18 +4,19 @@ import { createCaseState } from '@lexicon/game-core';
 import { migrateVersion1Save, migrateVersion2Save, parseCurrentSaveRecord } from './saveMigration';
 import { createSaveRepository, type SaveDatabase, type SaveRecord } from './saveRepository';
 const definition = loadCaseDefinition('case-001');
+function prePhase8State() {
+  const oldState = { ...createCaseState(definition) };
+  Reflect.deleteProperty(oldState, 'timelineEventIds');
+  Reflect.deleteProperty(oldState, 'contradictionIds');
+  return oldState;
+}
 function legacy() {
-  const {
-    timelineEventIds: _timelineEventIds,
-    contradictionIds: _contradictionIds,
-    ...oldState
-  } = createCaseState(definition);
   return {
     schemaVersion: 1,
     caseId: definition.id,
     updatedAt: 42,
     state: {
-      ...oldState,
+      ...prePhase8State(),
       objectiveStatuses: { find_what_happened: 'completed' },
       evidenceIds: ['meeting_minutes'],
       discoveredFactIds: ['meeting_started'],
@@ -84,11 +85,7 @@ describe('save migration', () => {
   });
 
   it('migrates V2 progress to V3 with an initial scene and new empty progress arrays', () => {
-    const {
-      timelineEventIds: _timelineEventIds,
-      contradictionIds: _contradictionIds,
-      ...oldState
-    } = createCaseState(definition);
+    const oldState = prePhase8State();
     const v2State = {
       ...oldState,
       objectiveStatuses: {

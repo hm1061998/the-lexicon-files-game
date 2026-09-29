@@ -24,8 +24,31 @@ type RecordSave = {
   schemaVersion: number;
   caseId: string;
   updatedAt: number;
+  activeSceneId?: string;
   state: ReturnType<typeof createCaseState>;
 };
+type LegacyGameState = Omit<
+  ReturnType<typeof createCaseState>,
+  'timelineEventIds' | 'contradictionIds'
+>;
+type SaveFixture = Omit<RecordSave, 'state'> & {
+  state: LegacyGameState | RecordSave['state'];
+};
+
+function prePhase8State(
+  state: ReturnType<typeof createCaseState>,
+  objectiveIds: readonly string[] = ['find_what_happened', 'talk_to_everyone'],
+): LegacyGameState {
+  const legacy = { ...state };
+  Reflect.deleteProperty(legacy, 'timelineEventIds');
+  Reflect.deleteProperty(legacy, 'contradictionIds');
+  return {
+    ...legacy,
+    objectiveStatuses: Object.fromEntries(
+      objectiveIds.map((id) => [id, state.objectiveStatuses[id]]),
+    ),
+  };
+}
 async function openWorld(page: Page) {
   await page.goto('/');
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
@@ -48,7 +71,7 @@ async function saved(page: Page): Promise<RecordSave | undefined> {
     }
   });
 }
-async function seed(page: Page, record: RecordSave) {
+async function seed(page: Page, record: SaveFixture) {
   await openWorld(page);
   await page.evaluate(async (record) => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -132,7 +155,10 @@ for (const gate of [undefined, false, true])
       schemaVersion: 2,
       caseId: definition.id,
       updatedAt: 42,
-      state: { ...state, flags: gate === undefined ? {} : { david_contradiction_found: gate } },
+      state: {
+        ...prePhase8State(state),
+        flags: gate === undefined ? {} : { david_contradiction_found: gate },
+      },
     };
     await seed(page, record);
     await talk(page, 'david');
@@ -177,19 +203,22 @@ test('legacy Phase 4 save migrates without losing evidence or objective progress
     caseId: definition.id,
     updatedAt: 42,
     state: {
-      ...createCaseState(definition),
+      ...prePhase8State(createCaseState(definition), ['find_what_happened']),
       objectiveStatuses: { find_what_happened: 'completed' },
       evidenceIds: ['meeting_minutes'],
       discoveredFactIds: ['meeting_started'],
       flags: {},
     },
   });
-  await expect.poll(async () => (await saved(page))?.schemaVersion).toBe(2);
+  await expect.poll(async () => (await saved(page))?.schemaVersion).toBe(3);
+  expect((await saved(page))?.activeSceneId).toBe('main_office');
   await page.keyboard.press('j');
   await expect(page.getByText('Meeting Minutes', { exact: true })).toBeVisible();
   expect((await saved(page))?.state.objectiveStatuses).toEqual({
     find_what_happened: 'completed',
     talk_to_everyone: 'active',
+    check_security_records: 'active',
+    compare_david_statement: 'active',
   });
 });
 test('dialogue traps focus, blocks gameplay, restores focus and fits desktop viewports', async ({
@@ -269,7 +298,10 @@ test('physical double clicks cannot skip responses or select the next question',
     schemaVersion: 2,
     caseId: definition.id,
     updatedAt: 42,
-    state: { ...createCaseState(definition), flags: { david_contradiction_found: true } },
+    state: {
+      ...prePhase8State(createCaseState(definition)),
+      flags: { david_contradiction_found: true },
+    },
   });
   await talk(page, 'david');
   await page
