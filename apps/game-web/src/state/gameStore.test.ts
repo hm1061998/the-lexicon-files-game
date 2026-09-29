@@ -277,6 +277,41 @@ describe('createGameStore', () => {
     store.getState().applyCaseEffects([{ type: 'setFlag', key: 'late_write', value: true }]);
     expect(store.getState().caseState).toBe(before);
   });
+
+  it('reopens a collected evidence from the notebook without changing the case state', () => {
+    const definition = loadCaseDefinition('case-001');
+    const initialState = { ...createCaseState(definition), evidenceIds: ['leo_phone_recording'] };
+    const store = createGameStore({ caseDefinition: definition, initialState });
+    const before = store.getState().caseState;
+    store.getState().toggleNotebook();
+    store.getState().reviewEvidence('leo_phone_recording');
+    expect(store.getState().notebookOpen).toBe(false);
+    expect(store.getState().activeEvidenceId).toBe('leo_phone_recording');
+    expect(store.getState().inputLocked).toBe(true);
+    expect(store.getState().caseState).toBe(before);
+    store.getState().closeEvidence();
+    expect(store.getState().inputLocked).toBe(false);
+  });
+
+  it('does not review evidence that was not collected or after the case is closed', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+    store.getState().toggleNotebook();
+    store.getState().reviewEvidence('leo_phone_recording');
+    expect(store.getState().activeEvidenceId).toBeNull();
+    expect(store.getState().notebookOpen).toBe(true);
+
+    const closed = createGameStore({
+      caseDefinition: definition,
+      initialState: {
+        ...createCaseState(definition),
+        evidenceIds: ['leo_phone_recording'],
+        flags: { case_closed: true },
+      },
+    });
+    closed.getState().reviewEvidence('leo_phone_recording');
+    expect(closed.getState().activeEvidenceId).toBeNull();
+  });
 });
 
 function applyAudioEvidence(definition: ReturnType<typeof loadCaseDefinition>) {

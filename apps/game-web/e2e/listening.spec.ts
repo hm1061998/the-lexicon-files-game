@@ -206,3 +206,30 @@ test('audio failure can retry and closing playback unmounts the evidence session
   await expect(page.locator('canvas')).toHaveCount(1);
   expect(pageErrors).toEqual([]);
 });
+
+test('a collected recording can be reopened from the notebook to answer later', async ({
+  page,
+}) => {
+  await open(page);
+  const hotspot = scene.assets.find((asset) => asset.id === 'phone_recording')!;
+  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
+  await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
+  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
+  await page.keyboard.press('e');
+  await expect(page.getByRole('dialog')).toContainText("Leo's Phone Recording");
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+
+  await page.keyboard.press('j');
+  await page.getByRole('button', { name: 'Xem lại' }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText("Leo's Phone Recording");
+  await dialog.getByRole('button', { name: 'Outside the meeting room' }).click();
+  await expect(dialog).toContainText('Bạn đã rút ra fact từ bản ghi này.');
+  await expect
+    .poll(async () => (await caseState(page))?.state?.flags.leo_phone_recording_understood)
+    .toBe(true);
+  await expect
+    .poll(async () => (await caseState(page))?.state?.evidenceIds)
+    .toEqual(['leo_phone_recording']);
+});

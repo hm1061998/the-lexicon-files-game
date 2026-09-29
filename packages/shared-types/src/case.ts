@@ -63,6 +63,7 @@ export interface UiStrings {
   readonly notebookEmptyPeople: string;
   readonly notebookEmptyVocabulary: string;
   readonly evidenceEmpty: string;
+  readonly evidenceReview: string;
   readonly openNotebook: string;
   readonly vocabularyMode: string;
   readonly vocabularyModeBeginner: string;

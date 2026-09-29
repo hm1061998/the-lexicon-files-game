@@ -40,6 +40,8 @@ export type GameStoreState = {
   setPaused(p: boolean): void;
   openEvidence(id: string): void;
   closeEvidence(): void;
+  /** Reopens an already-collected evidence from the notebook; never changes case state. */
+  reviewEvidence(id: string): void;
   toggleNotebook(): void;
   setNotebookTab(tab: NotebookTab): void;
   startDialogue(npcId: string): void;
@@ -116,6 +118,13 @@ export function createGameStore(init: {
       set((s) => {
         if (s.activeEvidenceId === id || s.inputLocked) return s;
         return { activeEvidenceId: id, inputLocked: true };
+      });
+    },
+    reviewEvidence(id) {
+      set((s) => {
+        if (!s.caseState.evidenceIds.includes(id) || caseClosed(s)) return s;
+        if (s.paused || s.dialogueSession || s.activeEvidenceId) return s;
+        return { notebookOpen: false, activeEvidenceId: id, inputLocked: true };
       });
     },
     closeEvidence() {

@@ -68,6 +68,7 @@ const uiStringsSchema = z
     notebookEmptyPeople: z.string().min(1),
     notebookEmptyVocabulary: z.string().min(1),
     evidenceEmpty: z.string().min(1),
+    evidenceReview: z.string().min(1),
     openNotebook: z.string().min(1),
     vocabularyMode: z.string().min(1),
     vocabularyModeBeginner: z.string().min(1),

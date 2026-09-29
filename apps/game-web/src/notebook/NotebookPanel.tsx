@@ -42,6 +42,7 @@ export function NotebookPanel({
   onPlaceTimelineEvent,
   onSubmitContradiction,
   onSubmitAccusation,
+  onReviewEvidence = () => undefined,
 }: {
   caseDefinition: CaseDefinition;
   caseState: GameState;
@@ -58,6 +59,7 @@ export function NotebookPanel({
   onPlaceTimelineEvent(eventId: string, slotId: string): TimelinePlacementResult;
   onSubmitContradiction(contradictionId: string, factIds: readonly string[]): ContradictionResult;
   onSubmitAccusation(suspectNpcId: string): AccusationResult;
+  onReviewEvidence?(evidenceId: string): void;
 }): JSX.Element {
   const headingId = useId();
   const [revealedVocabularyId, setRevealedVocabularyId] = useState<string | null>(null);
@@ -222,6 +224,13 @@ export function NotebookPanel({
                   {discovered.map((item) => (
                     <li key={item.id}>
                       <h3>{item.name}</h3>
+                      <button
+                        type="button"
+                        aria-label={`${strings.evidenceReview}: ${item.name}`}
+                        onClick={() => onReviewEvidence(item.id)}
+                      >
+                        {strings.evidenceReview}
+                      </button>
                       <p>
                         <VocabularyText
                           text={item.description}

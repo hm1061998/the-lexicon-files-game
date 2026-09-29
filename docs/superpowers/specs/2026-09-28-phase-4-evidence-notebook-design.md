@@ -19,7 +19,7 @@ Tiêu chí nghiệm thu:
 - Chỉ dùng một evidence đại diện trong Case #001 để chứng minh end-to-end. Không mở rộng đủ năm evidence trong vertical slice ở phase này.
 - Nội dung và ID evidence hiển thị lấy từ `packages/game-content` (JSON được Zod validate); không hardcode copy của Case #001 trong React hoặc Phaser.
 - Khi evidence chưa có được tương tác, app gọi transition core để thêm evidence. Transition idempotent: tương tác lặp không tạo ID hoặc domain event trùng, không mở lại modal.
-- Khi evidence được thêm mới, app mở modal chi tiết, đồng thời state notebook được cập nhật qua projection từ game state. Người chơi có thể đóng modal rồi mở notebook để xem lại evidence.
+- Khi evidence được thêm mới, app mở modal chi tiết, đồng thời state notebook được cập nhật qua projection từ game state. Người chơi có thể đóng modal rồi mở notebook để xem lại evidence. (Bổ sung 2026-09-29: mỗi evidence trong notebook có nút "Xem lại" mở lại modal đầy đủ — gồm audio và câu hỏi nghe — mà không thêm evidence hay domain event; tương tác lại trong world vẫn không mở lại modal.)
 - Notebook dùng phím `J`, mặc định mở tab Evidence. People và Vocabulary chỉ là tab khung với thông báo chưa có nội dung.
 - Modal và notebook phải thao tác được bằng bàn phím; modal giữ focus bằng focus trap, đóng được bằng nút đóng hoặc `Escape`. Modal khóa movement/gameplay input; đóng modal giải phóng khóa. Shortcut không kích hoạt khi focus nằm trong `input`, `textarea` hoặc `contenteditable`.
 

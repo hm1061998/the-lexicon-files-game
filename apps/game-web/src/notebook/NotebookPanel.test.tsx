@@ -277,4 +277,13 @@ describe('NotebookPanel', () => {
     }
     expect(html).toContain(strings.conclusionPrompt);
   });
+
+  it('offers a review button for each collected evidence', () => {
+    const caseState = {
+      ...createCaseState(caseDefinition),
+      evidenceIds: ['meeting_minutes', 'leo_phone_recording'],
+    };
+    const html = renderNotebook(caseState, 'evidence');
+    expect(html.split(`>${strings.evidenceReview}</button>`).length - 1).toBe(2);
+  });
 });

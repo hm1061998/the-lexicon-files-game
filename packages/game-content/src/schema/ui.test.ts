@@ -34,6 +34,7 @@ describe('parseUiStrings', () => {
     );
     expect(strings.conclusion).toBe('Kết luận');
     expect(strings.caseClosed).toBe('CASE CLOSED');
+    expect(strings.evidenceReview).toBe('Xem lại');
     expect(strings.overallProfile).toContain('toàn hồ sơ');
     expect(strings.noListeningData.length).toBeGreaterThan(0);
     expect(strings.conclusionSubmit.length).toBeGreaterThan(0);
