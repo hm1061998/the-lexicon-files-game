@@ -223,12 +223,12 @@ export interface CommerceConfigProvider {
 
 **Các bước:**
 
-- [ ] **Bước 1: Viết E2E thất bại** cho Main Office → Archive → thu thập Security Access Log → quay lại; objective/access fact; timeline placement sai rồi đúng; phát hiện lời khai David và fact 20:32; gửi contradiction; thấy challenge dialogue David; reload ở Archive và giữ scene/evidence/facts/timeline/flags/objectives.
-- [ ] **Bước 2: Chạy E2E mục tiêu** bằng `npm run test:e2e` khi dev server Playwright có thể khởi động; xác nhận đúng luồng mới fail trước khi sửa lỗi tích hợp.
-- [ ] **Bước 3: Sửa seam tích hợp** trong task sở hữu nếu E2E phát hiện sai khác; không đưa logic case vào Phaser/React và không thêm scope Phase 9.
-- [ ] **Bước 4: Chạy các gate cuối**: `npm run lint`, `npm run test`, `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run test:e2e`, `npm run memory:check`, `git diff --check`.
-- [ ] **Bước 5: Kiểm tra nội dung cuối**: `validateRegisteredContent` pass; Case #001 vẫn có `evidenceTotal: 5`; không đổi dependency/lockfile/API; chỉ một Phaser canvas; không có lỗi console trong luồng E2E.
-- [ ] **Bước 6: Commit** với `test(game-web): cover Phase 8 investigation flow`.
+- [x] **Bước 1: Viết E2E thất bại** cho Main Office → Archive → thu thập Security Access Log → quay lại; objective/access fact; timeline placement sai rồi đúng; phát hiện lời khai David và fact 20:32; gửi contradiction; thấy challenge dialogue David; reload ở Archive và giữ scene/evidence/facts/timeline/flags/objectives.
+- [x] **Bước 2: Chạy E2E mục tiêu** bằng `npm run test:e2e` khi dev server Playwright có thể khởi động; xác nhận đúng luồng mới fail trước khi sửa lỗi tích hợp.
+- [x] **Bước 3: Sửa seam tích hợp** trong task sở hữu nếu E2E phát hiện sai khác; không đưa logic case vào Phaser/React và không thêm scope Phase 9.
+- [x] **Bước 4: Chạy các gate cuối**: `npm run lint`, `npm run test`, `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run test:e2e`, `npm run memory:check`, `git diff --check`.
+- [x] **Bước 5: Kiểm tra nội dung cuối**: `validateRegisteredContent` pass; Case #001 vẫn có `evidenceTotal: 5`; không đổi dependency/lockfile/API; chỉ một Phaser canvas; không có lỗi console trong luồng E2E.
+- [x] **Bước 6: Commit** với `test(game-web): cover Phase 8 investigation flow`.
 
 ## Tự rà soát plan
 
