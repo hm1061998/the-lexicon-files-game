@@ -1552,7 +1552,7 @@ React UI tự dùng background texture riêng.
 
 # 65. Scene Manifest
 
-Mỗi scene có manifest preload; trong code, danh sách này là trường `textures` (cùng `characterSheets`) của scene JSON trong `packages/game-content`, tải bằng `loadSceneTextures` khi vào scene:
+Mỗi scene có manifest preload; trong code, danh sách này là trường `textures` của scene JSON trong `packages/game-content` (sheet nhân vật `characterSheets` và `sharedTextures` nằm ở `case.json`/`CaseDefinition`), tải bằng `loadSceneTextures` khi vào scene:
 
 ```json
 {
