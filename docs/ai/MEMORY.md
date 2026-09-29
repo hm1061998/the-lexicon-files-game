@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T17:30:00+07:00
+updated_at: 2026-09-29T19:00:00+07:00
 phase: phase-9
 status: complete
-result_commit: 6782d55
+result_commit: 7ef61fd
 active_spec: docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md
 active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 ---
@@ -34,6 +34,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 - Phase 6 learning profile, notebook từ vựng, persistence riêng và recovery; verification `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
 - Phase 7 audio listening; verification và user audition đã được ghi nhận.
 - Phase 8 spec/plan, implementation Task 1–6 và handoff đồng bộ với `origin/dev` tại `3c67c11`.
+- Sau Phase 9 (`7ef61fd`): notebook có nút "Xem lại" mở lại modal evidence đã thu (audio/câu hỏi nghe); tương tác lại trong world vẫn không mở modal theo spec Phase 4 (đã bổ sung ghi chú).
 - Phase 9: hợp đồng kết luận `0b5303c`, reducer + activation `f0f00ac`, save V4 `7122925`, UI buộc tội `53122bf`, báo cáo CASE CLOSED `568c68a`, E2E hành trình `6f5240b`, fix final review `f6346f2`, verification `6782d55`.
 
 ## In Progress
