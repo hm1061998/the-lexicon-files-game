@@ -1,6 +1,18 @@
 {
   "facts": [
     {
+      "id": "leo_outside_at_2029",
+      "text": "Leo was outside the meeting room at 20:29.",
+      "sourceEvidenceIds": ["leo_phone_recording"],
+      "unlockCondition": {
+        "type": "all",
+        "conditions": [
+          { "type": "hasEvidence", "evidenceId": "leo_phone_recording" },
+          { "type": "flag", "key": "leo_phone_recording_understood", "value": true }
+        ]
+      }
+    },
+    {
       "id": "meeting_started",
       "text": "The meeting began at 8:00 PM.",
       "sourceEvidenceIds": ["meeting_minutes"],

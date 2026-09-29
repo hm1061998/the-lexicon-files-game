@@ -9,6 +9,8 @@ import type {
   FactDefinition,
   GameState,
   InteractionArea,
+  ListeningOption,
+  ListeningTaskDefinition,
   ObjectiveDefinition,
   ObjectiveStatus,
 } from '../index';
@@ -53,6 +55,21 @@ const objective = {
   text: 'Find out what happened to the report.',
 } satisfies ObjectiveDefinition;
 
+const listeningOption: ListeningOption = { id: 'outside', text: 'Outside the room' };
+const listeningTask: ListeningTaskDefinition = {
+  id: 'where_was_leo',
+  evidenceId: 'phone_recording',
+  audioAsset: '/audio/case-001/leo-phone-recording.mp3',
+  timestamp: '20:29',
+  transcript: 'Leo is outside.',
+  question: 'Where was Leo?',
+  options: [listeningOption],
+  correctOptionId: listeningOption.id,
+  keywordHints: ['outside'],
+  completionFlag: 'recording_understood',
+  correctEffects: [{ type: 'setFlag', key: 'recording_understood', value: true }],
+};
+
 const definition = {
   id: 'case-001',
   title: 'The Missing Report',
@@ -66,6 +83,7 @@ const definition = {
   objectives: [objective],
   vocabulary: [],
   vocabularyContexts: [],
+  listeningTasks: [listeningTask],
 } satisfies CaseDefinition;
 
 const state = {

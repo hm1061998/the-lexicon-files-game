@@ -96,6 +96,21 @@
       }
     },
     {
+      "id": "phone_recording",
+      "type": "interactable",
+      "texture": "ph_audio_recorder",
+      "x": 1200,
+      "y": 1280,
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 80,
+        "prompt": "Nghe bản ghi điện thoại của Leo",
+        "effects": [{ "type": "addEvidence", "evidenceId": "leo_phone_recording" }]
+      }
+    },
+    {
       "id": "anna",
       "type": "npc",
       "texture": "ph_npc",

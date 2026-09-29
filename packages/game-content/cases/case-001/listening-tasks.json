@@ -1,0 +1,41 @@
+{
+  "tasks": [
+    {
+      "id": "leo_phone_recording_location",
+      "evidenceId": "leo_phone_recording",
+      "audioAsset": "/audio/case-001/leo-phone-recording.wav",
+      "timestamp": "20:29",
+      "transcript": "Hi, I'm outside the meeting room. I'll call you back in a few minutes.",
+      "transcriptVi": "Chào, tôi đang ở bên ngoài phòng họp. Tôi sẽ gọi lại sau vài phút.",
+      "question": "Where was Leo?",
+      "questionVi": "Leo đang ở đâu?",
+      "options": [
+        {
+          "id": "inside",
+          "text": "Inside the meeting room",
+          "textVi": "Bên trong phòng họp"
+        },
+        {
+          "id": "outside",
+          "text": "Outside the meeting room",
+          "textVi": "Bên ngoài phòng họp"
+        },
+        {
+          "id": "home",
+          "text": "At home",
+          "textVi": "Ở nhà"
+        }
+      ],
+      "correctOptionId": "outside",
+      "keywordHints": ["meeting room"],
+      "completionFlag": "leo_phone_recording_understood",
+      "correctEffects": [
+        {
+          "type": "setFlag",
+          "key": "leo_phone_recording_understood",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

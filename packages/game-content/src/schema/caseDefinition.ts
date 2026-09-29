@@ -5,12 +5,13 @@ import type {
   Effect,
   EvidenceDefinition,
   FactDefinition,
+  ListeningTaskDefinition,
   ObjectiveDefinition,
 } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
 import { npcSchema, dialogueTreeSchema } from './dialogue';
 import { validateDialogueReferences } from '../validation/dialogueReferences';
-import { conditionSchema } from './caseEngine';
+import { conditionSchema, effectSchema } from './caseEngine';
 import { sceneDefinitionSchema } from './scene';
 import { vocabularyCatalogueSchema, vocabularySpanSchema } from './learning';
 import { validateVocabularyReferences } from '../validation/vocabularyReferences';
@@ -60,15 +61,46 @@ const factSchema = z
   })
   .strict();
 
+const listeningOptionSchema = z
+  .object({
+    id: z.string().min(1),
+    text: z.string().min(1),
+    textVi: z.string().min(1).optional(),
+  })
+  .strict();
+
+const listeningTaskSchema = z
+  .object({
+    id: z.string().min(1),
+    evidenceId: z.string().min(1),
+    audioAsset: z
+      .string()
+      .startsWith('/audio/')
+      .refine((asset) => !asset.includes('..'), 'must not contain ".."'),
+    timestamp: z.string().min(1),
+    transcript: z.string().min(1),
+    transcriptVi: z.string().min(1).optional(),
+    question: z.string().min(1),
+    questionVi: z.string().min(1).optional(),
+    options: z.array(listeningOptionSchema).min(2),
+    correctOptionId: z.string().min(1),
+    keywordHints: z.array(z.string().min(1)),
+    completionFlag: z.string().min(1),
+    correctEffects: z.array(effectSchema),
+  })
+  .strict();
+
 const objectivesRawSchema = z.object({ objectives: z.array(objectiveSchema).min(1) }).strict();
 const evidencesRawSchema = z.object({ evidences: z.array(evidenceSchema) }).strict();
 const factsRawSchema = z.object({ facts: z.array(factSchema) }).strict();
+const listeningTasksRawSchema = z.object({ tasks: z.array(listeningTaskSchema) }).strict();
 
 type ParseCaseDefinitionInput = {
   caseRaw: unknown;
   objectivesRaw: unknown;
   evidencesRaw: unknown;
   factsRaw: unknown;
+  listeningTasksRaw: unknown;
   sceneRaws: readonly unknown[];
   npcsRaw: unknown;
   dialoguesRaw: unknown;
@@ -156,6 +188,7 @@ export function parseCaseDefinition(
   const objectivesResult = objectivesRawSchema.safeParse(input.objectivesRaw);
   const evidencesResult = evidencesRawSchema.safeParse(input.evidencesRaw);
   const factsResult = factsRawSchema.safeParse(input.factsRaw);
+  const listeningTasksResult = listeningTasksRawSchema.safeParse(input.listeningTasksRaw);
   const vocabularyResult = vocabularyCatalogueSchema.safeParse(input.vocabularyRaw);
   const scenesResult = input.sceneRaws.map((scene) => sceneDefinitionSchema.safeParse(scene));
 
@@ -171,6 +204,9 @@ export function parseCaseDefinition(
     appendSchemaIssues(issues, `${source}/evidences.json`, evidencesResult.error);
   }
   if (!factsResult.success) appendSchemaIssues(issues, `${source}/facts.json`, factsResult.error);
+  if (!listeningTasksResult.success) {
+    appendSchemaIssues(issues, `${source}/listening-tasks.json`, listeningTasksResult.error);
+  }
   if (!vocabularyResult.success)
     appendSchemaIssues(issues, `${source}/vocabulary.json`, vocabularyResult.error);
   scenesResult.forEach((result, index) => {
@@ -186,6 +222,7 @@ export function parseCaseDefinition(
     !objectivesResult.success ||
     !evidencesResult.success ||
     !factsResult.success ||
+    !listeningTasksResult.success ||
     !vocabularyResult.success ||
     scenesResult.some((result) => !result.success)
   ) {
@@ -196,6 +233,7 @@ export function parseCaseDefinition(
   const objectives = objectivesResult.data.objectives as ObjectiveDefinition[];
   const evidences = evidencesResult.data.evidences as EvidenceDefinition[];
   const facts = factsResult.data.facts as FactDefinition[];
+  const listeningTasks = listeningTasksResult.data.tasks as ListeningTaskDefinition[];
   const vocabulary = vocabularyResult.data.vocabulary;
   const scenes = scenesResult.map(
     (result) => (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] }).data,
@@ -206,6 +244,7 @@ export function parseCaseDefinition(
     { label: 'objectives', ids: objectives.map(({ id }) => id) },
     { label: 'evidences', ids: evidences.map(({ id }) => id) },
     { label: 'facts', ids: facts.map(({ id }) => id) },
+    { label: 'listeningTasks', ids: listeningTasks.map(({ id }) => id) },
     { label: 'scenes', ids: scenes.map(({ id }) => id) },
   ];
   for (const collection of collections) {
@@ -218,6 +257,7 @@ export function parseCaseDefinition(
   const vocabularyContexts: { id: string; vocabularyIds: readonly string[] }[] = [];
   const evidenceIds = new Set(evidences.map(({ id }) => id));
   const factIds = new Set(facts.map(({ id }) => id));
+  const evidenceById = new Map(evidences.map((evidence) => [evidence.id, evidence]));
   const sceneById = new Map(scenes.map((scene) => [scene.id, scene]));
 
   if (!objectiveIds.has(caseData.initialObjectiveId)) {
@@ -233,6 +273,46 @@ export function parseCaseDefinition(
       issues.push(`scene ${scene.id}: not referenced by case.json.sceneIds`);
     }
   }
+
+  listeningTasks.forEach((task, taskIndex) => {
+    const evidence = evidenceById.get(task.evidenceId);
+    if (!evidence) {
+      issues.push(
+        `listeningTasks.${taskIndex}.evidenceId: unknown evidence id "${task.evidenceId}"`,
+      );
+    } else if (evidence.category !== 'audio') {
+      issues.push(`listeningTasks.${taskIndex}.evidenceId: must use audio evidence`);
+    }
+    const duplicateOptions = findDuplicates(task.options.map(({ id }) => id));
+    duplicateOptions.forEach((id) => {
+      issues.push(`listeningTasks.${taskIndex}.options: duplicate option id "${id}"`);
+    });
+    if (!task.options.some(({ id }) => id === task.correctOptionId)) {
+      issues.push(
+        `listeningTasks.${taskIndex}.correctOptionId: unknown option id "${task.correctOptionId}"`,
+      );
+    }
+    task.correctEffects.forEach((effect, effectIndex) =>
+      validateEffectReferences(
+        effect,
+        evidenceIds,
+        factIds,
+        objectiveIds,
+        `listeningTasks.${taskIndex}.correctEffects.${effectIndex}`,
+        issues,
+      ),
+    );
+    if (
+      !task.correctEffects.some(
+        (effect) =>
+          effect.type === 'setFlag' && effect.key === task.completionFlag && effect.value,
+      )
+    ) {
+      issues.push(
+        `listeningTasks.${taskIndex}.completionFlag: requires a matching true setFlag effect`,
+      );
+    }
+  });
 
   const interactionIds = new Set<string>();
   scenes.forEach((scene, sceneIndex) => {
@@ -352,5 +432,6 @@ export function parseCaseDefinition(
     objectives,
     vocabulary,
     vocabularyContexts,
+    listeningTasks,
   };
 }

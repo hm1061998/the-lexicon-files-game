@@ -38,6 +38,7 @@ type RawInput = {
   objectivesRaw: unknown;
   evidencesRaw: unknown;
   factsRaw: unknown;
+  listeningTasksRaw?: unknown;
   sceneRaws: readonly unknown[];
   npcsRaw: unknown;
   dialoguesRaw: unknown;
@@ -52,7 +53,13 @@ function sceneWithEffects(effects: readonly unknown[]): unknown {
   return {
     ...scene,
     assets: scene.assets
-      .filter((asset) => asset.id !== 'anna' && asset.id !== 'leo' && asset.id !== 'david')
+      .filter(
+        (asset) =>
+          asset.id !== 'anna' &&
+          asset.id !== 'leo' &&
+          asset.id !== 'david' &&
+          asset.id !== 'phone_recording',
+      )
       .map((asset) =>
         asset.id === 'objective_note'
           ? { ...asset, interaction: { ...asset.interaction, effects } }
@@ -70,6 +77,7 @@ function makeInput(changes: Partial<RawInput> = {}): RawInput {
     objectivesRaw,
     evidencesRaw,
     factsRaw,
+    listeningTasksRaw: { tasks: [] },
     sceneRaws: [
       sceneWithEffects([{ type: 'completeObjective', objectiveId: 'find_what_happened' }]),
     ],
@@ -78,8 +86,30 @@ function makeInput(changes: Partial<RawInput> = {}): RawInput {
 }
 
 function parse(changes: Partial<RawInput> = {}) {
-  return parseCaseDefinition(makeInput(changes), 'cases/case-001');
+  return parseCaseDefinition(
+    makeInput(changes) as Parameters<typeof parseCaseDefinition>[0],
+    'cases/case-001',
+  );
 }
+
+const listeningTask = {
+  id: 'meeting_location',
+  evidenceId: 'meeting_minutes',
+  audioAsset: '/audio/case-001/recording.mp3',
+  timestamp: '20:29',
+  transcript: 'Leo is outside.',
+  question: 'Where was Leo?',
+  options: [
+    { id: 'inside', text: 'Inside the room' },
+    { id: 'outside', text: 'Outside the room' },
+  ],
+  correctOptionId: 'outside',
+  keywordHints: ['outside'],
+  completionFlag: 'recording_understood',
+  correctEffects: [],
+};
+
+const listeningTasksRaw = { tasks: [listeningTask] };
 
 function expectValidationIssue(changes: Partial<RawInput>, expected: string): void {
   try {
@@ -248,5 +278,85 @@ describe('parseCaseDefinition', () => {
       { type: 'completeObjective', objectiveId: 'missing_objective' },
     ]);
     expectValidationIssue({ sceneRaws: [sceneRaw] }, 'objectiveId');
+  });
+
+  it('rejects a missing listening task collection', () => {
+    expectValidationIssue({ listeningTasksRaw: undefined }, 'listening-tasks.json');
+  });
+
+  it('rejects duplicate listening task IDs', () => {
+    expectValidationIssue(
+      { listeningTasksRaw: { tasks: [listeningTask, listeningTask] } },
+      'listeningTasks: duplicate id "meeting_location"',
+    );
+  });
+
+  it('rejects a missing or unsafe audio source with its content path', () => {
+    expectValidationIssue(
+      {
+        evidencesRaw: { evidences: [{ ...evidence, category: 'audio' }] },
+        listeningTasksRaw: {
+          tasks: [{ ...listeningTask, evidenceId: 'meeting_minutes', audioAsset: '../recording.mp3' }],
+        },
+      },
+      'audioAsset',
+    );
+  });
+
+  it('rejects a task that references an unknown or non-audio evidence', () => {
+    expectValidationIssue(
+      { listeningTasksRaw: { tasks: [{ ...listeningTask, evidenceId: 'missing_audio' }] } },
+      'unknown evidence id "missing_audio"',
+    );
+    expectValidationIssue(
+      { listeningTasksRaw },
+      'must use audio evidence',
+    );
+  });
+
+  it('rejects duplicate option IDs and a correct option that is missing', () => {
+    expectValidationIssue(
+      {
+        listeningTasksRaw: {
+          tasks: [
+            {
+              ...listeningTask,
+              options: [listeningTask.options[0], { id: 'inside', text: 'Another room' }],
+            },
+          ],
+        },
+      },
+      'duplicate option id "inside"',
+    );
+    expectValidationIssue(
+      { listeningTasksRaw: { tasks: [{ ...listeningTask, correctOptionId: 'missing' }] } },
+      'unknown option id "missing"',
+    );
+  });
+
+  it('rejects listening effects with unknown fact or evidence references', () => {
+    expectValidationIssue(
+      {
+        evidencesRaw: { evidences: [{ ...evidence, category: 'audio' }] },
+        listeningTasksRaw: {
+          tasks: [
+            {
+              ...listeningTask,
+              correctEffects: [{ type: 'unlockFact', factId: 'missing_fact' }],
+            },
+          ],
+        },
+      },
+      'unknown fact id "missing_fact"',
+    );
+    expectValidationIssue(
+      {
+        evidencesRaw: { evidences: [{ ...evidence, category: 'audio' }] },
+        listeningTasksRaw: {
+          tasks: [{ ...listeningTask, correctEffects: [{ type: 'addEvidence', evidenceId: 'missing' }] }],
+        },
+      },
+      'unknown evidence id "missing"',
+    );
   });
 });

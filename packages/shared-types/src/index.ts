@@ -24,6 +24,8 @@ export type {
   ObjectiveDefinition,
   EvidenceDefinition,
   FactDefinition,
+  ListeningOption,
+  ListeningTaskDefinition,
   Condition,
   Effect,
   CaseDefinition,

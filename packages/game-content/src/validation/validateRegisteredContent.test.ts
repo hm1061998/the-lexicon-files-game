@@ -12,7 +12,10 @@ describe('registered dialogue content', () => {
     expect(d.dialogues.flatMap((t) => t.nodes).map((n) => n.text)).toContain(
       '...I may have gone in for a moment.',
     );
-    expect(d.evidences).toHaveLength(1);
+    expect(d.evidences).toHaveLength(2);
+    expect(d.evidences.find((evidence) => evidence.id === 'leo_phone_recording')?.category).toBe(
+      'audio',
+    );
     expect(d.evidenceTotal).toBe(5);
     expect(d.objectives.find((o) => o.id === 'talk_to_everyone')).toMatchObject({
       initialStatus: 'active',

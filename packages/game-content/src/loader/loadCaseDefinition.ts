@@ -5,6 +5,7 @@ import case001 from '../../cases/case-001/case.json';
 import case001Objectives from '../../cases/case-001/objectives.json';
 import case001Evidences from '../../cases/case-001/evidences.json';
 import case001Facts from '../../cases/case-001/facts.json';
+import case001ListeningTasks from '../../cases/case-001/listening-tasks.json';
 import case001MainOffice from '../../cases/case-001/scenes/main_office.json';
 
 import case001Npcs from '../../cases/case-001/npcs.json';
@@ -16,6 +17,7 @@ type RegisteredCase = {
   objectives: unknown;
   evidences: unknown;
   facts: unknown;
+  listeningTasks: unknown;
   npcs: unknown;
   dialogues: unknown;
   vocabulary: unknown;
@@ -28,6 +30,7 @@ const caseRegistry: Record<string, RegisteredCase> = {
     objectives: case001Objectives,
     evidences: case001Evidences,
     facts: case001Facts,
+    listeningTasks: case001ListeningTasks,
     npcs: case001Npcs,
     dialogues: case001Dialogues,
     vocabulary: case001Vocabulary,
@@ -49,6 +52,7 @@ export function loadCaseDefinition(caseId: string): CaseDefinition {
       objectivesRaw: entry.objectives,
       evidencesRaw: entry.evidences,
       factsRaw: entry.facts,
+      listeningTasksRaw: entry.listeningTasks,
       npcsRaw: entry.npcs,
       dialoguesRaw: entry.dialogues,
       vocabularyRaw: entry.vocabulary,

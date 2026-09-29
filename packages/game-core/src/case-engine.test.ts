@@ -35,6 +35,9 @@ const definition: CaseDefinition = {
     { id: 'find_what_happened', text: 'Find out what happened to the report.' },
     { id: 'speak_to_anna', text: 'Speak to Anna.' },
   ],
+  vocabulary: [],
+  vocabularyContexts: [],
+  listeningTasks: [],
 };
 
 const initialState: GameState = {

@@ -1,6 +1,16 @@
 {
   "evidences": [
     {
+      "id": "leo_phone_recording",
+      "caseId": "case-001",
+      "name": "Leo's Phone Recording",
+      "category": "audio",
+      "description": "A phone recording Leo left at 20:29.",
+      "descriptionVi": "Bản ghi điện thoại Leo để lại lúc 20:29.",
+      "relatedFactIds": ["leo_outside_at_2029"],
+      "relatedNpcIds": ["leo"]
+    },
+    {
       "id": "meeting_minutes",
       "caseId": "case-001",
       "name": "Meeting Minutes",

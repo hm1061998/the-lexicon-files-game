@@ -14,6 +14,8 @@ function input() {
     objectivesRaw,
     evidencesRaw,
     factsRaw,
+    listeningTasksRaw: { tasks: [] },
+    listeningTasksRaw: { tasks: [] },
     sceneRaws: [
       {
         ...office,

@@ -18,6 +18,7 @@ const definition = {
   ...(content('objectives.json') as object),
   ...(content('facts.json') as object),
   ...(content('evidences.json') as object),
+  listeningTasks: [],
 } as CaseDefinition;
 type RecordSave = {
   schemaVersion: number;

@@ -36,8 +36,20 @@ describe('loadCaseDefinition', () => {
     expect(
       definition.dialogues.find((tree) => tree.id === 'anna_initial')?.nodes[0]?.vocabularySpans,
     ).toHaveLength(4);
-    expect(definition.evidences.map((item) => item.id)).toEqual(['meeting_minutes']);
+    expect(definition.evidences.map((item) => item.id)).toEqual([
+      'leo_phone_recording',
+      'meeting_minutes',
+    ]);
+    expect(definition.listeningTasks).toHaveLength(1);
+    expect(definition.listeningTasks[0]).toMatchObject({
+      id: 'leo_phone_recording_location',
+      evidenceId: 'leo_phone_recording',
+      audioAsset: '/audio/case-001/leo-phone-recording.wav',
+      correctOptionId: 'outside',
+    });
+    expect(definition.evidenceTotal).toBe(5);
     expect(definition.facts.map((item) => item.id)).toEqual([
+      'leo_outside_at_2029',
       'meeting_started',
       'david_statement_no_entry_after_20_00',
       'david_collected_folder',
@@ -56,6 +68,19 @@ describe('loadCaseDefinition', () => {
 
     expect(interaction?.prompt).toBeTruthy();
     expect(interaction?.effects).toEqual([{ type: 'addEvidence', evidenceId: 'meeting_minutes' }]);
+  });
+
+  it('Case #001 exposes the phone recording as a collectible audio interaction', () => {
+    const definition = loadCaseDefinition('case-001');
+    const evidence = definition.evidences.find((item) => item.id === 'leo_phone_recording');
+    const scene = definition.scenes.find((item) => item.id === 'main_office');
+    const interaction = scene?.assets.find((item) => item.id === 'phone_recording')?.interaction;
+
+    expect(evidence?.category).toBe('audio');
+    expect(interaction?.prompt).toBeTruthy();
+    expect(interaction?.effects).toEqual([
+      { type: 'addEvidence', evidenceId: 'leo_phone_recording' },
+    ]);
   });
 
   it('throws a content validation error naming an unknown case', () => {

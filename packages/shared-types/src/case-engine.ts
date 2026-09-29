@@ -33,6 +33,28 @@ export interface FactDefinition {
   readonly unlockCondition: Condition;
 }
 
+export interface ListeningOption {
+  readonly id: string;
+  readonly text: string;
+  readonly textVi?: string;
+}
+
+export interface ListeningTaskDefinition {
+  readonly id: string;
+  readonly evidenceId: string;
+  readonly audioAsset: string;
+  readonly timestamp: string;
+  readonly transcript: string;
+  readonly transcriptVi?: string;
+  readonly question: string;
+  readonly questionVi?: string;
+  readonly options: readonly ListeningOption[];
+  readonly correctOptionId: string;
+  readonly keywordHints: readonly string[];
+  readonly completionFlag: string;
+  readonly correctEffects: readonly Effect[];
+}
+
 export type Condition =
   | { readonly type: 'hasEvidence'; readonly evidenceId: string }
   | { readonly type: 'hasFact'; readonly factId: string }
@@ -61,6 +83,7 @@ export interface CaseDefinition {
   readonly objectives: readonly ObjectiveDefinition[];
   readonly vocabulary: readonly VocabularyEntry[];
   readonly vocabularyContexts: readonly VocabularyContextDefinition[];
+  readonly listeningTasks: readonly ListeningTaskDefinition[];
 }
 
 export type ObjectiveStatus = 'locked' | 'active' | 'completed';
