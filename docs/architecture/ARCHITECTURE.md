@@ -142,7 +142,7 @@ Modal critical mở → store.setInputLocked(true) → Phaser dừng movement
 - Collider = footprint nhỏ, không dùng full sprite. Arcade Physics; Matter chỉ khi thật cần polygon.
 - Scene layer: `00_floor … 70_fx`. Scene data trong JSON, `WorldScene` generic dựng từ `SceneDefinition`.
 - 4 hướng NE/SE/SW/NW; anim key `${actor}_${action}_${direction}`.
-- Chỉ load asset của scene hiện tại (manifest → preload → create).
+- Chỉ load asset của scene hiện tại (manifest → preload → create); manifest là trường `textures` của scene JSON trong `packages/game-content`, tải theo scene bằng `loadSceneTextures` (không còn manifest global trong game-web).
 - Placeholder đặt tên final-friendly và gắn nhãn `PLACEHOLDER_*`.
 - Palette cố định; **đỏ chỉ dùng cho investigation accent**.
 

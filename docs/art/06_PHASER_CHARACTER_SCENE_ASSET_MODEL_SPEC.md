@@ -1544,13 +1544,15 @@ paper
 
 Nếu UI React nằm trên canvas, paper overlay cho world chỉ nằm trong Phaser.
 
+> Cập nhật Phase 11B: overlay hạt giấy của world hiện là lớp CSS `.game-paper-overlay` (sau canvas, trước HUD), không còn là ảnh Phaser, vì lớp Phaser làm giảm ~34% fps trên GL phần mềm (xem `docs/ai/2026-09-30-phase-11b-verification.md`).
+
 React UI tự dùng background texture riêng.
 
 ---
 
 # 65. Scene Manifest
 
-Mỗi scene có manifest preload:
+Mỗi scene có manifest preload; trong code, danh sách này là trường `textures` (cùng `characterSheets`) của scene JSON trong `packages/game-content`, tải bằng `loadSceneTextures` khi vào scene:
 
 ```json
 {
