@@ -1,99 +1,103 @@
-# Phase 8 — Timeline and Contradiction
+# Phase 8 — Dòng thời gian và mâu thuẫn
 
-**Status:** Draft for user review  
-**Date:** 2026-09-29  
-**Roadmap:** `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §27  
-**Product sources:** `docs/01_GAME_DESIGN_DOCUMENT.md` §§15–16, 20; `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §§4–9  
-**Approved direction:** data-driven timeline and contradiction flow, with a minimal Archive scene and a route from Main Office so the Security Access Log remains at its authored location.
+**Trạng thái:** Bản nháp chờ người dùng xem xét
 
-## Goal
+**Ngày:** 2026-09-29
 
-Let the player reconstruct the time-ordered events of Case #001 from discovered facts, then identify the contradiction between David's statement and the Security Access Log. The interface remains part of the investigator's notebook and case world; it does not score the player or reveal case truth before the evidence supports it.
+**Lộ trình:** `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §27
 
-## Scope
+**Tài liệu sản phẩm:** `docs/01_GAME_DESIGN_DOCUMENT.md` §§15–16, 20; `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §§4–9
 
-- Add validated, data-driven timeline and contradiction definitions to the case content contract.
-- Add pure `game-core` transitions for placing a discovered event in a time slot and checking a selected pair of discovered facts.
-- Add a Timeline tab and a contradiction interaction within the existing notebook/evidence flow.
-- Add the Security Access Log as evidence in a minimal Archive scene, reached from the existing Main Office hallway door and with a return route.
-- Preserve the authored Case #001 truth, timeline, dialogue, evidence total (`5`), local-first play, and all existing saves.
-- Persist the active scene ID on navigation and restore the saved scene at its authored spawn point. Player coordinates and a full world-save redesign remain outside this phase.
+**Hướng đã duyệt:** Dòng thời gian và luồng tìm mâu thuẫn dựa trên dữ liệu; bổ sung một Archive tối thiểu và lối đi từ Main Office để Security Access Log được đặt tại đúng địa điểm trong case.
 
-## Not in scope
+## Mục tiêu
 
-- Accusation, case closure, report summary, or wrong-suspect handling (Phase 9).
-- An interactive evidence graph, free-form links, drag-and-drop timeline, or arbitrary time entry. The MVP uses click-to-select and authored time slots, as allowed by the product design.
-- New scenes beyond the minimal Archive / Security Corner, a full environment art pass, or new NPCs/dialogue.
-- Backend, cloud saves, AI, runtime-generated content, or changes to the learning system.
-- The remaining Case #001 evidence that is not required for the Phase 8 timeline or its contradiction.
+Cho người chơi sắp xếp lại các sự kiện của Case #001 theo thời gian dựa trên những sự kiện đã khám phá, sau đó nhận diện mâu thuẫn giữa lời khai của David và Security Access Log. Giao diện vẫn thuộc sổ tay điều tra và thế giới của case; giao diện không chấm điểm người chơi hoặc tiết lộ sự thật của case trước khi chứng cứ đủ sức hỗ trợ kết luận.
 
-## Case #001 content contract
+## Phạm vi
 
-Keep the authored timeline in `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §4. The Timeline tab lists only events available from the case briefing or facts the player has discovered. It supports these times, in order:
+- Bổ sung định nghĩa dòng thời gian và mâu thuẫn dựa trên dữ liệu, có kiểm tra hợp lệ, vào hợp đồng nội dung case.
+- Bổ sung các chuyển trạng thái thuần trong `game-core` để đặt một sự kiện đã khám phá vào một mốc thời gian và kiểm tra một cặp sự kiện đã khám phá do người chơi chọn.
+- Thêm thẻ Dòng thời gian và tương tác tìm mâu thuẫn vào luồng sổ tay/chứng cứ hiện có.
+- Thêm Security Access Log dưới dạng chứng cứ trong một Archive tối thiểu. Người chơi đến đó qua cửa hành lang Main Office hiện có và có lối quay lại.
+- Giữ nguyên sự thật, dòng thời gian, hội thoại, tổng số chứng cứ (`5`) của Case #001, lối chơi local-first và mọi save hiện có.
+- Lưu ID scene đang hoạt động khi di chuyển và khôi phục scene đã lưu tại điểm spawn được khai báo cho scene đó. Tọa độ người chơi và việc thiết kế lại toàn bộ cơ chế lưu thế giới nằm ngoài phase này.
 
-| Time | Event | Source / availability |
+## Ngoài phạm vi
+
+- Buộc tội, kết thúc case, tóm tắt báo cáo hoặc xử lý chọn sai nghi phạm (Phase 9).
+- Đồ thị chứng cứ tương tác, liên kết tự do, kéo-thả dòng thời gian hoặc nhập thời gian tùy ý. MVP dùng thao tác chọn bằng nhấp chuột và các mốc thời gian được khai báo trước, phù hợp với thiết kế sản phẩm.
+- Scene mới ngoài Archive / Security Corner tối thiểu, đợt hoàn thiện hình ảnh môi trường toàn diện hoặc NPC/hội thoại mới.
+- Backend, cloud save, AI, nội dung tạo lúc chạy hoặc thay đổi hệ thống học tập.
+- Những chứng cứ Case #001 còn lại không cần cho dòng thời gian hoặc mâu thuẫn của Phase 8.
+
+## Hợp đồng nội dung Case #001
+
+Giữ nguyên dòng thời gian đã được xác định trong `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §4. Thẻ Dòng thời gian chỉ liệt kê sự kiện đã có trong phần giới thiệu case hoặc được mở khóa từ những sự kiện người chơi đã khám phá. Các mốc theo thứ tự:
+
+| Thời gian | Sự kiện | Nguồn / điều kiện xuất hiện |
 |---|---|---|
-| 20:00 | The meeting begins | Existing `meeting_started`, from Meeting Minutes |
-| 20:18 | Anna exits the meeting room | Security Access Log |
-| 20:27 | Leo exits the meeting room | Security Access Log |
-| 20:29 | Leo is outside the meeting room | Existing `leo_outside_at_2029`, after the listening task is solved |
-| 20:32 | David enters the meeting room | Security Access Log |
-| 20:36 | David exits the meeting room | Security Access Log |
-| 20:40 | Leo enters the meeting room | Security Access Log |
-| 20:45 | The meeting ends | Meeting Minutes |
-| 21:05 | The report is reported missing | Case briefing; known at case start, no new collectible evidence |
+| 20:00 | Cuộc họp bắt đầu | `meeting_started` hiện có, từ Meeting Minutes |
+| 20:18 | Anna rời phòng họp | Security Access Log |
+| 20:27 | Leo rời phòng họp | Security Access Log |
+| 20:29 | Leo ở bên ngoài phòng họp | `leo_outside_at_2029` hiện có, sau khi hoàn thành nhiệm vụ nghe |
+| 20:32 | David vào phòng họp | Security Access Log |
+| 20:36 | David rời phòng họp | Security Access Log |
+| 20:40 | Leo vào phòng họp | Security Access Log |
+| 20:45 | Cuộc họp kết thúc | Meeting Minutes |
+| 21:05 | Báo cáo được phát hiện là đã mất | Phần giới thiệu case; đã biết từ đầu, không tạo chứng cứ sưu tầm mới |
 
-The terminal evidence is `security_access_log` and contains the authored entries verbatim: Anna Reed EXIT at 20:18, Leo Tran EXIT at 20:27, David Cole ENTRY at 20:32, David Cole EXIT at 20:36, and Leo Tran ENTRY at 20:40. It is discoverable by interacting with the security terminal in Archive. `evidenceTotal` remains five.
+Chứng cứ từ terminal có ID `security_access_log` và giữ nguyên văn các mục đã được xác định: Anna Reed EXIT lúc 20:18, Leo Tran EXIT lúc 20:27, David Cole ENTRY lúc 20:32, David Cole EXIT lúc 20:36 và Leo Tran ENTRY lúc 20:40. Người chơi khám phá chứng cứ này bằng cách tương tác với security terminal trong Archive. `evidenceTotal` vẫn bằng năm.
 
-Complete the authored objective “Check the security records” when the access log is discovered. Complete “Compare David's statement with the evidence” only after the correct contradiction is identified. Do not implement the subsequent “Submit your conclusion” objective; that belongs to Phase 9.
+Hoàn thành objective đã có “Check the security records” khi người chơi khám phá access log. Chỉ hoàn thành “Compare David's statement with the evidence” sau khi người chơi xác định đúng mâu thuẫn. Không triển khai objective tiếp theo “Submit your conclusion”; objective đó thuộc Phase 9.
 
-The existing fact `david_statement_no_entry_after_20_00` remains sourced from David's dialogue. Add the facts required to expose each security-log event and the 20:45 meeting end, with cross-references to their authored evidence. The 21:05 event is authored as a case-briefing timeline event, not fabricated as evidence or as a collectible fact. Reuse `leo_outside_at_2029` and `meeting_started` rather than duplicate their facts.
+Fact `david_statement_no_entry_after_20_00` hiện có tiếp tục lấy từ hội thoại với David. Bổ sung các fact cần thiết để thể hiện từng sự kiện trong security log và thời điểm kết thúc cuộc họp lúc 20:45, kèm tham chiếu chéo đến chứng cứ đã xác định. Sự kiện 21:05 được khai báo là sự kiện trong dòng thời gian lấy từ phần giới thiệu case, không được tạo thành chứng cứ hoặc fact sưu tầm giả. Tái sử dụng `leo_outside_at_2029` và `meeting_started`, không tạo fact trùng lặp.
 
-Define one contradiction, for the pair `david_statement_no_entry_after_20_00` and `david_entry_20_32`. Its authored explanation states that the security log records David entering at 20:32, despite his statement that he did not enter after 20:00. On success, set the existing `david_contradiction_found` flag so the already-authored conditional David dialogue unlocks. Do not change the confession or suspect truth.
+Chỉ khai báo một mâu thuẫn cho cặp `david_statement_no_entry_after_20_00` và `david_entry_20_32`. Phần giải thích đã được soạn sẵn nêu rằng security log ghi nhận David vào phòng lúc 20:32, trái với lời khai rằng anh không vào phòng sau 20:00. Khi thành công, đặt flag hiện có `david_contradiction_found` để mở khóa hội thoại David có điều kiện đã được khai báo. Không thay đổi lời thú nhận hoặc sự thật về nghi phạm.
 
-## Timeline behavior
+## Hành vi dòng thời gian
 
-- Each authored event has a stable ID, display text, time-slot reference, location, people, source, confidence text, availability facts (or case-start availability), and a persistent placed flag.
-- Time slots and valid event/slot matches are authored in case content. UI copy does not expose a target time before the player chooses a slot.
-- Selecting an available event and a time slot calls a pure core transition. A correct placement persists its flag. An incorrect placement leaves game state unchanged, allows retry, and shows `Something in the timeline is inconsistent.` with a non-revealing evidence hint.
-- Previously placed events remain placed after closing/reopening the notebook and after reload. Newly discovered events appear without resetting earlier placements.
-- The 21:05 case-briefing event is available from case start. All evidence-backed events require their source fact to be discovered before they appear.
+- Mỗi sự kiện được khai báo trước gồm ID ổn định, nội dung hiển thị, tham chiếu mốc thời gian, địa điểm, người liên quan, nguồn, mô tả mức độ tin cậy, các fact cần có để xuất hiện (hoặc điều kiện có sẵn từ đầu case) và một cờ ghi nhận sự kiện đã được đặt.
+- Các mốc thời gian và cặp sự kiện/mốc hợp lệ được khai báo trong nội dung case. Nội dung giao diện không tiết lộ thời gian đích trước khi người chơi chọn mốc.
+- Khi người chơi chọn một sự kiện đang khả dụng và một mốc thời gian, hệ thống gọi chuyển trạng thái thuần của core. Nếu đặt đúng, cờ của sự kiện được lưu. Nếu đặt sai, game state không đổi, người chơi có thể thử lại và giao diện hiển thị nguyên văn `Something in the timeline is inconsistent.` cùng một gợi ý không tiết lộ đáp án, dựa trên chứng cứ.
+- Sự kiện đã đặt vẫn giữ nguyên sau khi đóng/mở lại sổ tay và sau khi tải lại game. Sự kiện mới được khám phá sẽ xuất hiện mà không xóa các lựa chọn đã đặt trước đó.
+- Sự kiện 21:05 lấy từ phần giới thiệu case và khả dụng ngay từ đầu. Các sự kiện cần chứng cứ chỉ xuất hiện sau khi người chơi khám phá fact nguồn tương ứng.
 
-## Contradiction behavior
+## Hành vi tìm mâu thuẫn
 
-- The notebook offers only facts present in `discoveredFactIds`; UI cannot submit a hidden fact. Core validates task IDs and fact IDs independently of the UI.
-- Selecting the authored conflicting pair records the contradiction once, sets `david_contradiction_found=true`, and completes the Case #001 objective “Compare David's statement with the evidence.”
-- A non-matching pair leaves case state unchanged, shows `This interpretation doesn't match the evidence.`, and offers a clue that points back to the relevant sources without naming the answer.
-- Repeating a successful submission is idempotent. It does not duplicate events, facts, or objective progress. Wrong attempts never reset progress or incur a cost.
-- Contradiction visibility and David's conditional dialogue continue to depend on the existing flag and on the player having discovered both facts.
+- Sổ tay chỉ hiển thị các fact có trong `discoveredFactIds`; giao diện không thể gửi một fact đang bị ẩn. Core kiểm tra riêng ID nhiệm vụ và ID fact, không dựa vào kiểm tra của giao diện.
+- Khi chọn đúng cặp mâu thuẫn đã khai báo, hệ thống ghi nhận mâu thuẫn đúng một lần, đặt `david_contradiction_found=true` và hoàn thành objective Case #001 “Compare David's statement with the evidence.”
+- Nếu cặp được chọn không khớp, case state không đổi; giao diện hiển thị nguyên văn `This interpretation doesn't match the evidence.` và đưa ra gợi ý dẫn người chơi về các nguồn liên quan mà không nêu đáp án.
+- Gửi lại lựa chọn đã thành công phải có tính idempotent. Không nhân đôi sự kiện, fact hoặc tiến độ objective. Lần thử sai không xóa tiến độ và không bị tính phí.
+- Việc hiển thị mâu thuẫn và hội thoại David có điều kiện tiếp tục dựa vào flag hiện có và yêu cầu người chơi đã khám phá cả hai fact.
 
-## Archive scene and navigation
+## Scene Archive và điều hướng
 
-- Keep `main_office` as the fresh-case start. Add one `archive` scene with clearly labeled placeholder floor/wall assets, a security terminal interactable, and a doorway back to Main Office.
-- Convert the existing Main Office hallway door into the route to Archive. The terminal adds `security_access_log`; the return route restores the player at a safe Main Office spawn.
-- Scene transition destinations and named entry spawn points are validated against registered case scenes. Invalid scene or spawn references fail content validation/build with a readable path.
-- Navigation is driven through typed app/world contracts. Zustand owns the active scene ID used by the UI and save record; Phaser renders that scene and retains live player coordinates. React does not call Phaser internals.
-- Upgrade the local save record to persist the active scene ID. Migrate schema V1/V2 saves to the new schema without losing case state; legacy saves start in `main_office`. A save restored in Archive starts at Archive's authored entry spawn. Keep the IndexedDB database version unchanged unless the existing repository's migration contract requires otherwise.
-- Scene changes autosave. Existing recovery behavior remains: preserve invalid records as backups and never silently replace them.
+- Case mới vẫn bắt đầu ở `main_office`. Thêm một scene `archive`, dùng asset sàn/tường placeholder có nhãn rõ ràng, một security terminal có thể tương tác và một cửa quay lại Main Office.
+- Chuyển cửa hành lang Main Office hiện có thành lối sang Archive. Terminal cấp `security_access_log`; lối quay lại đưa người chơi tới điểm spawn an toàn ở Main Office.
+- Điểm đến của chuyển scene và các điểm spawn được đặt tên phải được kiểm tra đối chiếu với danh sách scene đã đăng ký của case. Tham chiếu scene hoặc spawn không hợp lệ phải làm kiểm tra nội dung/build thất bại và nêu được đường dẫn dễ hiểu.
+- Điều hướng đi qua các hợp đồng kiểu dữ liệu của app/world. Zustand sở hữu ID scene đang hoạt động mà giao diện và save sử dụng; Phaser hiển thị scene đó và giữ tọa độ người chơi đang chạy. React không gọi internals của Phaser.
+- Nâng cấp bản ghi save cục bộ để lưu ID scene đang hoạt động. Chuyển save schema V1/V2 sang schema mới mà không làm mất case state; save cũ bắt đầu tại `main_office`. Khi khôi phục save đang ở Archive, đặt người chơi tại điểm spawn vào scene đã khai báo cho Archive. Giữ nguyên phiên bản cơ sở dữ liệu IndexedDB, trừ khi hợp đồng migration hiện có của repo yêu cầu khác.
+- Tự động lưu khi đổi scene. Giữ nguyên hành vi khôi phục hiện có: lưu bản sao dự phòng của record không hợp lệ và không bao giờ âm thầm ghi đè chúng.
 
-## Architecture and UI
+## Kiến trúc và giao diện
 
-- `shared-types` defines timeline and contradiction content/result types; `game-content` Zod schema, loader, cross-reference validation, and build validation enforce unique IDs, known facts/evidence/objectives/scenes/spawns, valid time-slot references, and a two-fact contradiction pair.
-- `game-core` owns pure, deterministic timeline placement and contradiction validation. It has no React, Phaser, Zustand, DOM, or persistence imports.
-- `gameStore` wraps core results. It updates case state only after successful transitions. Typed events report scene transition requests/changes across the Phaser–React boundary.
-- Notebook UI adds a Timeline tab. Use a paper dossier layout with a clear chronological spine, authored event cards, source/confidence labels, and keyboard-operable time-slot selection. The contradiction interaction presents discovered facts as selectable cards. Focus remains visible; controls have labels and do not rely on color alone.
-- Use existing typography and muted sepia palette. Investigation red (`#A4412D` / `#743026`) is reserved for clues, selected timeline entries, and confirmed contradictions. The Archive remains visually sparse and uses named placeholders; no temporary unlabelled production art.
-- Localized interface text remains in `packages/game-content/ui/vi.json` and its schema. Case evidence/fact copy remains in case content, not React/Phaser source.
+- `shared-types` định nghĩa kiểu nội dung/kết quả dòng thời gian và mâu thuẫn. Zod schema, loader, kiểm tra tham chiếu chéo và kiểm tra build của `game-content` đảm bảo ID duy nhất; fact, evidence, objective, scene và spawn đều tồn tại; tham chiếu mốc thời gian hợp lệ; cặp mâu thuẫn có đúng hai fact.
+- `game-core` sở hữu logic thuần, xác định được cho việc đặt sự kiện lên dòng thời gian và kiểm tra mâu thuẫn. Package này không import React, Phaser, Zustand, DOM hoặc persistence.
+- `gameStore` bọc kết quả từ core và chỉ cập nhật case state sau chuyển trạng thái thành công. Event có kiểu dữ liệu truyền yêu cầu/thông báo đổi scene qua ranh giới Phaser–React.
+- Giao diện sổ tay thêm thẻ Dòng thời gian. Dùng bố cục hồ sơ giấy, trục thời gian rõ ràng, thẻ sự kiện đã soạn sẵn, nhãn nguồn/mức độ tin cậy và thao tác chọn mốc thời gian dùng được bằng bàn phím. Tương tác tìm mâu thuẫn hiển thị các fact đã khám phá dưới dạng thẻ có thể chọn. Focus phải nhìn thấy được; các điều khiển có nhãn và không chỉ dựa vào màu sắc.
+- Dùng typography và bảng màu nâu giấy trầm hiện có. Màu đỏ điều tra (`#A4412D` / `#743026`) chỉ dành cho manh mối, mục dòng thời gian được chọn và mâu thuẫn đã xác nhận. Archive giữ bố cục thưa, dùng placeholder có tên; không đưa hình tạm không gắn nhãn vào production.
+- Nội dung giao diện bản địa hóa tiếp tục nằm trong `packages/game-content/ui/vi.json` và schema tương ứng. Nội dung case của evidence/fact tiếp tục nằm trong case content, không đặt cứng trong mã React/Phaser.
 
-## Verification and acceptance
+## Kiểm tra và tiêu chí chấp nhận
 
-- Unit tests cover correct/incorrect/unknown/repeated timeline placements; event availability; correct/incorrect/unknown/repeated contradiction submissions; and the exact David contradiction flag and objective result.
-- Content tests reject duplicate IDs, unknown fact/evidence/objective/scene/spawn references, malformed time slots, invalid contradiction pairs, and missing required content. Registered Case #001 loads with `evidenceTotal: 5`.
-- Persistence tests migrate existing save versions, round-trip active scene and case flags, preserve backups on invalid data, and restore the correct authored spawn for a saved scene.
-- UI tests cover discovered-only events/facts, retry feedback, completed states, keyboard operation, focus, and non-color-only status.
-- E2E covers: Main Office → Archive → collect Security Access Log → return; evidence and fact persistence; place timeline events (including retry after a wrong slot); discover David's statement and the access-log fact; identify the contradiction; observe the existing David challenge become available; reload and retain scene/case progress; one Phaser canvas and no console errors.
-- Run `npm run lint`, `npm run test`, `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run test:e2e`, `npm run memory:check`, and `git diff --check`. No .NET gates because the API is unchanged.
+- Unit test bao phủ trường hợp đặt dòng thời gian đúng/sai/không xác định/gửi lặp; điều kiện xuất hiện sự kiện; gửi mâu thuẫn đúng/sai/không xác định/gửi lặp; và kết quả chính xác của flag mâu thuẫn David cùng objective.
+- Test nội dung từ chối ID trùng, tham chiếu fact/evidence/objective/scene/spawn không tồn tại, mốc thời gian sai định dạng, cặp mâu thuẫn không hợp lệ và nội dung bắt buộc còn thiếu. Case #001 đã đăng ký phải tải được với `evidenceTotal: 5`.
+- Test persistence chuyển được các phiên bản save hiện có, round-trip được scene đang hoạt động và case flag, giữ bản sao dự phòng khi dữ liệu không hợp lệ, đồng thời khôi phục đúng spawn đã khai báo cho scene trong save.
+- Test giao diện bao phủ sự kiện/fact chỉ hiện sau khi khám phá, phản hồi khi thử lại, trạng thái hoàn tất, thao tác bằng bàn phím, focus và trạng thái không chỉ phân biệt bằng màu.
+- E2E bao phủ luồng: Main Office → Archive → thu thập Security Access Log → quay lại; lưu evidence và fact; đặt sự kiện vào dòng thời gian (bao gồm thử lại sau khi chọn sai mốc); khám phá lời khai David và fact từ access log; xác định mâu thuẫn; xác nhận thử thách hội thoại David hiện có được mở; tải lại và giữ scene/case progress; chỉ có một Phaser canvas và không có lỗi console.
+- Chạy `npm run lint`, `npm run test`, `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run test:e2e`, `npm run memory:check` và `git diff --check`. Không cần các bước kiểm tra .NET vì API không thay đổi.
 
-## Out-of-scope follow-up
+## Việc tiếp nối ngoài phạm vi
 
-Phase 9 owns accusation and case closure. A later persistence phase may add exact player coordinates; Phase 8 only restores the saved scene at its named entry spawn.
+Phase 9 phụ trách buộc tội và kết thúc case. Một phase persistence sau này có thể bổ sung tọa độ chính xác của người chơi; Phase 8 chỉ khôi phục scene đã lưu tại điểm spawn được đặt tên.
