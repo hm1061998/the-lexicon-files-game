@@ -38,6 +38,11 @@ export interface UiStrings {
   readonly contradictionMismatch: string;
   readonly contradictionMismatchHint: string;
   readonly contradictionFound: string;
+  readonly conclusion: string;
+  readonly conclusionPrompt: string;
+  readonly conclusionSubmit: string;
+  readonly conclusionMismatch: string;
+  readonly conclusionUnavailable: string;
   readonly close: string;
   readonly notebookEmptyPeople: string;
   readonly notebookEmptyVocabulary: string;

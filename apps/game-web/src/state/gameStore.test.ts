@@ -203,6 +203,50 @@ describe('createGameStore', () => {
     expect(store.getState().caseState).toBe(caseState);
     expect(store.getState().persistenceError).toBe('save failed');
   });
+
+  function storeReadyToAccuse() {
+    const definition = loadCaseDefinition('case-001');
+    const base = createCaseState(definition);
+    const conclusion = definition.conclusion!;
+    const initialState = {
+      ...base,
+      discoveredFactIds: ['david_took_report'],
+      flags: { david_confession_read: true },
+      objectiveStatuses: { ...base.objectiveStatuses, [conclusion.objectiveId]: 'active' as const },
+    };
+    return {
+      definition,
+      conclusion,
+      store: createGameStore({ caseDefinition: definition, initialState }),
+    };
+  }
+
+  it('keeps the exact case state after a wrong accusation', () => {
+    const { conclusion, store } = storeReadyToAccuse();
+    const before = store.getState().caseState;
+    const wrong = conclusion.suspectNpcIds.find((id) => id !== conclusion.correctSuspectNpcId)!;
+    const result = store.getState().submitAccusation(wrong);
+    expect(result.ok && result.correct).toBe(false);
+    expect(store.getState().caseState).toBe(before);
+  });
+
+  it('closes the case through game-core and locks gameplay input on a correct accusation', () => {
+    const { conclusion, store } = storeReadyToAccuse();
+    const result = store.getState().submitAccusation(conclusion.correctSuspectNpcId);
+    expect(result.ok && result.correct).toBe(true);
+    expect(store.getState().caseState.flags.case_closed).toBe(true);
+    expect(store.getState().caseState.objectiveStatuses[conclusion.objectiveId]).toBe('completed');
+    expect(store.getState().inputLocked).toBe(true);
+    store.getState().setPaused(false);
+    expect(store.getState().inputLocked).toBe(true);
+  });
+
+  it('locks input from the start when restoring a closed case', () => {
+    const definition = loadCaseDefinition('case-001');
+    const initialState = { ...createCaseState(definition), flags: { case_closed: true } };
+    const store = createGameStore({ caseDefinition: definition, initialState });
+    expect(store.getState().inputLocked).toBe(true);
+  });
 });
 
 function applyAudioEvidence(definition: ReturnType<typeof loadCaseDefinition>) {

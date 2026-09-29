@@ -29,6 +29,13 @@ describe('parseUiStrings', () => {
     expect(strings.contradictionSelectFacts).toBeTruthy();
     expect(strings.contradictionSubmit).toBeTruthy();
     expect(strings.contradictionMismatch).toBe("This interpretation doesn't match the evidence.");
+    expect(strings.conclusionMismatch).toBe(
+      "The evidence doesn't fully support this conclusion. Review the timeline.",
+    );
+    expect(strings.conclusion).toBe('Kết luận');
+    expect(strings.conclusionSubmit.length).toBeGreaterThan(0);
+    expect(strings.conclusionPrompt.length).toBeGreaterThan(0);
+    expect(strings.conclusionUnavailable.length).toBeGreaterThan(0);
     expect(strings.contradictionFound).toBeTruthy();
   });
 

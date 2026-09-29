@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from 'react';
 import { PaperPanel } from '@lexicon/ui';
 import type {
   CaseDefinition,
+  AccusationResult,
   ContradictionResult,
   GameState,
   LanguageProfile,
@@ -11,16 +12,18 @@ import type {
 } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
 import { VocabularyText } from '../vocabulary/VocabularyText';
+import { AccusationPanel } from '../conclusion/AccusationPanel';
 import './notebook.css';
 
 const TABS: readonly {
   id: NotebookTab;
-  label: keyof Pick<UiStrings, 'people' | 'evidence' | 'vocabulary' | 'timeline'>;
+  label: keyof Pick<UiStrings, 'people' | 'evidence' | 'vocabulary' | 'timeline' | 'conclusion'>;
 }[] = [
   { id: 'people', label: 'people' },
   { id: 'evidence', label: 'evidence' },
   { id: 'vocabulary', label: 'vocabulary' },
   { id: 'timeline', label: 'timeline' },
+  { id: 'conclusion', label: 'conclusion' },
 ];
 
 export function NotebookPanel({
@@ -38,6 +41,7 @@ export function NotebookPanel({
   onTranslationModeChange = () => undefined,
   onPlaceTimelineEvent,
   onSubmitContradiction,
+  onSubmitAccusation,
 }: {
   caseDefinition: CaseDefinition;
   caseState: GameState;
@@ -53,6 +57,7 @@ export function NotebookPanel({
   onTranslationModeChange?(mode: TranslationMode): void;
   onPlaceTimelineEvent(eventId: string, slotId: string): TimelinePlacementResult;
   onSubmitContradiction(contradictionId: string, factIds: readonly string[]): ContradictionResult;
+  onSubmitAccusation(suspectNpcId: string): AccusationResult;
 }): JSX.Element {
   const headingId = useId();
   const [revealedVocabularyId, setRevealedVocabularyId] = useState<string | null>(null);
@@ -84,6 +89,16 @@ export function NotebookPanel({
   const availableContradictions = caseDefinition.contradictions.filter((item) =>
     item.factIds.every((factId) => caseState.discoveredFactIds.includes(factId)),
   );
+  const conclusion = caseDefinition.conclusion;
+  const conclusionAvailable =
+    conclusion !== undefined &&
+    caseState.objectiveStatuses[conclusion.objectiveId] === 'active' &&
+    caseState.flags.case_closed !== true;
+  const visibleTabs = TABS.filter(({ id }) => id !== 'conclusion' || conclusionAvailable);
+  const suspects = (conclusion?.suspectNpcIds ?? []).map((id) => ({
+    id,
+    name: caseDefinition.npcs.find((npc) => npc.id === id)?.name ?? id,
+  }));
   const discoveredFacts = caseDefinition.facts.filter(({ id }) =>
     caseState.discoveredFactIds.includes(id),
   );
@@ -133,7 +148,7 @@ export function NotebookPanel({
             </button>
           </header>
           <nav className="notebook-tabs" aria-label={strings.notebook}>
-            {TABS.map(({ id, label }) => (
+            {visibleTabs.map(({ id, label }) => (
               <button
                 type="button"
                 key={id}
@@ -147,6 +162,13 @@ export function NotebookPanel({
           </nav>
           <div className="notebook-content">
             {activeTab === 'people' && <p>{strings.notebookEmptyPeople}</p>}
+            {activeTab === 'conclusion' && conclusionAvailable && (
+              <AccusationPanel
+                suspects={suspects}
+                strings={strings}
+                onSubmit={onSubmitAccusation}
+              />
+            )}
             {activeTab === 'vocabulary' &&
               (Object.keys(profile?.vocabulary ?? {}).length ? (
                 <ul>

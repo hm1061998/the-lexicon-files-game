@@ -230,4 +230,51 @@ describe('NotebookPanel', () => {
     expect(html).not.toContain(hiddenFact.text);
     expect(html).toContain(strings.contradictionUnavailable);
   });
+
+  function renderNotebook(
+    caseState: ReturnType<typeof createCaseState>,
+    activeTab: 'conclusion' | 'evidence' = 'evidence',
+  ) {
+    return renderToString(
+      <NotebookPanel
+        caseDefinition={caseDefinition}
+        caseState={caseState}
+        activeTab={activeTab}
+        strings={strings}
+        onSelectTab={() => {}}
+        onClose={() => {}}
+        onPlaceTimelineEvent={() => ({ ok: true, correct: false, state: caseState })}
+        onSubmitContradiction={() => ({ ok: true, correct: false, state: caseState, events: [] })}
+        onSubmitAccusation={() => ({ ok: true, correct: false, state: caseState, events: [] })}
+      />,
+    );
+  }
+  const objectiveId = caseDefinition.conclusion!.objectiveId;
+  function withObjective(status: 'locked' | 'active', flags: Record<string, boolean> = {}) {
+    const base = createCaseState(caseDefinition);
+    return {
+      ...base,
+      flags,
+      objectiveStatuses: { ...base.objectiveStatuses, [objectiveId]: status },
+    };
+  }
+
+  it('hides the conclusion tab until the conclusion objective is active', () => {
+    expect(renderNotebook(withObjective('locked'))).not.toContain(strings.conclusion);
+    expect(renderNotebook(withObjective('active'))).toContain(strings.conclusion);
+  });
+
+  it('hides the conclusion tab once the case is closed', () => {
+    expect(renderNotebook(withObjective('active', { case_closed: true }))).not.toContain(
+      strings.conclusion,
+    );
+  });
+
+  it('lists every declared suspect by content name on the conclusion tab', () => {
+    const html = renderNotebook(withObjective('active'), 'conclusion');
+    for (const id of caseDefinition.conclusion!.suspectNpcIds) {
+      expect(html).toContain(caseDefinition.npcs.find((npc) => npc.id === id)!.name);
+    }
+    expect(html).toContain(strings.conclusionPrompt);
+  });
 });

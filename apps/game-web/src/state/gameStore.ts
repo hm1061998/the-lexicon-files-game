@@ -9,6 +9,7 @@ import type {
   ListeningAnswerResult,
   TimelinePlacementResult,
   ContradictionResult,
+  AccusationResult,
 } from '@lexicon/shared-types';
 import {
   applyEffects,
@@ -18,8 +19,9 @@ import {
   answerListeningTask as answerListeningTaskCore,
   placeTimelineEvent as placeTimelineEventCore,
   submitContradiction as submitContradictionCore,
+  submitAccusation as submitAccusationCore,
 } from '@lexicon/game-core';
-export type NotebookTab = 'people' | 'evidence' | 'vocabulary' | 'timeline';
+export type NotebookTab = 'people' | 'evidence' | 'vocabulary' | 'timeline' | 'conclusion';
 export type GameStoreState = {
   caseDefinition: CaseDefinition;
   caseState: CaseState;
@@ -48,13 +50,23 @@ export type GameStoreState = {
   answerListeningTask(taskId: string, optionId: string): ListeningAnswerResult;
   placeTimelineEvent(eventId: string, slotId: string): TimelinePlacementResult;
   submitContradiction(contradictionId: string, factIds: readonly string[]): ContradictionResult;
+  submitAccusation(suspectNpcId: string): AccusationResult;
   transitionScene(sceneId: string, spawnId: string): boolean;
 };
 export type GameStore = StoreApi<GameStoreState>;
 function inputLocked(
-  s: Pick<GameStoreState, 'paused' | 'activeEvidenceId' | 'notebookOpen' | 'dialogueSession'>,
+  s: Pick<
+    GameStoreState,
+    'paused' | 'activeEvidenceId' | 'notebookOpen' | 'dialogueSession' | 'caseState'
+  >,
 ): boolean {
-  return s.paused || s.activeEvidenceId !== null || s.notebookOpen || s.dialogueSession !== null;
+  return (
+    s.paused ||
+    s.activeEvidenceId !== null ||
+    s.notebookOpen ||
+    s.dialogueSession !== null ||
+    s.caseState.flags.case_closed === true
+  );
 }
 export function createGameStore(init: {
   caseDefinition: CaseDefinition;
@@ -68,9 +80,10 @@ export function createGameStore(init: {
     throw new Error(`Initial scene "${String(initialSceneId)}" or its default spawn is missing`);
   // Per-store action sequence also rejects callbacks from a closed/reopened session.
   let nextRevision = 0;
+  const initialCaseState = init.initialState ?? createCaseState(init.caseDefinition);
   return createStore<GameStoreState>((set, get) => ({
     caseDefinition: init.caseDefinition,
-    caseState: init.initialState ?? createCaseState(init.caseDefinition),
+    caseState: initialCaseState,
     activeSceneId: initialScene.id,
     nearby: null,
     paused: false,
@@ -79,7 +92,8 @@ export function createGameStore(init: {
     notebookTab: 'evidence',
     dialogueSession: null,
     dialogueError: null,
-    inputLocked: false,
+    // A closed case never resumes free movement; the report replaces play.
+    inputLocked: initialCaseState.flags.case_closed === true,
     persistenceError: init.initialPersistenceError ?? null,
     setNearby(nearby) {
       set({ nearby });
@@ -181,6 +195,18 @@ export function createGameStore(init: {
         factIds,
       );
       if (result.ok && result.correct) set({ caseState: result.state });
+      return result;
+    },
+    submitAccusation(suspectNpcId) {
+      const s = get();
+      const result = submitAccusationCore(s.caseDefinition, s.caseState, suspectNpcId);
+      // Wrong or rejected accusations leave the case state untouched.
+      if (result.ok && result.correct && result.state !== s.caseState) {
+        set({
+          caseState: result.state,
+          inputLocked: inputLocked({ ...s, caseState: result.state }),
+        });
+      }
       return result;
     },
     transitionScene(sceneId, spawnId) {

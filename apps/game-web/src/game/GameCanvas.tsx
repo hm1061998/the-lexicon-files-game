@@ -507,6 +507,7 @@ function NotebookLayer({
       onInspect={onInspect}
       onTranslationModeChange={setTranslationMode}
       onPlaceTimelineEvent={(eventId, slotId) => store.placeTimelineEvent(eventId, slotId)}
+      onSubmitAccusation={(suspectNpcId) => store.submitAccusation(suspectNpcId)}
       onSubmitContradiction={(contradictionId, factIds) =>
         store.submitContradiction(contradictionId, factIds)
       }
