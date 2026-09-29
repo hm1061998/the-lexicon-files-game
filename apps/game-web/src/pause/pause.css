@@ -26,7 +26,12 @@
   border-radius: 4px;
   background: var(--lexicon-beige);
   color: var(--lexicon-ink);
+  font-family: inherit;
   cursor: pointer;
+}
+
+.pause-menu button:hover {
+  background: var(--lexicon-paper);
 }
 
 .pause-menu select,

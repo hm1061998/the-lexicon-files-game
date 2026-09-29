@@ -235,3 +235,38 @@ test('storage warning is readable and does not cover the objective panel', async
     warningBox!.y + warningBox!.height > objectiveBox!.y;
   expect(overlaps).toBe(false);
 });
+
+test('paper panels use the classic serif file styling', async ({ page }) => {
+  await openWorld(page);
+  const style = await page
+    .locator('.paper-panel')
+    .first()
+    .evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { fontFamily: cs.fontFamily, fontSize: cs.fontSize, boxShadow: cs.boxShadow };
+    });
+  expect(style.fontFamily).toContain('Georgia');
+  expect(parseFloat(style.fontSize)).toBeGreaterThanOrEqual(14);
+  const blurs = [
+    ...style.boxShadow.matchAll(/rgba?\([^)]*\)\s+(-?\d+px)\s+(-?\d+px)\s+(-?\d+px)/g),
+  ];
+  expect(blurs.length).toBeGreaterThan(0);
+  for (const m of blurs) expect(m[3]).toBe('0px');
+});
+
+test('panel entrance animates unless reduced motion is on', async ({ page }) => {
+  await openWorld(page);
+  await page.keyboard.press('Escape');
+  const pause = page.getByRole('dialog');
+  await expect(pause).toBeVisible();
+  const panel = page.locator('.pause-menu');
+  expect(await panel.evaluate((el) => getComputedStyle(el).animationName)).toBe('lexicon-panel-in');
+  await pause.getByLabel('Giảm chuyển động').check();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  expect(
+    await page.locator('.pause-menu').evaluate((el) => getComputedStyle(el).animationName),
+  ).toBe('none');
+});
