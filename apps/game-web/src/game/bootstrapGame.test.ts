@@ -3,6 +3,7 @@ import type { GameState } from '@lexicon/shared-types';
 import { loadCaseDefinition } from '@lexicon/game-content';
 import { createCaseState } from '@lexicon/game-core';
 import type { LoadSaveResult, SaveRepository } from '../persistence/saveRepository';
+import type { CommerceConfigProvider } from '../commerce/commerceConfig';
 import { loadGameBootstrap } from './bootstrapGame';
 
 function createRepository(result: LoadSaveResult): SaveRepository {
@@ -32,6 +33,7 @@ describe('loadGameBootstrap', () => {
       status: 'ready',
       initialState: restored,
       activeSceneId: 'archive',
+      commerceConfig: { schemaVersion: 1, mode: 'free' },
       autosaveEnabled: true,
     });
   });
@@ -44,6 +46,7 @@ describe('loadGameBootstrap', () => {
       status: 'ready',
       initialState: createCaseState(definition),
       activeSceneId: 'main_office',
+      commerceConfig: { schemaVersion: 1, mode: 'free' },
       autosaveEnabled: true,
     });
   });
@@ -55,6 +58,7 @@ describe('loadGameBootstrap', () => {
     await expect(loadGameBootstrap(definition, repository)).resolves.toEqual({
       status: 'confirmation-required',
       reason: 'bad data',
+      commerceConfig: { schemaVersion: 1, mode: 'free' },
     });
   });
 
@@ -66,8 +70,74 @@ describe('loadGameBootstrap', () => {
       status: 'memory-only',
       initialState: createCaseState(definition),
       activeSceneId: 'main_office',
+      commerceConfig: { schemaVersion: 1, mode: 'free' },
       autosaveEnabled: false,
       error: 'blocked',
+    });
+  });
+
+  it('injects commercial config while preserving the same playable case state', async () => {
+    const definition = loadCaseDefinition('case-001');
+    const progressed = {
+      ...createCaseState(definition),
+      evidenceIds: ['meeting_minutes'],
+      flags: { checked_desk: true },
+    };
+    const loadConfig = vi.fn(async () => ({
+      schemaVersion: 1 as const,
+      mode: 'commercial' as const,
+    }));
+    const provider: CommerceConfigProvider = {
+      load: loadConfig,
+    };
+    const repository = createRepository({
+      status: 'loaded',
+      state: progressed,
+      activeSceneId: 'main_office',
+    });
+    const result = await loadGameBootstrap(definition, repository, provider);
+
+    expect(result).toMatchObject({
+      status: 'ready',
+      commerceConfig: { schemaVersion: 1, mode: 'commercial' },
+    });
+    expect(result.status === 'ready' && result.initialState).toEqual(progressed);
+    expect(loadConfig).toHaveBeenCalledTimes(1);
+    if (result.status === 'ready') {
+      expect(Object.keys(result.initialState)).not.toContain('commerceConfig');
+      expect(result.initialState.evidenceIds).toEqual(['meeting_minutes']);
+      expect(result.initialState.flags.checked_desk).toBe(true);
+    }
+  });
+
+  it('falls back to free without blocking bootstrap when an injected provider fails', async () => {
+    const definition = loadCaseDefinition('case-001');
+    const provider: CommerceConfigProvider = {
+      load: async () => {
+        throw new Error('offline');
+      },
+    };
+
+    await expect(
+      loadGameBootstrap(definition, createRepository({ status: 'missing' }), provider),
+    ).resolves.toMatchObject({
+      status: 'ready',
+      commerceConfig: { schemaVersion: 1, mode: 'free' },
+      initialState: createCaseState(definition),
+    });
+  });
+
+  it('falls back to free for an unsupported config version and still bootstraps', async () => {
+    const definition = loadCaseDefinition('case-001');
+    const provider = {
+      load: async () => ({ schemaVersion: 2, mode: 'commercial' }),
+    } as unknown as CommerceConfigProvider;
+
+    await expect(
+      loadGameBootstrap(definition, createRepository({ status: 'missing' }), provider),
+    ).resolves.toMatchObject({
+      status: 'ready',
+      commerceConfig: { schemaVersion: 1, mode: 'free' },
     });
   });
 });

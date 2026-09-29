@@ -37,6 +37,11 @@ import { createLearningStore } from '../state/learningStore';
 import { LearningStoreProvider } from '../state/LearningStoreContext';
 import { connectLearningAutosave } from '../persistence/connectLearningAutosave';
 import { useLearningStore } from '../state/LearningStoreContext';
+import {
+  defaultCommerceConfigProvider,
+  FREE_COMMERCE_CONFIG,
+  type CommerceConfigProvider,
+} from '../commerce/commerceConfig';
 
 type StartContent = { caseDefinition: CaseDefinition; strings: UiStrings };
 type LoadResult = { ok: true; content: StartContent } | { ok: false; error: Error };
@@ -61,7 +66,11 @@ function loadStartContent(): LoadResult {
   }
 }
 
-export function GameCanvas() {
+export function GameCanvas({
+  commerceConfigProvider = defaultCommerceConfigProvider,
+}: {
+  commerceConfigProvider?: CommerceConfigProvider;
+} = {}) {
   const result = useMemo(loadStartContent, []);
   const repository = useMemo(createSaveRepository, []);
   const learningRepository = useMemo(createLearningRepository, []);
@@ -83,7 +92,7 @@ export function GameCanvas() {
   useEffect(() => {
     if (!result.ok) return;
     let active = true;
-    void loadGameBootstrap(result.content.caseDefinition, repository)
+    void loadGameBootstrap(result.content.caseDefinition, repository, commerceConfigProvider)
       .then((loaded) => {
         if (active) setBootstrap(loaded);
       })
@@ -93,6 +102,7 @@ export function GameCanvas() {
           status: 'memory-only',
           initialState: createCaseState(result.content.caseDefinition),
           activeSceneId: DEFAULT_START.sceneId,
+          commerceConfig: FREE_COMMERCE_CONFIG,
           autosaveEnabled: false,
           error: error instanceof Error ? error.message : String(error),
         });
@@ -100,7 +110,7 @@ export function GameCanvas() {
     return () => {
       active = false;
     };
-  }, [result, repository]);
+  }, [result, repository, commerceConfigProvider]);
 
   if (!result.ok) {
     const issues = result.error instanceof ContentValidationError ? result.error.issues : [];
@@ -135,6 +145,7 @@ export function GameCanvas() {
                 status: 'ready',
                 initialState,
                 activeSceneId: DEFAULT_START.sceneId,
+                commerceConfig: bootstrap.commerceConfig,
                 autosaveEnabled: true,
               });
             })
@@ -143,6 +154,7 @@ export function GameCanvas() {
                 status: 'memory-only',
                 initialState: createCaseState(result.content.caseDefinition),
                 activeSceneId: DEFAULT_START.sceneId,
+                commerceConfig: bootstrap.commerceConfig,
                 autosaveEnabled: false,
                 error: error instanceof Error ? error.message : String(error),
               });
@@ -153,6 +165,7 @@ export function GameCanvas() {
             status: 'memory-only',
             initialState: createCaseState(result.content.caseDefinition),
             activeSceneId: DEFAULT_START.sceneId,
+            commerceConfig: bootstrap.commerceConfig,
             autosaveEnabled: false,
             error: result.content.strings.saveUnavailable,
           })
