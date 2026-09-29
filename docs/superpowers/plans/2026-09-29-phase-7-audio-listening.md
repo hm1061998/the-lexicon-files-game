@@ -142,7 +142,7 @@ Chạy: `npx nx run @lexicon/game-web:test -- --run src/audio/audioController.te
 
 Kỳ vọng: FAIL do controller chưa tồn tại.
 
-- [ ] **Bước 3: Tạo asset Kokoro và provenance.** Nghe lại để xác minh chính xác câu thoại, phát âm “outside”, không có câu/chữ thừa; đo thời lượng và kích thước file. Không commit weights, package Python hoặc script build/runtime TTS vào monorepo. Browser playback và metadata đã kiểm chứng; cần người nghe duyệt phát âm/chất lượng.
+- [x] **Bước 3: Tạo asset Kokoro và provenance.** Nghe lại để xác minh chính xác câu thoại, phát âm “outside”, không có câu/chữ thừa; đo thời lượng và kích thước file. Không commit weights, package Python hoặc script build/runtime TTS vào monorepo. Browser playback và metadata đã kiểm chứng; ngày 2026-09-29 người dùng xác nhận đã nghe bản ghi và test OK.
 - [x] **Bước 4: Implement controller và React adapter.** Howler callback phải unsubscribe/stop/unload khi dispose; bỏ callback cũ; hỗ trợ retry bằng cùng controller hoặc controller mới theo URL.
 - [x] **Bước 5: Chạy controller tests xanh.**
 
@@ -233,7 +233,7 @@ Chạy lần lượt: `npm run lint`; `npm run test`; `npm run build`; `npm run 
 
 Kỳ vọng: tất cả exit code 0; lưu output/kết quả thật vào `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`. Không chạy .NET vì không sửa `apps/api`.
 
-- [x] **Bước 6: Commit verification, cập nhật plan checkboxes, rồi cập nhật `MEMORY.md` ở commit kế tiếp.** Ghi rõ source/license asset, test mới, output các gate, chunk/asset size, giới hạn còn lại. Chưa đánh dấu complete hoặc push trước khi toàn bộ kiểm tra và review cuối đạt.
+- [x] **Bước 6: Commit verification, cập nhật plan checkboxes, rồi cập nhật `MEMORY.md` ở commit kế tiếp.** Ghi rõ source/license asset, test mới, output các gate, chunk/asset size, giới hạn còn lại. Sau khi người dùng nghe và xác nhận test OK, đánh dấu Phase 7 complete; không push nếu chưa được yêu cầu.
 
 ```bash
 git add apps/game-web/e2e docs/ai/2026-09-29-phase-7-audio-listening-verification.md docs/superpowers/plans/2026-09-29-phase-7-audio-listening.md

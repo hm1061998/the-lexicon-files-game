@@ -1,7 +1,7 @@
 # Phase 7 Audio / Listening — Verification
 
 Date: 2026-09-29 (Asia/Saigon)
-Status: implementation and automated gates verified; human audio audition pending.
+Status: complete; implementation, automated gates, and user audio audition verified.
 
 ## Delivered
 
@@ -32,15 +32,15 @@ Status: implementation and automated gates verified; human audio audition pendin
 | `npm run typecheck` | PASS |
 | `npm run format:check` | PASS |
 | `npm run test:e2e` | PASS — 35 browser tests, 1 worker |
-| `npm run memory:check` | PASS — phase-7 active plan recognized. Run again after the final memory handoff update. |
+| `npm run memory:check` | PASS — phase-7 active plan recognized; rerun on the final memory handoff commit. |
 | `git diff --check` | PASS |
 
 No backend checks were run because `apps/api` was not changed. No dependency was added.
 
 ## Human audio audition
 
-Automated browser playback reached the `ended` state and retry worked after a controlled load failure. The agent could not perceptually review the generated recording, so pronunciation (especially “outside”), clarity, and unwanted audible artifacts remain for a human listen-through. Do not treat the visual playback checks as a subjective sound-quality review.
+Automated browser playback reached the `ended` state and retry worked after a controlled load failure. On 2026-09-29, the user confirmed they listened to the recording and that it tested OK. No pronunciation, clarity, or unwanted-audio issue was reported.
 
 ## Integration status
 
-Task 1–4 implementation commits are on local `dev`: `7125f05`, `7a40426`, `7586275`, `06e8b60`. Task 5 verification and plan update are committed locally; `MEMORY.md` is the next handoff commit. The phase remains `in_progress` until the generated audio is auditioned; no implementation push is recorded here.
+Task 1–4 implementation commits are on local `dev`: `7125f05`, `7a40426`, `7586275`, `06e8b60`. Task 5 verification and plan update are committed locally; `MEMORY.md` is the next handoff commit. The phase is complete after the user audition; implementation remains local and has not been pushed.
