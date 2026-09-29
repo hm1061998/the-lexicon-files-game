@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T10:47:06+07:00
+updated_at: 2026-09-29T10:56:05+07:00
 phase: phase-8
 status: in_progress
-result_commit: 43f51d2
+result_commit: 3d6752d
 active_spec: docs/superpowers/specs/2026-09-29-phase-8-timeline-contradiction-design.md
 active_plan: none
 ---
@@ -43,7 +43,7 @@ active_plan: none
 
 ## Active Decisions
 
-- Product/case truth theo docs/01–03; phase theo roadmap; dependency boundaries theo ARCHITECTURE.md. Không tự sửa rule khi thiếu/mâu thuẫn.
+- Product/case truth theo docs/01–03; phase theo roadmap; dependency boundaries theo ARCHITECTURE.md. Spec và implementation plan viết bằng tiếng Việt theo `AGENTS.md` (commit `3d6752d`). Không tự sửa rule khi thiếu/mâu thuẫn.
 - npm + Nx bắt buộc; local runtime `.superpowers/runtime/npm-10.9.7/bin`, `C:/Windows/System32` trên PATH; `NX_DAEMON=false` khi checks. Không thêm dependency/đổi lockfile.
 - Gameplay local-first; core engines TS thuần; learning reducer không nằm trong Phaser. Backend ngoài scope Phase 6.
 - Case save schema 2/database 1 giữ evidence/facts/objectives/flags; learning profile/settings ở DB riêng.
@@ -72,6 +72,7 @@ active_plan: none
 
 ## Latest Handoff
 
+- Quy định dự án mới: mọi spec và implementation plan phải viết bằng tiếng Việt; đã ghi vào `AGENTS.md` tại `3d6752d`.
 - Phase 8 design draft is local at `43f51d2`; user approved the proposed scope, including a minimal Archive scene and route, but has not reviewed the written spec. Wait for written-spec approval before invoking `writing-plans`; no code/plan/push yet.
 - Phase 7 is complete and pushed to `origin/dev` through `44e06ff`; user approved the audio audition. Verification ledger: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`. Audio is 4.2 s, 201,644 bytes, mono 24 kHz PCM16; model/voice revisions and checksums are in `.provenance.json`.
 - Phase 6 is integrated and pushed: local/remote `dev` at `520ee4d` (then memory reconciliation `9177cfa`). Verification/review: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
