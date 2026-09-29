@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createLearningRepository, type LearningDatabase } from './learningRepository';
 import { createDefaultLearningRecord, parseLearningRecord } from './learningMigration';
 
@@ -14,6 +14,9 @@ function memory(raw?: unknown) {
     },
     async backup(value) {
       backups.push(value);
+    },
+    async listBackups() {
+      return backups;
     },
   };
   return { db, backups, value: () => saved };
@@ -166,6 +169,7 @@ describe('separate learning repository', () => {
   it('migrates V1 to V2, backing up the raw V1 before writing V2', async () => {
     const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Immersion' };
     const order: string[] = [];
+    const backupsList: unknown[] = [];
     let saved: unknown = v1;
     const db: LearningDatabase = {
       async get() {
@@ -177,6 +181,10 @@ describe('separate learning repository', () => {
       },
       async backup(raw) {
         order.push(raw === v1 ? 'backup-v1' : 'backup-other');
+        backupsList.push(raw);
+      },
+      async listBackups() {
+        return backupsList;
       },
     };
     const result = await createLearningRepository(async () => db).loadLearning([], []);
@@ -200,6 +208,9 @@ describe('separate learning repository', () => {
         throw new Error('quota');
       },
       async backup() {},
+      async listBackups() {
+        return [];
+      },
     };
     const result = await createLearningRepository(async () => db).loadLearning([], []);
     expect(result).toMatchObject({
@@ -208,5 +219,56 @@ describe('separate learning repository', () => {
       legacyTranslationMode: 'Beginner',
     });
     expect(saved).toBe(v1);
+  });
+
+  it('keeps memory-only and does not put when the migration backup fails', async () => {
+    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Beginner' };
+    const put = vi.fn(async () => undefined);
+    const db: LearningDatabase = {
+      get: async () => v1,
+      put,
+      backup: async () => {
+        throw new Error('backup denied');
+      },
+      listBackups: async () => [],
+    };
+    const result = await createLearningRepository(async () => db).loadLearning([], []);
+    expect(result).toMatchObject({
+      status: 'memory-only',
+      error: 'backup denied',
+      legacyTranslationMode: 'Beginner',
+    });
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('returns the legacy mode again on a second load of the same repository', async () => {
+    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Immersion' };
+    let saved: unknown = v1;
+    const db: LearningDatabase = {
+      get: async () => saved,
+      put: async (record) => {
+        saved = record;
+      },
+      backup: async () => undefined,
+      listBackups: async () => [],
+    };
+    const repo = createLearningRepository(async () => db);
+    await repo.loadLearning([], []);
+    expect(await repo.loadLearning([], [])).toMatchObject({ legacyTranslationMode: 'Immersion' });
+  });
+
+  it('finds the newest valid V1 translation mode in backups', async () => {
+    const old = { schemaVersion: 1, translationMode: 'Beginner' };
+    const newest = { schemaVersion: 1, translationMode: 'Immersion' };
+    const db: LearningDatabase = {
+      get: async () => undefined,
+      put: async () => undefined,
+      backup: async () => undefined,
+      listBackups: async () => [old, newest, { schemaVersion: 1, translationMode: 'Bogus' }, 7],
+    };
+    const repo = createLearningRepository(async () => db);
+    expect(await repo.findLegacyTranslationMode()).toBe('Immersion');
+    const empty = createLearningRepository(async () => ({ ...db, listBackups: async () => [] }));
+    expect(await empty.findLegacyTranslationMode()).toBeNull();
   });
 });
