@@ -3,6 +3,11 @@
   "title": "The Missing Report",
   "evidenceTotal": 5,
   "initialObjectiveId": "find_what_happened",
+  "conclusion": {
+    "suspectNpcIds": ["anna", "leo", "david"],
+    "correctSuspectNpcId": "david",
+    "objectiveId": "submit_your_conclusion"
+  },
   "sceneIds": ["main_office", "archive"],
   "timeline": {
     "slots": [

@@ -67,6 +67,7 @@ describe('loadCaseDefinition', () => {
       'talk_to_everyone',
       'check_security_records',
       'compare_david_statement',
+      'submit_your_conclusion',
     ]);
   });
 
@@ -90,6 +91,24 @@ describe('loadCaseDefinition', () => {
     expect(interaction?.effects).toEqual([
       { type: 'addEvidence', evidenceId: 'leo_phone_recording' },
     ]);
+  });
+
+  it('Case #001 declares Anna, Leo and David as suspects with David as the answer', () => {
+    const definition = loadCaseDefinition('case-001');
+    expect(definition.conclusion).toEqual({
+      suspectNpcIds: ['anna', 'leo', 'david'],
+      correctSuspectNpcId: 'david',
+      objectiveId: 'submit_your_conclusion',
+    });
+    const objective = definition.objectives.find(({ id }) => id === 'submit_your_conclusion');
+    expect(objective?.initialStatus).toBe('locked');
+    expect(objective?.activationCondition).toEqual({
+      type: 'all',
+      conditions: [
+        { type: 'flag', key: 'david_confession_read', value: true },
+        { type: 'hasFact', factId: 'david_took_report' },
+      ],
+    });
   });
 
   it('throws a content validation error naming an unknown case', () => {

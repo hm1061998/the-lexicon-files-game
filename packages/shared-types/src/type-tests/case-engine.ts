@@ -53,6 +53,7 @@ const fact = {
 const objective = {
   id: 'find_what_happened',
   text: 'Find out what happened to the report.',
+  activationCondition: { type: 'flag', key: 'note_read', value: true },
 } satisfies ObjectiveDefinition;
 
 const listeningOption: ListeningOption = { id: 'outside', text: 'Outside the room' };
@@ -86,6 +87,11 @@ const definition = {
   listeningTasks: [listeningTask],
   timeline: { slots: [], events: [] },
   contradictions: [],
+  conclusion: {
+    suspectNpcIds: ['anna'],
+    correctSuspectNpcId: 'anna',
+    objectiveId: 'find_what_happened',
+  },
 } satisfies CaseDefinition;
 
 const state = {

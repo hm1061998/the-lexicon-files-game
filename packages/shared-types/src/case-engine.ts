@@ -9,6 +9,14 @@ export interface ObjectiveDefinition {
   readonly text: string;
   readonly initialStatus?: 'locked' | 'active' | undefined;
   readonly completionCondition?: Condition | undefined;
+  /** Moves a locked objective to active when satisfied (reconciled by game-core). */
+  readonly activationCondition?: Condition | undefined;
+}
+
+export interface CaseConclusionDefinition {
+  readonly suspectNpcIds: readonly string[];
+  readonly correctSuspectNpcId: string;
+  readonly objectiveId: string;
 }
 
 export interface EvidenceDefinition {
@@ -118,6 +126,7 @@ export interface CaseDefinition {
   readonly listeningTasks: readonly ListeningTaskDefinition[];
   readonly timeline: TimelineDefinition;
   readonly contradictions: readonly ContradictionDefinition[];
+  readonly conclusion?: CaseConclusionDefinition | undefined;
 }
 
 export type ObjectiveStatus = 'locked' | 'active' | 'completed';

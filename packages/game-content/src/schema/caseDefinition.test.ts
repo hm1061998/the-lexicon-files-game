@@ -539,3 +539,101 @@ describe('parseCaseDefinition', () => {
     );
   });
 });
+
+describe('case conclusion contract', () => {
+  const npcsRaw = {
+    npcs: [
+      {
+        id: 'anna',
+        name: 'Anna Reed',
+        role: 'Project Coordinator',
+        dialogueTreeId: 'anna_initial',
+      },
+      { id: 'david', name: 'David Cole', role: 'Office Manager', dialogueTreeId: 'david_initial' },
+    ],
+  };
+  const conclusion = {
+    suspectNpcIds: ['anna', 'david'],
+    correctSuspectNpcId: 'david',
+    objectiveId: 'submit_your_conclusion',
+  };
+  const objectivesWithConclusion = {
+    objectives: [
+      ...objectivesRaw.objectives,
+      {
+        id: 'submit_your_conclusion',
+        text: 'Submit your conclusion',
+        initialStatus: 'locked',
+        activationCondition: {
+          type: 'all',
+          conditions: [
+            { type: 'flag', key: 'david_confession_read', value: true },
+            { type: 'hasFact', factId: 'meeting_started' },
+          ],
+        },
+      },
+    ],
+  };
+  function withConclusion(value: unknown, objectives: unknown = objectivesWithConclusion) {
+    return {
+      caseRaw: { ...caseRaw, conclusion: value },
+      npcsRaw,
+      objectivesRaw: objectives,
+    } as Partial<RawInput>;
+  }
+
+  // Acceptance of a valid conclusion is covered against real Case #001 content in
+  // loadCaseDefinition.test.ts (NPCs there own real dialogue trees).
+  it('keeps conclusion optional for cases that do not declare one', () => {
+    expect(parse().conclusion).toBeUndefined();
+  });
+
+  it('rejects an empty suspect list', () => {
+    expectValidationIssue(withConclusion({ ...conclusion, suspectNpcIds: [] }), 'suspectNpcIds');
+  });
+
+  it('rejects duplicate suspects', () => {
+    expectValidationIssue(
+      withConclusion({ ...conclusion, suspectNpcIds: ['anna', 'anna', 'david'] }),
+      'duplicate suspect',
+    );
+  });
+
+  it('rejects a correct suspect that is not in the suspect list', () => {
+    expectValidationIssue(
+      withConclusion({ ...conclusion, suspectNpcIds: ['anna'] }),
+      'correctSuspectNpcId',
+    );
+  });
+
+  it('rejects a suspect that is not a declared NPC', () => {
+    expectValidationIssue(
+      withConclusion({ ...conclusion, suspectNpcIds: ['anna', 'david', 'ghost'] }),
+      'unknown NPC id "ghost"',
+    );
+  });
+
+  it('rejects a conclusion objective that is not defined', () => {
+    expectValidationIssue(
+      withConclusion({ ...conclusion, objectiveId: 'missing_objective' }),
+      'conclusion.objectiveId',
+    );
+  });
+
+  it('rejects an activation condition that references an unknown fact', () => {
+    expectValidationIssue(
+      withConclusion(conclusion, {
+        objectives: [
+          ...objectivesRaw.objectives,
+          {
+            id: 'submit_your_conclusion',
+            text: 'Submit your conclusion',
+            initialStatus: 'locked',
+            activationCondition: { type: 'hasFact', factId: 'missing_fact' },
+          },
+        ],
+      }),
+      'activationCondition',
+    );
+  });
+});

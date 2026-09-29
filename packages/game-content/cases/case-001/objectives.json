@@ -38,6 +38,25 @@
       "id": "compare_david_statement",
       "text": "Compare David's statement with the evidence",
       "initialStatus": "active"
+    },
+    {
+      "id": "submit_your_conclusion",
+      "text": "Submit your conclusion",
+      "initialStatus": "locked",
+      "activationCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "david_confession_read",
+            "value": true
+          },
+          {
+            "type": "hasFact",
+            "factId": "david_took_report"
+          }
+        ]
+      }
     }
   ]
 }

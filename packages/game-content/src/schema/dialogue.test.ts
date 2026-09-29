@@ -27,10 +27,14 @@ const dialogueCaseRaw = {
     events: [caseRaw.timeline.events.find((event) => event.id === 'meeting_started')!],
   },
 };
+// The conclusion objective depends on facts outside this minimal fixture.
+const dialogueObjectivesRaw = {
+  objectives: objectivesRaw.objectives.filter(({ id }) => id !== 'submit_your_conclusion'),
+};
 function input() {
   return {
     caseRaw: dialogueCaseRaw,
-    objectivesRaw,
+    objectivesRaw: dialogueObjectivesRaw,
     evidencesRaw,
     factsRaw,
     contradictionsRaw: { contradictions: [] },

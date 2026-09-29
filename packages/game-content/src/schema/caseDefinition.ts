@@ -24,6 +24,14 @@ const caseRawSchema = z
     title: z.string().min(1),
     evidenceTotal: z.number().int().min(0),
     initialObjectiveId: z.string().min(1),
+    conclusion: z
+      .object({
+        suspectNpcIds: z.array(z.string().min(1)).min(1),
+        correctSuspectNpcId: z.string().min(1),
+        objectiveId: z.string().min(1),
+      })
+      .strict()
+      .optional(),
     sceneIds: z.array(z.string().min(1)).min(1),
     timeline: z
       .object({
@@ -95,6 +103,7 @@ const objectiveSchema = z
     text: z.string().min(1),
     initialStatus: z.enum(['locked', 'active']).optional(),
     completionCondition: conditionSchema.optional(),
+    activationCondition: conditionSchema.optional(),
   })
   .strict();
 
@@ -369,6 +378,41 @@ export function parseCaseDefinition(
       }
     });
   });
+  const conclusion = caseData.conclusion;
+  if (conclusion) {
+    const seenSuspects = new Set<string>();
+    conclusion.suspectNpcIds.forEach((id) => {
+      if (seenSuspects.has(id)) {
+        issues.push(`case.json.conclusion.suspectNpcIds: duplicate suspect "${id}"`);
+      }
+      seenSuspects.add(id);
+      if (!npcIds.has(id)) {
+        issues.push(`case.json.conclusion.suspectNpcIds: unknown NPC id "${id}"`);
+      }
+    });
+    if (!seenSuspects.has(conclusion.correctSuspectNpcId)) {
+      issues.push(
+        `case.json.conclusion.correctSuspectNpcId: "${conclusion.correctSuspectNpcId}" is not a declared suspect`,
+      );
+    }
+    if (!objectiveIds.has(conclusion.objectiveId)) {
+      issues.push(
+        `case.json.conclusion.objectiveId: unknown objective id "${conclusion.objectiveId}"`,
+      );
+    }
+  }
+  objectives.forEach((objective, objectiveIndex) => {
+    if (objective.activationCondition) {
+      validateConditionReferences(
+        objective.activationCondition,
+        evidenceIds,
+        factIds,
+        objectiveIds,
+        `objectives.${objectiveIndex}.activationCondition`,
+        issues,
+      );
+    }
+  });
   contradictions.forEach((contradiction, contradictionIndex) => {
     contradiction.factIds.forEach((id) => {
       if (!factIds.has(id)) {
@@ -556,5 +600,6 @@ export function parseCaseDefinition(
     listeningTasks,
     timeline: caseData.timeline as TimelineDefinition,
     contradictions,
+    ...(conclusion ? { conclusion } : {}),
   };
 }

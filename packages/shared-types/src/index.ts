@@ -24,6 +24,7 @@ export type { UiStrings } from './case';
 export type {
   EvidenceCategory,
   ObjectiveDefinition,
+  CaseConclusionDefinition,
   EvidenceDefinition,
   FactDefinition,
   ListeningOption,
