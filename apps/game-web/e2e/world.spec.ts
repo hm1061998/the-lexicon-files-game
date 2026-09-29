@@ -26,6 +26,7 @@ type DebugApi = {
   nearbyEvents(): number;
   teleport(x: number, y: number): void;
   markerY(): number | null;
+  markerBaseY(): number | null;
   paperOverlayAlpha(): number | null;
   requestTransition(sceneId: string, spawnId: string): void;
 };
@@ -170,6 +171,8 @@ test('interaction marker floats, holds still under reduced motion, and floats ag
   await page.waitForTimeout(500);
   const d = await markerY();
   expect(c).toBe(d);
+  // Held still means resting exactly on the anchor, not frozen mid-float.
+  expect(c).toBe(await page.evaluate(() => window.__lexiconDebug!.markerBaseY()));
 
   await pause.getByLabel('Giảm chuyển động').uncheck();
   await page.waitForTimeout(200);
@@ -177,6 +180,45 @@ test('interaction marker floats, holds still under reduced motion, and floats ag
   await page.waitForTimeout(500);
   const f = await markerY();
   expect(e).not.toBe(f);
+});
+
+test('marker anchor follows the current interactable, not the previous one', async ({ page }) => {
+  await openWorld(page);
+  const anchor = () => page.evaluate(() => window.__lexiconDebug!.markerBaseY());
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1400, 1100));
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
+    .toBe('objective_note');
+  const note = await anchor();
+  await page.evaluate(() => window.__lexiconDebug!.teleport(2100, 700));
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
+    .not.toBe('objective_note');
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).not.toBeNull();
+  const other = await anchor();
+  expect(other).not.toBeNull();
+  expect(other).not.toBe(note);
+  // The float offset never leaks into a new anchor: the marker stays within the tween range.
+  await expect
+    .poll(async () =>
+      Math.abs((await page.evaluate(() => window.__lexiconDebug!.markerY()))! - other!),
+    )
+    .toBeLessThanOrEqual(4);
+});
+
+test('marker clears the player head when standing behind the archive terminal', async ({
+  page,
+}) => {
+  await openWorld(page);
+  await transitionAndWait(page, 'archive', 'from_office');
+  // Feet at the top of the terminal footprint (y=956): the closest a player gets from behind.
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1500, 950));
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
+    .toBe('PLACEHOLDER_security_terminal');
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.markerY())).not.toBeNull();
+  const markerY = (await page.evaluate(() => window.__lexiconDebug!.markerY()))!;
+  expect(markerY).toBeLessThan((await player(page)).y - 100);
 });
 
 test('paper overlay is subtle and does not block movement or interaction', async ({ page }) => {

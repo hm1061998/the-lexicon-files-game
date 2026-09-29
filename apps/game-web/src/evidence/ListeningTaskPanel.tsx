@@ -8,7 +8,7 @@ import type {
 import type { LearningAction } from '@lexicon/shared-types';
 import { useAudioPlayback } from '../audio/useAudioPlayback';
 import type { SubtitlePreference } from '../persistence/settingsSchema';
-import { resolveTranscriptVisibility } from './transcriptVisibility';
+import { resolveTranscriptBlock, resolveTranscriptVisibility } from './transcriptVisibility';
 
 type ListeningEvent = Extract<LearningAction, { type: 'recordListeningEvent' }>['event'];
 
@@ -32,6 +32,7 @@ export function ListeningTaskPanel({
   const playback = useAudioPlayback(task.audioAsset);
   const visibility = resolveTranscriptVisibility(mode, subtitles);
   const [transcriptOpen, setTranscriptOpen] = useState(false);
+  const block = resolveTranscriptBlock(visibility, transcriptOpen);
   const [hintVisible, setHintVisible] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [answeredCorrectly, setAnsweredCorrectly] = useState(completed);
@@ -123,8 +124,8 @@ export function ListeningTaskPanel({
         </button>
       )}
 
-      {visibility.transcriptShown && (
-        <TranscriptBlock task={task} strings={strings} translation={visibility.translationShown} />
+      {block.transcript && (
+        <TranscriptBlock task={task} strings={strings} translation={block.translation} />
       )}
       {mode !== 'Immersion' && (
         <div className="listening-support">
@@ -140,13 +141,6 @@ export function ListeningTaskPanel({
             <button type="button" onClick={showTranscript} aria-expanded={transcriptOpen}>
               {strings.listeningShowTranscript}
             </button>
-          )}
-          {visibility.transcriptToggle && transcriptOpen && (
-            <TranscriptBlock
-              task={task}
-              strings={strings}
-              translation={visibility.translationWithTranscript}
-            />
           )}
         </div>
       )}

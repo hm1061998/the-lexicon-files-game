@@ -7,6 +7,8 @@ export type LexiconDebug = {
   triggeredEvents(): number;
   teleport(x: number, y: number): void;
   markerY(): number | null;
+  /** Anchor the marker rests on when the float offset is zero, or null while hidden. */
+  markerBaseY(): number | null;
   paperOverlayAlpha(): number | null;
   requestTransition(sceneId: string, spawnId: string): void;
 };

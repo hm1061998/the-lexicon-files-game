@@ -113,7 +113,11 @@ export class WorldScene extends Phaser.Scene {
         // Character frames carry transparent headroom, so use the figure height for NPCs.
         const visualTop =
           asset.type === 'npc' ? asset.y - CHARACTER_FIGURE_HEIGHT : sprite.getTopCenter().y;
-        this.markerAnchors.set(asset.id, markerBaseY(asset.y + asset.interaction.y, visualTop));
+        const blockedTop = asset.collision ? asset.y + asset.collision.y : undefined;
+        this.markerAnchors.set(
+          asset.id,
+          markerBaseY(asset.y + asset.interaction.y, visualTop, blockedTop),
+        );
         this.areas.push({
           id: asset.id,
           x: asset.x + asset.interaction.x,
@@ -163,6 +167,7 @@ export class WorldScene extends Phaser.Scene {
       nearbyEvents: () => this.nearbyEventCount,
       triggeredEvents: () => this.triggeredEventCount,
       markerY: () => (this.marker.visible ? this.marker.y : null),
+      markerBaseY: () => (this.marker.visible ? this.markerBaseY : null),
       paperOverlayAlpha,
       requestTransition: (sceneId, spawnId) =>
         this.bus.emit('scene:transitionRequested', { sceneId, spawnId }),

@@ -87,7 +87,7 @@
       "texture": "tex_security_terminal",
       "x": 1500,
       "y": 1000,
-      "depthBias": -2,
+      "depthBias": 0,
       "interaction": {
         "x": 0,
         "y": 0,

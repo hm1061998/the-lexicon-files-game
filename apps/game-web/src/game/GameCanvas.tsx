@@ -321,7 +321,7 @@ function GameRoot({
       }),
       bus: createEventBus<GameEventMap>(),
     }),
-    [caseDefinition, initialState, persistenceWarning],
+    [caseDefinition, initialState, initialSceneId, persistenceWarning],
   );
   const learning = useMemo(
     () =>

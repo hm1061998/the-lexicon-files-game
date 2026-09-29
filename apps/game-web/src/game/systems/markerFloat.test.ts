@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MARKER_TOP_GAP, markerBaseY, markerPositionY } from './markerFloat';
+import { CHARACTER_FIGURE_HEIGHT } from '../constants';
+import { MARKER_HEAD_GAP, MARKER_TOP_GAP, markerBaseY, markerPositionY } from './markerFloat';
 
 describe('markerPositionY', () => {
   it.each([
@@ -20,5 +21,16 @@ describe('markerBaseY', () => {
   it('lifts the marker above tall sprites so it never covers them', () => {
     // door: area at 720, sprite top at 568 -> above the top edge
     expect(markerBaseY(720, 568)).toBe(568 - MARKER_TOP_GAP);
+  });
+
+  it('clears the head of a player standing behind a blocking footprint', () => {
+    // terminal: area at 1000, art top at 940, footprint blocks the feet at y=956
+    const base = markerBaseY(1000, 940, 956);
+    expect(base).toBe(956 - CHARACTER_FIGURE_HEIGHT - MARKER_HEAD_GAP);
+    expect(base).toBeLessThan(956 - CHARACTER_FIGURE_HEIGHT);
+  });
+
+  it('ignores the standing point when other limits are already higher', () => {
+    expect(markerBaseY(720, 568, 700)).toBe(568 - MARKER_TOP_GAP);
   });
 });

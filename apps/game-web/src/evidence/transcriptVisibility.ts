@@ -19,6 +19,25 @@ const NONE: TranscriptVisibility = {
   translationWithTranscript: false,
 };
 
+export type TranscriptBlock = { transcript: boolean; translation: boolean };
+
+/**
+ * What the single transcript block shows. Always one block: with Learning + subtitles on the
+ * transcript is already shown, so opening the toggle only adds the translation to it.
+ */
+export function resolveTranscriptBlock(
+  visibility: TranscriptVisibility,
+  toggleOpen: boolean,
+): TranscriptBlock {
+  const opened = visibility.transcriptToggle && toggleOpen;
+  return {
+    transcript: visibility.transcriptShown || opened,
+    translation:
+      (visibility.transcriptShown && visibility.translationShown) ||
+      (opened && visibility.translationWithTranscript),
+  };
+}
+
 export function resolveTranscriptVisibility(
   mode: TranslationMode,
   subtitles: SubtitlePreference,
