@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T19:00:00+07:00
-phase: phase-9
-status: complete
+updated_at: 2026-09-29T20:00:00+07:00
+phase: phase-10
+status: proposed
 result_commit: 7ef61fd
-active_spec: docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md
+active_spec: docs/superpowers/specs/2026-09-29-phase-10-persistence-settings-design.md
 active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 ---
 
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 
 ## Current Phase
 
-- Phase 9 — Case Completion (roadmap §28). Hoàn tất bằng Native, final review độc lập đã chạy và các Important đã sửa.
+- Phase 10 — Persistence (roadmap §29): Settings riêng + kiểm chứng auto-save. Phase 9 đã hoàn tất.
 
 ## Active Goal
 
@@ -60,7 +60,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 
 ## Next Actions
 
-- Chờ người dùng yêu cầu bắt đầu Phase 10; không tự tiến sang phase khác.
+- Người dùng review spec Phase 10; sau đó lập plan tiếng Việt bằng writing-plans.
 
 ## Verification
 
