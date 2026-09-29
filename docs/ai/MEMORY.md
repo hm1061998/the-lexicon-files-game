@@ -5,7 +5,7 @@ phase: phase-10
 status: proposed
 result_commit: 7ef61fd
 active_spec: docs/superpowers/specs/2026-09-29-phase-10-persistence-settings-design.md
-active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
+active_plan: docs/superpowers/plans/2026-09-29-phase-10-persistence-settings.md
 ---
 
 ## Metadata
@@ -60,7 +60,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 
 ## Next Actions
 
-- Người dùng review spec Phase 10; sau đó lập plan tiếng Việt bằng writing-plans.
+- Người dùng review plan Phase 10 (7 task) và chọn Native hoặc Subagent-driven.
 
 ## Verification
 
