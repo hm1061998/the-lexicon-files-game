@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T13:37:09+07:00
+updated_at: 2026-09-29T14:04:50+07:00
 phase: phase-9
 status: proposed
-result_commit: 131122c
+result_commit: c676982
 active_spec: docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 ---
 
 ## Metadata
@@ -14,7 +14,7 @@ active_plan: none
 
 ## Current Phase
 
-- Phase 9 — Case Completion (roadmap §28). Thiết kế đã chốt; spec đã commit và đang chờ người dùng review. Chưa có plan hoặc code Phase 9.
+- Phase 9 — Case Completion (roadmap §28). Người dùng đã duyệt spec; plan đã tạo/commit và đang chờ review cùng lựa chọn cách thực thi. Chưa có code Phase 9.
 
 ## Active Goal
 
@@ -22,7 +22,7 @@ active_plan: none
 
 ## Current Status
 
-- `dev` có commit Phase 9 spec `131122c`; `origin/dev` đang ở `3c67c11`. Phase 8 đã hoàn tất và push, workspace sạch trước khi tạo spec.
+- `dev` có spec `131122c` và plan `c676982`; `origin/dev` đang ở `3c67c11`. Phase 8 đã hoàn tất/push; Phase 9 artifacts đang ở local, chưa push.
 - Phase 8: timeline/contradiction, Archive, save V3 migration, commerce provider trung lập mặc định `free`, notebook và E2E. Hoàn tất/push tại `3c67c11`.
 - Phase 7 hoàn tất và push; user nghe audio và xác nhận test OK. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
 - Phase 6 và Phase 5 hoàn tất; xem verification ledger tương ứng trong `docs/ai/`.
@@ -38,8 +38,8 @@ active_plan: none
 
 ## In Progress
 
-- Phase 9 spec tại `docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md`, commit `131122c`; chờ người dùng duyệt file.
-- Sau khi duyệt spec mới dùng skill `writing-plans`; plan phải được người dùng duyệt trước khi thực thi Phase 9.
+- Phase 9 spec tại `docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md` đã được người dùng duyệt.
+- Plan tại `docs/superpowers/plans/2026-09-29-phase-9-case-completion.md`, commit `c676982`; chờ người dùng review và chọn cách thực thi trước khi code.
 
 ## Active Decisions
 
@@ -56,18 +56,19 @@ active_plan: none
 
 ## Blockers
 
-- Chờ người dùng review spec Phase 9; chưa bắt đầu lập plan hoặc code.
+- Chờ người dùng review plan Phase 9 và chọn cách thực thi; chưa bắt đầu code.
 
 ## Next Actions
 
-- Người dùng review `docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md`.
-- Nếu được duyệt, tạo implementation plan tiếng Việt và gửi review trước khi thực thi.
+- Người dùng review `docs/superpowers/plans/2026-09-29-phase-9-case-completion.md` và chọn native hoặc subagent-driven.
+- Chỉ sau khi plan được duyệt mới dùng skill thực thi tương ứng.
 - Chỉ làm Phase 9; không tiến sang phase khác nếu chưa được yêu cầu.
 - Khi bàn giao, chạy các gate theo `AGENTS.md`, cập nhật verification và memory.
 
 ## Verification
 
-- Spec Phase 9: tự rà placeholder/nhất quán/phạm vi; `git diff --check` PASS trước commit `131122c`.
+- Spec Phase 9: người dùng duyệt; tự rà placeholder/nhất quán/phạm vi; `git diff --check` PASS trước commit `131122c`.
+- Plan Phase 9: tự rà coverage, task interfaces, review focus và TDD; `git diff --check` PASS trước commit `c676982`.
 - Phase 8 final: lint PASS (7 projects); test PASS (7 targets; game-web 173 tests); build PASS (147 modules; chunk-size warning); typecheck, format, E2E (36 tests/1 worker), memory check và `git diff --check` PASS. API/dependency/lockfile không đổi.
 - Phase 7: lint, unit/content, build, typecheck, format, E2E (35 tests/1 worker), memory check và user audio audition PASS; push đã xác nhận.
 - Backend checks chỉ cần khi Phase 9 sửa `apps/api`.
@@ -75,11 +76,11 @@ active_plan: none
 ## Latest Handoff
 
 - Phase 8 đã push và `dev` đồng bộ `origin/dev` tại `3c67c11`.
-- Phase 9 design được chốt sau khi xác nhận câu phản hồi chọn sai theo Case #001. Spec đã commit local tại `131122c`, chưa push; chờ user review. Chưa có implementation plan hoặc code.
+- Phase 9 spec đã được duyệt; plan commit local `c676982` và đang chờ user review/chọn execution method. Spec/plan chưa push; chưa có code.
 
 ## Required Reading
 
 - `AGENTS.md`, `apps/game-web/AGENTS.md`, `docs/ai/README.md`.
-- Active spec/plan theo metadata ở đầu file; Phase 9 hiện chỉ có active spec.
+- Active spec/plan theo metadata ở đầu file; plan Phase 9 chờ review.
 - Docs/01–05, `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`, `docs/architecture/ARCHITECTURE.md` theo phạm vi phase.
 - Phase 8 spec/plan cho save V3, reducer, content validation và ranh giới commerce.
