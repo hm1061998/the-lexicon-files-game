@@ -1,82 +1,73 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T23:00:00+07:00
-phase: phase-10
-status: complete
-result_commit: e222ce4
-active_spec: docs/superpowers/specs/2026-09-29-phase-10-persistence-settings-design.md
+updated_at: 2026-09-29T23:59:00+07:00
+phase: phase-11
+status: proposed
+result_commit: 21c879c
+active_spec: docs/superpowers/specs/2026-09-29-phase-11-visual-polish-design.md
 active_plan: docs/superpowers/plans/2026-09-29-phase-10-persistence-settings.md
 ---
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; `result_commit` là commit kết quả gần nhất trước lần cập nhật memory này.
+- Snapshot duy trì bằng Git; `result_commit` là commit kết quả gần nhất trước lần cập nhật memory này. `active_plan` vẫn trỏ plan Phase 10 vì **chưa có plan Phase 11**.
 
 ## Current Phase
 
-- Phase 10 — Persistence (roadmap §29) hoàn tất bằng subagent-driven; Settings riêng + kiểm chứng auto-save. Verification: `docs/ai/2026-09-29-phase-10-persistence-settings-verification.md`.
+- Phase 11 — Visual Polish (roadmap §30). Phase 0A–10 đã hoàn tất trên `dev`; người dùng tự merge `main`.
 
 ## Active Goal
 
-- Hoàn tất Case #001: buộc tội theo content/core, không mất tiến độ khi sai, đóng case đúng và hiện báo cáo case cùng chỉ số hồ sơ học tập.
+- Phần A: visual polish bằng code (token, paper overlay, UI cổ điển, chuyển cảnh, sửa marker). Phần B: tích hợp art AI do người dùng tạo.
 
 ## Current Status
 
-- Phase 9 hoàn tất trên `dev`; verification ledger `docs/ai/2026-09-29-phase-9-case-completion-verification.md` (commit `6782d55`). Người dùng tự merge `main`.
-- Phase 8: timeline/contradiction, Archive, save V3 migration, commerce provider trung lập mặc định `free`, notebook và E2E. Hoàn tất/push tại `3c67c11`.
-- Phase 7 hoàn tất và push; user nghe audio và xác nhận test OK. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
-- Phase 6 và Phase 5 hoàn tất; xem verification ledger tương ứng trong `docs/ai/`.
+- Spec Phase 11 Phần A đã viết (`docs/superpowers/specs/2026-09-29-phase-11-visual-polish-design.md`), **chờ người dùng duyệt**; sau đó lập plan tiếng Việt bằng writing-plans. Chưa có code Phase 11.
+- Art: đã có `docs/art/07_AI_ASSET_PROMPT_PACK.md` (STYLE_LOCK + prompt 3 mức ưu tiên) và `assets/PROVENANCE.md`; thư mục `assets/_incoming/` chờ người dùng bỏ ảnh AI vào, chưa có ảnh nào.
+- Gate cuối Phase 10 (commit `e222ce4`): lint/test/build/typecheck/format/E2E 40 PASS; xem `docs/ai/2026-09-29-phase-10-persistence-settings-verification.md`.
 
 ## Completed
 
-- Phase 0A–4 đã có trong Git history.
-- Phase 5 dialogue/NPC, validation, save V2 và UI/input; push `f4ac2be`.
-- Phase 6 learning profile, notebook từ vựng, persistence riêng và recovery; verification `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
-- Phase 7 audio listening; verification và user audition đã được ghi nhận.
-- Phase 8 spec/plan, implementation Task 1–6 và handoff đồng bộ với `origin/dev` tại `3c67c11`.
-- Sau Phase 9 (`7ef61fd`): notebook có nút "Xem lại" mở lại modal evidence đã thu (audio/câu hỏi nghe); tương tác lại trong world vẫn không mở modal theo spec Phase 4 (đã bổ sung ghi chú).
-- Phase 9: hợp đồng kết luận `0b5303c`, reducer + activation `f0f00ac`, save V4 `7122925`, UI buộc tội `53122bf`, báo cáo CASE CLOSED `568c68a`, E2E hành trình `6f5240b`, fix final review `f6346f2`, verification `6782d55`.
-- Phase 10: Settings + learning V2 + áp dụng cài đặt + test auto-save/E2E (`1eb5f5e..e222ce4`); `translationMode` chỉ còn trong Settings.
+- Phase 0A–4 trong Git history; Phase 5 `f4ac2be`; Phase 6, 7 có verification ledger trong `docs/ai/`.
+- Phase 8 `3c67c11` (timeline, contradiction, Archive, save V3); Phase 9 (buộc tội, CASE CLOSED, save V4; ledger `docs/ai/2026-09-29-phase-9-case-completion-verification.md`); nút "Xem lại" evidence trong notebook `7ef61fd`.
+- Phase 10 `1eb5f5e..e222ce4`: Settings (`lexicon-settings`), learning V2, áp dụng âm lượng/phụ đề/giảm chuyển động, test auto-save; `translationMode` chỉ còn trong Settings.
 
 ## In Progress
 
-- Không có hạng mục đang mở.
+- Chờ người dùng duyệt spec Phase 11 Phần A. Song song, người dùng tự tạo ảnh bằng app AI miễn phí theo `docs/art/07` (phiên khác/tay người dùng).
 
 ## Active Decisions
 
-- Tuân theo product truth trong docs/01–03 và dependency boundaries trong `docs/architecture/ARCHITECTURE.md`; khi tài liệu mâu thuẫn phải hỏi người dùng.
-- Spec và implementation plan viết bằng tiếng Việt theo `AGENTS.md`.
-- Dùng npm + Nx; không pnpm/yarn/bun. Không thêm dependency nếu native đủ dùng.
-- `game-core`/`learning-engine` là TS thuần; UI gọi domain qua store/event boundary; không hardcode sự thật Case #001 trong React/Phaser.
-- Gameplay local-first; không có API/backend cho Phase 9.
-- Phase 9: `CaseDefinition.conclusion` optional; objective `activationCondition` do reconcile xử lý; `applyEffects` tự mở fact nên cờ thú nhận kéo theo `david_took_report`.
-- Save hiện hành V4, IndexedDB database version 1; hợp đồng lịch sử V1/V2/V3 trong `cases/case-001/save-v*.json`.
-- Case đóng: store chặn di chuyển, sổ tay, pause và mọi ghi tiến độ; báo cáo dựng lại từ save + `LanguageProfile` hiện tại.
-- Commerce config Phase 8 trung lập, mặc định `free`, không paywall/entitlement client-side; Playwright worker = 1 cho thao tác di chuyển theo frames.
-- Deferred minor Phase 9: đọc lại feedback sai khi chọn lại cùng nghi phạm; mã `unknownSuspect` khi case không có conclusion; store trả `ok` khi bỏ qua ghi sau đóng case; warning lint cũ `GameCanvas.tsx` (`initialSceneId`). Phase 10: marker tương tác chưa từng nổi (tween bị ghi đè từ Phase 1); on+Learning hiện transcript hai lần; thiếu test hook âm lượng/StrictMode boot.
-
+- Tuân theo product truth docs/01–03 và `docs/architecture/ARCHITECTURE.md`; mâu thuẫn tài liệu thì hỏi. Spec và plan viết tiếng Việt (AGENTS.md). Chỉ npm + Nx, không thêm dependency nếu native đủ.
+- Người dùng tự merge `dev` vào `main`; không hỏi hay đề xuất merge. Ưu tiên tối ưu token: subagent sonnet cho task, opus chỉ final review, prompt ngắn trỏ file brief, gộp task nhỏ.
+- `game-core`/`learning-engine` TS thuần; UI qua store/event; không hardcode Case #001 trong React/Phaser; gameplay local-first, không API.
+- Save case V4, IndexedDB `lexicon-game-saves` v1; `lexicon-learning` v1 (record V2); `lexicon-settings` v1; hợp đồng lịch sử `cases/case-001/save-v*.json`. Case đóng: store chặn di chuyển, sổ tay, pause và ghi tiến độ.
+- Font: hệ thống, ngăn xếp serif (không dependency); palette khóa theo `docs/art/06` §5; đỏ chỉ cho clue/evidence/objective/contradiction/marker.
+- Art: người dùng tạo ảnh thủ công bằng công cụ AI miễn phí. Máy chưa có khóa API tạo ảnh và trợ lý không nhập khóa thay người dùng; Intel UHD, 16 GB RAM, không Python nên không chạy Stable Diffusion cục bộ; Pollinations bị loại (401, giới hạn, giấy phép mờ). Tải file từ dịch vụ bên thứ ba cần người dùng cho phép.
+- Phase 11 chia A (code, không cần ảnh) và B (tích hợp ảnh; spec/plan chỉ lập sau khi có ảnh trong `assets/_incoming/`). Placeholder giữ cho asset không đạt.
+- Playwright worker = 1; E2E cần dev server; commerce config mặc định `free`, không paywall.
+- Deferred minor: marker tương tác chưa từng nổi (tween bị `updateNearby` ghi đè từ Phase 1 — Phase 11 A sẽ sửa); on+Learning hiện transcript hai lần; thiếu test hook âm lượng/StrictMode boot; Esc/`unknownSuspect`/feedback đọc lại; palette.css↔palette.ts đồng bộ tay (Phase 11 A thêm test); warning lint cũ `GameCanvas.tsx` `initialSceneId`.
 
 ## Blockers
 
-- Không có blocker hiện tại.
+- Không có blocker cho Phần A. Phần B bị chặn tới khi người dùng đưa ảnh vào `assets/_incoming/`.
 
 ## Next Actions
 
-- Chờ người dùng yêu cầu bắt đầu Phase 11 (Visual Polish); không tự tiến sang phase khác.
+- Người dùng duyệt (hoặc sửa) spec Phase 11 Phần A → lập plan bằng writing-plans → thực thi (đề xuất subagent-driven, tiết kiệm token).
+- Khi có ảnh: đọc `docs/art/07` mục 5–6 và spec Phase 11 §5 để tách nền, chuẩn hóa, tích hợp (Phần B).
+- Chỉ làm Phase 11; không tự tiến sang Phase 12.
 
 ## Verification
 
-- Phase 9 final (sau `npx nx reset`, commit `f6346f2`): lint PASS (7 projects, 1 warning cũ); test PASS (7 targets; game-web 203, game-content 93, game-core 49); build PASS (153 modules; chunk-size warning); typecheck, format, E2E (36 tests/1 worker), memory check và `git diff --check` PASS. API/dependency/lockfile không đổi.
-- Phase 8 final: lint, test (game-web 173), build, typecheck, format, E2E (36), memory check PASS.
-- Backend checks chỉ cần khi sửa `apps/api`.
+- Phase 10 (`e222ce4`, sau `npx nx reset`): lint 0 lỗi; test game-web 266, game-content 94, game-core 49; build 162 modules; typecheck, format, E2E 40, memory check, `git diff --check` PASS.
+- Sau đó chỉ thêm tài liệu/asset khung: spec Phase 11, `docs/art/07`, `assets/PROVENANCE.md`; chưa chạy lại gate cho các commit tài liệu ngoài `memory:check` và `git diff --check`.
 
 ## Latest Handoff
 
-- Phase 9 đã thực thi Native theo plan `c676982`; rulings và deferred minor ghi trong báo cáo phiên và verification ledger.
+- Phiên sau đọc `AGENTS.md`, file này, spec Phase 11, rồi `git log`/`git status`. Hỏi người dùng đã duyệt spec chưa và đã có ảnh trong `assets/_incoming/` chưa; không tự bắt đầu code khi spec chưa duyệt.
 
 ## Required Reading
 
 - `AGENTS.md`, `apps/game-web/AGENTS.md`, `docs/ai/README.md`.
-- Active spec/plan theo metadata ở đầu file.
-- `docs/ai/2026-09-29-phase-9-case-completion-verification.md` cho kết quả gate Phase 9.
-- Docs/01–05, `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`, `docs/architecture/ARCHITECTURE.md` theo phạm vi phase.
+- `docs/superpowers/specs/2026-09-29-phase-11-visual-polish-design.md`; `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`; `docs/art/07_AI_ASSET_PROMPT_PACK.md`; `docs/concept/README.md`.
