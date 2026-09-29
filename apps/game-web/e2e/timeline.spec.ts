@@ -54,8 +54,10 @@ async function saved(page: Page): Promise<SavedRecord | undefined> {
   });
 }
 
-test('Archive, timeline, contradiction, and scene progress survive reload', async ({ page }) => {
-  test.setTimeout(90000);
+test('Archive, timeline, contradiction, conclusion and case report survive reload', async ({
+  page,
+}) => {
+  test.setTimeout(150000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
@@ -163,7 +165,7 @@ test('Archive, timeline, contradiction, and scene progress survive reload', asyn
   await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
   const recordBeforeReload = await saved(page);
   expect(recordBeforeReload).toMatchObject({
-    schemaVersion: 3,
+    schemaVersion: 4,
     activeSceneId: 'archive',
     state: {
       evidenceIds: ['security_access_log'],
@@ -177,6 +179,7 @@ test('Archive, timeline, contradiction, and scene progress survive reload', asyn
       objectiveStatuses: {
         check_security_records: 'completed',
         compare_david_statement: 'completed',
+        submit_your_conclusion: 'locked',
       },
     },
   });
@@ -188,5 +191,51 @@ test('Archive, timeline, contradiction, and scene progress survive reload', asyn
     .poll(() => page.evaluate(() => window.__lexiconDebug!.player()))
     .toMatchObject({ x: 1200, y: 1100 });
   expect(await saved(page)).toMatchObject(recordBeforeReload);
+
+  // Phase 9: confession opens the conclusion; a wrong accusation changes nothing.
+  await interactAt(page, 420, 700, 'Quay lại Main Office');
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1900, 900));
+  await expect(page.getByText('Nói chuyện với David', { exact: true })).toBeVisible();
+  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
+  await page.keyboard.press('e');
+  await page
+    .getByRole('button', { name: 'But the security log shows that you entered at 8:32.' })
+    .click();
+  await expect(page.getByRole('dialog')).toContainText('I only went in to collect a folder.');
+  await page.getByRole('button', { name: 'Which folder?' }).click();
+  await expect(page.getByRole('dialog')).toContainText('The Quarterly Risk Report.');
+  await expect
+    .poll(async () => (await saved(page))?.state.objectiveStatuses.submit_your_conclusion)
+    .toBe('active');
+  await page.keyboard.press('Escape');
+
+  await page.keyboard.press('j');
+  await page.getByRole('button', { name: 'Kết luận' }).click();
+  const submit = page.getByRole('button', { name: 'Nộp kết luận' });
+  await expect(submit).toBeDisabled();
+  const beforeWrong = await saved(page);
+  const anna = page.getByRole('button', { name: 'Anna Reed' });
+  await anna.focus();
+  await page.keyboard.press('Enter');
+  await expect(anna).toHaveAttribute('aria-pressed', 'true');
+  await submit.click();
+  await expect(page.getByRole('status').filter({ hasText: 'Review the timeline.' })).toHaveText(
+    "The evidence doesn't fully support this conclusion. Review the timeline.",
+  );
+  expect(await saved(page)).toEqual(beforeWrong);
+
+  await page.getByRole('button', { name: 'David Cole' }).click();
+  await submit.click();
+  await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
+  await expect(page.getByText('toàn hồ sơ', { exact: false })).toBeVisible();
+  await expect.poll(async () => (await saved(page))?.state.flags.case_closed).toBe(true);
+  const closedRecord = await saved(page);
+  expect(closedRecord?.state.objectiveStatuses.submit_your_conclusion).toBe('completed');
+
+  await page.reload();
+  await page.waitForFunction(() => window.__lexiconDebug !== undefined);
+  await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Nộp kết luận' })).toHaveCount(0);
+  expect(await saved(page)).toEqual(closedRecord);
   expect(errors).toEqual([]);
 });

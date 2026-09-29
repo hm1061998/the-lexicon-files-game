@@ -210,7 +210,7 @@ test('legacy Phase 4 save migrates without losing evidence or objective progress
       flags: {},
     },
   });
-  await expect.poll(async () => (await saved(page))?.schemaVersion).toBe(3);
+  await expect.poll(async () => (await saved(page))?.schemaVersion).toBe(4);
   expect((await saved(page))?.activeSceneId).toBe('main_office');
   await page.keyboard.press('j');
   await expect(page.getByText('Meeting Minutes', { exact: true })).toBeVisible();
@@ -219,6 +219,7 @@ test('legacy Phase 4 save migrates without losing evidence or objective progress
     talk_to_everyone: 'active',
     check_security_records: 'active',
     compare_david_statement: 'active',
+    submit_your_conclusion: 'locked',
   });
 });
 test('dialogue traps focus, blocks gameplay, restores focus and fits desktop viewports', async ({
