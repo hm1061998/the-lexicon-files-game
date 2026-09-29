@@ -50,8 +50,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 - Phase 9: `CaseDefinition.conclusion` optional; objective `activationCondition` do reconcile xử lý; `applyEffects` tự mở fact nên cờ thú nhận kéo theo `david_took_report`.
 - Save hiện hành V4, IndexedDB database version 1; hợp đồng lịch sử V1/V2/V3 trong `cases/case-001/save-v*.json`.
 - Case đóng: store chặn di chuyển, sổ tay, pause và mọi ghi tiến độ; báo cáo dựng lại từ save + `LanguageProfile` hiện tại.
-- Commerce config Phase 8 trung lập, mặc định `free`; không paywall hoặc entitlement client-side.
-- Playwright worker = 1 cho thao tác di chuyển theo frames.
+- Commerce config Phase 8 trung lập, mặc định `free`, không paywall/entitlement client-side; Playwright worker = 1 cho thao tác di chuyển theo frames.
 - Deferred minor Phase 9: đọc lại feedback sai khi chọn lại cùng nghi phạm; mã `unknownSuspect` khi case không có conclusion; store trả `ok` khi bỏ qua ghi sau đóng case; warning lint cũ `GameCanvas.tsx` (`initialSceneId`).
 
 ## Blockers
