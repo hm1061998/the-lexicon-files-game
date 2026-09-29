@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ANCHOR_EMIT_INTERVAL_MS,
+  canAnchorBubble,
   clampBubble,
   placeBubble,
   shouldEmitAnchor,
@@ -24,12 +25,18 @@ describe('worldToScreen', () => {
     });
   });
 
-  it('applies camera zoom before the CSS scale', () => {
+  it('zooms about the camera centre like Phaser (world view centre stays put)', () => {
     const zoomed = { ...camera, zoom: 2 };
-    expect(worldToScreen({ x: 300, y: 250 }, zoomed, { width: 1920, height: 1080 })).toEqual({
-      x: 400,
-      y: 400,
+    // Camera centre in world space is scroll + half the size; it maps to the canvas centre.
+    const centre = { x: 100 + 960, y: 50 + 540 };
+    expect(worldToScreen(centre, zoomed, { width: 1920, height: 1080 })).toEqual({
+      x: 960,
+      y: 540,
     });
+    // One world px right of the centre is two screen px right.
+    expect(
+      worldToScreen({ x: centre.x + 1, y: centre.y }, zoomed, { width: 1920, height: 1080 }).x,
+    ).toBe(962);
   });
 });
 
@@ -79,19 +86,30 @@ describe('placeBubble', () => {
   });
 });
 
+describe('canAnchorBubble', () => {
+  it('falls back to the fixed prompt below 720 px', () => {
+    expect(canAnchorBubble(719)).toBe(false);
+    expect(canAnchorBubble(720)).toBe(true);
+  });
+});
+
 describe('shouldEmitAnchor', () => {
+  const a = { id: 'a', x: 0, y: 0 };
+
   it('always emits the first anchor', () => {
-    expect(shouldEmitAnchor(null, { x: 1, y: 1 }, 0)).toBe(true);
+    expect(shouldEmitAnchor(null, { id: 'a', x: 1, y: 1 }, 0)).toBe(true);
   });
 
   it('waits for the interval', () => {
-    expect(shouldEmitAnchor({ x: 0, y: 0 }, { x: 50, y: 0 }, ANCHOR_EMIT_INTERVAL_MS - 1)).toBe(
-      false,
-    );
+    expect(shouldEmitAnchor(a, { id: 'a', x: 50, y: 0 }, ANCHOR_EMIT_INTERVAL_MS - 1)).toBe(false);
   });
 
   it('ignores movement under 2 px', () => {
-    expect(shouldEmitAnchor({ x: 0, y: 0 }, { x: 1, y: 1 }, ANCHOR_EMIT_INTERVAL_MS)).toBe(false);
-    expect(shouldEmitAnchor({ x: 0, y: 0 }, { x: 2, y: 0 }, ANCHOR_EMIT_INTERVAL_MS)).toBe(true);
+    expect(shouldEmitAnchor(a, { id: 'a', x: 1, y: 1 }, ANCHOR_EMIT_INTERVAL_MS)).toBe(false);
+    expect(shouldEmitAnchor(a, { id: 'a', x: 2, y: 0 }, ANCHOR_EMIT_INTERVAL_MS)).toBe(true);
+  });
+
+  it('emits at once when the target id changes, even within 50 ms and under 2 px', () => {
+    expect(shouldEmitAnchor(a, { id: 'b', x: 0.5, y: 0 }, 1)).toBe(true);
   });
 });

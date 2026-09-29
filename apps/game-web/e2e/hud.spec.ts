@@ -528,3 +528,49 @@ test('nearby target gets a red outline that clears when leaving, locking or open
   await expect.poll(() => highlight(page)).toBeNull();
   await expect(page.locator('.hud-interaction-bubble')).toHaveCount(0);
 });
+
+test('locked input hides the prompt and outline instead of jumping to the fallback', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openWorld(page);
+  await walkToNote(page);
+  await expect(page.locator('.hud-interaction-bubble')).toBeVisible();
+  await page.keyboard.press('j');
+  await expect(page.getByRole('heading', { name: 'Sổ tay điều tra' })).toBeVisible();
+  await expect(page.locator('.hud-interaction-prompt')).toHaveCount(0);
+  expect(await highlight(page)).toBeNull();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('heading', { name: 'Sổ tay điều tra' })).toHaveCount(0);
+  await expect(page.locator('.hud-interaction-bubble')).toBeVisible();
+});
+
+test('the prompt is never seen at the fallback position on a wide viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openWorld(page);
+  await page.evaluate(() => {
+    const w = window as unknown as { __promptSeen: string[] };
+    w.__promptSeen = [];
+    const check = () => {
+      const el = document.querySelector('.hud-interaction-prompt');
+      if (el) w.__promptSeen.push(el.className);
+      requestAnimationFrame(check);
+    };
+    requestAnimationFrame(check);
+  });
+  await walkToNote(page);
+  await expect(page.locator('.hud-interaction-bubble')).toBeVisible();
+  const seen = await page.evaluate(
+    () => (window as unknown as { __promptSeen: string[] }).__promptSeen,
+  );
+  expect(seen.length).toBeGreaterThan(0);
+  expect(seen.filter((name) => !name.includes('hud-interaction-bubble'))).toEqual([]);
+});
+
+test('narrow viewports keep the fixed bottom-centre prompt', async ({ page }) => {
+  await page.setViewportSize({ width: 700, height: 720 });
+  await openWorld(page);
+  await walkToNote(page);
+  await expect(page.locator('.hud-interaction-prompt')).toBeVisible();
+  await expect(page.locator('.hud-interaction-bubble')).toHaveCount(0);
+});

@@ -23,10 +23,19 @@ export const BUBBLE_GAP = 12;
 export function worldToScreen(world: Point, camera: CameraView, canvasRect: Size): Point {
   const scaleX = camera.width > 0 ? canvasRect.width / camera.width : 1;
   const scaleY = camera.height > 0 ? canvasRect.height / camera.height : 1;
+  // Phaser zooms about the camera centre: worldView.x = scrollX + width * (1 - 1 / zoom) / 2.
+  const z = camera.zoom;
   return {
-    x: (world.x - camera.scrollX) * camera.zoom * scaleX,
-    y: (world.y - camera.scrollY) * camera.zoom * scaleY,
+    x: ((world.x - camera.scrollX) * z - (camera.width * (z - 1)) / 2) * scaleX,
+    y: ((world.y - camera.scrollY) * z - (camera.height * (z - 1)) / 2) * scaleY,
   };
+}
+
+/** Below this HUD width the bubble falls back to the fixed bottom-centre prompt. */
+export const MIN_ANCHORED_WIDTH = 720;
+
+export function canAnchorBubble(hudWidth: number): boolean {
+  return hudWidth >= MIN_ANCHORED_WIDTH;
 }
 
 /** Keeps a bubble of `size` inside the viewport with `margin` on every edge. */
@@ -71,9 +80,14 @@ export function placeBubble(
   return null;
 }
 
-/** Throttle for `interaction:anchor`: first anchor at once, then >= 50 ms apart and >= 2 px moved. */
-export function shouldEmitAnchor(prev: Point | null, next: Point, dtMs: number): boolean {
-  if (prev === null) return true;
+export type IdAnchor = Point & { id: string };
+
+/**
+ * Throttle for `interaction:anchor`: the first anchor and any change of target go out at once;
+ * afterwards >= 50 ms apart and only when moved >= 2 px.
+ */
+export function shouldEmitAnchor(prev: IdAnchor | null, next: IdAnchor, dtMs: number): boolean {
+  if (prev === null || prev.id !== next.id) return true;
   if (dtMs < ANCHOR_EMIT_INTERVAL_MS) return false;
   return Math.hypot(next.x - prev.x, next.y - prev.y) >= ANCHOR_MIN_DISTANCE;
 }

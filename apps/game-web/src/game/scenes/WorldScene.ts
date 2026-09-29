@@ -17,7 +17,7 @@ import {
 import { createShadow, syncShadow } from '../entities/shadow';
 import { CHARACTER_FIGURE_HEIGHT, INTERACTION_RED, SCENE_FADE_MS } from '../constants';
 import { installDebugHook, paperOverlayAlpha } from '../debug';
-import { shouldEmitAnchor, worldToScreen } from '../systems/anchorScreen';
+import { shouldEmitAnchor, worldToScreen, type IdAnchor } from '../systems/anchorScreen';
 import { computeDepth } from '../systems/depth';
 import type { Facing } from '../systems/direction';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
@@ -73,7 +73,9 @@ export class WorldScene extends Phaser.Scene {
   private targetBounds = new Map<string, () => Bounds>();
   private outline: Phaser.GameObjects.Graphics | null = null;
   private outlineBounds: Bounds | null = null;
-  private lastAnchor: { x: number; y: number } | null = null;
+  private lastAnchor: IdAnchor | null = null;
+  /** Canvas CSS size, cached; refreshed on Phaser scale 'resize' instead of every frame. */
+  private canvasSize = { width: 1920, height: 1080 };
   private sinceAnchorMs = 0;
   private interactionTracker!: InteractionTracker;
   private nearbyEventCount = 0;
@@ -194,6 +196,8 @@ export class WorldScene extends Phaser.Scene {
       this.interactKey = keyboard.addKey('E', false);
     }
 
+    this.refreshCanvasSize();
+    this.scale.on(Phaser.Scale.Events.RESIZE, this.refreshCanvasSize, this);
     this.marker = this.add.sprite(0, 0, 'ph_marker');
     this.marker.setDepth(MARKER_DEPTH);
     this.marker.setVisible(false);
@@ -303,7 +307,6 @@ export class WorldScene extends Phaser.Scene {
     }
     const box = boundsOf();
     this.drawOutline(box);
-    const canvas = this.game.canvas.getBoundingClientRect();
     const camera = this.cameras.main;
     const anchor = worldToScreen(
       { x: box.x + box.width, y: box.y },
@@ -314,12 +317,19 @@ export class WorldScene extends Phaser.Scene {
         width: camera.width,
         height: camera.height,
       },
-      { width: canvas.width, height: canvas.height },
+      this.canvasSize,
     );
-    if (!shouldEmitAnchor(this.lastAnchor, anchor, this.sinceAnchorMs)) return;
-    this.lastAnchor = anchor;
+    const next = { id: id!, x: anchor.x, y: anchor.y };
+    if (!shouldEmitAnchor(this.lastAnchor, next, this.sinceAnchorMs)) return;
+    this.lastAnchor = next;
     this.sinceAnchorMs = 0;
     this.bus.emit('interaction:anchor', { interactableId: id!, x: anchor.x, y: anchor.y });
+  }
+
+  private refreshCanvasSize(): void {
+    const rect = this.game.canvas.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0)
+      this.canvasSize = { width: rect.width, height: rect.height };
   }
 
   private drawOutline(box: Bounds): void {
@@ -444,6 +454,7 @@ export class WorldScene extends Phaser.Scene {
     }
     this.interactionTracker?.clear();
     this.clearAnchor();
+    this.scale.off(Phaser.Scale.Events.RESIZE, this.refreshCanvasSize, this);
     this.outline?.destroy();
     this.outline = null;
     this.outlineBounds = null;

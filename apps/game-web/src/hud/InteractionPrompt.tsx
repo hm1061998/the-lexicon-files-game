@@ -1,12 +1,12 @@
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Keycap, PaperPanel } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
-import { placeBubble, type Point, type Rect } from '../game/systems/anchorScreen';
+import { canAnchorBubble, placeBubble, type Point, type Rect } from '../game/systems/anchorScreen';
 import { useGameStore } from '../state/GameStoreContext';
 
 const VIEWPORT_MARGIN = 8;
-/** Below this HUD width the bubble falls back to the fixed bottom-centre prompt. */
-const MIN_ANCHORED_WIDTH = 720;
+// useLayoutEffect warns during server rendering (the unit tests); the browser gets the layout one.
+const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 const AVOID_SELECTORS = [
   '.hud-minimap',
   '.hud-objective-panel',
@@ -29,15 +29,28 @@ function relativeRect(el: Element, origin: DOMRect): Rect {
 export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Element | null {
   const nearby = useGameStore((state) => state.nearby);
   const anchor = useGameStore((state) => state.interactionAnchor);
+  const locked = useGameStore((state) => state.inputLocked);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const [placement, setPlacement] = useState<Placement | null>(null);
   const [resizeTick, setResizeTick] = useState(0);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const onResize = () => setResizeTick((tick) => tick + 1);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
+
+  const showing = nearby !== null && !locked && anchor !== null;
+  useIsoLayoutEffect(() => {
+    const hud = bubbleRef.current?.closest('.hud');
+    if (!showing || !hud || typeof ResizeObserver === 'undefined') return;
+    // The objective text and other HUD blocks can change size while the bubble stays.
+    const observer = new ResizeObserver(() => setResizeTick((tick) => tick + 1));
+    for (const selector of AVOID_SELECTORS) {
+      hud.querySelectorAll(selector).forEach((el) => observer.observe(el));
+    }
+    return () => observer.disconnect();
+  }, [showing]);
 
   const measure = useCallback(() => {
     const bubble = bubbleRef.current;
@@ -45,7 +58,7 @@ export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Elem
     const canvas = hud?.parentElement?.querySelector('canvas');
     if (!bubble || !hud || !canvas || !anchor) return null;
     const origin = hud.getBoundingClientRect();
-    if (origin.width < MIN_ANCHORED_WIDTH) return null;
+    if (!canAnchorBubble(origin.width)) return null;
     const canvasRect = canvas.getBoundingClientRect();
     // The anchor is canvas-relative CSS px; the canvas can be letterboxed inside the HUD.
     const point = {
@@ -66,7 +79,7 @@ export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Elem
     return pos ? { pos, anchor: { x: point.x + origin.left, y: point.y + origin.top } } : null;
   }, [anchor]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const next = nearby ? measure() : null;
     setPlacement((prev) =>
       prev === next || (prev && next && prev.pos.x === next.pos.x && prev.pos.y === next.pos.y)
@@ -75,7 +88,12 @@ export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Elem
     );
   }, [nearby, measure, resizeTick]);
 
-  if (!nearby) {
+  // Modals, pause and a closed case lock input: no prompt behind them.
+  if (!nearby || locked) {
+    return null;
+  }
+  // Wide screens wait for the first anchor so the prompt never flashes at the fallback spot.
+  if (!anchor && typeof window !== 'undefined' && canAnchorBubble(window.innerWidth)) {
     return null;
   }
 

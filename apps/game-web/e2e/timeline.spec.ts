@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
   teleport(x: number, y: number): void;
+  highlightBounds(): { x: number; y: number; width: number; height: number } | null;
 };
 
 type SavedRecord = {
@@ -243,6 +244,9 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
   await expect(page.getByText('toàn hồ sơ', { exact: false })).toBeVisible();
   await expect.poll(async () => (await saved(page))?.state.flags.case_closed).toBe(true);
+  // A closed case never shows the interaction prompt or the red target outline.
+  await expect(page.locator('.hud-interaction-prompt')).toHaveCount(0);
+  expect(await page.evaluate(() => window.__lexiconDebug!.highlightBounds())).toBeNull();
   await expect(page.getByRole('button', { name: 'Nộp kết luận' })).toHaveCount(0);
   await page.keyboard.press('j');
   await page.keyboard.press('Escape');
