@@ -9,6 +9,13 @@ const caseRaw = {
   evidenceTotal: 5,
   initialObjectiveId: 'find_what_happened',
   sceneIds: ['main_office'],
+  sharedTextures: [
+    { key: 'tex_hero_ne', url: '/assets/characters/hero/ne.png' },
+    { key: 'tex_hero_se', url: '/assets/characters/hero/se.png' },
+    { key: 'tex_hero_sw', url: '/assets/characters/hero/sw.png' },
+    { key: 'tex_hero_nw', url: '/assets/characters/hero/nw.png' },
+  ],
+  playerTextures: { NE: 'tex_hero_ne', SE: 'tex_hero_se', SW: 'tex_hero_sw', NW: 'tex_hero_nw' },
   timeline: {
     slots: [{ id: '20_00', time: '20:00' }],
     events: [
@@ -634,6 +641,48 @@ describe('case conclusion contract', () => {
         ],
       }),
       'activationCondition',
+    );
+  });
+
+  it('exposes the shared textures and the player facing texture map', () => {
+    const definition = parse();
+    expect(definition.playerTextures).toEqual(caseRaw.playerTextures);
+    expect(definition.sharedTextures).toEqual(caseRaw.sharedTextures);
+  });
+
+  it('rejects a player facing texture that is not a shared texture', () => {
+    expectValidationIssue(
+      { caseRaw: { ...caseRaw, playerTextures: { ...caseRaw.playerTextures, SW: 'tex_ghost' } } },
+      'case.json.playerTextures.SW: texture "tex_ghost" is not declared in sharedTextures',
+    );
+  });
+
+  it('rejects a shared texture outside /assets/', () => {
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          sharedTextures: [...caseRaw.sharedTextures, { key: 'paper', url: 'paper.png' }],
+        },
+      },
+      'sharedTextures',
+    );
+  });
+
+  it('rejects one texture key mapped to two different urls', () => {
+    const [first] = (mainOffice as unknown as { textures: Array<{ key: string; url: string }> })
+      .textures;
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          sharedTextures: [
+            ...caseRaw.sharedTextures,
+            { key: first!.key, url: '/assets/other.png' },
+          ],
+        },
+      },
+      `texture key "${first!.key}" maps to different urls`,
     );
   });
 });

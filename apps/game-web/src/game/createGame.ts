@@ -16,6 +16,9 @@ export function createGame(parent: HTMLElement, options: WorldOptions): Phaser.G
     // panicMax 0: no 120-frame startup window where delta is clamped to 1/60 s
     // (made movement run in slow motion on low-fps devices right after boot).
     fps: { panicMax: 0 },
+    // A stalled texture request errors out (warns, placeholder) instead of holding a scene
+    // transition behind a black fade forever.
+    loader: { timeout: 15000 },
     physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 } } },
     callbacks: {
       preBoot: (game) => {

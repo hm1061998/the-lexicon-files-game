@@ -20,6 +20,40 @@
       "y": 740
     }
   },
+  "textures": [
+    {
+      "key": "tex_office_floor",
+      "url": "/assets/environment/office/scene_office_floor.png"
+    },
+    {
+      "key": "tex_office_desk",
+      "url": "/assets/environment/props/prop_office_desk_01.png"
+    },
+    {
+      "key": "tex_note",
+      "url": "/assets/environment/props/prop_note_01.png"
+    },
+    {
+      "key": "tex_audio_recorder",
+      "url": "/assets/environment/props/prop_audio_recorder_01.png"
+    },
+    {
+      "key": "tex_anna_se",
+      "url": "/assets/characters/anna/chr_anna_idle_se.png"
+    },
+    {
+      "key": "tex_door_hallway",
+      "url": "/assets/environment/props/prop_door_hallway_01.png"
+    },
+    {
+      "key": "tex_leo_se",
+      "url": "/assets/characters/leo/chr_leo_idle_se.png"
+    },
+    {
+      "key": "tex_david_se",
+      "url": "/assets/characters/david/chr_david_idle_se.png"
+    }
+  ],
   "assets": [
     {
       "id": "floor",

@@ -5,6 +5,7 @@ import type {
   GameEventMap,
   SceneDefinition,
 } from '@lexicon/shared-types';
+import { loadSceneTextures } from '../assetManifest';
 import { createSceneAsset } from '../entities/createSceneAsset';
 import {
   PLAYER_INITIAL_FACING,
@@ -69,6 +70,7 @@ export class WorldScene extends Phaser.Scene {
   private transitioning = false;
   private fadeInPending = false;
   private fadeOutHandler: (() => void) | null = null;
+  private pendingTransition: { loaded: boolean; faded: boolean } | null = null;
   private unsubscribeNearby: (() => void) | null = null;
   private unsubscribeTransition: (() => void) | null = null;
   private uninstallDebug: (() => void) | null = null;
@@ -124,7 +126,7 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
-    this.player = createPlayer(this, spawn.x, spawn.y);
+    this.player = createPlayer(this, spawn.x, spawn.y, options.caseDefinition.playerTextures);
     this.playerFacing = PLAYER_INITIAL_FACING;
     this.physics.add.collider(this.player, colliders);
 
@@ -186,7 +188,12 @@ export class WorldScene extends Phaser.Scene {
     this.applyMarkerPosition();
     if (!this.keys) return;
     if (this.inputLock.isInputLocked()) {
-      this.playerFacing = movePlayer(this.player, { x: 0, y: 0 }, this.playerFacing);
+      this.playerFacing = movePlayer(
+        this.player,
+        { x: 0, y: 0 },
+        this.playerFacing,
+        this.options.caseDefinition.playerTextures,
+      );
       // Consume a press made while locked so it does not fire after unlock.
       if (this.interactKey) Phaser.Input.Keyboard.JustDown(this.interactKey);
       return;
@@ -201,7 +208,12 @@ export class WorldScene extends Phaser.Scene {
       },
       typing,
     );
-    this.playerFacing = movePlayer(this.player, direction, this.playerFacing);
+    this.playerFacing = movePlayer(
+      this.player,
+      direction,
+      this.playerFacing,
+      this.options.caseDefinition.playerTextures,
+    );
     this.updateNearby();
     this.updateInteract(typing);
   }
@@ -252,14 +264,25 @@ export class WorldScene extends Phaser.Scene {
     this.fadeInPending = true;
     this.interactionTracker.clear();
     this.registry.set('world', { ...this.options, scene, spawnId } satisfies WorldOptions);
-    if (this.options.motion.reducedMotion()) {
+    // Restart once the destination textures are loaded (failures only warn) and, unless
+    // motion is reduced, the fade-out has finished; the load runs during the fade.
+    const pending = { loaded: false, faded: this.options.motion.reducedMotion() };
+    this.pendingTransition = pending;
+    const restartWhenReady = () => {
+      if (this.pendingTransition !== pending || !pending.loaded || !pending.faded) return;
+      this.pendingTransition = null;
       this.scene.restart();
-      return;
-    }
+    };
+    void loadSceneTextures(this, scene.textures).then(() => {
+      pending.loaded = true;
+      restartWhenReady();
+    });
+    if (pending.faded) return;
     const camera = this.cameras.main;
     this.fadeOutHandler = () => {
       this.fadeOutHandler = null;
-      this.scene.restart();
+      pending.faded = true;
+      restartWhenReady();
     };
     camera.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, this.fadeOutHandler);
     // Camera.fadeOut passes force=true, so it also restarts a fade-in that is still running.
@@ -267,6 +290,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private cleanup(): void {
+    // A load that settles after shutdown must not restart this scene again.
+    this.pendingTransition = null;
     if (this.fadeOutHandler) {
       this.cameras.main?.off(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, this.fadeOutHandler);
       this.fadeOutHandler = null;

@@ -9,6 +9,19 @@
     "objectiveId": "submit_your_conclusion"
   },
   "sceneIds": ["main_office", "archive"],
+  "sharedTextures": [
+    { "key": "tex_player_ne", "url": "/assets/characters/player/chr_player_idle_ne.png" },
+    { "key": "tex_player_se", "url": "/assets/characters/player/chr_player_idle_se.png" },
+    { "key": "tex_player_sw", "url": "/assets/characters/player/chr_player_idle_sw.png" },
+    { "key": "tex_player_nw", "url": "/assets/characters/player/chr_player_idle_nw.png" },
+    { "key": "paper_overlay", "url": "/assets/textures/paper_texture.png" }
+  ],
+  "playerTextures": {
+    "NE": "tex_player_ne",
+    "SE": "tex_player_se",
+    "SW": "tex_player_sw",
+    "NW": "tex_player_nw"
+  },
   "timeline": {
     "slots": [
       { "id": "20_00", "time": "20:00" },

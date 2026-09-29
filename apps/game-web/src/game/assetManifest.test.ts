@@ -1,66 +1,147 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
-import { loadCaseDefinition } from '@lexicon/game-content';
+import { REGISTERED_CASE_IDS, loadCaseDefinition } from '@lexicon/game-content';
+import type { TextureEntry } from '@lexicon/shared-types';
 import { PAPER_OVERLAY_KEY } from './constants';
-import {
-  TEXTURE_MANIFEST,
-  facingTextureKey,
-  loadTextureManifest,
-  resolveTextureKey,
-} from './assetManifest';
+import { facingTextureKey, loadSceneTextures, resolveTextureKey } from './assetManifest';
 
 const publicDir = fileURLToPath(new URL('../../public', import.meta.url));
+const gameDir = fileURLToPath(new URL('.', import.meta.url));
+const cases = REGISTERED_CASE_IDS.map((id) => loadCaseDefinition(id));
 
-describe('TEXTURE_MANIFEST', () => {
-  it('serves every texture from /assets/', () => {
-    for (const entry of TEXTURE_MANIFEST) expect(entry.url.startsWith('/assets/')).toBe(true);
-  });
-
-  it('uses unique keys', () => {
-    const keys = TEXTURE_MANIFEST.map(({ key }) => key);
-    expect(new Set(keys).size).toBe(keys.length);
-  });
-
-  it('points at files that exist under public/', () => {
-    for (const { url } of TEXTURE_MANIFEST) {
-      expect(existsSync(`${publicDir}${url}`), url).toBe(true);
+describe('content texture manifests', () => {
+  it('point at files that exist under public/', () => {
+    for (const definition of cases) {
+      const entries = [
+        ...definition.sharedTextures,
+        ...definition.scenes.flatMap((scene) => scene.textures),
+      ];
+      expect(entries.length).toBeGreaterThan(0);
+      for (const { url } of entries) expect(existsSync(`${publicDir}${url}`), url).toBe(true);
     }
   });
 
-  it('includes all four facings for the player and the real paper texture', () => {
-    const keys = TEXTURE_MANIFEST.map(({ key }) => key);
-    for (const facing of ['NE', 'SE', 'SW', 'NW'] as const) {
-      expect(keys).toContain(facingTextureKey('player', facing));
+  it('share the paper overlay texture and map all four player facings', () => {
+    for (const definition of cases) {
+      const shared = new Set(definition.sharedTextures.map(({ key }) => key));
+      expect(shared.has(PAPER_OVERLAY_KEY)).toBe(true);
+      for (const facing of ['NE', 'SE', 'SW', 'NW'] as const) {
+        expect(shared.has(definition.playerTextures[facing]), facing).toBe(true);
+      }
     }
-    expect(keys).toContain(PAPER_OVERLAY_KEY);
   });
 
-  it('covers every non-placeholder texture referenced by case-001 scenes', () => {
-    const keys = new Set(TEXTURE_MANIFEST.map(({ key }) => key));
-    const sceneTextures = loadCaseDefinition('case-001').scenes.flatMap((scene) =>
-      scene.assets.map((asset) => asset.texture),
-    );
-    for (const texture of sceneTextures) {
-      if (texture.startsWith('ph_')) continue;
-      expect(keys.has(texture), texture).toBe(true);
+  it('declare per scene only textures that the scene assets use', () => {
+    for (const definition of cases) {
+      for (const scene of definition.scenes) {
+        const used = new Set(scene.assets.map(({ texture }) => texture));
+        for (const { key } of scene.textures)
+          expect(used.has(key), `${scene.id}:${key}`).toBe(true);
+      }
+    }
+  });
+});
+
+describe('Phaser game source', () => {
+  const sourceFiles = (dir: string): string[] =>
+    readdirSync(dir).flatMap((name) => {
+      const path = join(dir, name);
+      if (statSync(path).isDirectory()) return sourceFiles(path);
+      return /\.tsx?$/.test(name) && !/\.test\.tsx?$/.test(name) ? [path] : [];
+    });
+
+  it('has no case-specific character ids, case ids or asset urls', () => {
+    const forbidden = /\b(?:anna|leo|david)\b|case-001|\/assets\//i;
+    const files = sourceFiles(gameDir);
+    expect(files.length).toBeGreaterThan(0);
+    for (const file of files) {
+      const match = forbidden.exec(readFileSync(file, 'utf8'));
+      expect(match?.[0], file).toBeUndefined();
     }
   });
 });
 
 describe('facingTextureKey', () => {
-  it('lowercases the facing into the texture key', () => {
-    expect(facingTextureKey('player', 'NE')).toBe('tex_player_ne');
-    expect(facingTextureKey('anna', 'SW')).toBe('tex_anna_sw');
+  it('reads the key for a facing from the content map', () => {
+    const map = { NE: 'a_ne', SE: 'a_se', SW: 'a_sw', NW: 'a_nw' };
+    expect(facingTextureKey(map, 'NE')).toBe('a_ne');
+    expect(facingTextureKey(map, 'SW')).toBe('a_sw');
   });
 });
 
-describe('loadTextureManifest', () => {
-  it('queues every manifest entry on the scene loader', () => {
-    const image = vi.fn();
-    loadTextureManifest({ load: { image } } as never);
-    expect(image).toHaveBeenCalledTimes(TEXTURE_MANIFEST.length);
-    for (const { key, url } of TEXTURE_MANIFEST) expect(image).toHaveBeenCalledWith(key, url);
+type Listener = (file: { key: string }) => void;
+
+function fakeScene(existing: string[], failing: string[] = []) {
+  const listeners = new Map<string, Listener[]>();
+  const queued: TextureEntry[] = [];
+  const on = (event: string, fn: Listener) => {
+    listeners.set(event, [...(listeners.get(event) ?? []), fn]);
+  };
+  const off = (event: string, fn: Listener) => {
+    listeners.set(
+      event,
+      (listeners.get(event) ?? []).filter((candidate) => candidate !== fn),
+    );
+  };
+  const emit = (event: string, file: { key: string }) => {
+    for (const fn of listeners.get(event) ?? []) fn(file);
+  };
+  const load = {
+    image: vi.fn((key: string, url: string) => queued.push({ key, url })),
+    on: vi.fn(on),
+    off: vi.fn(off),
+    once: vi.fn((event: string, fn: Listener) => {
+      const wrapped: Listener = (file) => {
+        off(event, wrapped);
+        fn(file);
+      };
+      on(event, wrapped);
+    }),
+    start: vi.fn(() => {
+      // Simulate the async loader: report failures, add the rest, then complete.
+      queueMicrotask(() => {
+        for (const entry of queued.splice(0)) {
+          if (failing.includes(entry.key)) emit('loaderror', entry);
+          else existing.push(entry.key);
+        }
+        emit('complete', { key: '' });
+      });
+    }),
+  };
+  const scene = { load, textures: { exists: (key: string) => existing.includes(key) } };
+  return { scene: scene as never, load, listeners };
+}
+
+describe('loadSceneTextures', () => {
+  const entries: TextureEntry[] = [
+    { key: 'tex_a', url: '/a.png' },
+    { key: 'tex_b', url: '/b.png' },
+  ];
+
+  it('queues only textures that are not loaded yet and resolves on complete', async () => {
+    const { scene, load } = fakeScene(['tex_a']);
+    await loadSceneTextures(scene, entries);
+    expect(load.image).toHaveBeenCalledTimes(1);
+    expect(load.image).toHaveBeenCalledWith('tex_b', '/b.png');
+    expect(load.start).toHaveBeenCalledTimes(1);
+  });
+
+  it('resolves without starting the loader when everything is loaded', async () => {
+    const { scene, load } = fakeScene(['tex_a', 'tex_b']);
+    await loadSceneTextures(scene, entries);
+    expect(load.image).not.toHaveBeenCalled();
+    expect(load.start).not.toHaveBeenCalled();
+  });
+
+  it('warns with [Assets] on a failed file, still resolves and removes its listener', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { scene, listeners } = fakeScene([], ['tex_b']);
+    await loadSceneTextures(scene, entries);
+    expect(warn).toHaveBeenCalledWith('[Assets] failed to load tex_b');
+    expect(listeners.get('loaderror') ?? []).toHaveLength(0);
+    warn.mockRestore();
   });
 });
 

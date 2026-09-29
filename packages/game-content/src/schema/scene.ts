@@ -38,6 +38,29 @@ const spawnPointSchema = z
   })
   .strict();
 
+export const PLACEHOLDER_TEXTURE_PREFIX = 'ph_';
+
+export const textureEntrySchema = z
+  .object({
+    key: z.string().min(1),
+    url: z
+      .string()
+      .startsWith('/assets/', 'must start with "/assets/"')
+      .refine((url) => !url.includes('..'), 'must not contain ".."'),
+  })
+  .strict();
+
+/** Reports duplicate keys in a texture list as `<label>: duplicate texture key "<key>"`. */
+export function findDuplicateTextureKeys(textures: readonly { key: string }[]): string[] {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+  for (const { key } of textures) {
+    if (seen.has(key)) duplicates.add(key);
+    seen.add(key);
+  }
+  return [...duplicates];
+}
+
 const sceneAssetTypeSchema = z.enum(['background', 'wall', 'prop', 'interactable', 'npc']);
 
 const sceneAssetDefinitionSchema = z
@@ -74,6 +97,7 @@ export const sceneDefinitionSchema = z
       })
       .strict(),
     spawnPoints: z.record(z.string().min(1), spawnPointSchema),
+    textures: z.array(textureEntrySchema),
     assets: z.array(sceneAssetDefinitionSchema),
   })
   .strict()
@@ -89,6 +113,25 @@ export const sceneDefinitionSchema = z
       }
       seenIds.add(asset.id);
     }
+
+    for (const key of findDuplicateTextureKeys(scene.textures)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['textures'],
+        message: `scene "${scene.id}": duplicate texture key "${key}"`,
+      });
+    }
+    const declared = new Set(scene.textures.map(({ key }) => key));
+    scene.assets.forEach((asset, index) => {
+      if (asset.texture.startsWith(PLACEHOLDER_TEXTURE_PREFIX) || declared.has(asset.texture)) {
+        return;
+      }
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['assets', index, 'texture'],
+        message: `scene "${scene.id}": asset "${asset.id}" uses texture "${asset.texture}" that is not declared in textures`,
+      });
+    });
 
     const { spawnPoints, worldBounds } = scene;
     if (!Object.hasOwn(spawnPoints, 'default')) {

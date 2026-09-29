@@ -19,6 +19,9 @@ export type {
   SceneTransitionDefinition,
   SpawnPointDefinition,
   SceneDefinition,
+  TextureEntry,
+  CharacterFacing,
+  FacingTextureMap,
 } from './scene';
 export type { UiStrings } from './case';
 export type {

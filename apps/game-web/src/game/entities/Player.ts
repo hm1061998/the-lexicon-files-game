@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import type { FacingTextureMap } from '@lexicon/shared-types';
 import { PLAYER_BODY, PLAYER_ORIGIN, PLAYER_SPEED } from '../constants';
 import { facingTextureKey, resolveTextureKey } from '../assetManifest';
 import { computeDepth } from '../systems/depth';
@@ -8,10 +9,15 @@ export type PlayerSprite = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
 export const PLAYER_INITIAL_FACING: Facing = 'SE';
 
-export function createPlayer(scene: Phaser.Scene, x: number, y: number): PlayerSprite {
+export function createPlayer(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  textures: FacingTextureMap,
+): PlayerSprite {
   const texture = resolveTextureKey(
     scene,
-    facingTextureKey('player', PLAYER_INITIAL_FACING),
+    facingTextureKey(textures, PLAYER_INITIAL_FACING),
     'ph_player',
   );
   const player = scene.physics.add.sprite(x, y, texture);
@@ -35,12 +41,13 @@ export function movePlayer(
   player: PlayerSprite,
   direction: { x: number; y: number },
   facing: Facing,
+  textures: FacingTextureMap,
 ): Facing {
   player.setVelocity(direction.x * PLAYER_SPEED, direction.y * PLAYER_SPEED);
   player.setDepth(computeDepth(player.y));
   const next = nextFacing(facing, direction.x, direction.y);
   if (next !== facing) {
-    const key = facingTextureKey('player', next);
+    const key = facingTextureKey(textures, next);
     // Frames share one canvas size, so the feet-aligned body stays valid after the swap.
     if (player.scene.textures.exists(key)) player.setTexture(key);
   }

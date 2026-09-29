@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import { loadTextureManifest } from '../assetManifest';
+import { queueMissingTextures, warnFailedTexture } from '../assetManifest';
 import { PALETTE } from '../constants';
 import { generatePlaceholderTextures } from '../textures';
 import { generatePaperOverlayTexture } from '../paperOverlay';
-import { WorldScene } from './WorldScene';
+import { WorldScene, type WorldOptions } from './WorldScene';
 
 export class BootScene extends Phaser.Scene {
   static readonly KEY = 'Boot';
@@ -14,13 +14,14 @@ export class BootScene extends Phaser.Scene {
 
   preload(): void {
     // A missing or broken file must not blank the game: warn and let placeholders stand in.
-    this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, (file: Phaser.Loader.File) => {
-      console.warn('[Assets] failed to load', file.key);
-    });
-    loadTextureManifest(this);
+    this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, warnFailedTexture);
+    // Shared textures (player, paper) plus only the start scene's; other scenes load on entry.
+    const { caseDefinition, scene } = this.registry.get('world') as WorldOptions;
+    queueMissingTextures(this, [...caseDefinition.sharedTextures, ...scene.textures]);
   }
 
   create(): void {
+    this.load.off(Phaser.Loader.Events.FILE_LOAD_ERROR, warnFailedTexture);
     this.cameras.main.setBackgroundColor(PALETTE.inkBlack);
     generatePlaceholderTextures(this);
     generatePaperOverlayTexture(this);

@@ -14,7 +14,12 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 import { npcSchema, dialogueTreeSchema } from './dialogue';
 import { validateDialogueReferences } from '../validation/dialogueReferences';
 import { conditionSchema, effectSchema } from './caseEngine';
-import { sceneDefinitionSchema } from './scene';
+import {
+  PLACEHOLDER_TEXTURE_PREFIX,
+  findDuplicateTextureKeys,
+  sceneDefinitionSchema,
+  textureEntrySchema,
+} from './scene';
 import { vocabularyCatalogueSchema, vocabularySpanSchema } from './learning';
 import { validateVocabularyReferences } from '../validation/vocabularyReferences';
 
@@ -33,6 +38,15 @@ const caseRawSchema = z
       .strict()
       .optional(),
     sceneIds: z.array(z.string().min(1)).min(1),
+    sharedTextures: z.array(textureEntrySchema),
+    playerTextures: z
+      .object({
+        NE: z.string().min(1),
+        SE: z.string().min(1),
+        SW: z.string().min(1),
+        NW: z.string().min(1),
+      })
+      .strict(),
     timeline: z
       .object({
         slots: z.array(
@@ -245,6 +259,44 @@ function validateEffectReferences(
   }
 }
 
+function validateTextureReferences(
+  caseData: {
+    sharedTextures: readonly { key: string; url: string }[];
+    playerTextures: Readonly<Record<string, string>>;
+  },
+  scenes: readonly { id: string; textures: readonly { key: string; url: string }[] }[],
+  issues: string[],
+): void {
+  for (const key of findDuplicateTextureKeys(caseData.sharedTextures)) {
+    issues.push(`case.json.sharedTextures: duplicate texture key "${key}"`);
+  }
+  const shared = new Set(caseData.sharedTextures.map(({ key }) => key));
+  for (const [facing, key] of Object.entries(caseData.playerTextures)) {
+    if (!key.startsWith(PLACEHOLDER_TEXTURE_PREFIX) && !shared.has(key)) {
+      issues.push(
+        `case.json.playerTextures.${facing}: texture "${key}" is not declared in sharedTextures`,
+      );
+    }
+  }
+  // Textures are cached by key across scenes, so one key must always mean one file.
+  const urlByKey = new Map<string, { url: string; owner: string }>();
+  const owners = [
+    { owner: 'case.json.sharedTextures', textures: caseData.sharedTextures },
+    ...scenes.map((scene) => ({ owner: `scene ${scene.id}`, textures: scene.textures })),
+  ];
+  for (const { owner, textures } of owners) {
+    for (const { key, url } of textures) {
+      const known = urlByKey.get(key);
+      if (!known) urlByKey.set(key, { url, owner });
+      else if (known.url !== url) {
+        issues.push(
+          `${owner}: texture key "${key}" maps to different urls ("${known.url}" in ${known.owner}, "${url}" here)`,
+        );
+      }
+    }
+  }
+}
+
 export function parseCaseDefinition(
   input: ParseCaseDefinitionInput,
   source: string,
@@ -357,6 +409,7 @@ export function parseCaseDefinition(
       issues.push(`scene ${scene.id}: not referenced by case.json.sceneIds`);
     }
   }
+  validateTextureReferences(caseData, scenes, issues);
   caseData.timeline.events.forEach((event, eventIndex) => {
     if (!slotIds.has(event.slotId)) {
       issues.push(
@@ -601,5 +654,7 @@ export function parseCaseDefinition(
     timeline: caseData.timeline as TimelineDefinition,
     contradictions,
     ...(conclusion ? { conclusion } : {}),
+    sharedTextures: caseData.sharedTextures,
+    playerTextures: caseData.playerTextures,
   };
 }

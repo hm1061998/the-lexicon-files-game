@@ -9,7 +9,7 @@ export {
 export { validateVocabularyReferences } from './validation/vocabularyReferences';
 export { parseUiStrings } from './schema/ui';
 export { loadSceneDefinition, DEFAULT_START } from './loader/loadScene';
-export { loadCaseDefinition } from './loader/loadCaseDefinition';
+export { loadCaseDefinition, REGISTERED_CASE_IDS } from './loader/loadCaseDefinition';
 export { loadUiStrings } from './loader/loadUiStrings';
 export { ContentValidationError } from './loader/ContentValidationError';
 

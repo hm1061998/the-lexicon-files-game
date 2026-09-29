@@ -1,4 +1,22 @@
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+
+type SceneTextures = { textures: Array<{ key: string; url: string }> };
+
+function sceneTextures(file: string): Array<{ key: string; url: string }> {
+  const url = new URL(
+    `../../../packages/game-content/cases/case-001/scenes/${file}`,
+    import.meta.url,
+  );
+  return (JSON.parse(readFileSync(url, 'utf8')) as SceneTextures).textures;
+}
+
+const officeTextures = sceneTextures('main_office.json');
+const archiveTextures = sceneTextures('archive.json');
+/** Textures only the archive declares: they must load on entering the archive, not at boot. */
+const archiveOnlyTextures = archiveTextures.filter(
+  ({ key }) => !officeTextures.some((office) => office.key === key),
+);
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
@@ -265,4 +283,64 @@ test('player texture follows the facing and keeps it while idle', async ({ page 
   expect(await texture()).toBe('tex_player_nw');
   await page.keyboard.up('a');
   await page.keyboard.up('w');
+});
+
+async function transitionAndWait(page: Page, sceneId: string, spawnId: string): Promise<void> {
+  const before = await page.evaluateHandle(() => window.__lexiconDebug);
+  await page.evaluate(
+    ([scene, spawn]) => window.__lexiconDebug!.requestTransition(scene!, spawn!),
+    [sceneId, spawnId],
+  );
+  // The restarted scene installs a fresh debug hook once it is created.
+  await page.waitForFunction(
+    (previous) => window.__lexiconDebug !== undefined && window.__lexiconDebug !== previous,
+    before,
+  );
+}
+
+test('a destination texture that fails to load warns and the transition still completes', async ({
+  page,
+}) => {
+  const failed = archiveOnlyTextures[0]!;
+  await page.route(`**${failed.url}`, (route) => route.fulfill({ status: 404, body: '' }));
+  const warnings: string[] = [];
+  const errors: string[] = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'warning') warnings.push(msg.text());
+    if (msg.type() === 'error' && !msg.text().includes('404')) errors.push(msg.text());
+  });
+  page.on('pageerror', (err) => errors.push(err.message));
+  await openWorld(page);
+  await transitionAndWait(page, 'archive', 'from_office');
+  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  expect(warnings).toContain(`[Assets] failed to load ${failed.key}`);
+  expect(errors).toEqual([]);
+  await expect(page.locator('canvas')).toHaveCount(1);
+  // The scene is live: the player can still move.
+  const before = await player(page);
+  await hold(page, 'd', 300);
+  expect((await player(page)).x).toBeGreaterThan(before.x);
+});
+
+test('scene textures load on entry only once across office and archive round trips', async ({
+  page,
+}) => {
+  const requests = new Map<string, number>();
+  page.on('request', (request) => {
+    const { pathname } = new URL(request.url());
+    if (pathname.startsWith('/assets/')) requests.set(pathname, (requests.get(pathname) ?? 0) + 1);
+  });
+  await openWorld(page);
+  for (const { url } of archiveOnlyTextures) expect(requests.get(url) ?? 0, url).toBe(0);
+  // Count only what the transitions request; the dev StrictMode double mount boots twice.
+  requests.clear();
+
+  await transitionAndWait(page, 'archive', 'from_office');
+  await transitionAndWait(page, 'main_office', 'from_archive');
+  await transitionAndWait(page, 'archive', 'from_office');
+  await transitionAndWait(page, 'main_office', 'from_archive');
+
+  for (const { url } of archiveOnlyTextures) expect(requests.get(url), url).toBe(1);
+  for (const { url } of officeTextures) expect(requests.get(url) ?? 0, url).toBe(0);
+  expect([...requests.values()].every((count) => count === 1)).toBe(true);
 });

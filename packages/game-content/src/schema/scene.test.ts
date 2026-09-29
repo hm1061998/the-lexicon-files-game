@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseSceneDefinition } from './scene';
 import { ContentValidationError } from '../loader/ContentValidationError';
 import mainOffice from '../../cases/case-001/scenes/main_office.json';
+import archive from '../../cases/case-001/scenes/archive.json';
 
 describe('parseSceneDefinition', () => {
   it('accepts the Main Office scene', () => {
@@ -170,3 +171,93 @@ describe('parseSceneDefinition', () => {
     }
   });
 });
+
+describe('scene textures', () => {
+  type RawScene = {
+    textures: Array<{ key: string; url: string }>;
+    assets: Array<{ id: string; texture: string }>;
+  };
+  const withTextures = (edit: (raw: RawScene) => void): unknown => {
+    const raw = structuredClone(mainOffice) as unknown as RawScene;
+    edit(raw);
+    return raw;
+  };
+  const issuesOf = (raw: unknown): string[] => {
+    try {
+      parseSceneDefinition(raw, 'main_office.json');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ContentValidationError);
+      return (err as ContentValidationError).issues;
+    }
+    throw new Error('expected parseSceneDefinition to throw');
+  };
+
+  it('accepts the real Main Office and Archive textures', () => {
+    for (const [raw, source] of [
+      [mainOffice, 'main_office.json'],
+      [archive, 'archive.json'],
+    ] as const) {
+      const scene = parseSceneDefinition(raw, source);
+      expect(scene.textures.length).toBeGreaterThan(0);
+      for (const { url } of scene.textures) expect(url.startsWith('/assets/')).toBe(true);
+    }
+  });
+
+  it('rejects a texture url outside /assets/', () => {
+    const issues = issuesOf(
+      withTextures((raw) => {
+        raw.textures[0]!.url = '/images/floor.png';
+      }),
+    );
+    expect(issues.some((issue) => issue.includes('textures') && issue.includes('/assets/'))).toBe(
+      true,
+    );
+  });
+
+  it('rejects a texture url that climbs out with ".."', () => {
+    const issues = issuesOf(
+      withTextures((raw) => {
+        raw.textures[0]!.url = '/assets/../secret.png';
+      }),
+    );
+    expect(issues.some((issue) => issue.includes('textures'))).toBe(true);
+  });
+
+  it('rejects duplicate texture keys within a scene', () => {
+    const issues = issuesOf(
+      withTextures((raw) => {
+        raw.textures.push({ ...raw.textures[0]! });
+      }),
+    );
+    expect(
+      issues.some((issue) => issue.includes('duplicate texture key') && issue.includes(raw0Key())),
+    ).toBe(true);
+  });
+
+  it('rejects an asset texture that is not declared in textures, naming scene and key', () => {
+    const issues = issuesOf(
+      withTextures((raw) => {
+        raw.assets[0]!.texture = 'tex_not_declared';
+      }),
+    );
+    expect(
+      issues.some(
+        (issue) =>
+          issue.includes('main_office') &&
+          issue.includes('tex_not_declared') &&
+          issue.includes('textures'),
+      ),
+    ).toBe(true);
+  });
+
+  it('accepts ph_* placeholder textures without a declaration', () => {
+    const raw = withTextures((scene) => {
+      scene.assets[0]!.texture = 'ph_missing';
+    });
+    expect(parseSceneDefinition(raw, 'main_office.json').assets[0]?.texture).toBe('ph_missing');
+  });
+});
+
+function raw0Key(): string {
+  return (mainOffice as unknown as { textures: Array<{ key: string }> }).textures[0]!.key;
+}

@@ -1,44 +1,56 @@
 import type Phaser from 'phaser';
-import { PAPER_OVERLAY_KEY } from './constants';
+import type { FacingTextureMap, TextureEntry } from '@lexicon/shared-types';
 import type { Facing } from './systems/direction';
 
-export type TextureManifestEntry = { readonly key: string; readonly url: string };
+// Phaser.Loader.Events.FILE_LOAD_ERROR / COMPLETE; literals keep this module free of the
+// Phaser runtime so it can be unit tested without a canvas.
+const FILE_LOAD_ERROR = 'loaderror';
+const LOAD_COMPLETE = 'complete';
 
-const FACINGS: readonly Facing[] = ['NE', 'SE', 'SW', 'NW'];
-const CHARACTERS = ['player', 'anna', 'leo', 'david'] as const;
-
-export function facingTextureKey(character: string, facing: Facing): string {
-  return `tex_${character}_${facing.toLowerCase()}`;
+/** Texture key for a facing, as declared by content (`CaseDefinition.playerTextures`). */
+export function facingTextureKey(textures: FacingTextureMap, facing: Facing): string {
+  return textures[facing];
 }
 
-const characterEntries: TextureManifestEntry[] = CHARACTERS.flatMap((character) =>
-  FACINGS.map((facing) => ({
-    key: facingTextureKey(character, facing),
-    url: `/assets/characters/${character}/chr_${character}_idle_${facing.toLowerCase()}.png`,
-  })),
-);
+export function warnFailedTexture(file: { key: string }): void {
+  console.warn(`[Assets] failed to load ${file.key}`);
+}
+
+/** Queues on the scene loader every entry whose texture is not in the texture manager yet. */
+export function queueMissingTextures(
+  scene: Phaser.Scene,
+  textures: readonly TextureEntry[],
+): number {
+  let queued = 0;
+  for (const { key, url } of textures) {
+    if (scene.textures.exists(key)) continue;
+    scene.load.image(key, url);
+    queued += 1;
+  }
+  return queued;
+}
 
 /**
- * Processed art (tools/art-codegen, Phase 11 Task 5) used by the case scenes; ph_* placeholders
- * stay as fallbacks. Unused props and the diagonal wall slabs are left out so they are not preloaded.
+ * Loads the textures that are not loaded yet, outside of `preload`. Always resolves: a file
+ * that fails is reported with `[Assets] failed to load <key>` and its assets fall back to
+ * placeholders through `resolveTextureKey`.
  */
-export const TEXTURE_MANIFEST: readonly TextureManifestEntry[] = [
-  { key: 'tex_office_floor', url: '/assets/environment/office/scene_office_floor.png' },
-  { key: 'tex_archive_floor', url: '/assets/environment/archive/scene_archive_floor.png' },
-  { key: 'tex_office_desk', url: '/assets/environment/props/prop_office_desk_01.png' },
-  { key: 'tex_note', url: '/assets/environment/props/prop_note_01.png' },
-  { key: 'tex_audio_recorder', url: '/assets/environment/props/prop_audio_recorder_01.png' },
-  { key: 'tex_door_hallway', url: '/assets/environment/props/prop_door_hallway_01.png' },
-  {
-    key: 'tex_security_terminal',
-    url: '/assets/environment/props/prop_security_terminal_01.png',
-  },
-  ...characterEntries,
-  { key: PAPER_OVERLAY_KEY, url: '/assets/textures/paper_texture.png' },
-];
-
-export function loadTextureManifest(scene: Phaser.Scene): void {
-  for (const { key, url } of TEXTURE_MANIFEST) scene.load.image(key, url);
+export function loadSceneTextures(
+  scene: Phaser.Scene,
+  textures: readonly TextureEntry[],
+): Promise<void> {
+  if (queueMissingTextures(scene, textures) === 0) return Promise.resolve();
+  const loader = scene.load;
+  return new Promise((resolve) => {
+    // A dedicated handler so `off` never removes another caller's listener.
+    const onError = (file: { key: string }) => warnFailedTexture(file);
+    loader.on(FILE_LOAD_ERROR, onError);
+    loader.once(LOAD_COMPLETE, () => {
+      loader.off(FILE_LOAD_ERROR, onError);
+      resolve();
+    });
+    loader.start();
+  });
 }
 
 /** Returns `key` when loaded, otherwise warns and returns the placeholder fallback. */

@@ -1,5 +1,16 @@
 import type { Effect } from './case-engine';
 
+/** A texture key and the public URL it is loaded from (always under `/assets/`). */
+export interface TextureEntry {
+  readonly key: string;
+  readonly url: string;
+}
+
+export type CharacterFacing = 'NE' | 'SE' | 'SW' | 'NW';
+
+/** Texture key per facing for a character, declared in content. */
+export type FacingTextureMap = Readonly<Record<CharacterFacing, string>>;
+
 export type SceneAssetType = 'background' | 'wall' | 'prop' | 'interactable' | 'npc';
 
 export interface RectCollision {
@@ -55,5 +66,7 @@ export interface SceneDefinition {
     readonly height: number;
   };
   readonly spawnPoints: Readonly<Record<string, SpawnPointDefinition>>;
+  /** Textures this scene's assets use; loaded when the scene is entered. `ph_*` are generated. */
+  readonly textures: readonly TextureEntry[];
   readonly assets: readonly SceneAssetDefinition[];
 }

@@ -20,6 +20,20 @@
       "y": 760
     }
   },
+  "textures": [
+    {
+      "key": "tex_archive_floor",
+      "url": "/assets/environment/archive/scene_archive_floor.png"
+    },
+    {
+      "key": "tex_security_terminal",
+      "url": "/assets/environment/props/prop_security_terminal_01.png"
+    },
+    {
+      "key": "tex_door_hallway",
+      "url": "/assets/environment/props/prop_door_hallway_01.png"
+    }
+  ],
   "assets": [
     {
       "id": "PLACEHOLDER_archive_floor",
