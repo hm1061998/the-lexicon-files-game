@@ -15,7 +15,7 @@
   --lexicon-muted-green: #737660;
   --lexicon-dark-red: #743026;
   /* prettier-ignore */
-  --lexicon-font-body: Georgia, Cambria, "Times New Roman", serif;
+  --lexicon-font-body: Cambria, "Times New Roman", Georgia, serif;
   /* prettier-ignore */
   --lexicon-font-mono: "Courier New", ui-monospace, monospace;
   --lexicon-text-min: 14px;

@@ -21,7 +21,7 @@
   margin-top: 0.5rem;
 }
 .vocabulary-tutorial {
-  font-size: 0.9em;
+  font-size: var(--lexicon-text-min);
   font-style: italic;
 }
 .vocabulary-popover {

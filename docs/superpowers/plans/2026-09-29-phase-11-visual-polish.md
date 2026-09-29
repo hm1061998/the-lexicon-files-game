@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Chỉ npm + Nx; không thêm dependency npm. Font hệ thống: nội dung `Georgia, Cambria, "Times New Roman", serif`; keycap `"Courier New", ui-monospace, monospace`; chữ ≥ 14px.
+- Chỉ npm + Nx; không thêm dependency npm. Font hệ thống: nội dung `Cambria, "Times New Roman", Georgia, serif` (Georgia đặt cuối vì vẽ sai dấu thanh tiếng Việt trên Windows); keycap `"Courier New", ui-monospace, monospace`; chữ ≥ 14px.
 - Paper overlay Phaser alpha trong 0.10–0.18 (art/06 §44); overlay UI khoảng 0.12; không blur, không glow.
 - Marker: hình thoi đỏ `#A4412D` viền mực, nổi 4 px trong 1000 ms (khoảng cho phép 800–1200 ms); dừng khi `reducedMotion` bật.
 - Chuyển cảnh Phaser ≈ 250 ms, panel hiện ≈ 160 ms; cả hai tức thì khi giảm chuyển động (`MotionSource` cho Phaser, `data-reduced-motion` cho CSS).

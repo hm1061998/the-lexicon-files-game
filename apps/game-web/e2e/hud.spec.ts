@@ -258,7 +258,7 @@ test('paper panels use the classic serif file styling', async ({ page }) => {
       const cs = getComputedStyle(el);
       return { fontFamily: cs.fontFamily, fontSize: cs.fontSize, boxShadow: cs.boxShadow };
     });
-  expect(style.fontFamily).toContain('Georgia');
+  expect(style.fontFamily).toContain('Cambria');
   expect(parseFloat(style.fontSize)).toBeGreaterThanOrEqual(14);
   const blurs = [
     ...style.boxShadow.matchAll(/rgba?\([^)]*\)\s+(-?\d+px)\s+(-?\d+px)\s+(-?\d+px)/g),

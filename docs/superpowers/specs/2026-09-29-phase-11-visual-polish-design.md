@@ -27,7 +27,7 @@ Giao diện và lớp phủ trong game nhìn như "hồ sơ giấy cổ điển"
 
 ## 3. Thiết kế Phần A
 
-1. **Token thiết kế.** Mở rộng `packages/ui/src/theme/palette.css` (và `palette.ts` giữ đồng bộ) với các màu còn thiếu trong palette `art/06` §5 (Warm Gray, Dusty Olive, Muted Green, Dark Red) và token chữ: serif nội dung `Georgia, Cambria, "Times New Roman", serif`, chữ máy đánh cho keycap `"Courier New", ui-monospace, monospace`, thang cỡ chữ ≥ 14px. Test đơn vị kiểm độ tương phản WCAG AA cho các cặp chữ/nền được dùng (đọc token từ `palette.ts`; thêm test đồng bộ `palette.css` ↔ `palette.ts` để xử lý deferred minor Phase 3).
+1. **Token thiết kế.** Mở rộng `packages/ui/src/theme/palette.css` (và `palette.ts` giữ đồng bộ) với các màu còn thiếu trong palette `art/06` §5 (Warm Gray, Dusty Olive, Muted Green, Dark Red) và token chữ: serif nội dung `Cambria, "Times New Roman", Georgia, serif` (Georgia vẽ sai dấu thanh tiếng Việt trên Windows nên đặt cuối), chữ máy đánh cho keycap `"Courier New", ui-monospace, monospace`, thang cỡ chữ ≥ 14px. Test đơn vị kiểm độ tương phản WCAG AA cho các cặp chữ/nền được dùng (đọc token từ `palette.ts`; thêm test đồng bộ `palette.css` ↔ `palette.ts` để xử lý deferred minor Phase 3).
 2. **Paper overlay.**
    - UI: panel giấy có texture sinh bằng CSS/SVG (nhiễu `feTurbulence` trong data URI hoặc gradient), độ mờ khoảng 0.12, không kéo dependency.
    - Phaser: lớp overlay giấy phủ toàn màn hình, alpha 0.10–0.18 (art/06 §44), đặt trên thế giới và dưới HUD, sinh bằng code trong `BootScene`; khóa theo texture key để Phần B chỉ cần thay bằng `paper_texture` thật.
