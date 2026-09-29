@@ -33,6 +33,9 @@ describe('parseUiStrings', () => {
       "The evidence doesn't fully support this conclusion. Review the timeline.",
     );
     expect(strings.conclusion).toBe('Kết luận');
+    expect(strings.caseClosed).toBe('CASE CLOSED');
+    expect(strings.overallProfile).toContain('toàn hồ sơ');
+    expect(strings.noListeningData.length).toBeGreaterThan(0);
     expect(strings.conclusionSubmit.length).toBeGreaterThan(0);
     expect(strings.conclusionPrompt.length).toBeGreaterThan(0);
     expect(strings.conclusionUnavailable.length).toBeGreaterThan(0);

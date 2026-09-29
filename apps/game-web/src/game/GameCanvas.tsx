@@ -37,6 +37,8 @@ import { createLearningStore } from '../state/learningStore';
 import { LearningStoreProvider } from '../state/LearningStoreContext';
 import { connectLearningAutosave } from '../persistence/connectLearningAutosave';
 import { useLearningStore } from '../state/LearningStoreContext';
+import { buildCaseReport } from '../conclusion/buildCaseReport';
+import { CaseSummaryScreen } from '../conclusion/CaseSummaryScreen';
 import {
   defaultCommerceConfigProvider,
   FREE_COMMERCE_CONFIG,
@@ -384,6 +386,7 @@ function GameRoot({
           <PauseLayer strings={strings} store={store} />
           <EvidenceLayer strings={strings} />
           <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
+          <CaseSummaryLayer strings={strings} />
         </LearningStoreProvider>
       </GameStoreProvider>
     </div>
@@ -459,6 +462,19 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       onListeningTelemetry={onListeningTelemetry}
     />
   );
+}
+
+/** Rebuilt from the saved case state and the current profile, so it survives reload. */
+function CaseSummaryLayer({ strings }: { strings: UiStrings }): JSX.Element | null {
+  const caseDefinition = useGameStore((state) => state.caseDefinition);
+  const caseState = useGameStore((state) => state.caseState);
+  const profile = useLearningStore((state) => state.profile);
+  const report = useMemo(
+    () => buildCaseReport(caseDefinition, caseState, profile),
+    [caseDefinition, caseState, profile],
+  );
+  if (caseState.flags.case_closed !== true) return null;
+  return <CaseSummaryScreen caseTitle={caseState.caseTitle} report={report} strings={strings} />;
 }
 
 function NotebookLayer({

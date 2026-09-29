@@ -1,0 +1,55 @@
+.case-summary-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(42, 37, 33, 0.55);
+  color: var(--lexicon-ink);
+  font-size: 16px;
+}
+
+.case-summary {
+  width: min(560px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 24px;
+  line-height: 1.5;
+}
+
+.case-summary-stamp {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 4px 12px;
+  border: 2px solid var(--lexicon-border);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.case-summary-metrics {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 16px;
+  margin: 0 0 16px;
+}
+
+.case-summary-metrics dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.accusation-suspects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.accusation-suspects button[aria-pressed='true'] {
+  outline: 2px solid var(--lexicon-border);
+  outline-offset: 2px;
+  font-weight: 700;
+}
