@@ -54,6 +54,10 @@ export type GameStoreState = {
   transitionScene(sceneId: string, spawnId: string): boolean;
 };
 export type GameStore = StoreApi<GameStoreState>;
+/** The report replaces play once the case is closed; no further investigation. */
+function caseClosed(s: Pick<GameStoreState, 'caseState'>): boolean {
+  return s.caseState.flags.case_closed === true;
+}
 function inputLocked(
   s: Pick<
     GameStoreState,
@@ -65,7 +69,7 @@ function inputLocked(
     s.activeEvidenceId !== null ||
     s.notebookOpen ||
     s.dialogueSession !== null ||
-    s.caseState.flags.case_closed === true
+    caseClosed(s)
   );
 }
 export function createGameStore(init: {
@@ -103,7 +107,8 @@ export function createGameStore(init: {
     },
     setPaused(paused) {
       set((s) => {
-        if (paused && (s.dialogueSession || s.activeEvidenceId || s.notebookOpen)) return s;
+        if (paused && (s.dialogueSession || s.activeEvidenceId || s.notebookOpen || caseClosed(s)))
+          return s;
         return { paused, inputLocked: inputLocked({ ...s, paused }) };
       });
     },
@@ -122,6 +127,7 @@ export function createGameStore(init: {
     toggleNotebook() {
       set((s) => {
         if (s.paused || s.activeEvidenceId || s.dialogueSession) return s;
+        if (caseClosed(s) && !s.notebookOpen) return s;
         const notebookOpen = !s.notebookOpen;
         return {
           notebookOpen,
@@ -171,19 +177,19 @@ export function createGameStore(init: {
     applyCaseEffects(effects) {
       const s = get();
       const r = applyEffects(s.caseDefinition, s.caseState, effects);
-      if (r.ok) set({ caseState: r.state });
+      if (r.ok && !caseClosed(s)) set({ caseState: r.state });
       return r;
     },
     answerListeningTask(taskId, optionId) {
       const s = get();
       const result = answerListeningTaskCore(s.caseDefinition, s.caseState, taskId, optionId);
-      if (result.ok && result.correct) set({ caseState: result.state });
+      if (result.ok && result.correct && !caseClosed(s)) set({ caseState: result.state });
       return result;
     },
     placeTimelineEvent(eventId, slotId) {
       const s = get();
       const result = placeTimelineEventCore(s.caseDefinition, s.caseState, eventId, slotId);
-      if (result.ok && result.correct) set({ caseState: result.state });
+      if (result.ok && result.correct && !caseClosed(s)) set({ caseState: result.state });
       return result;
     },
     submitContradiction(contradictionId, factIds) {
@@ -194,7 +200,7 @@ export function createGameStore(init: {
         contradictionId,
         factIds,
       );
-      if (result.ok && result.correct) set({ caseState: result.state });
+      if (result.ok && result.correct && !caseClosed(s)) set({ caseState: result.state });
       return result;
     },
     submitAccusation(suspectNpcId) {
@@ -204,7 +210,9 @@ export function createGameStore(init: {
       if (result.ok && result.correct && result.state !== s.caseState) {
         set({
           caseState: result.state,
-          inputLocked: inputLocked({ ...s, caseState: result.state }),
+          notebookOpen: false,
+          notebookTab: 'evidence',
+          inputLocked: inputLocked({ ...s, notebookOpen: false, caseState: result.state }),
         });
       }
       return result;

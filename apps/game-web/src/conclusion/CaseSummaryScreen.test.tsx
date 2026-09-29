@@ -26,6 +26,8 @@ describe('CaseSummaryScreen', () => {
   it('announces the closed case and shows the case metrics', () => {
     const html = render(report);
     expect(html).toContain('role="status"');
+    expect(html).toContain('role="dialog"');
+    expect(html).toContain('aria-modal="true"');
     expect(html).toContain(strings.caseClosed);
     expect(html).toContain('The Missing Report');
     expect(html).toContain('5/5');

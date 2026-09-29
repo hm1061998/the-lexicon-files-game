@@ -247,6 +247,36 @@ describe('createGameStore', () => {
     const store = createGameStore({ caseDefinition: definition, initialState });
     expect(store.getState().inputLocked).toBe(true);
   });
+
+  it('closes the notebook when the correct accusation closes the case', () => {
+    const { conclusion, store } = storeReadyToAccuse();
+    store.getState().toggleNotebook();
+    store.getState().setNotebookTab('conclusion');
+    store.getState().submitAccusation(conclusion.correctSuspectNpcId);
+    expect(store.getState().notebookOpen).toBe(false);
+    expect(store.getState().notebookTab).toBe('evidence');
+  });
+
+  it('does not reopen the notebook or pause once the case is closed', () => {
+    const definition = loadCaseDefinition('case-001');
+    const initialState = { ...createCaseState(definition), flags: { case_closed: true } };
+    const store = createGameStore({ caseDefinition: definition, initialState });
+    store.getState().toggleNotebook();
+    expect(store.getState().notebookOpen).toBe(false);
+    store.getState().setPaused(true);
+    expect(store.getState().paused).toBe(false);
+  });
+
+  it('rejects further investigation writes once the case is closed', () => {
+    const definition = loadCaseDefinition('case-001');
+    const initialState = { ...createCaseState(definition), flags: { case_closed: true } };
+    const store = createGameStore({ caseDefinition: definition, initialState });
+    const before = store.getState().caseState;
+    const event = definition.timeline.events[0]!;
+    store.getState().placeTimelineEvent(event.id, event.slotId);
+    store.getState().applyCaseEffects([{ type: 'setFlag', key: 'late_write', value: true }]);
+    expect(store.getState().caseState).toBe(before);
+  });
 });
 
 function applyAudioEvidence(definition: ReturnType<typeof loadCaseDefinition>) {

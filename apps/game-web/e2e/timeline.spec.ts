@@ -229,6 +229,11 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
   await expect(page.getByText('toàn hồ sơ', { exact: false })).toBeVisible();
   await expect.poll(async () => (await saved(page))?.state.flags.case_closed).toBe(true);
+  await expect(page.getByRole('button', { name: 'Nộp kết luận' })).toHaveCount(0);
+  await page.keyboard.press('j');
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Dòng thời gian' })).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: /tạm dừng/i })).toHaveCount(0);
   const closedRecord = await saved(page);
   expect(closedRecord?.state.objectiveStatuses.submit_your_conclusion).toBe('completed');
 

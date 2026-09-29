@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { PaperPanel } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import type { CaseReport } from './buildCaseReport';
@@ -15,8 +15,18 @@ export function CaseSummaryScreen({
 }): JSX.Element {
   const headingId = useId();
   const profileHeadingId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  // Move focus into the report so keyboard/screen-reader users land on it.
+  useEffect(() => dialogRef.current?.focus(), []);
   return (
-    <div className="case-summary-overlay">
+    <div
+      ref={dialogRef}
+      className="case-summary-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={headingId}
+      tabIndex={-1}
+    >
       <PaperPanel as="div" className="case-summary">
         <section aria-labelledby={headingId}>
           <p role="status" aria-live="polite" className="case-summary-stamp">
