@@ -1,6 +1,6 @@
 # Phase 11 — Visual Polish
 
-**Trạng thái:** Thiết kế Phần A đã trình bày trong chat, **chờ người dùng duyệt** (chưa duyệt, chưa có plan)
+**Trạng thái:** Đã duyệt (Phần A + B); hoàn tất triển khai. Sai lệch: asset xử lý dùng PNG thay WebP; thêm trường tùy chọn `scale` cho scene asset; tường vẫn placeholder `ph_wall`; fade-in bỏ ở boot đầu. Chi tiết: `docs/ai/2026-09-29-phase-11-visual-polish-verification.md`.
 **Ngày:** 2026-09-29
 **Lộ trình:** `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §30 — "Apply graphic design spec: paper texture; sepia palette; red accent; vintage UI; typography; transitions; interaction marker. Không thay game logic."
 **Tài liệu liên quan:** `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md` §5 (palette, style), §33 (marker), §44 (paper overlay); `docs/concept/*.webp` và `docs/concept/README.md`; `docs/art/07_AI_ASSET_PROMPT_PACK.md`; `AGENTS.md` §6 (giới hạn màu đỏ); `apps/game-web/AGENTS.md`.
