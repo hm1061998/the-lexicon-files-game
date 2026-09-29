@@ -34,7 +34,7 @@ Tạo một recording tĩnh với đúng lời thoại Case #001, giọng tiến
 
 ### Vòng đời playback
 
-Đặt Howler sau một typed controller/hook nhỏ trong `apps/game-web/src/audio/` để evidence surface của React sử dụng. Các trạng thái cần có: idle, loading, playing, paused, ended và lỗi tải/phát có thể phục hồi. Các điều khiển: play, pause, replay từ đầu; replay không giới hạn. Dừng và unload khi đóng evidence/unmount; chặn callback bất đồng bộ cũ tác động lên view đã đóng. Tuân thủ yêu cầu user gesture của trình duyệt. Nếu asset lỗi, hiển thị thông báo dễ hiểu và cho retry; modal không được trống trắng. Telemetry playback tuân theo policy profile/session cục bộ, không lưu audio bytes hoặc chép transcript sang state thứ hai.
+Đặt Howler sau một typed controller/hook nhỏ trong `apps/game-web/src/audio/` để evidence surface của React sử dụng. Các trạng thái cần có: idle, loading, playing, paused, ended và lỗi tải/phát có thể phục hồi. Các điều khiển: play, pause, replay từ đầu; replay không giới hạn. Dừng và unload khi đóng evidence/unmount; chặn callback bất đồng bộ cũ tác động lên view đã đóng. Tuân thủ yêu cầu user gesture của trình duyệt. Nếu asset lỗi, hiển thị thông báo dễ hiểu và cho retry; modal không được trống trắng. Playback telemetry được lưu cục bộ dưới dạng counter; thời gian rút ra fact đúng chỉ lưu tổng thời lượng và số lượt đo, không lưu timestamp từng thao tác, audio bytes hoặc transcript ở state thứ hai.
 
 ### Evidence và listening task
 
@@ -53,7 +53,7 @@ Với câu “Where was Leo?”, các lựa chọn phải đúng theo hợp đ�
 - Prompt/lựa chọn/hint/effects/audio reference được biên soạn trong `packages/game-content`, kiểm tra bằng Zod và cross-reference validation.
 - Trả lời đúng làm thay đổi case state có thẩm quyền qua discriminated `Condition`/`Effect` và API transition của game-core; không dùng `eval`, không nhân bản case facts trong React và không tạo singleton mới.
 - Vị trí/trạng thái playback chỉ tồn tại tạm trong audio controller. Case store chỉ giữ kết quả ổn định của đáp án/effect cần cho persistence.
-- Telemetry cần cho learning profile chỉ là counter (replay/subtitle/transcript/use/answer); không thu microphone hay giữ raw audio.
+- Telemetry lưu trong learning profile gồm counter (replay/subtitle/transcript/hint/answer) và tổng thời gian từ lần phát đầu tới lúc rút ra fact đúng; không lưu timestamp từng thao tác, không thu microphone hay giữ raw audio.
 - Callback của Howler, event-bus listener và task subscription phải được dọn khi modal đóng hoặc component chủ sở hữu bị destroy.
 
 ## Trải nghiệm và accessibility
