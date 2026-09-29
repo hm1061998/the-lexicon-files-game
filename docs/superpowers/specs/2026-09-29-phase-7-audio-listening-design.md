@@ -1,90 +1,90 @@
-# Phase 7 Audio / Listening — Design
+# Phase 7 Audio / Listening — Thiết kế
 
-## Goal
+## Mục tiêu
 
-Deliver the first playable listening investigation in Case #001: the player finds and listens to the phone recording associated with Leo, answers the authored question about his location, and the correct interpretation updates case state. Playback is replayable and supports the listening assistance levels already defined by the learning design. The feature preserves investigation-first pacing and does not grade minor English mistakes.
+Hoàn thiện trải nghiệm điều tra qua nghe đầu tiên có thể chơi được trong Case #001: người chơi tìm và nghe bản ghi điện thoại liên quan tới Leo, trả lời câu hỏi về vị trí của anh ấy, và cách hiểu đúng sẽ cập nhật trạng thái vụ án. Người chơi có thể nghe lại không giới hạn và dùng các mức hỗ trợ nghe đã có trong thiết kế hệ thống học tiếng Anh. Trải nghiệm phải giữ nhịp điều tra làm trọng tâm và không chấm lỗi tiếng Anh nhỏ thành thất bại.
 
-The user chose inline execution and approved generating the recording with Kokoro. Phase 7 is an architectural change because it introduces authored audio content, playback lifecycle, listening-task state and a new path into case facts.
+Người dùng đã chọn thực thi inline và đồng ý tạo recording bằng Kokoro. Phase 7 là thay đổi kiến trúc vì bổ sung nội dung audio, vòng đời playback, trạng thái listening task và một đường mới để mở fact trong case.
 
-## Source of truth and constraints
+## Nguồn chuẩn và ràng buộc
 
-- Roadmap §26: Howler playback, play/pause/replay, subtitle mode, phone-recording evidence; acceptance requires replay, task answer and case-state update.
-- Learning-system design §§16–17, 31–32: listening levels are audio+subtitles, audio+keyword hints, and audio only; replay is unlimited; track replay/subtitle/transcript/answer behavior locally; never capture microphone in MVP.
-- Case #001 §15 Evidence 5: Archive/audio device; exact recording text “Hi, I'm outside the meeting room. I'll call you back in a few minutes.”; timestamp 20:29; supports `Leo was outside at 20:29`; question “Where was Leo?” with correct answer “Outside the meeting room”.
-- Existing case total remains five evidence items; the phone recording is the authored audio evidence for the existing case contract, not a sixth case item. Do not alter any other case truth or fabricate additional audio clues.
-- Use Howler already declared by `apps/game-web`; do not add dependencies or call the API/backend from gameplay. Core learning/game logic remains framework-independent. React and Phaser communicate through the typed event bus/store boundary; scenes clean up listeners.
-- Preserve local-first saves and existing schema unless implementation proves a migration is unavoidable. Do not persist transient playback position or audio buffers.
-- Product guardrails: no forced quiz/reward flow, no lives/timer/streak punishment, no “WRONG!” presentation, unlimited replay, hints clarify language rather than reveal the answer, and no microphone access.
+- Roadmap §26: playback bằng Howler, play/pause/replay, chế độ subtitle, evidence là phone recording; tiêu chí chấp nhận gồm nghe lại, trả lời task và cập nhật case state.
+- Thiết kế hệ thống học tiếng Anh §§16–17, 31–32: các mức nghe gồm audio kèm subtitle, audio kèm keyword hint, và chỉ audio; replay không giới hạn; theo dõi cục bộ việc replay/subtitle/transcript/answer; MVP không thu microphone.
+- Case #001 §15 Evidence 5: Archive/audio device; lời thoại chính xác “Hi, I'm outside the meeting room. I'll call you back in a few minutes.”; thời điểm 20:29; hỗ trợ fact `Leo was outside at 20:29`; câu hỏi “Where was Leo?” với đáp án đúng “Outside the meeting room”.
+- Tổng số evidence của case vẫn là năm; phone recording là evidence audio đã có trong hợp đồng nội dung của case, không phải evidence thứ sáu. Không thay đổi truth nào khác của case hoặc tạo thêm audio clue.
+- Dùng Howler đã khai báo trong `apps/game-web`; không thêm dependency và không gọi API/backend trong gameplay. Logic core vẫn độc lập framework. React và Phaser giao tiếp qua typed event bus/store; scene phải dọn listener khi đóng.
+- Giữ local-first save và schema hiện có, trừ khi trong lúc triển khai chứng minh được cần migration. Không lưu vị trí playback tạm thời hoặc buffer audio.
+- Guardrail sản phẩm: không ép thành luồng quiz/reward, không lives/timer/streak punishment, không hiện “WRONG!”, replay không giới hạn, hint giúp hiểu ngôn ngữ thay vì tiết lộ đáp án, không truy cập microphone.
 
-## Approaches considered
+## Các phương án đã cân nhắc
 
-1. **Generate a static authored clip locally with Kokoro (recommended).** No runtime service, network request, or per-play charge; deterministic asset is shipped with the game. Keep the model outside the shipped application. Before shipping the selected preset voice, record its exact model/voice and source/license evidence in asset metadata; the Apache-2.0 model license does not by itself settle every voice preset's provenance.
-2. **Generate through a hosted TTS API.** Convenient and may have free quota, but requires account/billing configuration and adds external service terms and a supply dependency for producing content.
-3. **Use a human recording or download an existing recording.** Potentially more natural, but requires performer/recording rights or a verified asset license and may require attribution. Avoid a downloaded dialogue clip with unclear consent or rights.
+1. **Dùng Kokoro tạo clip tĩnh cho nội dung game (đề xuất và đã đồng ý).** Không cần dịch vụ ở runtime, yêu cầu mạng hay trả phí theo mỗi lần chơi; asset cố định được đóng gói cùng game. Không đưa model vào ứng dụng phát hành. Trước khi phát hành preset voice đã chọn, lưu lại model/voice chính xác cùng bằng chứng nguồn và license; license Apache-2.0 của model không tự giải quyết nguồn gốc/license của mọi preset voice.
+2. **Tạo bằng hosted TTS API.** Tiện lợi và có thể có hạn mức miễn phí, nhưng cần cấu hình tài khoản/billing, đồng thời phụ thuộc điều khoản của dịch vụ bên ngoài trong khâu sản xuất nội dung.
+3. **Thu âm người thật hoặc tải recording có sẵn.** Có thể tự nhiên hơn nhưng cần quyền từ người biểu diễn/quyền bản ghi, hoặc xác minh được license asset và yêu cầu attribution. Không dùng clip lời thoại đã tải nếu quyền sử dụng không rõ.
 
-Approved direction: approach 1. Free online recordings are not required for Leo's authored line. Optional ambient/SFX downloads are outside this phase; if added later, each must be chosen under a compatible license and have a source/attribution record.
+Hướng đã chốt: phương án 1. Không cần recording miễn phí trên mạng cho lời thoại do game viết của Leo. Tải ambience/SFX tùy chọn nằm ngoài phase này; nếu bổ sung sau, từng asset phải có license tương thích và ghi nhận nguồn/attribution.
 
-## Runtime design
+## Thiết kế runtime
 
-### Audio asset and provenance
+### Audio asset và nguồn gốc
 
-Create one static recording of the exact Case #001 line in a clear, natural English voice. Store the encoded asset under the game's existing public-asset convention and reference it from validated case content rather than hardcoding a case-specific URL in React or Phaser. The final format/sample rate/bitrate will follow the existing build and browser support; prefer compressed audio suitable for web delivery while retaining a lossless source for regeneration if practical.
+Tạo một recording tĩnh với đúng lời thoại Case #001, giọng tiếng Anh rõ và tự nhiên. Lưu file đã encode theo quy ước public asset hiện có của game và tham chiếu từ case content đã được validate; không hardcode URL riêng của case trong React hoặc Phaser. Chọn format/sample rate/bitrate cuối cùng theo build và khả năng hỗ trợ trình duyệt hiện tại; ưu tiên audio nén phù hợp phân phối web, đồng thời giữ bản lossless để tái tạo nếu khả thi.
 
-Commit a small provenance record beside the authored asset containing source text, model and pinned revision, voice preset, generation date, output format, model/code license links, voice/data license review and any required attribution. Do not commit model weights, secrets, user recordings or generated files outside this case asset. If the chosen preset cannot be cleared for redistribution from its published licensing/provenance information, use another verified preset or record that the clip is prototype-only; do not silently treat Apache model weights as blanket voice clearance.
+Đặt một bản ghi provenance nhỏ cạnh asset, gồm văn bản nguồn, model và revision đã pin, preset voice, ngày tạo, format đầu ra, liên kết license của model/code, kết quả rà soát license voice/data và attribution bắt buộc (nếu có). Không commit model weights, secret, bản ghi của người dùng hoặc generated files ngoài asset của case này. Nếu không thể xác minh quyền phân phối của preset từ thông tin nguồn/license đã công bố, chọn preset khác hoặc ghi rõ clip chỉ dùng cho prototype; không mặc định license Apache của model bao trùm mọi quyền sử dụng voice.
 
-### Playback lifecycle
+### Vòng đời playback
 
-Wrap Howler in `apps/game-web/src/audio/` behind a small typed controller/hook usable by the React evidence surface. Required states: idle, loading, playing, paused, ended, and recoverable load/playback error. Controls: play, pause, replay from start; replay remains available without limits. Stop and unload on evidence close/unmount, and guard async completion callbacks against stale/closed views. Respect browser user-gesture audio policy. Provide a readable error and retry path if the asset fails; do not leave a blank modal. Playback telemetry is local to the session/profile policy and must not store audio bytes or listening transcript in a separate duplicate state.
+Đặt Howler sau một typed controller/hook nhỏ trong `apps/game-web/src/audio/` để evidence surface của React sử dụng. Các trạng thái cần có: idle, loading, playing, paused, ended và lỗi tải/phát có thể phục hồi. Các điều khiển: play, pause, replay từ đầu; replay không giới hạn. Dừng và unload khi đóng evidence/unmount; chặn callback bất đồng bộ cũ tác động lên view đã đóng. Tuân thủ yêu cầu user gesture của trình duyệt. Nếu asset lỗi, hiển thị thông báo dễ hiểu và cho retry; modal không được trống trắng. Telemetry playback tuân theo policy profile/session cục bộ, không lưu audio bytes hoặc chép transcript sang state thứ hai.
 
-### Evidence and listening task
+### Evidence và listening task
 
-Expose the phone recording through the existing case evidence interaction. The evidence view shows its authored name, timestamp, recording controls, and an accessible task after the player has had an opportunity to listen. Audio controls are real user-operated controls; do not autoplay on evidence discovery. Subtitle assistance modes:
+Đưa phone recording vào luồng tương tác evidence hiện có. Evidence view hiển thị tên, timestamp, điều khiển recording và task có accessibility sau khi người chơi có cơ hội nghe. Điều khiển audio phải do người chơi chủ động dùng; không autoplay khi vừa phát hiện evidence. Các mức hỗ trợ subtitle:
 
-- **Beginner / Level 1:** audio plus the authored English transcript (and Vietnamese translation only when the existing Beginner mode permits it).
-- **Learning / Level 2:** audio plus authored keyword hints, with transcript hidden until explicitly requested; opening a transcript is tracked and counts as assistance.
-- **Immersion / Level 3:** audio only; do not reveal transcript or translation through the listening surface.
+- **Beginner / Level 1:** audio kèm transcript tiếng Anh do game biên soạn (và bản dịch tiếng Việt chỉ khi Beginner mode hiện có cho phép).
+- **Learning / Level 2:** audio kèm keyword hint do game biên soạn; transcript ẩn cho tới khi người chơi chủ động mở; hành động mở transcript được theo dõi và tính là hỗ trợ.
+- **Immersion / Level 3:** chỉ audio; không tiết lộ transcript hoặc bản dịch trong listening surface.
 
-Mode must reuse the existing persisted translation-mode preference rather than introduce a competing global difficulty setting. Mode changes during playback must not reset or corrupt case progress. All content, question text, options, hints, expected answer and state effects are data-driven and validated under `packages/game-content`; UI strings belong in the existing localized UI content.
+Mode phải dùng lại tùy chọn translation mode hiện tại đã được lưu, không thêm một thiết lập độ khó toàn cục cạnh tranh. Đổi mode trong khi đang phát không được reset hay làm hỏng tiến độ case. Nội dung, câu hỏi, lựa chọn, hint, đáp án kỳ vọng và state effects đều lấy từ data, được validate trong `packages/game-content`; UI strings nằm trong nguồn UI content đã localized.
 
-For “Where was Leo?”, the options are the exact alternatives specified in the Case #001 contract: inside the meeting room, outside the meeting room, or at home. A correct answer applies authored case effects to discover the phone-recording evidence/fact and marks the corresponding listening task complete. The task must not disclose the right option as a hint. An incorrect choice receives the established gentle feedback (“This interpretation doesn't match the evidence.”) and a useful listening/keyword cue; it does not fail the case, erase progress, or set a punitive flag. Replay is always available before and after answering. Whether answer options remain changeable after a correct answer is deferred to implementation detail, but repeated submissions must be idempotent and must never duplicate evidence/facts.
+Với câu “Where was Leo?”, các lựa chọn phải đúng theo hợp đồng Case #001: inside the meeting room, outside the meeting room, at home. Đáp án đúng áp dụng case effects đã khai báo để ghi nhận phone-recording evidence/fact và đánh dấu listening task hoàn thành. Hint không được tiết lộ lựa chọn đúng. Đáp án sai nhận phản hồi nhẹ nhàng đã thống nhất (“This interpretation doesn't match the evidence.”) kèm gợi ý nghe lại/từ khóa hữu ích; không làm fail case, xóa tiến độ hoặc đặt punitive flag. Luôn cho nghe lại trước và sau khi trả lời. Có cho đổi lựa chọn sau khi đã đúng hay không là chi tiết triển khai; gửi lại đáp án đúng phải idempotent và không thêm trùng evidence/fact.
 
-### State boundaries
+### Ranh giới state
 
-- Authored prompt/options/hints/effects/audio reference live in `packages/game-content` and are checked by Zod plus cross-reference validation.
-- Correct task completion changes authoritative case state using the existing discriminated `Condition`/`Effect` and game-core transition APIs; no `eval`, React-owned copy of case facts, or new singleton.
-- Playback position/state stays ephemeral in the audio controller. The case store holds only the stable answer/effect outcome needed for persistence.
-- Any telemetry required by current learning profile is counters only (replay/subtitle/transcript/use/answer); do not add microphone capture or raw audio retention.
-- Howler callbacks, event-bus listeners and task subscriptions are cleaned up when the modal closes or owning component is destroyed.
+- Prompt/lựa chọn/hint/effects/audio reference được biên soạn trong `packages/game-content`, kiểm tra bằng Zod và cross-reference validation.
+- Trả lời đúng làm thay đổi case state có thẩm quyền qua discriminated `Condition`/`Effect` và API transition của game-core; không dùng `eval`, không nhân bản case facts trong React và không tạo singleton mới.
+- Vị trí/trạng thái playback chỉ tồn tại tạm trong audio controller. Case store chỉ giữ kết quả ổn định của đáp án/effect cần cho persistence.
+- Telemetry cần cho learning profile chỉ là counter (replay/subtitle/transcript/use/answer); không thu microphone hay giữ raw audio.
+- Callback của Howler, event-bus listener và task subscription phải được dọn khi modal đóng hoặc component chủ sở hữu bị destroy.
 
-## User experience and accessibility
+## Trải nghiệm và accessibility
 
-The recording remains evidence in an investigation surface, not a standalone quiz screen. Keep the user in control of when to play, pause, replay, reveal transcript (where mode permits), and submit an interpretation. Buttons have clear accessible names and visible focus; task choices work with keyboard; errors/status are announced without stealing focus. Avoid red except on investigation accents allowed by the visual rules. Do not depend on sound alone to communicate player-control state or errors.
+Recording vẫn là evidence trong giao diện điều tra, không trở thành một quiz screen tách rời. Người chơi chủ động chọn play, pause, replay, mở transcript (nếu mode cho phép) và gửi cách diễn giải. Nút có tên truy cập rõ ràng, focus nhìn thấy được; lựa chọn task dùng được bằng bàn phím; lỗi/trạng thái được thông báo mà không cướp focus. Chỉ dùng đỏ cho accent điều tra theo visual rules. Không dùng âm thanh làm cách duy nhất để báo trạng thái điều khiển hoặc lỗi.
 
-## Scope boundaries
+## Ranh giới phạm vi
 
-Included: Howler-backed playback wrapper, the Case #001 phone-recording asset and provenance, validated recording/listening content, subtitle/keyword support for the three existing modes, answer feedback/effects, focused unit/content/UI tests and an E2E listening path.
+Bao gồm: wrapper playback dùng Howler, asset phone recording Case #001 và provenance, nội dung recording/listening đã validate, hỗ trợ subtitle/keyword cho ba mode hiện có, feedback/effects của đáp án, unit/content/UI tests tập trung và E2E listening flow.
 
-Excluded: general-purpose soundscape/music pipeline, downloaded ambience/SFX, microphone/speech recognition, cloud TTS at runtime, voice cloning, dynamic TTS, broad audio settings/mixer, backend sync, new learning assessment/scoring, timeline/contradiction work from Phase 8, unrelated case-content expansion, or changing Case #001 truth.
+Không bao gồm: pipeline tổng quát cho soundscape/music, tải ambience/SFX, microphone/speech recognition, cloud TTS ở runtime, voice cloning, TTS động, audio mixer/settings tổng quát, backend sync, learning assessment/scoring mới, timeline/contradiction thuộc Phase 8, mở rộng nội dung case ngoài phạm vi hoặc thay đổi truth Case #001.
 
-## Failure behavior
+## Cách xử lý lỗi
 
-- Invalid/missing audio metadata/content fails content validation or shows a developer-readable case-content error through the existing loading/error boundary.
-- Network-free bundled asset load/play failure displays a recoverable message and retry; the rest of the evidence and case stay usable.
-- A stale audio callback after close/reopen has no effect on the next evidence session.
-- Invalid or duplicate answer/effect is rejected or idempotent by game-core; it cannot corrupt persisted state.
-- Playback is blocked until an explicit user gesture where required by the browser.
+- Audio metadata/content thiếu hoặc sai sẽ làm content validation thất bại hoặc hiển thị lỗi nội dung dễ hiểu cho developer qua loading/error boundary hiện có.
+- Asset đóng gói nội bộ bị lỗi tải/phát sẽ hiện thông báo có thể phục hồi và nút retry; phần còn lại của evidence/case vẫn dùng được.
+- Callback audio cũ sau khi đóng/mở lại không được ảnh hưởng evidence session mới.
+- Đáp án/effect sai hoặc lặp bị game-core từ chối hoặc xử lý idempotent; không thể làm hỏng persisted state.
+- Nếu trình duyệt yêu cầu user gesture thì chỉ bắt đầu playback sau thao tác rõ ràng của người chơi.
 
-## Verification and acceptance
+## Tiêu chí chấp nhận và kiểm chứng
 
-- Content schema rejects missing audio source/text/options/effects, unknown evidence/fact/objective references, invalid answer IDs and malformed hints; registered content validation/build catches cross-references.
-- Audio wrapper tests cover play/pause/replay, load/play errors, callbacks after dispose, and cleanup without depending on real sound output.
-- Core tests prove correct answer unlocks only the authored fact/evidence/objective effects; wrong answer does not mutate case truth/progress; repeated correct submission is idempotent.
-- UI tests prove each existing mode's transcript/hint visibility, explicit transcript reveal rules, accessible playback/task controls, gentle feedback, and replay after answer.
-- E2E proves discovery → manual play/replay → answer → case fact/state survives reload with no console errors and no second canvas.
-- Required repo gates: `npm run lint`, `npm run test`, `npm run build`, plus existing typecheck, format, E2E, memory and diff checks. Backend checks are unnecessary unless `apps/api` changes.
-- Audio QA: listen to the final generated asset and verify exact wording, pronunciation, intelligibility, duration/size and the 20:29 timestamp shown in the evidence surface.
+- Content schema từ chối audio source/text/options/effects bị thiếu, evidence/fact/objective reference không tồn tại, answer ID sai và hint không hợp lệ; registered content validation/build kiểm tra cross-reference.
+- Audio wrapper tests bao phủ play/pause/replay, lỗi tải/phát, callback sau dispose và cleanup mà không phụ thuộc phát ra âm thanh thật.
+- Core tests chứng minh đáp án đúng chỉ mở đúng fact/evidence/objective effects đã biên soạn; đáp án sai không đổi truth/progress của case; gửi lặp đáp án đúng idempotent.
+- UI tests xác minh transcript/hint hiển thị theo từng mode, quy tắc mở transcript, playback/task controls có accessibility, feedback nhẹ nhàng và vẫn replay được sau khi trả lời.
+- E2E chứng minh luồng phát hiện → chủ động play/replay → trả lời → case fact/state còn sau reload; không có console error hoặc canvas thứ hai.
+- Gate bắt buộc của repo: `npm run lint`, `npm run test`, `npm run build` cùng typecheck, format, E2E, memory và diff checks hiện có. Không cần kiểm tra backend trừ khi thay đổi `apps/api`.
+- Kiểm tra audio: nghe asset cuối và xác minh đúng lời thoại, phát âm, độ rõ, thời lượng/kích thước cùng timestamp 20:29 trên evidence view.
 
-## Open implementation choices
+## Lựa chọn triển khai còn mở
 
-- Select and pin one Kokoro English voice preset only after checking its published voice/data provenance. Prefer a clear American English delivery consistent with Case #001; the exact preset is an asset-production decision, not a runtime preference.
-- Choose compressed output encoding and final playback component details after measuring bundle/asset size and matching current project conventions. Keep these choices within the above contracts.
+- Chọn và pin một Kokoro English voice preset sau khi kiểm tra nguồn/license đã công bố. Ưu tiên giọng Mỹ rõ ràng, phù hợp Case #001; preset cụ thể là quyết định khi sản xuất asset, không phải tùy chọn runtime.
+- Chọn encoding nén và chi tiết playback component sau khi đo kích thước asset và đối chiếu quy ước project hiện tại. Các lựa chọn này phải nằm trong những hợp đồng nêu trên.
