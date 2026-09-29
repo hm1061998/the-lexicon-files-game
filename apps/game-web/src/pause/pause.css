@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(42, 37, 33, 0.6);
-  font-size: 14px;
+  font-size: var(--lexicon-text-min);
 }
 
 .pause-menu {
@@ -20,22 +20,12 @@
 }
 
 .pause-menu button {
-  font-size: 14px;
   padding: 8px 16px;
-  border: 1px solid var(--lexicon-border);
   border-radius: 4px;
-  background: var(--lexicon-beige);
-  color: var(--lexicon-ink);
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.pause-menu button:hover {
-  background: var(--lexicon-paper);
 }
 
 .pause-menu select,
 .pause-menu input,
 .pause-menu output {
-  font-size: 14px;
+  font-size: var(--lexicon-text-min);
 }

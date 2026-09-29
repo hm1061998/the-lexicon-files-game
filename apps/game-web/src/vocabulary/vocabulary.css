@@ -13,7 +13,7 @@
   font: inherit;
 }
 .vocabulary-word:focus-visible {
-  outline: 2px solid #343434;
+  outline: 2px solid var(--lexicon-ink);
   outline-offset: 2px;
 }
 .vocabulary-translation {
@@ -31,7 +31,8 @@
   z-index: 20;
   min-width: 14rem;
   padding: 0.75rem;
-  background: #fffdf7;
-  border: 1px solid #716d64;
-  box-shadow: 0 4px 16px #0002;
+  font-size: var(--lexicon-text-min);
+  background: var(--lexicon-paper);
+  border: 1px solid var(--lexicon-border);
+  box-shadow: 2px 2px 0 0 var(--lexicon-border);
 }
