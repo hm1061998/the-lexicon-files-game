@@ -1,6 +1,6 @@
 # Phase 9 — Hoàn tất vụ án
 
-**Trạng thái:** Bản spec để người dùng duyệt  
+**Trạng thái:** Đã được người dùng duyệt
 **Ngày:** 2026-09-29  
 **Lộ trình:** `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md` §28  
 **Tài liệu sản phẩm:** `docs/01_GAME_DESIGN_DOCUMENT.md` §21; `docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md` §34; `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` §§9, 13–14, 20; `docs/architecture/ARCHITECTURE.md`
