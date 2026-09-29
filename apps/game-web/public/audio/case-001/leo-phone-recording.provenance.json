@@ -1,0 +1,37 @@
+{
+  "asset": "leo-phone-recording.wav",
+  "generatedAt": "2026-09-29",
+  "dialogue": "Hi, I'm outside the meeting room. I'll call you back in a few minutes.",
+  "format": {
+    "container": "WAV",
+    "codec": "PCM signed 16-bit little-endian",
+    "sampleRateHz": 24000,
+    "channels": 1,
+    "frames": 100800,
+    "durationSeconds": 4.2,
+    "bytes": 201644,
+    "sha256": "f0105db5ffe99dee0deceb24b1aaa25fe543e47b7a078eb8ceadd615719bbd98"
+  },
+  "generator": {
+    "name": "Kokoro",
+    "repository": "https://github.com/hexgrad/kokoro",
+    "modelRepository": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987",
+    "modelFile": "kokoro-v1_0.pth",
+    "modelFileSha256": "496dba118d1a58f5f3db2efc88dbdc216e0483fc89fe6e47ee1f2c53f18ad1e4",
+    "voiceFile": "voices/af_heart.pt",
+    "voiceRevision": "8542409da2986c0ab5d41b3cf0411f7a58caab38",
+    "voiceFileSha256": "0ab5709b8ffab19bfd849cd11d98f75b60af7733253ad0d67b12382a102cb4ff",
+    "language": "American English",
+    "speed": 1.0,
+    "runtimeDependency": false
+  },
+  "license": {
+    "modelRepositoryLicense": "Apache-2.0",
+    "modelLicenseSource": "https://huggingface.co/hexgrad/Kokoro-82M/blob/f3ff3571791e39611d31c381e3a41a3af07b4987/LICENSE",
+    "voiceArtifactSource": "https://huggingface.co/hexgrad/Kokoro-82M/blob/8542409da2986c0ab5d41b3cf0411f7a58caab38/voices/af_heart.pt",
+    "voiceDocumentationSource": "https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md",
+    "voiceSpecificTerms": "The upstream repository labels the repository Apache-2.0, but does not identify separate voice-specific recording rights, performer consent, or a dataset-to-voice mapping in its voice documentation. The repository license is recorded as source metadata; it is not a separate assertion about those matters.",
+    "generatedOutputLicense": "No upstream license is asserted for this generated recording."
+  }
+}
