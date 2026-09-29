@@ -60,8 +60,19 @@ def frame_character(img: Image.Image, frame: int = 160) -> Image.Image:
     return img.resize((frame, frame), Image.LANCZOS)
 
 
+class ConfigError(Exception):
+    pass
+
+
 def process(entry: dict) -> Image.Image:
-    img = Image.open(ROOT / entry["src"])
+    for k in ("src", "dest"):
+        if k not in entry:
+            raise ConfigError(f"config entry missing '{k}': {entry}")
+    src = ROOT / entry["src"]
+    if not src.exists():
+        hint = " (assets/_incoming is kept local, not committed: place or generate the file first)" if "_incoming" in entry["src"] else ""
+        raise ConfigError(f"missing source '{entry['src']}' for dest '{entry['dest']}'{hint}")
+    img = Image.open(src)
     if entry.get("keyMagenta"):
         img = key_magenta(img)
     else:
@@ -86,9 +97,11 @@ def main() -> int:
     cfg = json.loads((Path(__file__).parent / "assets_config.json").read_text(encoding="utf-8"))
     print(f"{'file':60} {'size':>10} {'alpha bbox':>22} {'KB':>7}")
     for e in cfg:
-        if "src" not in e:
-            continue
-        img = process(e)
+        try:
+            img = process(e)
+        except ConfigError as err:
+            print(f"ERROR: {err}", file=sys.stderr)
+            return 1
         dest = OUT_ROOT / e["dest"]
         dest.parent.mkdir(parents=True, exist_ok=True)
         img.save(dest, optimize=True)

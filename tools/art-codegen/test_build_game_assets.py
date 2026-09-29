@@ -38,6 +38,31 @@ class KeyTests(unittest.TestCase):
     def test_alpha_bbox(self):
         self.assertEqual(b.alpha_bbox(b.key_magenta(synth())), (20, 20, 44, 44))
 
+    def test_missing_src_readable(self):
+        with self.assertRaises(b.ConfigError) as c:
+            b.process({"src": "assets/_incoming/nope.png", "dest": "x/y.png", "keyMagenta": True})
+        self.assertIn("nope.png", str(c.exception))
+        self.assertIn("x/y.png", str(c.exception))
+        with self.assertRaises(b.ConfigError):
+            b.process({"dest": "x.png"})
+
+    def test_frame_feet_line(self):
+        a = np.zeros((512, 512, 4), np.uint8)
+        a[100:451, 240:270] = (120, 80, 40, 255)  # feet at row 450 (~0.88)
+        out = np.asarray(b.frame_character(Image.fromarray(a), 160))
+        rows = np.where(out[..., 3].max(1) > 8)[0]
+        self.assertAlmostEqual(rows.max(), 0.88 * 160, delta=2)
+
+    def test_prop_bottom_anchored(self):
+        a = np.zeros((200, 200, 4), np.uint8)
+        a[..., :3] = (255, 0, 255)
+        a[..., 3] = 255
+        a[50:150, 60:120] = (120, 80, 40, 255)
+        k = b.key_magenta(Image.fromarray(a[..., :3]))
+        k = b.fit_width(k.crop(b.alpha_bbox(k)), 30)
+        rows = np.where(np.asarray(k)[..., 3].max(1) > 8)[0]
+        self.assertEqual(rows.max(), k.height - 1)
+
 
 if __name__ == "__main__":
     unittest.main()

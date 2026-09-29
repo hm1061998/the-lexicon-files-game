@@ -2,6 +2,8 @@
 
 Mỗi asset đưa vào `assets/` phải có một dòng. Không dùng asset nếu điều khoản của công cụ cấm dùng thương mại hoặc không rõ.
 
+> Lưu ý: `assets/_incoming/` được giữ cục bộ, không commit (ảnh nguồn AI, điều khoản đầu ra chưa được chủ dự án xác nhận). `tools/art-codegen/build_game_assets.py` cần thư mục này để tái tạo `apps/game-web/public/assets`.
+
 | File đích | Công cụ + phiên bản/model | Ngày | Prompt rút gọn | Điều khoản đầu ra (link/ghi chú) |
 | --------- | ------------------------- | ---- | -------------- | -------------------------------- |
 | `assets/textures/paper_grain_cream_tile_1024.png` | Script Python procedural (numpy + Pillow, noise FFT tuần hoàn), Claude Opus 5.5 viết — không dùng model sinh ảnh | 2026-09-29 | Paper grain tileable 1024², nền #D8C5A4, sợi giấy + vết ố rất nhạt | Tự sinh bằng code, không phụ thuộc điều khoản bên thứ ba |
