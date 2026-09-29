@@ -1,8 +1,8 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T14:04:50+07:00
+updated_at: 2026-09-29T14:13:33+07:00
 phase: phase-9
-status: proposed
+status: approved
 result_commit: c676982
 active_spec: docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md
 active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 
 ## Current Phase
 
-- Phase 9 — Case Completion (roadmap §28). Người dùng đã duyệt spec; plan đã tạo/commit và đang chờ review cùng lựa chọn cách thực thi. Chưa có code Phase 9.
+- Phase 9 — Case Completion (roadmap §28). Người dùng đã duyệt spec/plan, chọn Native và yêu cầu chỉ push tài liệu; implementation chưa được bắt đầu.
 
 ## Active Goal
 
@@ -22,7 +22,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 
 ## Current Status
 
-- `dev` có spec `131122c` và plan `c676982`; `origin/dev` đang ở `3c67c11`. Phase 8 đã hoàn tất/push; Phase 9 artifacts đang ở local, chưa push.
+- `dev` và `origin/dev` đồng bộ tại `ecbccf9`. Spec `131122c`, plan `c676982` và handoff memory Phase 9 đã push; implementation chưa bắt đầu theo yêu cầu người dùng.
 - Phase 8: timeline/contradiction, Archive, save V3 migration, commerce provider trung lập mặc định `free`, notebook và E2E. Hoàn tất/push tại `3c67c11`.
 - Phase 7 hoàn tất và push; user nghe audio và xác nhận test OK. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
 - Phase 6 và Phase 5 hoàn tất; xem verification ledger tương ứng trong `docs/ai/`.
@@ -39,7 +39,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 ## In Progress
 
 - Phase 9 spec tại `docs/superpowers/specs/2026-09-29-phase-9-case-completion-design.md` đã được người dùng duyệt.
-- Plan tại `docs/superpowers/plans/2026-09-29-phase-9-case-completion.md`, commit `c676982`; chờ người dùng review và chọn cách thực thi trước khi code.
+- Plan tại `docs/superpowers/plans/2026-09-29-phase-9-case-completion.md`, commit `c676982`; người dùng đã duyệt và chọn Native. Chưa thực thi vì yêu cầu mới nhất chỉ cho push.
 
 ## Active Decisions
 
@@ -56,12 +56,11 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 
 ## Blockers
 
-- Chờ người dùng review plan Phase 9 và chọn cách thực thi; chưa bắt đầu code.
+- Chưa bắt đầu implementation; cần người dùng yêu cầu tiếp tục sau lần push tài liệu này.
 
 ## Next Actions
 
-- Người dùng review `docs/superpowers/plans/2026-09-29-phase-9-case-completion.md` và chọn native hoặc subagent-driven.
-- Chỉ sau khi plan được duyệt mới dùng skill thực thi tương ứng.
+- Đợi yêu cầu của người dùng trước khi bắt đầu thực thi Native.
 - Chỉ làm Phase 9; không tiến sang phase khác nếu chưa được yêu cầu.
 - Khi bàn giao, chạy các gate theo `AGENTS.md`, cập nhật verification và memory.
 
@@ -76,11 +75,11 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-9-case-completion.md
 ## Latest Handoff
 
 - Phase 8 đã push và `dev` đồng bộ `origin/dev` tại `3c67c11`.
-- Phase 9 spec đã được duyệt; plan commit local `c676982` và đang chờ user review/chọn execution method. Spec/plan chưa push; chưa có code.
+- Phase 9 spec/plan và memory đã push lên `origin/dev` tại `ecbccf9`; plan được duyệt, Native đã chọn, nhưng chưa có code theo yêu cầu hiện tại.
 
 ## Required Reading
 
 - `AGENTS.md`, `apps/game-web/AGENTS.md`, `docs/ai/README.md`.
-- Active spec/plan theo metadata ở đầu file; plan Phase 9 chờ review.
+- Active spec/plan theo metadata ở đầu file; cả hai đã được duyệt, implementation đang chờ user yêu cầu.
 - Docs/01–05, `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`, `docs/architecture/ARCHITECTURE.md` theo phạm vi phase.
 - Phase 8 spec/plan cho save V3, reducer, content validation và ranh giới commerce.
