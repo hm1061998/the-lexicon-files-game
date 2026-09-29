@@ -19,4 +19,21 @@ describe('loadLegacySaveContract', () => {
       ],
     });
   });
+
+  it('provides the historical Case #001 V3 contract with Phase 8 objectives only', () => {
+    const contract = loadLegacySaveContract('case-001', 3);
+    expect(contract?.schemaVersion).toBe(3);
+    expect(contract?.objectiveIds).toEqual([
+      'find_what_happened',
+      'talk_to_everyone',
+      'check_security_records',
+      'compare_david_statement',
+    ]);
+    expect(contract?.timelineEventIds).toContain('david_entry_20_32');
+    expect(contract?.contradictionIds).toEqual(['david_statement_vs_access_log']);
+  });
+
+  it('returns null for an unknown version', () => {
+    expect(loadLegacySaveContract('case-001', 4)).toBeNull();
+  });
 });

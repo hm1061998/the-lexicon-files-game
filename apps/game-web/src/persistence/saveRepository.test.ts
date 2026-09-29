@@ -82,7 +82,7 @@ describe('saveRepository', () => {
 
     expect(record).toBeDefined();
     expect(record).toMatchObject({
-      schemaVersion: 3,
+      schemaVersion: 4,
       caseId: definition.id,
       activeSceneId: 'archive',
     });
@@ -101,14 +101,14 @@ describe('saveRepository', () => {
 
     expect(record).toBeDefined();
     expect(record?.caseId).toBe('case-001');
-    expect(record?.schemaVersion).toBe(3);
+    expect(record?.schemaVersion).toBe(4);
   });
 
   it('backs up malformed state before requiring confirmation', async () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw: SaveRecord = {
-      schemaVersion: 3,
+      schemaVersion: 4,
       caseId: definition.id,
       activeSceneId: 'main_office',
       state: { ...createCaseState(definition), evidenceIds: ['not-defined'] } as GameState,
@@ -129,7 +129,7 @@ describe('saveRepository', () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 3,
+      schemaVersion: 4,
       caseId: definition.id,
       activeSceneId: 'main_office',
       state: corrupt(createCaseState(definition)),
@@ -149,7 +149,7 @@ describe('saveRepository', () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 3,
+      schemaVersion: 4,
       caseId: 'case-999',
       activeSceneId: 'main_office',
       state: createCaseState(definition),
@@ -165,11 +165,11 @@ describe('saveRepository', () => {
     expect(database.saves.get(definition.id)).toBe(raw);
   });
 
-  it('backs up a V3 record with an unknown active scene without overwriting it', async () => {
+  it('backs up a V4 record with an unknown active scene without overwriting it', async () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 3,
+      schemaVersion: 4,
       caseId: definition.id,
       activeSceneId: 'missing_scene',
       state: createCaseState(definition),
@@ -185,7 +185,7 @@ describe('saveRepository', () => {
     expect(database.saves.get(definition.id)).toBe(raw);
   });
 
-  it('backs up a V3 record when the saved scene no longer has its default spawn', async () => {
+  it('backs up a V4 record when the saved scene no longer has its default spawn', async () => {
     const definition = loadCaseDefinition('case-001');
     const definitionWithoutArchiveDefault = {
       ...definition,
@@ -197,7 +197,7 @@ describe('saveRepository', () => {
     };
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 3,
+      schemaVersion: 4,
       caseId: definition.id,
       activeSceneId: 'archive',
       state: createCaseState(definition),
@@ -217,7 +217,7 @@ describe('saveRepository', () => {
     const definition = loadCaseDefinition('case-001');
     const database = new MemorySaveDatabase();
     const raw = {
-      schemaVersion: 3,
+      schemaVersion: 4,
       caseId: definition.id,
       activeSceneId: 'main_office',
       state: { ...createCaseState(definition), notebookOpen: true },
@@ -260,7 +260,7 @@ describe('saveRepository', () => {
     const fresh = await repository.createFreshSaveAfterConfirmation(definition.id, definition);
     expect(fresh).toEqual(createCaseState(definition));
     expect(database.saves.get(definition.id)).toMatchObject({
-      schemaVersion: 3,
+      schemaVersion: 4,
       state: fresh,
       activeSceneId: 'main_office',
     });

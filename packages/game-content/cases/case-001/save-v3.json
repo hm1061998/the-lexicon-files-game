@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 3,
+  "caseId": "case-001",
+  "caseTitle": "The Missing Report",
+  "evidenceTotal": 5,
+  "objectiveIds": [
+    "find_what_happened",
+    "talk_to_everyone",
+    "check_security_records",
+    "compare_david_statement"
+  ],
+  "evidenceIds": ["leo_phone_recording", "meeting_minutes", "security_access_log"],
+  "factIds": [
+    "leo_outside_at_2029",
+    "meeting_started",
+    "david_statement_no_entry_after_20_00",
+    "david_collected_folder",
+    "david_took_report",
+    "anna_exit_20_18",
+    "leo_exit_20_27",
+    "david_entry_20_32",
+    "david_exit_20_36",
+    "leo_entry_20_40",
+    "meeting_ended_20_45"
+  ],
+  "timelineEventIds": [
+    "meeting_started",
+    "anna_exit_20_18",
+    "leo_exit_20_27",
+    "leo_outside_at_2029",
+    "david_entry_20_32",
+    "david_exit_20_36",
+    "leo_entry_20_40",
+    "meeting_ended_20_45",
+    "report_missing_21_05"
+  ],
+  "contradictionIds": ["david_statement_vs_access_log"]
+}

@@ -1,10 +1,16 @@
 import { openDB, type DBSchema } from 'idb';
 import type { CaseDefinition, GameState } from '@lexicon/shared-types';
 import { createCaseState } from '@lexicon/game-core';
-import { migrateVersion1Save, migrateVersion2Save, parseCurrentSaveRecord } from './saveMigration';
+import {
+  CURRENT_SAVE_SCHEMA_VERSION,
+  migrateVersion1Save,
+  migrateVersion2Save,
+  migrateVersion3Save,
+  parseCurrentSaveRecord,
+} from './saveMigration';
 
 export type SaveRecord = {
-  schemaVersion: 3;
+  schemaVersion: 4;
   caseId: string;
   activeSceneId: string;
   state: GameState;
@@ -95,7 +101,7 @@ export function createSaveRepository(
           typeof raw === 'object' &&
           raw !== null &&
           'schemaVersion' in raw &&
-          (raw.schemaVersion === 1 || raw.schemaVersion === 2)
+          (raw.schemaVersion === 1 || raw.schemaVersion === 2 || raw.schemaVersion === 3)
             ? raw.schemaVersion
             : null;
         const record =
@@ -103,7 +109,9 @@ export function createSaveRepository(
             ? migrateVersion1Save(raw, definition)
             : version === 2
               ? migrateVersion2Save(raw, definition)
-              : parseCurrentSaveRecord(raw, caseId, definition);
+              : version === 3
+                ? migrateVersion3Save(raw, definition)
+                : parseCurrentSaveRecord(raw, caseId, definition);
         const legacy = version !== null;
         if (legacy) {
           try {
@@ -133,7 +141,7 @@ export function createSaveRepository(
     async saveGameState(state, activeSceneId) {
       const database = await openDatabase();
       await database.putSave({
-        schemaVersion: 3,
+        schemaVersion: CURRENT_SAVE_SCHEMA_VERSION,
         caseId: state.caseId,
         activeSceneId,
         state,
