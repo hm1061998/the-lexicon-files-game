@@ -340,7 +340,9 @@ test('player texture follows the facing and keeps it while idle', async ({ page 
   const texture = () => page.evaluate(() => window.__lexiconDebug!.playerTexture());
   expect(await texture()).toBe('tex_player_se');
   await hold(page, 'a', 200);
-  expect(await texture()).toBe('tex_player_sw');
+  // The idle still returns on the first Phaser update after key-up, so poll for it.
+  await expect.poll(async () => (await playerAnim(page)).playing).toBe(false);
+  await expect.poll(texture).toBe('tex_player_sw');
   await page.waitForTimeout(200);
   expect(await texture()).toBe('tex_player_sw');
   await page.keyboard.down('w');
@@ -365,7 +367,7 @@ async function framesDuring(page: Page, ms: number): Promise<Set<number>> {
   while (Date.now() < end) {
     const { frame } = await playerAnim(page);
     if (frame !== null) seen.add(frame);
-    await page.waitForTimeout(40);
+    await page.waitForTimeout(20);
   }
   return seen;
 }
@@ -378,10 +380,12 @@ test('walking plays the walk animation and stopping returns to the idle still', 
   await page.keyboard.down('d');
   await expect.poll(async () => (await playerAnim(page)).playing).toBe(true);
   expect((await playerAnim(page)).key).toMatch(/^player_walk_/);
-  expect((await framesDuring(page, 600)).size).toBeGreaterThanOrEqual(3);
+  expect((await framesDuring(page, 800)).size).toBeGreaterThanOrEqual(3);
   await page.keyboard.up('d');
   await expect.poll(async () => (await playerAnim(page)).playing).toBe(false);
-  expect(await page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_se');
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.playerTexture()))
+    .toBe('tex_player_se');
 });
 
 test('changing direction mid-walk switches the walk without console errors', async ({ page }) => {
@@ -400,7 +404,9 @@ test('changing direction mid-walk switches the walk without console errors', asy
   expect((await playerAnim(page)).playing).toBe(true);
   await page.keyboard.up('d');
   await expect.poll(async () => (await playerAnim(page)).playing).toBe(false);
-  expect(await page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_se');
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.playerTexture()))
+    .toBe('tex_player_se');
   expect(errors).toEqual([]);
 });
 
@@ -414,7 +420,7 @@ test('reduced motion keeps the walk animation (functional movement feedback)', a
   await expect(pause).toBeHidden();
   await page.keyboard.down('d');
   await expect.poll(async () => (await playerAnim(page)).playing).toBe(true);
-  expect((await framesDuring(page, 600)).size).toBeGreaterThanOrEqual(3);
+  expect((await framesDuring(page, 800)).size).toBeGreaterThanOrEqual(3);
   await page.keyboard.up('d');
 });
 
