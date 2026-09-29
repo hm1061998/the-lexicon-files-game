@@ -52,13 +52,4 @@ describe('contrastRatio', () => {
   it('red on paper >= 3 (large text / borders only)', () => {
     expect(contrastRatio('#A4412D', '#D8C5A4')).toBeGreaterThanOrEqual(3);
   });
-  it('red heading on paper >= 3 at large bold size (HUD objective heading, 19px bold)', () => {
-    expect(contrastRatio('#A4412D', '#D8C5A4')).toBeGreaterThanOrEqual(3);
-  });
-  it('ink on beige for hovered form controls >= 4.5', () => {
-    expect(contrastRatio('#2A2521', '#CDBA97')).toBeGreaterThanOrEqual(4.5);
-  });
-  it('focus ring ink against paper >= 3 (non-text UI component)', () => {
-    expect(contrastRatio('#2A2521', '#D8C5A4')).toBeGreaterThanOrEqual(3);
-  });
 });

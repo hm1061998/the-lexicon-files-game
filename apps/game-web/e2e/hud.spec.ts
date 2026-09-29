@@ -18,6 +18,15 @@ async function openWorld(page: Page): Promise<void> {
   await page.waitForFunction(
     () => (window as unknown as { __lexiconDebug?: DebugApi }).__lexiconDebug !== undefined,
   );
+  await expect(page.locator('.hud-key-hints')).toBeVisible();
+}
+
+/** Retry Esc until the pause dialog shows; the key can be lost before shortcuts are wired. */
+async function openPause(page: Page): Promise<void> {
+  await expect(async () => {
+    if ((await page.getByRole('dialog').count()) === 0) await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 10000 });
 }
 
 function debug(page: Page) {
@@ -86,7 +95,7 @@ test('canvas is not remounted by HUD updates', async ({ page }) => {
 test('Esc pauses and blocks movement', async ({ page }) => {
   await openWorld(page);
   const d = debug(page);
-  await page.keyboard.press('Escape');
+  await openPause(page);
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   await expect(page.getByRole('button', { name: 'Tiếp tục' })).toBeFocused();
@@ -281,7 +290,7 @@ test('paper panels use the classic serif file styling', async ({ page }) => {
 
 test('panel entrance animates unless reduced motion is on', async ({ page }) => {
   await openWorld(page);
-  await page.keyboard.press('Escape');
+  await openPause(page);
   const pause = page.getByRole('dialog');
   await expect(pause).toBeVisible();
   const panel = page.locator('.pause-menu');
@@ -369,6 +378,7 @@ test('HUD chrome follows the concept: red objective heading, clip, case badge, 4
   await openWorld(page);
   const heading = page.locator('.hud-objective-heading');
   expect(await heading.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(164, 65, 45)');
+  expect(await heading.evaluate((el) => getComputedStyle(el).textTransform)).toBe('uppercase');
   await expect(page.locator('.hud-objective-panel .hud-objective-clip')).toHaveCount(1);
   await expect(page.locator('.hud-objective-marker')).toBeVisible();
 
@@ -391,9 +401,8 @@ test('pause menu form controls are custom paper controls with a visible focus ri
   page,
 }) => {
   await openWorld(page);
-  await page.keyboard.press('Escape');
+  await openPause(page);
   const dialog = page.getByRole('dialog');
-  await expect(dialog).toBeVisible();
   for (const selector of ['select', 'input[type=range]', 'input[type=checkbox]']) {
     const styles = await dialog
       .locator(selector)
@@ -420,4 +429,31 @@ test('pause menu form controls are custom paper controls with a visible focus ri
   });
   expect(outline.style).not.toBe('none');
   expect(outline.width).toBeGreaterThanOrEqual(2);
+});
+
+test('notebook buttons keep a >=3px focus ring and hover skips disabled buttons', async ({
+  page,
+}) => {
+  await openWorld(page);
+  await page.keyboard.press('j');
+  const close = page.getByRole('button', { name: 'Đóng' });
+  await expect(close).toBeVisible();
+  await close.focus();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+  const outline = await page.locator(':focus').evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return { w: parseFloat(cs.outlineWidth), o: parseFloat(cs.outlineOffset) };
+  });
+  expect(outline.w).toBeGreaterThanOrEqual(3);
+  expect(outline.o).toBeGreaterThanOrEqual(3);
+});
+
+test('key bar wraps instead of overflowing at 760px', async ({ page }) => {
+  await page.setViewportSize({ width: 760, height: 720 });
+  await openWorld(page);
+  const overflow = await page
+    .locator('.hud-key-hints')
+    .evaluate((el) => el.scrollWidth > el.clientWidth);
+  expect(overflow).toBe(false);
 });

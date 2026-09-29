@@ -32,10 +32,6 @@
   cursor: pointer;
 }
 
-.paper-panel button:hover {
-  background: var(--lexicon-paper);
-}
-
 @keyframes lexicon-panel-in {
   from {
     opacity: 0;

@@ -28,7 +28,7 @@
 }
 
 .paper-panel select:hover,
-.paper-panel button:hover {
+.paper-panel button:hover:not(:disabled) {
   background-color: var(--lexicon-beige);
 }
 
@@ -83,7 +83,7 @@
   -webkit-appearance: none;
   width: 16px;
   height: 22px;
-  margin-top: -9px;
+  margin-top: -8px;
   border: 1px solid var(--lexicon-border);
   border-radius: 2px;
   background: var(--lexicon-paper);
@@ -101,8 +101,54 @@
 
 .paper-panel select:focus-visible,
 .paper-panel input[type='range']:focus-visible,
-.paper-panel input[type='checkbox']:focus-visible,
-.paper-panel button:focus-visible {
+.paper-panel input[type='checkbox']:focus-visible {
   outline: 2px solid var(--lexicon-ink);
   outline-offset: 2px;
+}
+
+/* High-contrast: system colors; chevron/tick become masks so they always show. */
+@media (forced-colors: active) {
+  .paper-panel select,
+  .paper-panel input[type='checkbox'],
+  .paper-panel input[type='range']::-webkit-slider-runnable-track,
+  .paper-panel input[type='range']::-webkit-slider-thumb {
+    border-color: ButtonText;
+    background-color: Canvas;
+    forced-color-adjust: none;
+  }
+
+  .paper-panel select {
+    color: ButtonText;
+    background-image:
+      linear-gradient(45deg, transparent 50%, ButtonText 50%),
+      linear-gradient(-45deg, transparent 50%, ButtonText 50%);
+    background-size: 6px 6px;
+    background-position:
+      right 14px center,
+      right 8px center;
+  }
+
+  .paper-panel input[type='checkbox']:checked {
+    background-image: none;
+    background-color: Highlight;
+    border-color: ButtonText;
+  }
+
+  .paper-panel input[type='checkbox']:checked::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: HighlightText;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.5 3.5L13 4' fill='none' stroke='black' stroke-width='2.2'/%3E%3C/svg%3E")
+      center / 16px 16px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.5 3.5L13 4' fill='none' stroke='black' stroke-width='2.2'/%3E%3C/svg%3E")
+      center / 16px 16px no-repeat;
+  }
+
+  .paper-panel select:focus-visible,
+  .paper-panel input[type='range']:focus-visible,
+  .paper-panel input[type='checkbox']:focus-visible {
+    outline-color: Highlight;
+  }
 }
