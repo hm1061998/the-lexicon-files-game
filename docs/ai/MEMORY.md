@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T12:27:14+07:00
+updated_at: 2026-09-29T12:33:16+07:00
 phase: phase-8
 status: in_progress
-result_commit: 654c6c9
+result_commit: 1547517
 active_spec: docs/superpowers/specs/2026-09-29-phase-8-timeline-contradiction-design.md
 active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 ---
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 ## Current Phase
 
-- Phase 8 — Timeline + Contradiction (roadmap §27): spec và plan tiếng Việt đã được user duyệt, docs push qua `b7823c6`; triển khai theo plan. Task 1 complete tại `3411ee9`, Task 2 tại `648e958`, Task 3 tại `654c6c9`; tiếp tục Task 4.
+- Phase 8 — Timeline + Contradiction (roadmap §27): spec và plan tiếng Việt đã được user duyệt, docs push qua `b7823c6`; triển khai theo plan. Task 1 complete tại `3411ee9`, Task 2 tại `648e958`, Task 3 tại `654c6c9`, Task 4 tại `1547517`; tiếp tục Task 5.
 
 ## Active Goal
 
@@ -22,7 +22,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 ## Current Status
 
-- Branch `dev` has local, unpushed Phase 8 implementation commits through Task 3 (`3411ee9`, `648e958`, `654c6c9`) and their memory handoffs. Phase 8 spec/plan remain approved and on origin through `b7823c6` (later memory approval record through `8f55078`).
+- Branch `dev` has local, unpushed Phase 8 implementation commits through Task 4 (`3411ee9`, `648e958`, `654c6c9`, `1547517`) and their memory handoffs. Phase 8 spec/plan remain approved and on origin through `b7823c6` (later memory approval record through `8f55078`).
 - Phase 7 complete: functionality, user audio audition, and automated verification passed. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
 - Phase 6 remains complete and pushed to `origin/dev` at `520ee4d`; Phase 5 remains complete through `f4ac2be`.
 
@@ -41,7 +41,8 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 - Phase 8 Task 1 complete: shared timeline/contradiction/spawn/transition types, strict content schemas and cross-reference checks, Case #001 events/facts/evidence/objectives, Archive placeholder/door/terminal, localized UI strings. Commit `3411ee9`; 82/82 `game-content` tests pass.
 - Phase 8 Task 2 complete: pure timeline placement and contradiction submission transitions, typed validation errors, idempotency and authored flag/objective completion. Commit `648e958`; 37/37 `game-core` tests pass.
-- Phase 8 Task 3 complete: save schema V3, V1/V2 legacy contracts and migrations, scene-ID validation/backup recovery, active-scene store/autosave, typed scene-transition bus and WorldScene restarts at named spawns. IndexedDB database version remains 1. Commit `654c6c9`; Task 3 next.
+- Phase 8 Task 3 complete: save schema V3, V1/V2 legacy contracts and migrations, scene-ID validation/backup recovery, active-scene store/autosave, typed scene-transition bus and WorldScene restarts at named spawns. IndexedDB database version remains 1. Commit `654c6c9`.
+- Phase 8 Task 4 complete: versioned `CommerceConfigProvider`, static `free` default, injected `commercial` snapshot, strict boundary validation and `free` fallback on malformed/unsupported/error responses. Commerce data stays out of case state and saves; no gameplay gate is introduced. Commit `1547517`; Task 5 next.
 
 ## Active Decisions
 
@@ -62,10 +63,11 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 ## Next Actions
 
-- Continue approved plan at Task 4: add the neutral commerce configuration provider.
+- Continue approved plan at Task 5: add timeline and contradiction interactions to the notebook UI.
 
 ## Verification
 
+- Phase 8 Task 4 complete: `npx nx test @lexicon/game-web --skip-nx-cache` PASS (28 files, 168 tests); `npm run typecheck` PASS. Default/free, injected/commercial, invalid-mode/version/value and provider-error fallback verified, including preserved loaded evidence/flags. Task 4 commit `1547517`, not pushed.
 - Phase 8 Task 3 complete: `npx nx test @lexicon/game-web --skip-nx-cache` PASS (27 files, 159 tests); `npx nx test @lexicon/game-content --skip-nx-cache` PASS (11 files, 83 tests); `npm run typecheck` PASS; `git diff --check` PASS. Historical V2 contract reconciled from Git before migration tests; Task 3 local commit `654c6c9`, not pushed.
 - Phase 8 Task 2 complete: `npx nx test @lexicon/game-core --skip-nx-cache` PASS (6 files, 37 tests); targeted Prettier and `git diff --check` PASS. RED confirmed absent reducer APIs; a failure exposed and fixed contradiction availability validation order. Task 2 local commit `648e958`, not pushed.
 - Phase 8 Task 1 complete: `npx nx test @lexicon/game-content --skip-nx-cache` PASS (10 files, 82 tests); `git diff --check` and targeted Prettier PASS. RED was observed for missing schema/content and missing NPC cross-reference validation. Baseline `npm run test` PASS (7 targets); npm had to be added from `C:\nvm4w\nodejs` to PATH for Nx child scripts. Task 1 local commit `3411ee9`, not pushed.
@@ -76,7 +78,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 ## Latest Handoff
 
-- Tasks 1–3 are committed locally at `3411ee9`, `648e958`, and `654c6c9`; current gates include `game-content` 83/83, `game-core` 37/37, `game-web` 159/159, and typecheck PASS. Continue with Task 4; no code push has been requested.
+- Tasks 1–4 are committed locally at `3411ee9`, `648e958`, `654c6c9`, and `1547517`; current gates include `game-content` 83/83, `game-core` 37/37, `game-web` 168/168, and typecheck PASS. Continue with Task 5; no code push has been requested.
 - Quy định dự án mới: mọi spec và implementation plan phải viết bằng tiếng Việt; đã ghi vào `AGENTS.md` tại `3d6752d`.
 - User approved the Phase 8 spec and requested plan creation plus push to `dev`; spec, plan, and synchronized memory are on `origin/dev` through `38f0a7d`. Plan review and execution method remain pending; no code yet.
 - Phase 7 is complete and pushed to `origin/dev` through `44e06ff`; user approved the audio audition. Verification ledger: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`. Audio is 4.2 s, 201,644 bytes, mono 24 kHz PCM16; model/voice revisions and checksums are in `.provenance.json`.
