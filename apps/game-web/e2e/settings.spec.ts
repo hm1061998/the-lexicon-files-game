@@ -109,6 +109,9 @@ test('settings and progress survive reload', async ({ page }) => {
   await expect(slider).toHaveValue('40');
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => window.__lexiconDebug!.player())).toEqual(before);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await openPause(page);
   await pause.getByRole('button', { name: 'Tiếp tục' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
 

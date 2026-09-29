@@ -130,7 +130,9 @@ describe('connectAutosave', () => {
 describe('connectAutosave triggers', () => {
   function setup() {
     const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });
-    const saveGameState = vi.fn(async (_state: GameState, _sceneId: string) => {});
+    const saveGameState = vi.fn<(state: GameState, sceneId: string) => Promise<void>>(
+      async () => {},
+    );
     const disconnect = connectAutosave(store, saveGameState, vi.fn());
     return { store, saveGameState, disconnect };
   }

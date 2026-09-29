@@ -26,13 +26,29 @@ export function resolveInputVector(keys: MovementKeys, typing: boolean): { x: nu
   return { x: x / length, y: y / length };
 }
 
+const TEXT_INPUT_TYPES = new Set([
+  '',
+  'text',
+  'search',
+  'email',
+  'url',
+  'tel',
+  'password',
+  'number',
+]);
+
 export function isTypingTarget(el: Element | null): boolean {
   if (el === null) {
     return false;
   }
 
-  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+  if (el.tagName === 'TEXTAREA') {
     return true;
+  }
+
+  if (el.tagName === 'INPUT') {
+    const type = ((el as HTMLInputElement).type ?? '').toLowerCase();
+    return TEXT_INPUT_TYPES.has(type);
   }
 
   return (el as unknown as HTMLElement).isContentEditable === true;

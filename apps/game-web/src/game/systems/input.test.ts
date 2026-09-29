@@ -47,9 +47,19 @@ describe('isTypingTarget', () => {
     expect(isTypingTarget(null)).toBe(false);
   });
 
-  it('returns true for INPUT element', () => {
-    expect(isTypingTarget({ tagName: 'INPUT' } as unknown as Element)).toBe(true);
-  });
+  it.each(['text', 'search', 'email', 'url', 'tel', 'password', 'number', '', undefined])(
+    'returns true for INPUT type %s',
+    (type) => {
+      expect(isTypingTarget({ tagName: 'INPUT', type } as unknown as Element)).toBe(true);
+    },
+  );
+
+  it.each(['range', 'checkbox', 'radio', 'button', 'submit'])(
+    'returns false for INPUT type %s',
+    (type) => {
+      expect(isTypingTarget({ tagName: 'INPUT', type } as unknown as Element)).toBe(false);
+    },
+  );
 
   it('returns true for TEXTAREA element', () => {
     expect(isTypingTarget({ tagName: 'TEXTAREA' } as unknown as Element)).toBe(true);
