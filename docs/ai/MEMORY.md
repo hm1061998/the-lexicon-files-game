@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T07:00:35+07:00
+updated_at: 2026-09-29T07:15:52+07:00
 phase: phase-7
 status: proposed
-result_commit: ccae148
+result_commit: 018e7f3
 active_spec: docs/superpowers/specs/2026-09-29-phase-7-audio-listening-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-09-29-phase-7-audio-listening.md
 ---
 
 ## Metadata
@@ -14,15 +14,15 @@ active_plan: none
 
 ## Current Phase
 
-- Phase 7 — Audio / Listening (roadmap §26) đang chờ review spec tiếng Việt. Người dùng đã đồng ý dùng recording tạo tĩnh bằng Kokoro, execution inline và yêu cầu push implementation lên dev khi hoàn tất. Spec và plan phải viết bằng tiếng Việt.
+- Phase 7 — Audio / Listening (roadmap §26) đang chờ review plan tiếng Việt. Người dùng đã đồng ý dùng recording tĩnh Kokoro, chọn hotspot tạm ở Main Office, execution inline và yêu cầu push implementation lên dev khi hoàn tất. Spec và plan phải viết bằng tiếng Việt.
 
 ## Active Goal
 
-- Chờ người dùng review/duyệt Phase 7 spec trước khi lập implementation plan. Chưa sửa product code, chưa tạo asset audio.
+- Chờ người dùng review/duyệt Phase 7 implementation plan trước khi bắt đầu code. Chưa sửa product code, chưa tạo asset audio.
 
 ## Current Status
 
-- Working branch `dev` có ba commit local từ lúc remote ở `9177cfa`, gồm spec tiếng Việt mới nhất `ccae148`; `origin/dev` vẫn ở `9177cfa`. Chưa push khi spec còn chờ user review.
+- Working branch `dev` có sáu commit local từ lúc remote ở `9177cfa`, mới nhất là plan `018e7f3`; `origin/dev` vẫn ở `9177cfa`. Chưa push khi plan còn chờ user review.
 - Phase 6 remains complete and pushed to `origin/dev` at `520ee4d`; the memory reconciliation commit `9177cfa` is on both local and remote dev.
 
 ## Completed
@@ -35,7 +35,7 @@ active_plan: none
 
 ## In Progress
 
-- Phase 7 design spec đã chuyển hoàn toàn sang tiếng Việt, self-review placeholder/consistency/scope và commit local. Đang chờ user review; chưa có implementation plan.
+- Phase 7 spec tiếng Việt đã được duyệt khi người dùng yêu cầu viết plan; plan tiếng Việt đã viết, self-review và commit local. Đang chờ plan review; chưa bắt đầu implementation.
 
 ## Active Decisions
 
@@ -46,29 +46,29 @@ active_plan: none
 - Phase 5 ba NPC/Main Office/ph_npc prototype đã duyệt; conditional David chỉ fixture trước Phase 8. Không làm detector/accusation trong Phase 6.
 - Meeting Minutes vẫn evidence collectible mẫu duy nhất, evidenceTotal=5. Catalogue 20 từ không tự đồng nghĩa encountered=20.
 - Phase 6 phương án A/seen-only: chỉ unique vocabulary/context pair tăng encounter; inspection/translation không promote stage; giữ stage cao hơn nếu profile tương lai đã đạt.
-- Phase 7 phạm vi đề xuất: một phone recording Case #001 của Leo (20:29), playback/replay qua Howler, ba listening mode hiện có, data-driven task effects, counter cục bộ, không TTS/API runtime hay microphone. Preset voice Kokoro cần rà soát provenance/license; license model đơn lẻ chưa đủ.
+- Phase 7 phạm vi: một phone recording Case #001 của Leo (20:29), playback/replay qua Howler, ba listening mode hiện có, data-driven task effects, telemetry local (counters + aggregate time-to-fact), không TTS/API runtime hay microphone. Hotspot prototype ở Main Office `(1200, 1280)`; không thêm Archive scene. Preset voice Kokoro cần rà provenance/license; license model đơn lẻ chưa đủ.
 - Playwright workers=1 do movement theo frames.
 
 ## Blockers
 
-- User written-spec review is the current workflow gate. Git metadata initially denied writes; approved elevated git staging/commit succeeded. No technical blocker known.
+- User plan review is the current workflow gate. Git metadata initially denied writes; approved elevated git staging/commit succeeded. No technical blocker known.
 
 ## Next Actions
 
-- User review/duyệt spec tiếng Việt `docs/superpowers/specs/2026-09-29-phase-7-audio-listening-design.md`.
-- Nếu được duyệt, dùng writing-plans để viết Phase 7 plan bằng tiếng Việt; chờ user duyệt plan trước khi thực thi.
-- Implement inline, generate/verify the recording asset and provenance, run all repo gates, update verification and memory, then integrate/push to dev per user request.
+- User review/duyệt plan tiếng Việt `docs/superpowers/plans/2026-09-29-phase-7-audio-listening.md`.
+- Nếu được duyệt, dùng executing-plans và thực thi inline như user đã chọn; TDD từng task.
+- Tạo/verify recording provenance, chạy repo gates, cập nhật verification/memory rồi tích hợp/push lên dev theo yêu cầu user.
 
 ## Verification
 
-- Phase 7 spec tiếng Việt: placeholder scan PASS; `git diff --check` PASS; Prettier check PASS. Không chạy product tests vì không sửa code. Bản dịch spec commit: `ccae148`.
+- Phase 7 spec và plan tiếng Việt: placeholder scan PASS; `git diff --check` PASS; Prettier check PASS. `npm run memory:check` PASS trước khi plan được tạo; chưa chạy product tests vì không sửa code. Plan commit: `018e7f3`.
 - Phase 6 final: `npm run lint` PASS (7 Nx projects); `npm run test` PASS (25 files / 136 tests); `npm run build` PASS (134 modules; chunk warning: JS 1,761.37 kB, gzip 423.69 kB); `npm run typecheck` PASS; `npm run format:check` PASS; `npm run test:e2e` PASS (31 tests, 1 worker); `npm run memory:check` PASS; `npm run memory:test` PASS (30); `git diff --check` PASS.
 - Backend checks not run because `apps/api` unchanged. `npm ci` earlier reported 7 existing audit advisories (3 moderate, 3 high, 1 critical); no dependency was changed.
 - Phase 5 historical verification: lint 7 projects; 204 Vitest + 30 memory tests; build 122 modules with >500 kB warning; E2E 29/29; formatting/memory/whitespace pass.
 
 ## Latest Handoff
 
-- Phase 7 spec tiếng Việt commit local tại `ccae148`; snapshot memory kế tiếp ghi nhận kết quả này. Chưa push design khi chưa được user duyệt. User đã cho phép push implementation hoàn tất lên dev.
+- Phase 7 spec telemetry được làm rõ theo learning design §17; plan tiếng Việt commit local tại `018e7f3`. User đã chọn hotspot Main Office và inline execution. Chưa push design/plan khi chưa được user review/duyệt. User đã cho phép push implementation hoàn tất lên dev.
 - Phase 6 is integrated and pushed: local/remote `dev` at `520ee4d` (then memory reconciliation `9177cfa`). Verification/review: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
 - Phase 5 is already pushed through `f4ac2be`. Minor evidence focus restoration Phase 4 remains deferred; dialogue has separate restoration verified.
 
