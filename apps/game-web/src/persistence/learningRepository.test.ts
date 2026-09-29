@@ -166,7 +166,7 @@ describe('separate learning repository', () => {
   it('migrates V1 to V2, backing up the raw V1 before writing V2', async () => {
     const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Immersion' };
     const order: string[] = [];
-    const saved: unknown = v1;
+    let saved: unknown = v1;
     const db: LearningDatabase = {
       async get() {
         return saved;
