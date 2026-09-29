@@ -14,7 +14,7 @@
   --lexicon-dusty-olive: #8a8469;
   --lexicon-muted-green: #737660;
   --lexicon-dark-red: #743026;
-  --lexicon-font-body: Georgia, 'Times New Roman', serif;
-  --lexicon-font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --lexicon-font-body: Georgia, Cambria, 'Times New Roman', serif;
+  --lexicon-font-mono: 'Courier New', ui-monospace, monospace;
   --lexicon-text-min: 14px;
 }

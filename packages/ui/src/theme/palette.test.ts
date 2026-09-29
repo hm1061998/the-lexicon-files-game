@@ -30,8 +30,8 @@ describe('PALETTE <-> palette.css', () => {
   }
 
   it('defines typography tokens', () => {
-    expect(css).toMatch(/--lexicon-font-body:/);
-    expect(css).toMatch(/--lexicon-font-mono:/);
+    expect(css).toContain('--lexicon-font-body: Georgia, Cambria, "Times New Roman", serif;');
+    expect(css).toContain('--lexicon-font-mono: "Courier New", ui-monospace, monospace;');
     expect(css).toMatch(/--lexicon-text-min:\s*14px/);
   });
 });
