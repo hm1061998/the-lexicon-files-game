@@ -12,6 +12,7 @@ const sources = import.meta.glob<string>(['./**/*.ts', '!./**/*.test.ts'], {
 describe('package entry', () => {
   it('loads as a module', () => {
     expect(mod).toBeTypeOf('object');
+    expect(mod.answerListeningTask).toBeTypeOf('function');
   });
 
   it('stays framework-free (no React, Phaser, Zustand, IndexedDB imports)', () => {

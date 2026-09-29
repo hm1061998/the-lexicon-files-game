@@ -8,3 +8,4 @@ export {
   chooseDialogueChoice,
 } from './dialogue/dialogueRunner';
 export { reconcileDialogueProgress } from './dialogue/reconcileDialogueProgress';
+export { answerListeningTask } from './listening/answerListeningTask';

@@ -6,12 +6,14 @@ import type {
   CaseTransitionResult,
   DialogueSession,
   DialogueAction,
+  ListeningAnswerResult,
 } from '@lexicon/shared-types';
 import {
   applyEffects,
   createCaseState,
   startDialogue as runStartDialogue,
   chooseDialogueChoice,
+  answerListeningTask as answerListeningTaskCore,
 } from '@lexicon/game-core';
 export type NotebookTab = 'people' | 'evidence' | 'vocabulary';
 export type GameStoreState = {
@@ -38,6 +40,7 @@ export type GameStoreState = {
   closeDialogue(): void;
   setPersistenceError(error: string | null): void;
   applyCaseEffects(effects: readonly Effect[]): CaseTransitionResult;
+  answerListeningTask(taskId: string, optionId: string): ListeningAnswerResult;
 };
 export type GameStore = StoreApi<GameStoreState>;
 function inputLocked(
@@ -142,6 +145,12 @@ export function createGameStore(init: {
       const r = applyEffects(s.caseDefinition, s.caseState, effects);
       if (r.ok) set({ caseState: r.state });
       return r;
+    },
+    answerListeningTask(taskId, optionId) {
+      const s = get();
+      const result = answerListeningTaskCore(s.caseDefinition, s.caseState, taskId, optionId);
+      if (result.ok && result.correct) set({ caseState: result.state });
+      return result;
     },
   }));
 }

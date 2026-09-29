@@ -33,6 +33,21 @@ describe('createGameStore', () => {
     );
   });
 
+  it('applies correct listening effects through game-core and leaves wrong answers unchanged', () => {
+    const definition = loadCaseDefinition('case-001');
+    const initial = applyAudioEvidence(definition);
+    const store = createGameStore({ caseDefinition: definition, initialState: initial });
+    const beforeWrongAnswer = store.getState().caseState;
+
+    const wrong = store.getState().answerListeningTask('leo_phone_recording_location', 'inside');
+    expect(wrong).toMatchObject({ ok: true, correct: false, state: beforeWrongAnswer, events: [] });
+    expect(store.getState().caseState).toBe(beforeWrongAnswer);
+
+    const correct = store.getState().answerListeningTask('leo_phone_recording_location', 'outside');
+    expect(correct).toMatchObject({ ok: true, correct: true });
+    expect(store.getState().caseState.discoveredFactIds).toContain('leo_outside_at_2029');
+  });
+
   it('uses a restored core state when provided', () => {
     const definition = loadCaseDefinition('case-001');
     const restored = {
@@ -122,3 +137,9 @@ describe('createGameStore', () => {
     expect(store.getState().persistenceError).toBe('save failed');
   });
 });
+
+function applyAudioEvidence(definition: ReturnType<typeof loadCaseDefinition>) {
+  return createGameStore({ caseDefinition: definition })
+    .getState()
+    .applyCaseEffects([{ type: 'addEvidence', evidenceId: 'leo_phone_recording' }]).state;
+}

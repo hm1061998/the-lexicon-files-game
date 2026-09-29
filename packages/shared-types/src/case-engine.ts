@@ -123,3 +123,20 @@ export type CaseTransitionResult =
       readonly state: GameState;
       readonly error: CaseEngineError;
     };
+
+export type ListeningAnswerError =
+  | { readonly code: 'unknownListeningTask' | 'unknownListeningOption'; readonly id: string }
+  | CaseEngineError;
+
+export type ListeningAnswerResult =
+  | {
+      readonly ok: true;
+      readonly correct: boolean;
+      readonly state: GameState;
+      readonly events: readonly CaseDomainEvent[];
+    }
+  | {
+      readonly ok: false;
+      readonly state: GameState;
+      readonly error: ListeningAnswerError;
+    };

@@ -34,6 +34,8 @@ export type {
   CaseDomainEvent,
   CaseEngineError,
   CaseTransitionResult,
+  ListeningAnswerError,
+  ListeningAnswerResult,
 } from './case-engine';
 export * from './events';
 
