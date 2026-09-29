@@ -23,7 +23,8 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-11-visual-polish.md
 ## Current Status
 
 - Phase 11 A+B đã triển khai: token/palette, paper overlay, UI cổ điển, marker nổi, fade chuyển cảnh, pipeline asset (`tools/art-codegen`, `assets/`) và texture PNG đã xử lý tích hợp vào scene. Gate PASS (lint/test/build/typecheck/format/E2E 49/memory); ledger `docs/ai/2026-09-29-phase-11-visual-polish-verification.md`.
-- Scene chưa giống concept: tường vẫn placeholder `ph_wall`, ít nội thất, không minimap. Điều khoản đầu ra ChatGPT chưa được xác nhận; `assets/_incoming/` chỉ giữ cục bộ, không commit.
+- Scene chưa giống concept: tường vẫn placeholder `ph_wall`, ít nội thất, không minimap. Art AI đã xử lý (gồm nhân vật ChatGPT, `public/assets/characters/**`) **đã commit trên `dev` cục bộ, chưa push**; chỉ `assets/_incoming/` (ảnh thô) giữ cục bộ. Xác nhận điều khoản OpenAI của chủ dự án là **bắt buộc trước merge/push**.
+- Font nội dung đổi sang `Cambria, "Times New Roman", Georgia, serif` vì Georgia vẽ sai dấu thanh tiếng Việt trên Windows.
 
 ## Completed
 
@@ -41,12 +42,12 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-11-visual-polish.md
 - Tuân theo product truth docs/01–03 và `docs/architecture/ARCHITECTURE.md`; mâu thuẫn tài liệu thì hỏi. Spec và plan viết tiếng Việt (AGENTS.md). Chỉ npm + Nx, không thêm dependency nếu native đủ.
 - Người dùng tự merge `dev` vào `main`; không hỏi hay đề xuất merge. Ưu tiên tối ưu token: subagent sonnet cho task, opus chỉ final review, prompt ngắn trỏ file brief, gộp task nhỏ.
 - `game-core`/`learning-engine` TS thuần; UI qua store/event; không hardcode Case #001 trong React/Phaser; gameplay local-first, không API.
-- Save case V4, IndexedDB `lexicon-game-saves` v1; `lexicon-learning` v1 (record V2); `lexicon-settings` v1. Case đóng: store chặn di chuyển, sổ tay, pause và ghi tiến độ.
+- Save case V4, IndexedDB `lexicon-game-saves` v1; `lexicon-learning` v1 (record V2); `lexicon-settings` v1. Case đóng: store chặn di chuyển, sổ tay, pause và ghi tiến độ. Playwright worker = 1; E2E cần dev server; commerce mặc định `free`.
 - Font: hệ thống, ngăn xếp serif (không dependency); palette khóa theo `docs/art/06` §5; đỏ chỉ cho clue/evidence/objective/contradiction/marker.
 - Art: ảnh AI do người dùng tạo, xử lý bằng `tools/art-codegen` (Python venv ngoài repo, Pillow/numpy/scipy) ra PNG (không phải WebP) trong `assets/`; scene asset có trường tùy chọn `scale`. `assets/_incoming/` giữ cục bộ, không commit.
-- Playwright worker = 1; E2E cần dev server; commerce config mặc định `free`, không paywall.
-- Deferred minor (art): tường AI là tấm chéo không dùng được nên scene vẫn `ph_wall` — cần tạo lại ảnh tường; ảnh evidence opaque nền gỗ chưa dùng trong modal; chưa có animation đi bộ; điều khoản đầu ra ChatGPT chưa xác nhận.
-- Deferred minor (code): paper overlay làm FPS giảm trên GL phần mềm (đo lại trên GPU thật, cân nhắc overlay rẻ hơn); marker vẽ trên ngực player ở terminal archive; terminal `depthBias -2` chưa giải thích; hằng `CHARACTER_FIGURE_HEIGHT` = 100 là số ma thuật; dấu tiếng Việt lệch trong Chromium headless (kiểm tra font trên máy thật).
+- Deferred minor (art): tường AI là tấm chéo không dùng được nên scene vẫn `ph_wall` — cần tạo lại ảnh tường; ảnh evidence opaque nền gỗ chưa dùng trong modal; chưa có animation đi bộ.
+- Sai lệch chấp nhận: `TEXTURE_MANIFEST` nằm trong game-web (hardcode id Case #001, preload ~9.6 MB lúc boot); follow-up chuyển sang manifest theo scene trong `packages/game-content`.
+- Deferred minor (code): paper overlay làm FPS giảm trên GL phần mềm (đo lại trên GPU thật, cân nhắc overlay rẻ hơn); marker vẽ trên ngực player ở terminal archive; terminal `depthBias -2` chưa giải thích; hằng `CHARACTER_FIGURE_HEIGHT` = 100 là số ma thuật.
 - Deferred minor (cũ): on+Learning hiện transcript hai lần; thiếu test hook âm lượng/StrictMode boot; Esc/`unknownSuspect`/feedback đọc lại; warning lint cũ `GameCanvas.tsx` `initialSceneId`; test E2E reduced-motion chưa assert giá trị nền.
 
 ## Blockers
@@ -55,9 +56,11 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-11-visual-polish.md
 
 ## Next Actions
 
+- **Trước merge/push:** chủ dự án xác nhận điều khoản đầu ra OpenAI cho ảnh nhân vật ChatGPT đã commit (nếu không đạt phải gỡ/thay).
 - Người dùng review/merge `dev`; chờ yêu cầu Phase 12 (không tự bắt đầu).
-- Nếu tiếp tục art: tạo lại ảnh tường (không phải tấm chéo) theo `docs/art/07`, rồi tích hợp thay `ph_wall`.
-- Xác nhận điều khoản đầu ra ChatGPT trước khi commit ảnh AI hoặc coi là phát hành được.
+- Tạo lại ảnh tường (không phải tấm chéo) theo `docs/art/07` rồi thay `ph_wall`.
+- Chuyển texture manifest sang `packages/game-content` theo scene, tải theo scene.
+- Đo lại FPS paper overlay trên GPU thật và xác nhận dấu tiếng Việt với Cambria.
 
 ## Verification
 

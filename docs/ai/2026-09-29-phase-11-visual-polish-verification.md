@@ -28,7 +28,7 @@ Sửa deferred minor trước gate: `.pause-menu button` dùng `font-size: var(-
   2. Không có minimap "Bản đồ nhỏ" (concept có; ngoài phạm vi Phase 11).
   3. Không có nội thất phong phú (tủ, cây, bảng trắng, bàn họp) – chỉ vài prop; player/NPC nhỏ hơn và ít chi tiết so với concept; bố cục thưa.
   4. Marker đỏ hình thoi hiển thị đúng ở archive (cạnh cửa) nhưng ở archive nó nằm gần ngực nhân vật khi đứng cạnh terminal; ở office chưa thấy marker trong ảnh chụp spawn (chưa đứng gần điểm tương tác).
-  5. Tiếng Việt có dấu kết hợp bị hiển thị lệch dấu trong Chromium headless (ví dụ "Hô` sơ", "điê`u") — chuỗi nguồn là dạng dựng sẵn (không có ký tự kết hợp), nên nghi do font serif dự phòng của môi trường headless thiếu glyph. **Cần kiểm tra lại trên máy thật** (Georgia/Cambria); nếu vẫn lỗi cần đổi ngăn xếp font.
+  5. Tiếng Việt bị vẽ lệch dấu thanh ("Hô` sơ", "điê`u"): nguyên nhân là **glyph của Georgia trên Windows**, không phải font dự phòng của headless. Đã sửa bằng ngăn xếp `Cambria, "Times New Roman", Georgia, serif` (Cambria/Times New Roman vẽ đúng). Cần nhìn lại ảnh chụp sau sửa trên máy thật.
   6. Sổ tay: `select` chế độ dịch dùng style mặc định của trình duyệt (trắng), lệch hẳn phong cách giấy; nhãn "Chế độ dịch" dính liền select. Menu pause: layout hàng cài đặt chật, `select`/`input` chưa được style.
   7. Modal evidence: ảnh evidence (`evidence_*.png`) opaque với nền gỗ, chưa được dùng trong modal.
 - Không tuyên bố "giống concept": phần khung UI gần tinh thần concept, còn scene thì chưa.
@@ -43,4 +43,6 @@ Task 4 ghi nhận overlay giấy làm FPS giảm ~17 → 10 trên WebGL phần m
 - Thêm trường tùy chọn `scale` cho scene asset (schema + type) — mở rộng hợp đồng nội dung thêm một trường tùy chọn (controller chấp nhận).
 - Tường vẫn `ph_wall` (ảnh tường AI dạng tấm chéo, không dùng được).
 - Fade-in bị bỏ ở lần boot đầu (chỉ có fade khi chuyển cảnh).
-- Điều khoản sử dụng đầu ra của ChatGPT/OpenAI **chưa được chủ dự án xác nhận**; `assets/_incoming/` giữ cục bộ, không commit; repo không tự tái tạo được nếu thiếu input này.
+- Art AI đã xử lý (gồm nhân vật tạo bằng ChatGPT, `apps/game-web/public/assets/characters/**`) **đã được commit và đi kèm trong nhánh `dev` cục bộ (chưa push)**; chỉ ảnh thô `assets/_incoming/` giữ cục bộ. Chủ dự án **phải xác nhận điều khoản đầu ra của OpenAI trước khi merge/push**.
+- Sai lệch được chấp nhận: manifest texture (`TEXTURE_MANIFEST`) nằm trong game-web, hardcode id/texture Case #001 và preload toàn bộ (~9.6 MB) lúc boot. Follow-up: chuyển sang manifest theo scene trong `packages/game-content` và tải theo scene.
+- Sửa sau final review: `vocabulary-tutorial` 12.6px → `--lexicon-text-min`; `.gitignore` thêm `__pycache__/` và `assets/_incoming/*`.
