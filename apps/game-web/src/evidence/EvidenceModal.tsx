@@ -19,6 +19,7 @@ export function EvidenceModal({
   onClose,
   vocabulary = [],
   translationMode = 'Learning',
+  subtitles = 'auto',
   onEncounter = () => undefined,
   onInspect = () => undefined,
   onRevealTranslation = () => undefined,
@@ -35,6 +36,7 @@ export function EvidenceModal({
   onClose(): void;
   vocabulary?: import('@lexicon/shared-types').CaseDefinition['vocabulary'];
   translationMode?: import('@lexicon/shared-types').TranslationMode;
+  subtitles?: import('../persistence/settingsSchema').SubtitlePreference;
   onEncounter?(vocabularyId: string, contextId: string): void;
   onInspect?(vocabularyId: string, contextId: string): void;
   onRevealTranslation?(vocabularyId: string, contextId: string): void;
@@ -109,6 +111,7 @@ export function EvidenceModal({
             <ListeningTaskPanel
               task={listeningTask}
               mode={translationMode}
+              subtitles={subtitles}
               completed={listeningCompleted}
               onAnswer={(optionId) => onListeningAnswer(listeningTask.id, optionId)}
               onTelemetry={(event, elapsedMs) => onListeningTelemetry?.(event, elapsedMs)}

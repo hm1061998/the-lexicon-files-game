@@ -7,12 +7,15 @@ import type {
 } from '@lexicon/shared-types';
 import type { LearningAction } from '@lexicon/shared-types';
 import { useAudioPlayback } from '../audio/useAudioPlayback';
+import type { SubtitlePreference } from '../persistence/settingsSchema';
+import { resolveTranscriptVisibility } from './transcriptVisibility';
 
 type ListeningEvent = Extract<LearningAction, { type: 'recordListeningEvent' }>['event'];
 
 export function ListeningTaskPanel({
   task,
   mode,
+  subtitles = 'auto',
   completed,
   onAnswer,
   onTelemetry,
@@ -20,12 +23,14 @@ export function ListeningTaskPanel({
 }: {
   task: ListeningTaskDefinition;
   mode: TranslationMode;
+  subtitles?: SubtitlePreference;
   completed: boolean;
   onAnswer(optionId: string): ListeningAnswerResult;
   onTelemetry(event: ListeningEvent, elapsedMs?: number): void;
   strings: UiStrings;
 }): JSX.Element {
   const playback = useAudioPlayback(task.audioAsset);
+  const visibility = resolveTranscriptVisibility(mode, subtitles);
   const [transcriptOpen, setTranscriptOpen] = useState(false);
   const [hintVisible, setHintVisible] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -36,7 +41,7 @@ export function ListeningTaskPanel({
 
   const beginPlayback = (replay: boolean) => {
     if (startedAt.current === null) startedAt.current = performance.now();
-    if (mode === 'Beginner' && !subtitleCounted.current) {
+    if (visibility.transcriptShown && !subtitleCounted.current) {
       subtitleCounted.current = true;
       onTelemetry('subtitleUsed');
     }
@@ -118,38 +123,30 @@ export function ListeningTaskPanel({
         </button>
       )}
 
-      {mode === 'Beginner' && (
-        <div className="listening-transcript">
-          <h3>{strings.listeningTranscript}</h3>
-          <p>{task.transcript}</p>
-          {task.transcriptVi && (
-            <p>
-              <span>{strings.listeningTranslation}: </span>
-              {task.transcriptVi}
-            </p>
-          )}
-        </div>
+      {visibility.transcriptShown && (
+        <TranscriptBlock task={task} strings={strings} translation={visibility.translationShown} />
       )}
-      {mode === 'Learning' && (
+      {mode !== 'Immersion' && (
         <div className="listening-support">
-          <button type="button" onClick={toggleHint} aria-expanded={hintVisible}>
-            {strings.listeningHint}
-          </button>
-          {hintVisible && <p>{task.keywordHints.join(' · ')}</p>}
-          <button type="button" onClick={showTranscript} aria-expanded={transcriptOpen}>
-            {strings.listeningShowTranscript}
-          </button>
-          {transcriptOpen && (
-            <div className="listening-transcript">
-              <h3>{strings.listeningTranscript}</h3>
-              <p>{task.transcript}</p>
-              {task.transcriptVi && (
-                <p>
-                  <span>{strings.listeningTranslation}: </span>
-                  {task.transcriptVi}
-                </p>
-              )}
-            </div>
+          {mode === 'Learning' && (
+            <>
+              <button type="button" onClick={toggleHint} aria-expanded={hintVisible}>
+                {strings.listeningHint}
+              </button>
+              {hintVisible && <p>{task.keywordHints.join(' · ')}</p>}
+            </>
+          )}
+          {visibility.transcriptToggle && (
+            <button type="button" onClick={showTranscript} aria-expanded={transcriptOpen}>
+              {strings.listeningShowTranscript}
+            </button>
+          )}
+          {visibility.transcriptToggle && transcriptOpen && (
+            <TranscriptBlock
+              task={task}
+              strings={strings}
+              translation={visibility.translationWithTranscript}
+            />
           )}
         </div>
       )}
@@ -173,5 +170,28 @@ export function ListeningTaskPanel({
         </p>
       )}
     </section>
+  );
+}
+
+function TranscriptBlock({
+  task,
+  strings,
+  translation,
+}: {
+  task: ListeningTaskDefinition;
+  strings: UiStrings;
+  translation: boolean;
+}): JSX.Element {
+  return (
+    <div className="listening-transcript">
+      <h3>{strings.listeningTranscript}</h3>
+      <p>{task.transcript}</p>
+      {translation && task.transcriptVi && (
+        <p>
+          <span>{strings.listeningTranslation}: </span>
+          {task.transcriptVi}
+        </p>
+      )}
+    </div>
   );
 }

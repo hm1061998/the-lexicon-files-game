@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type {
   CaseDefinition,
   GameEventMap,
@@ -39,6 +39,8 @@ import {
 } from '../persistence/settingsRepository';
 import { createSettingsStore } from '../state/settingsStore';
 import { SettingsStoreProvider } from '../state/SettingsStoreContext';
+import { useMasterVolume } from '../audio/useMasterVolume';
+import { useSettingsStore } from '../state/SettingsStoreContext';
 import { useTranslationMode } from '../state/useTranslationMode';
 import { connectSettingsAutosave } from '../persistence/connectSettingsAutosave';
 import { createDefaultLearningRecord } from '../persistence/learningMigration';
@@ -332,6 +334,11 @@ function GameRoot({
     [caseDefinition, learningRecord, bus],
   );
   const settings = useMemo(() => createSettingsStore(settingsLoad.settings), [settingsLoad]);
+  const reducedMotion = useSyncExternalStore(
+    settings.subscribe,
+    () => settings.getState().settings.reducedMotion,
+    () => false,
+  );
   const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
   usePauseShortcut(store);
   useNotebookShortcut(store);
@@ -357,6 +364,7 @@ function GameRoot({
       spawnId: 'default',
       bus,
       input: { isInputLocked: () => store.getState().inputLocked },
+      motion: { reducedMotion: () => settings.getState().settings.reducedMotion },
     });
     return () => {
       game.destroy(true);
@@ -364,7 +372,7 @@ function GameRoot({
       disconnectCaseEngine();
       disconnectAutosave?.();
     };
-  }, [scene, bus, store, caseDefinition, autosaveEnabled, repository, strings]);
+  }, [scene, bus, store, settings, caseDefinition, autosaveEnabled, repository, strings]);
 
   useEffect(() => {
     if (!learningPersistenceEnabled) return;
@@ -398,7 +406,11 @@ function GameRoot({
         : null;
 
   return (
-    <div className="game-root" style={{ position: 'relative', width: '100vw', height: '100vh' }}>
+    <div
+      className="game-root"
+      data-reduced-motion={reducedMotion ? 'true' : 'false'}
+      style={{ position: 'relative', width: '100vw', height: '100vh' }}
+    >
       <div
         ref={containerRef}
         tabIndex={-1}
@@ -408,6 +420,7 @@ function GameRoot({
       <GameStoreProvider store={store}>
         <LearningStoreProvider store={learning}>
           <SettingsStoreProvider store={settings}>
+            <SettingsEffects />
             {settingsNotice && (
               <aside role="status" className="learning-recovery-notice">
                 {settingsNotice}
@@ -462,6 +475,12 @@ function GameRoot({
   );
 }
 
+/** Applies settings that have no UI of their own (currently master volume). */
+function SettingsEffects(): null {
+  useMasterVolume(useSettingsStore((state) => state.settings.volume));
+  return null;
+}
+
 function EvidenceLayer({ strings }: { strings: UiStrings }) {
   const activeEvidenceId = useGameStore((state) => state.activeEvidenceId);
   const evidence = useGameStore((state) =>
@@ -477,6 +496,7 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
   );
   const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
   const [translationMode, setTranslationMode] = useTranslationMode();
+  const subtitles = useSettingsStore((state) => state.settings.subtitles);
   const vocabularyTutorialSeen = useLearningStore((state) => state.vocabularyTutorialSeen);
   const markVocabularyTutorialSeen = useLearningStore((state) => state.markVocabularyTutorialSeen);
   const onEncounter = useCallback(
@@ -518,6 +538,7 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       onClose={() => store.closeEvidence()}
       vocabulary={store.caseDefinition.vocabulary}
       translationMode={translationMode}
+      subtitles={subtitles}
       onEncounter={onEncounter}
       onInspect={onInspect}
       onRevealTranslation={onRevealTranslation}

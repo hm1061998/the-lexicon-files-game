@@ -59,4 +59,40 @@ describe('ListeningTaskPanel', () => {
     expect(html).not.toContain(task.transcript.replaceAll("'", '&#x27;'));
     expect(html).not.toContain(task.transcriptVi);
   });
+
+  it('shows transcript without translation when subtitles are on in Immersion', () => {
+    const html = renderToString(
+      <ListeningTaskPanel
+        task={task}
+        mode="Immersion"
+        subtitles="on"
+        completed={false}
+        onAnswer={() => {
+          throw new Error('SSR must not submit answers');
+        }}
+        onTelemetry={() => {}}
+        strings={strings}
+      />,
+    );
+    expect(html).toContain(task.transcript.replaceAll("'", '&#x27;'));
+    expect(html).not.toContain(task.transcriptVi);
+  });
+
+  it('offers a button but no auto transcript when subtitles are off in Beginner', () => {
+    const html = renderToString(
+      <ListeningTaskPanel
+        task={task}
+        mode="Beginner"
+        subtitles="off"
+        completed={false}
+        onAnswer={() => {
+          throw new Error('SSR must not submit answers');
+        }}
+        onTelemetry={() => {}}
+        strings={strings}
+      />,
+    );
+    expect(html).toContain(strings.listeningShowTranscript);
+    expect(html).not.toContain(task.transcript.replaceAll("'", '&#x27;'));
+  });
 });

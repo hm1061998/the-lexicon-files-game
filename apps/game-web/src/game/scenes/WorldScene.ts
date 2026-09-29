@@ -12,8 +12,11 @@ import { computeDepth } from '../systems/depth';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
 import { InteractionTracker } from '../systems/InteractionTracker';
+import { markerMotion } from '../systems/markerMotion';
 
 export type InputLockSource = { isInputLocked(): boolean };
+
+export type MotionSource = { reducedMotion(): boolean };
 
 export type WorldOptions = {
   caseDefinition: CaseDefinition;
@@ -21,6 +24,7 @@ export type WorldOptions = {
   spawnId: string;
   bus: EventBus<GameEventMap>;
   input: InputLockSource;
+  motion: MotionSource;
 };
 
 type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
@@ -47,6 +51,8 @@ export class WorldScene extends Phaser.Scene {
   private nearbyEventCount = 0;
   private marker!: Phaser.GameObjects.Sprite;
   private markerTween: Phaser.Tweens.Tween | null = null;
+  private markerBaseY = 0;
+  private reducedMotion = false;
   private unsubscribeNearby: (() => void) | null = null;
   private unsubscribeTransition: (() => void) | null = null;
   private uninstallDebug: (() => void) | null = null;
@@ -112,6 +118,7 @@ export class WorldScene extends Phaser.Scene {
     this.marker = this.add.sprite(0, 0, 'ph_marker');
     this.marker.setDepth(MARKER_DEPTH);
     this.marker.setVisible(false);
+    this.reducedMotion = options.motion.reducedMotion();
     this.markerTween = this.tweens.add({
       targets: this.marker,
       y: `-=${MARKER_FLOAT_DISTANCE}`,
@@ -119,6 +126,7 @@ export class WorldScene extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
     });
+    if (this.reducedMotion) this.markerTween.pause();
 
     this.uninstallDebug = installDebugHook({
       player: () => ({ x: this.player.x, y: this.player.y, depth: this.player.depth }),
@@ -141,6 +149,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   override update(): void {
+    this.syncMarkerMotion();
     if (!this.keys) return;
     if (this.inputLock.isInputLocked()) {
       movePlayer(this.player, { x: 0, y: 0 });
@@ -163,6 +172,18 @@ export class WorldScene extends Phaser.Scene {
     this.updateInteract(typing);
   }
 
+  private syncMarkerMotion(): void {
+    const next = this.options.motion.reducedMotion();
+    const action = markerMotion(this.reducedMotion, next);
+    this.reducedMotion = next;
+    if (action === 'pause') {
+      this.markerTween?.pause();
+      this.marker.y = this.markerBaseY;
+    } else if (action === 'resume') {
+      this.markerTween?.resume();
+    }
+  }
+
   private updateInteract(typing: boolean): void {
     if (!this.interactKey || !Phaser.Input.Keyboard.JustDown(this.interactKey)) return;
     const id = this.interactionTracker.current;
@@ -174,7 +195,8 @@ export class WorldScene extends Phaser.Scene {
     const id = this.interactionTracker.update(this.player, this.areas);
     const area = id ? this.areas.find((candidate) => candidate.id === id) : undefined;
     if (area) {
-      this.marker.setPosition(area.x, area.y + MARKER_OFFSET_Y);
+      this.markerBaseY = area.y + MARKER_OFFSET_Y;
+      this.marker.setPosition(area.x, this.markerBaseY);
       this.marker.setVisible(true);
     } else {
       this.marker.setVisible(false);
