@@ -9,3 +9,5 @@ export {
 } from './dialogue/dialogueRunner';
 export { reconcileDialogueProgress } from './dialogue/reconcileDialogueProgress';
 export { answerListeningTask } from './listening/answerListeningTask';
+export { placeTimelineEvent } from './timeline/placeTimelineEvent';
+export { submitContradiction } from './contradiction/submitContradiction';

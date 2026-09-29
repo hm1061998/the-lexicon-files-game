@@ -38,6 +38,8 @@ const definition: CaseDefinition = {
   vocabulary: [],
   vocabularyContexts: [],
   listeningTasks: [],
+  timeline: { slots: [], events: [] },
+  contradictions: [],
 };
 
 const initialState: GameState = {
@@ -50,6 +52,8 @@ const initialState: GameState = {
   },
   evidenceIds: [],
   discoveredFactIds: [],
+  timelineEventIds: [],
+  contradictionIds: [],
   flags: {},
 };
 

@@ -84,6 +84,8 @@ const definition = {
   vocabulary: [],
   vocabularyContexts: [],
   listeningTasks: [listeningTask],
+  timeline: { slots: [], events: [] },
+  contradictions: [],
 } satisfies CaseDefinition;
 
 const state = {
@@ -93,6 +95,8 @@ const state = {
   objectiveStatuses: { [objective.id]: 'active' },
   evidenceIds: [],
   discoveredFactIds: [],
+  timelineEventIds: [],
+  contradictionIds: [],
   flags: {},
 } satisfies GameState;
 

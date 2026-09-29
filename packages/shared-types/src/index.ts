@@ -43,6 +43,10 @@ export type {
   CaseTransitionResult,
   ListeningAnswerError,
   ListeningAnswerResult,
+  TimelinePlacementError,
+  TimelinePlacementResult,
+  ContradictionError,
+  ContradictionResult,
 } from './case-engine';
 export * from './events';
 

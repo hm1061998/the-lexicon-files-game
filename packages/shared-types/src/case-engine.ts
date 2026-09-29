@@ -176,3 +176,29 @@ export type ListeningAnswerResult =
       readonly state: GameState;
       readonly error: ListeningAnswerError;
     };
+
+export type TimelinePlacementError = {
+  readonly code: 'unknownTimelineEvent' | 'unknownTimelineSlot' | 'timelineEventUnavailable';
+  readonly id: string;
+};
+
+export type TimelinePlacementResult =
+  | { readonly ok: true; readonly correct: boolean; readonly state: GameState }
+  | { readonly ok: false; readonly state: GameState; readonly error: TimelinePlacementError };
+
+export type ContradictionError =
+  | {
+      readonly code:
+        'unknownContradiction' | 'unknownFact' | 'factNotDiscovered' | 'contradictionUnavailable';
+      readonly id: string;
+    }
+  | CaseEngineError;
+
+export type ContradictionResult =
+  | {
+      readonly ok: true;
+      readonly correct: boolean;
+      readonly state: GameState;
+      readonly events: readonly CaseDomainEvent[];
+    }
+  | { readonly ok: false; readonly state: GameState; readonly error: ContradictionError };

@@ -17,5 +17,7 @@ export function createCaseState(definition: CaseDefinition): GameState {
     evidenceIds: [],
     discoveredFactIds: [],
     flags: {},
+    timelineEventIds: [],
+    contradictionIds: [],
   };
 }
