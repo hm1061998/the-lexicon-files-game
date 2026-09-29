@@ -10,4 +10,11 @@
   --lexicon-ink: #2a2521;
   --lexicon-border: #3e342b;
   --lexicon-investigation-red: #a4412d;
+  --lexicon-warm-gray: #a89b87;
+  --lexicon-dusty-olive: #8a8469;
+  --lexicon-muted-green: #737660;
+  --lexicon-dark-red: #743026;
+  --lexicon-font-body: Georgia, 'Times New Roman', serif;
+  --lexicon-font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --lexicon-text-min: 14px;
 }
