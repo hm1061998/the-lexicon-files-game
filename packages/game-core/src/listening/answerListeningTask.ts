@@ -1,8 +1,4 @@
-import type {
-  CaseDefinition,
-  GameState,
-  ListeningAnswerResult,
-} from '@lexicon/shared-types';
+import type { CaseDefinition, GameState, ListeningAnswerResult } from '@lexicon/shared-types';
 import { applyEffects } from '../effect/applyEffects';
 
 export function answerListeningTask(

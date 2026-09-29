@@ -367,6 +367,7 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
     state.caseDefinition.evidences.find((item) => item.id === state.activeEvidenceId),
   );
   const store = useGameStore((state) => state);
+  const answerListeningTask = useGameStore((state) => state.answerListeningTask);
   const caseState = useGameStore((state) => state.caseState);
   const listeningTask = useGameStore(
     (state) =>
@@ -394,8 +395,8 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
     [dispatchLearning],
   );
   const onListeningAnswer = useCallback(
-    (taskId: string, optionId: string) => store.answerListeningTask(taskId, optionId),
-    [store.answerListeningTask],
+    (taskId: string, optionId: string) => answerListeningTask(taskId, optionId),
+    [answerListeningTask],
   );
   const onListeningTelemetry = useCallback(
     (

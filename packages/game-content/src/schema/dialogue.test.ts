@@ -2,12 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { parseCaseDefinition } from './caseDefinition';
 import caseRaw from '../../cases/case-001/case.json';
 import objectivesRaw from '../../cases/case-001/objectives.json';
-import evidencesRaw from '../../cases/case-001/evidences.json';
+import allEvidencesRaw from '../../cases/case-001/evidences.json';
 import fullFacts from '../../cases/case-001/facts.json';
 import office from '../../cases/case-001/scenes/main_office.json';
 import vocabularyRaw from '../../cases/case-001/vocabulary.json';
 
-const factsRaw = { facts: [fullFacts.facts[0]!] };
+const evidencesRaw = {
+  evidences: [allEvidencesRaw.evidences.find((evidence) => evidence.id === 'meeting_minutes')!],
+};
+const factsRaw = { facts: [fullFacts.facts.find((fact) => fact.id === 'meeting_started')!] };
 function input() {
   return {
     caseRaw,
@@ -15,11 +18,11 @@ function input() {
     evidencesRaw,
     factsRaw,
     listeningTasksRaw: { tasks: [] },
-    listeningTasksRaw: { tasks: [] },
     sceneRaws: [
       {
         ...office,
         assets: office.assets
+          .filter((asset) => asset.id !== 'phone_recording')
           .filter((a) => a.type !== 'npc' || a.id === 'anna')
           .map((a) =>
             a.id === 'anna'

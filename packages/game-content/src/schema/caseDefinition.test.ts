@@ -296,7 +296,9 @@ describe('parseCaseDefinition', () => {
       {
         evidencesRaw: { evidences: [{ ...evidence, category: 'audio' }] },
         listeningTasksRaw: {
-          tasks: [{ ...listeningTask, evidenceId: 'meeting_minutes', audioAsset: '../recording.mp3' }],
+          tasks: [
+            { ...listeningTask, evidenceId: 'meeting_minutes', audioAsset: '../recording.mp3' },
+          ],
         },
       },
       'audioAsset',
@@ -308,10 +310,7 @@ describe('parseCaseDefinition', () => {
       { listeningTasksRaw: { tasks: [{ ...listeningTask, evidenceId: 'missing_audio' }] } },
       'unknown evidence id "missing_audio"',
     );
-    expectValidationIssue(
-      { listeningTasksRaw },
-      'must use audio evidence',
-    );
+    expectValidationIssue({ listeningTasksRaw }, 'must use audio evidence');
   });
 
   it('rejects duplicate option IDs and a correct option that is missing', () => {
@@ -353,7 +352,9 @@ describe('parseCaseDefinition', () => {
       {
         evidencesRaw: { evidences: [{ ...evidence, category: 'audio' }] },
         listeningTasksRaw: {
-          tasks: [{ ...listeningTask, correctEffects: [{ type: 'addEvidence', evidenceId: 'missing' }] }],
+          tasks: [
+            { ...listeningTask, correctEffects: [{ type: 'addEvidence', evidenceId: 'missing' }] },
+          ],
         },
       },
       'unknown evidence id "missing"',

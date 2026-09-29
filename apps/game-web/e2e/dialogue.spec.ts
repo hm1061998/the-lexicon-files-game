@@ -74,6 +74,7 @@ async function talk(page: Page, npc: string) {
   const asset = definition.scenes[0]!.assets.find((a) => a.id === npc)!;
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x + 50, y + 30), asset);
   await expect(page.getByText(asset.interaction!.prompt, { exact: true })).toBeVisible();
+  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog')).toBeVisible();
 }

@@ -1,20 +1,28 @@
-import { useEffect, useMemo, useSyncExternalStore } from 'react';
-import { createAudioController } from './audioController';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { createAudioController, type AudioController } from './audioController';
+
+const noOp = () => undefined;
+const subscribeToNothing = () => () => undefined;
 
 export function useAudioPlayback(src: string) {
-  const controller = useMemo(() => createAudioController(src), [src]);
+  const [controller, setController] = useState<AudioController | null>(null);
+
+  useEffect(() => {
+    const nextController = createAudioController(src);
+    setController(nextController);
+    return () => nextController.dispose();
+  }, [src]);
+
   const state = useSyncExternalStore(
-    controller.subscribe,
-    controller.getSnapshot,
+    controller?.subscribe ?? subscribeToNothing,
+    controller?.getSnapshot ?? (() => 'idle' as const),
     () => 'idle' as const,
   );
 
-  useEffect(() => () => controller.dispose(), [controller]);
-
   return {
     state,
-    play: controller.play,
-    pause: controller.pause,
-    replay: controller.replay,
+    play: controller?.play ?? noOp,
+    pause: controller?.pause ?? noOp,
+    replay: controller?.replay ?? noOp,
   };
 }

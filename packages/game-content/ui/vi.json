@@ -48,6 +48,9 @@
   "listeningHint": "Gợi ý từ khóa",
   "listeningRetry": "Thử phát lại",
   "listeningLoading": "Đang tải bản ghi…",
+  "listeningPlaying": "Đang phát bản ghi.",
+  "listeningPaused": "Bản ghi đã tạm dừng.",
+  "listeningEnded": "Đã phát hết bản ghi.",
   "listeningPlaybackError": "Không thể phát bản ghi. Bạn có thể thử lại.",
   "listeningMismatch": "This interpretation doesn't match the evidence.",
   "listeningCompleted": "Bạn đã rút ra fact từ bản ghi này."

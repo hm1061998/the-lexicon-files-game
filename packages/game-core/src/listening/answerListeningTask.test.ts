@@ -57,8 +57,8 @@ describe('answerListeningTask', () => {
     expect(repeated).toMatchObject({ ok: true, correct: true, events: [] });
     if (!repeated.ok) return;
     expect(repeated.state).toBe(first.state);
-    expect(repeated.state.discoveredFactIds.filter((id) => id === 'leo_outside_at_2029')).toHaveLength(
-      1,
-    );
+    expect(
+      repeated.state.discoveredFactIds.filter((id) => id === 'leo_outside_at_2029'),
+    ).toHaveLength(1);
   });
 });

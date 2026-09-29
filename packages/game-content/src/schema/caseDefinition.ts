@@ -304,8 +304,7 @@ export function parseCaseDefinition(
     );
     if (
       !task.correctEffects.some(
-        (effect) =>
-          effect.type === 'setFlag' && effect.key === task.completionFlag && effect.value,
+        (effect) => effect.type === 'setFlag' && effect.key === task.completionFlag && effect.value,
       )
     ) {
       issues.push(

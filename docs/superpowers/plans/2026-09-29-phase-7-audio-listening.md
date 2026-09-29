@@ -64,21 +64,21 @@
 - Thêm scene interactable ID `phone_recording`, prompt tiếng Việt, effect `addEvidence(leo_phone_recording)`; dùng placeholder texture key `ph_audio_recorder` ở tọa độ `(1200, 1280)`.
 - Giữ `evidenceTotal` là 5.
 
-- [ ] **Bước 1: Viết test đỏ cho listening task content.** Trong `caseDefinition.test.ts`, kiểm tra thiếu task/audio source, task trỏ evidence không phải audio/ID không tồn tại, duplicate option ID, `correctOptionId` không có trong options và effect trỏ fact/evidence không tồn tại đều báo `ContentValidationError` có path dễ đọc.
-- [ ] **Bước 2: Chạy focused test để xác nhận đỏ.**
+- [x] **Bước 1: Viết test đỏ cho listening task content.** Trong `caseDefinition.test.ts`, kiểm tra thiếu task/audio source, task trỏ evidence không phải audio/ID không tồn tại, duplicate option ID, `correctOptionId` không có trong options và effect trỏ fact/evidence không tồn tại đều báo `ContentValidationError` có path dễ đọc.
+- [x] **Bước 2: Chạy focused test để xác nhận đỏ.**
 
 Chạy: `npx nx run @lexicon/game-content:test -- --run src/schema/caseDefinition.test.ts src/loader/loadCaseDefinition.test.ts`
 
 Kỳ vọng: test mới fail do schema/loader chưa nhận listening tasks.
 
-- [ ] **Bước 3: Thêm types, schema, loader và nội dung Case #001.** Kiểm tra effects của hotspot qua validator hiện có; thêm placeholder `ph_audio_recorder` tối giản theo palette placeholder hiện có trong `textures.ts`.
-- [ ] **Bước 4: Chạy focused test xanh và kiểm tra content đã load.**
+- [x] **Bước 3: Thêm types, schema, loader và nội dung Case #001.** Kiểm tra effects của hotspot qua validator hiện có; thêm placeholder `ph_audio_recorder` tối giản theo palette placeholder hiện có trong `textures.ts`.
+- [x] **Bước 4: Chạy focused test xanh và kiểm tra content đã load.**
 
 Chạy: `npx nx run @lexicon/game-content:test -- --run src/schema/caseDefinition.test.ts src/loader/loadCaseDefinition.test.ts src/validation/validateRegisteredContent.test.ts`
 
 Kỳ vọng: PASS; loader trả một task duy nhất liên kết `leo_phone_recording`; nội dung giữ `evidenceTotal: 5`.
 
-- [ ] **Bước 5: Commit.**
+- [x] **Bước 5: Commit.**
 
 ```bash
 git add packages/shared-types packages/game-content apps/game-web/e2e/dialogue.spec.ts
@@ -100,21 +100,21 @@ git commit -m "feat(content): add case listening task"
 - Bổ sung `answerListeningTask(taskId: string, optionId: string): ListeningAnswerResult` vào `GameStoreState`; store chỉ cập nhật `caseState` khi result thành công và `correct=true`.
 - Đáp án sai trả `correct=false`, cùng state đầu vào và events rỗng. Đáp án đúng gọi `applyEffects(definition, state, task.correctEffects)`; áp dụng lặp phải idempotent.
 
-- [ ] **Bước 1: Viết core tests đỏ.** Tên test: `answers the Leo task correctly and unlocks the authored fact`, `wrong answer leaves case state unchanged`, `unknown task and option return typed errors`, `repeating a correct answer does not duplicate events or facts`.
-- [ ] **Bước 2: Chạy test đỏ.**
+- [x] **Bước 1: Viết core tests đỏ.** Tên test: `answers the Leo task correctly and unlocks the authored fact`, `wrong answer leaves case state unchanged`, `unknown task and option return typed errors`, `repeating a correct answer does not duplicate events or facts`.
+- [x] **Bước 2: Chạy test đỏ.**
 
 Chạy: `npx nx run @lexicon/game-core:test -- --run src/listening/answerListeningTask.test.ts`
 
 Kỳ vọng: FAIL vì API chưa có.
 
-- [ ] **Bước 3: Cài `answerListeningTask` bằng `applyEffects`; nối store action.** Không đặt logic đáp án hoặc fact trong React.
-- [ ] **Bước 4: Chạy game-core và store tests.**
+- [x] **Bước 3: Cài `answerListeningTask` bằng `applyEffects`; nối store action.** Không đặt logic đáp án hoặc fact trong React.
+- [x] **Bước 4: Chạy game-core và store tests.**
 
 Chạy: `npx nx run @lexicon/game-core:test -- --run src/listening/answerListeningTask.test.ts src/case-engine.test.ts`; `npx nx run @lexicon/game-web:test -- --run src/state/gameStore.test.ts`
 
 Kỳ vọng: PASS; wrong answer không tạo transition và transition đầu tiên đúng mở đúng fact.
 
-- [ ] **Bước 5: Commit.**
+- [x] **Bước 5: Commit.**
 
 ```bash
 git add packages/game-core apps/game-web/src/state/gameStore.ts apps/game-web/src/state/gameStore.test.ts
@@ -135,22 +135,22 @@ git commit -m "feat(core): resolve listening task answers"
 - `useAudioPlayback(src: string)` trả snapshot state và các hàm play/pause/replay. Controller được dispose khi URL đổi hoặc component unmount.
 - Tạo file WAV mono 24 kHz từ đúng transcript bằng Kokoro local inference. Ứng viên voice là preset English American `af_heart`; provenance phải pin model revision và ghi lại nguồn/license mà upstream công bố. Nếu không xác minh được quyền dùng preset cho asset phân phối, giữ asset ngoài build và ghi blocker thay vì commit audio chưa rõ quyền.
 
-- [ ] **Bước 1: Viết controller tests đỏ với fake Howl.** Test: khởi tạo idle, play chuyển loading→playing, pause, replay seek 0 và play lại, end, load/play error, dispose stop/unload, callback muộn không đổi state sau dispose.
-- [ ] **Bước 2: Chạy controller test đỏ.**
+- [x] **Bước 1: Viết controller tests đỏ với fake Howl.** Test: khởi tạo idle, play chuyển loading→playing, pause, replay seek 0 và play lại, end, load/play error, dispose stop/unload, callback muộn không đổi state sau dispose.
+- [x] **Bước 2: Chạy controller test đỏ.**
 
 Chạy: `npx nx run @lexicon/game-web:test -- --run src/audio/audioController.test.ts`
 
 Kỳ vọng: FAIL do controller chưa tồn tại.
 
-- [ ] **Bước 3: Tạo asset Kokoro và provenance.** Nghe lại để xác minh chính xác câu thoại, phát âm “outside”, không có câu/chữ thừa; đo thời lượng và kích thước file. Không commit weights, package Python hoặc script build/runtime TTS vào monorepo.
-- [ ] **Bước 4: Implement controller và React adapter.** Howler callback phải unsubscribe/stop/unload khi dispose; bỏ callback cũ; hỗ trợ retry bằng cùng controller hoặc controller mới theo URL.
-- [ ] **Bước 5: Chạy controller tests xanh.**
+- [ ] **Bước 3: Tạo asset Kokoro và provenance.** Nghe lại để xác minh chính xác câu thoại, phát âm “outside”, không có câu/chữ thừa; đo thời lượng và kích thước file. Không commit weights, package Python hoặc script build/runtime TTS vào monorepo. Browser playback và metadata đã kiểm chứng; cần người nghe duyệt phát âm/chất lượng.
+- [x] **Bước 4: Implement controller và React adapter.** Howler callback phải unsubscribe/stop/unload khi dispose; bỏ callback cũ; hỗ trợ retry bằng cùng controller hoặc controller mới theo URL.
+- [x] **Bước 5: Chạy controller tests xanh.**
 
 Chạy: `npx nx run @lexicon/game-web:test -- --run src/audio/audioController.test.ts`
 
 Kỳ vọng: PASS, kể cả dispose trong lúc đang playing/loading; hook cleanup được kiểm tra trong E2E khi đóng evidence.
 
-- [ ] **Bước 6: Commit.**
+- [x] **Bước 6: Commit.**
 
 ```bash
 git add apps/game-web/public/audio/case-001 apps/game-web/src/audio
@@ -174,29 +174,29 @@ git commit -m "feat(audio): add Leo recording playback"
 - `parseLearningRecord` chấp nhận profile V1 cũ thiếu field `listening`, trả profile đã normalize về các số 0; từ chối counter âm/không nguyên, elapsed âm/không hữu hạn.
 - `ListeningTaskPanel` nhận `{ task, mode, completed, onAnswer, onTelemetry }`; thời gian đo tính từ lần playback start đầu trong modal tới lần trả lời đúng đầu tiên, tính bằng `performance.now()` và chỉ lưu tổng ms + số lượt đo.
 
-- [ ] **Bước 1: Viết learning reducer/migration tests đỏ.** Test: mọi telemetry event tăng đúng field; `elapsedMs` không hợp lệ bị từ chối; record V1 cũ được normalize và giữ vocabulary/mode; `elapsedMs` chỉ được tính cho đáp án đúng.
-- [ ] **Bước 2: Chạy focused tests đỏ.**
+- [x] **Bước 1: Viết learning reducer/migration tests đỏ.** Test: mọi telemetry event tăng đúng field; `elapsedMs` không hợp lệ bị từ chối; record V1 cũ được normalize và giữ vocabulary/mode; `elapsedMs` chỉ được tính cho đáp án đúng.
+- [x] **Bước 2: Chạy focused tests đỏ.**
 
 Chạy: `npx nx run @lexicon/learning-engine:test -- --run src/vocabulary/learningReducer.test.ts`; `npx nx run @lexicon/game-web:test -- --run src/persistence/learningRepository.test.ts`
 
 Kỳ vọng: FAIL vì action và telemetry shape chưa có.
 
-- [ ] **Bước 3: Implement action/reducer và normalize migration V1.** Không thay schemaVersion hoặc xóa dữ liệu người dùng; `createInitialLanguageProfile` khởi tạo listening telemetry bằng 0.
-- [ ] **Bước 4: Chạy reducer, migration, autosave và learningStore tests.**
+- [x] **Bước 3: Implement action/reducer và normalize migration V1.** Không thay schemaVersion hoặc xóa dữ liệu người dùng; `createInitialLanguageProfile` khởi tạo listening telemetry bằng 0.
+- [x] **Bước 4: Chạy reducer, migration, autosave và learningStore tests.**
 
 Chạy: `npx nx run @lexicon/learning-engine:test -- --run src/vocabulary/learningReducer.test.ts`; `npx nx run @lexicon/game-web:test -- --run src/persistence/learningRepository.test.ts src/persistence/connectLearningAutosave.test.ts src/state/learningStore.test.ts`
 
 Kỳ vọng: PASS; old records round-trip sau normalize/save.
 
-- [ ] **Bước 5: Viết SSR UI tests đỏ cho các mode của audio evidence.** Với `renderToString`, kiểm tra Beginner có transcript/subtitle và bản dịch, Learning có keyword nhưng ẩn transcript cho tới khi mở, Immersion không render transcript/bản dịch. Tương tác bàn phím/đáp án/replay/error/close cleanup được kiểm tra trong E2E, không thêm testing dependency.
-- [ ] **Bước 6: Nối `ListeningTaskPanel` trong `EvidenceModal`/`EvidenceLayer`.** Chỉ render với audio evidence có task; không autoplay; mode dùng preference hiện tại; các event telemetry chuyển qua learning store; kết quả answer gọi game-store action; task hoàn tất đọc từ case flag.
-- [ ] **Bước 7: Thêm UI strings tiếng Việt và chạy SSR evidence/UI tests.**
+- [x] **Bước 5: Viết SSR UI tests đỏ cho các mode của audio evidence.** Với `renderToString`, kiểm tra Beginner có transcript/subtitle và bản dịch, Learning có keyword nhưng ẩn transcript cho tới khi mở, Immersion không render transcript/bản dịch. Tương tác bàn phím/đáp án/replay/error/close cleanup được kiểm tra trong E2E, không thêm testing dependency.
+- [x] **Bước 6: Nối `ListeningTaskPanel` trong `EvidenceModal`/`EvidenceLayer`.** Chỉ render với audio evidence có task; không autoplay; mode dùng preference hiện tại; các event telemetry chuyển qua learning store; kết quả answer gọi game-store action; task hoàn tất đọc từ case flag.
+- [x] **Bước 7: Thêm UI strings tiếng Việt và chạy SSR evidence/UI tests.**
 
 Chạy: `npx nx run @lexicon/game-web:test -- --run src/evidence/ListeningTaskPanel.test.tsx src/evidence/EvidenceModal.test.tsx src/state/gameStore.test.ts`; `npx nx run @lexicon/game-content:test -- --run src/schema/ui.test.ts`
 
 Kỳ vọng: PASS; không transcript leak ở Immersion. E2E xác minh mismatch message hiển thị “This interpretation doesn't match the evidence.”
 
-- [ ] **Bước 8: Commit.**
+- [x] **Bước 8: Commit.**
 
 ```bash
 git add packages/shared-types packages/learning-engine apps/game-web/src/evidence apps/game-web/src/game/GameCanvas.tsx apps/game-web/src/state apps/game-web/src/persistence/learningMigration.ts apps/game-web/src/persistence/learningRepository.test.ts packages/game-content/ui/vi.json packages/game-content/src/schema/ui.ts packages/game-content/src/schema/ui.test.ts
@@ -213,27 +213,27 @@ git commit -m "feat(ui): add accessible listening investigation"
 
 **Interfaces:** Dùng hotspot `phone_recording`, dialog/audio controls, case save `lexicon-game-saves` và learning profile `lexicon-learning` đã triển khai ở Task 1–4. E2E không thêm production debug setter.
 
-- [ ] **Bước 1: Viết E2E listening test đỏ.** Kiểm tra người chơi teleport tới hotspot Main Office, mở audio evidence, không autoplay, play tới ended, replay, thấy hỗ trợ theo Beginner/Learning/Immersion, trả lời sai không đổi evidence/fact, nghe lại rồi chọn `Outside the meeting room`, fact `leo_outside_at_2029` mở, listening flag/case state và telemetry lưu sau reload, một canvas, không console error.
-- [ ] **Bước 2: Chạy E2E đỏ.**
+- [x] **Bước 1: Viết E2E listening test đỏ.** Kiểm tra người chơi teleport tới hotspot Main Office, mở audio evidence, không autoplay, play tới ended, replay, thấy hỗ trợ theo Beginner/Learning/Immersion, trả lời sai không đổi evidence/fact, nghe lại rồi chọn `Outside the meeting room`, fact `leo_outside_at_2029` mở, listening flag/case state và telemetry lưu sau reload, một canvas, không console error.
+- [x] **Bước 2: Chạy E2E đỏ.**
 
 Chạy: `npm run test:e2e -- --grep listening`
 
 Kỳ vọng: FAIL vì audio evidence/task chưa nối đủ trong gameplay.
 
-- [ ] **Bước 3: Sửa integration gaps quan sát được trong browser trace.** Không nới test, không đổi câu trả lời/case truth, không làm task tự mở đúng đáp án.
-- [ ] **Bước 4: Chạy E2E listening xanh, rồi toàn bộ E2E.**
+- [x] **Bước 3: Sửa integration gaps quan sát được trong browser trace.** Không nới test, không đổi câu trả lời/case truth, không làm task tự mở đúng đáp án.
+- [x] **Bước 4: Chạy E2E listening xanh, rồi toàn bộ E2E.**
 
 Chạy: `npm run test:e2e -- --grep listening`; sau đó `npm run test:e2e`
 
 Kỳ vọng: listening flow và toàn bộ browser suite PASS với một worker.
 
-- [ ] **Bước 5: Rà soát thay đổi và chạy các gate phase.**
+- [x] **Bước 5: Rà soát thay đổi và chạy các gate phase.**
 
 Chạy lần lượt: `npm run lint`; `npm run test`; `npm run build`; `npm run typecheck`; `npm run format:check`; `npm run test:e2e`; `npm run memory:check`; `git diff --check`.
 
 Kỳ vọng: tất cả exit code 0; lưu output/kết quả thật vào `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`. Không chạy .NET vì không sửa `apps/api`.
 
-- [ ] **Bước 6: Commit verification, cập nhật plan checkboxes, rồi cập nhật `MEMORY.md` ở commit kế tiếp.** Ghi rõ source/license asset, test mới, output các gate, chunk/asset size, giới hạn còn lại. Chưa đánh dấu complete hoặc push trước khi toàn bộ kiểm tra và review cuối đạt.
+- [x] **Bước 6: Commit verification, cập nhật plan checkboxes, rồi cập nhật `MEMORY.md` ở commit kế tiếp.** Ghi rõ source/license asset, test mới, output các gate, chunk/asset size, giới hạn còn lại. Chưa đánh dấu complete hoặc push trước khi toàn bộ kiểm tra và review cuối đạt.
 
 ```bash
 git add apps/game-web/e2e docs/ai/2026-09-29-phase-7-audio-listening-verification.md docs/superpowers/plans/2026-09-29-phase-7-audio-listening.md

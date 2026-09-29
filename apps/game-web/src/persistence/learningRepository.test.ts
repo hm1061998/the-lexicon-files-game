@@ -75,7 +75,8 @@ describe('separate learning repository', () => {
 
   it('normalizes schema v1 profiles without listening counters and preserves saved settings', () => {
     const record = createDefaultLearningRecord();
-    const { listening: _listening, ...legacyProfile } = record.profile;
+    const { listening, ...legacyProfile } = record.profile;
+    expect(listening).toBeDefined();
     const legacy = {
       ...record,
       translationMode: 'Beginner',

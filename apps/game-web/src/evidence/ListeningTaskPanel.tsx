@@ -69,10 +69,13 @@ export function ListeningTaskPanel({
   };
 
   const showTranscript = () => {
-    setTranscriptOpen((open) => {
-      if (!open) onTelemetry('transcriptOpened');
-      return !open;
-    });
+    if (!transcriptOpen) onTelemetry('transcriptOpened');
+    setTranscriptOpen(!transcriptOpen);
+  };
+
+  const toggleHint = () => {
+    if (!hintVisible) onTelemetry('hintUsed');
+    setHintVisible(!hintVisible);
   };
 
   return (
@@ -104,6 +107,9 @@ export function ListeningTaskPanel({
       </div>
       <p className="listening-playback-state" role="status" aria-live="polite">
         {playback.state === 'loading' ? strings.listeningLoading : null}
+        {playback.state === 'playing' ? strings.listeningPlaying : null}
+        {playback.state === 'paused' ? strings.listeningPaused : null}
+        {playback.state === 'ended' ? strings.listeningEnded : null}
         {playback.state === 'error' ? strings.listeningPlaybackError : null}
       </p>
       {playback.state === 'error' && (
@@ -126,16 +132,7 @@ export function ListeningTaskPanel({
       )}
       {mode === 'Learning' && (
         <div className="listening-support">
-          <button
-            type="button"
-            onClick={() => {
-              setHintVisible((visible) => {
-                if (!visible) onTelemetry('hintUsed');
-                return !visible;
-              });
-            }}
-            aria-expanded={hintVisible}
-          >
+          <button type="button" onClick={toggleHint} aria-expanded={hintVisible}>
             {strings.listeningHint}
           </button>
           {hintVisible && <p>{task.keywordHints.join(' · ')}</p>}

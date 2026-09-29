@@ -48,6 +48,9 @@ export interface UiStrings {
   readonly listeningHint: string;
   readonly listeningRetry: string;
   readonly listeningLoading: string;
+  readonly listeningPlaying: string;
+  readonly listeningPaused: string;
+  readonly listeningEnded: string;
   readonly listeningPlaybackError: string;
   readonly listeningMismatch: string;
   readonly listeningCompleted: string;
