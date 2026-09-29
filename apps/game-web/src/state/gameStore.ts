@@ -7,6 +7,8 @@ import type {
   DialogueSession,
   DialogueAction,
   ListeningAnswerResult,
+  TimelinePlacementResult,
+  ContradictionResult,
 } from '@lexicon/shared-types';
 import {
   applyEffects,
@@ -14,8 +16,10 @@ import {
   startDialogue as runStartDialogue,
   chooseDialogueChoice,
   answerListeningTask as answerListeningTaskCore,
+  placeTimelineEvent as placeTimelineEventCore,
+  submitContradiction as submitContradictionCore,
 } from '@lexicon/game-core';
-export type NotebookTab = 'people' | 'evidence' | 'vocabulary';
+export type NotebookTab = 'people' | 'evidence' | 'vocabulary' | 'timeline';
 export type GameStoreState = {
   caseDefinition: CaseDefinition;
   caseState: CaseState;
@@ -42,6 +46,8 @@ export type GameStoreState = {
   setPersistenceError(error: string | null): void;
   applyCaseEffects(effects: readonly Effect[]): CaseTransitionResult;
   answerListeningTask(taskId: string, optionId: string): ListeningAnswerResult;
+  placeTimelineEvent(eventId: string, slotId: string): TimelinePlacementResult;
+  submitContradiction(contradictionId: string, factIds: readonly string[]): ContradictionResult;
   transitionScene(sceneId: string, spawnId: string): boolean;
 };
 export type GameStore = StoreApi<GameStoreState>;
@@ -157,6 +163,23 @@ export function createGameStore(init: {
     answerListeningTask(taskId, optionId) {
       const s = get();
       const result = answerListeningTaskCore(s.caseDefinition, s.caseState, taskId, optionId);
+      if (result.ok && result.correct) set({ caseState: result.state });
+      return result;
+    },
+    placeTimelineEvent(eventId, slotId) {
+      const s = get();
+      const result = placeTimelineEventCore(s.caseDefinition, s.caseState, eventId, slotId);
+      if (result.ok && result.correct) set({ caseState: result.state });
+      return result;
+    },
+    submitContradiction(contradictionId, factIds) {
+      const s = get();
+      const result = submitContradictionCore(
+        s.caseDefinition,
+        s.caseState,
+        contradictionId,
+        factIds,
+      );
       if (result.ok && result.correct) set({ caseState: result.state });
       return result;
     },

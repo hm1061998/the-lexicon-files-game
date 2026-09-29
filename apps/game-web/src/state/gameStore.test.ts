@@ -48,6 +48,61 @@ describe('createGameStore', () => {
     expect(store.getState().caseState.discoveredFactIds).toContain('leo_outside_at_2029');
   });
 
+  it('places timeline events through game-core, permits retries, and saves only correct placements', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+    const initial = store.getState().caseState;
+
+    const wrong = store.getState().placeTimelineEvent('report_missing_21_05', '20_45');
+    expect(wrong).toMatchObject({ ok: true, correct: false, state: initial });
+    expect(store.getState().caseState).toBe(initial);
+
+    const correct = store.getState().placeTimelineEvent('report_missing_21_05', '21_05');
+    expect(correct).toMatchObject({ ok: true, correct: true });
+    expect(store.getState().caseState.timelineEventIds).toEqual(['report_missing_21_05']);
+
+    const completed = store.getState().caseState;
+    expect(store.getState().placeTimelineEvent('report_missing_21_05', '21_05')).toMatchObject({
+      ok: true,
+      correct: true,
+      state: completed,
+    });
+    expect(store.getState().caseState).toBe(completed);
+  });
+
+  it('submits contradiction pairs through game-core without losing retry progress', () => {
+    const definition = loadCaseDefinition('case-001');
+    const initial = {
+      ...createCaseState(definition),
+      discoveredFactIds: [
+        'david_statement_no_entry_after_20_00',
+        'david_entry_20_32',
+        'meeting_started',
+        'leo_outside_at_2029',
+      ],
+    };
+    const store = createGameStore({ caseDefinition: definition, initialState: initial });
+    const wrong = store
+      .getState()
+      .submitContradiction('david_statement_vs_access_log', [
+        'meeting_started',
+        'leo_outside_at_2029',
+      ]);
+    expect(wrong).toMatchObject({ ok: true, correct: false, state: initial, events: [] });
+    expect(store.getState().caseState).toBe(initial);
+
+    const correct = store
+      .getState()
+      .submitContradiction('david_statement_vs_access_log', [
+        'david_statement_no_entry_after_20_00',
+        'david_entry_20_32',
+      ]);
+    expect(correct).toMatchObject({ ok: true, correct: true });
+    expect(store.getState().caseState.flags.david_contradiction_found).toBe(true);
+    expect(store.getState().caseState.objectiveStatuses.compare_david_statement).toBe('completed');
+    expect(store.getState().caseState.contradictionIds).toEqual(['david_statement_vs_access_log']);
+  });
+
   it('uses a restored core state when provided', () => {
     const definition = loadCaseDefinition('case-001');
     const restored = {

@@ -506,6 +506,10 @@ function NotebookLayer({
       onEncounter={onEncounter}
       onInspect={onInspect}
       onTranslationModeChange={setTranslationMode}
+      onPlaceTimelineEvent={(eventId, slotId) => store.placeTimelineEvent(eventId, slotId)}
+      onSubmitContradiction={(contradictionId, factIds) =>
+        store.submitContradiction(contradictionId, factIds)
+      }
     />
   );
 }

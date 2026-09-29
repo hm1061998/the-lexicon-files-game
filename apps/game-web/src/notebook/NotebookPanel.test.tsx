@@ -19,6 +19,17 @@ describe('NotebookPanel', () => {
         strings={strings}
         onSelectTab={() => {}}
         onClose={() => {}}
+        onPlaceTimelineEvent={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+        })}
+        onSubmitContradiction={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+          events: [],
+        })}
       />,
     );
     expect(html).toContain(
@@ -27,6 +38,7 @@ describe('NotebookPanel', () => {
     expect(html).toContain(strings.people);
     expect(html).toContain(strings.evidence);
     expect(html).toContain(strings.vocabulary);
+    expect(html).toContain(strings.timeline);
     expect(html).toContain(strings.close);
     expect(html).toContain(strings.vocabularyMode);
     expect(html).toContain(strings.vocabularyModeLearning);
@@ -56,6 +68,17 @@ describe('NotebookPanel', () => {
         strings={strings}
         onSelectTab={() => {}}
         onClose={() => {}}
+        onPlaceTimelineEvent={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+        })}
+        onSubmitContradiction={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+          events: [],
+        })}
         profile={profile}
       />,
     );
@@ -75,6 +98,17 @@ describe('NotebookPanel', () => {
         strings={strings}
         onSelectTab={() => {}}
         onClose={() => {}}
+        onPlaceTimelineEvent={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+        })}
+        onSubmitContradiction={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+          events: [],
+        })}
       />,
     );
     const vocabulary = renderToString(
@@ -85,9 +119,115 @@ describe('NotebookPanel', () => {
         strings={strings}
         onSelectTab={() => {}}
         onClose={() => {}}
+        onPlaceTimelineEvent={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+        })}
+        onSubmitContradiction={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+          events: [],
+        })}
       />,
     );
     expect(people).toContain(strings.notebookEmptyPeople);
     expect(vocabulary).toContain(strings.notebookEmptyVocabulary);
+  });
+
+  it('shows only start-available timeline events and hides target slots until an event is selected', () => {
+    const html = renderToString(
+      <NotebookPanel
+        caseDefinition={caseDefinition}
+        caseState={createCaseState(caseDefinition)}
+        activeTab="timeline"
+        strings={strings}
+        onSelectTab={() => {}}
+        onClose={() => {}}
+        onPlaceTimelineEvent={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+        })}
+        onSubmitContradiction={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+          events: [],
+        })}
+      />,
+    );
+
+    expect(html).toContain(
+      caseDefinition.timeline.events.find((event) => event.id === 'report_missing_21_05')!.text,
+    );
+    expect(html).not.toContain(
+      caseDefinition.timeline.events.find((event) => event.id === 'meeting_ended_20_45')!.text,
+    );
+    expect(html).not.toContain('21:05');
+    expect(html).toContain(strings.timelineSelectEvent);
+    expect(html).toContain('aria-pressed="false"');
+  });
+
+  it('reveals a timeline event only after its required fact is discovered', () => {
+    const html = renderToString(
+      <NotebookPanel
+        caseDefinition={caseDefinition}
+        caseState={{ ...createCaseState(caseDefinition), discoveredFactIds: ['meeting_started'] }}
+        activeTab="timeline"
+        strings={strings}
+        onSelectTab={() => {}}
+        onClose={() => {}}
+        onPlaceTimelineEvent={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+        })}
+        onSubmitContradiction={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+          events: [],
+        })}
+      />,
+    );
+
+    expect(html).toContain(
+      caseDefinition.timeline.events.find((event) => event.id === 'meeting_started')!.text,
+    );
+    expect(html).not.toContain(
+      caseDefinition.timeline.events.find((event) => event.id === 'david_entry_20_32')!.text,
+    );
+  });
+
+  it('does not render undiscovered facts in the contradiction chooser', () => {
+    const hiddenFact = caseDefinition.facts.find(
+      (fact) => fact.id === 'david_statement_no_entry_after_20_00',
+    )!;
+    const html = renderToString(
+      <NotebookPanel
+        caseDefinition={caseDefinition}
+        caseState={createCaseState(caseDefinition)}
+        activeTab="timeline"
+        strings={strings}
+        onSelectTab={() => {}}
+        onClose={() => {}}
+        onPlaceTimelineEvent={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+        })}
+        onSubmitContradiction={() => ({
+          ok: true,
+          correct: false,
+          state: createCaseState(caseDefinition),
+          events: [],
+        })}
+      />,
+    );
+
+    expect(html).not.toContain(hiddenFact.text);
+    expect(html).toContain(strings.contradictionUnavailable);
   });
 });
