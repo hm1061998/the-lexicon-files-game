@@ -73,6 +73,56 @@ describe('separate learning repository', () => {
     );
   });
 
+  it('normalizes schema v1 profiles without listening counters and preserves saved settings', () => {
+    const record = createDefaultLearningRecord();
+    const { listening: _listening, ...legacyProfile } = record.profile;
+    const legacy = {
+      ...record,
+      translationMode: 'Beginner',
+      vocabularyTutorialSeen: true,
+      profile: {
+        ...legacyProfile,
+        vocabulary: {
+          leave: {
+            vocabularyId: 'leave',
+            stage: 'seen',
+            encounterCount: 1,
+            correctRecognitionCount: 0,
+            incorrectRecognitionCount: 0,
+            lastSeenAt: '2026-09-28T00:00:00.000Z',
+            contextsSeen: ['dialogue:anna:entry:text'],
+          },
+        },
+      },
+    };
+    expect(parseLearningRecord(legacy, ['leave'], ['dialogue:anna:entry:text'])).toMatchObject({
+      schemaVersion: 1,
+      translationMode: 'Beginner',
+      vocabularyTutorialSeen: true,
+      profile: {
+        vocabulary: { leave: { stage: 'seen' } },
+        listening: {
+          subtitleUses: 0,
+          correctAnswers: 0,
+          incorrectAnswers: 0,
+          totalTimeToExtractFactMs: 0,
+          timedFacts: 0,
+        },
+      },
+    });
+  });
+
+  it('rejects malformed listening counters', () => {
+    const record = createDefaultLearningRecord();
+    const corrupted = {
+      ...record,
+      profile: { ...record.profile, listening: { ...record.profile.listening, timedFacts: -1 } },
+    };
+    expect(() => parseLearningRecord(corrupted, [], [])).toThrow(
+      'Invalid timedFacts listening counter',
+    );
+  });
+
   it('rejects encounter counts that do not match unique seen contexts', () => {
     const record = createDefaultLearningRecord();
     const inconsistent = {

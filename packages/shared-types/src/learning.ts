@@ -43,6 +43,13 @@ export interface LanguageProfile {
   readonly assistance: Readonly<
     Record<'translations' | 'hints' | 'transcriptOpens' | 'audioReplays', number>
   >;
+  readonly listening: Readonly<{
+    subtitleUses: number;
+    correctAnswers: number;
+    incorrectAnswers: number;
+    totalTimeToExtractFactMs: number;
+    timedFacts: number;
+  }>;
 }
 export type LearningAction =
   | { readonly type: 'encounterContext'; readonly vocabularyId: string; readonly contextId: string }
@@ -55,7 +62,18 @@ export type LearningAction =
       readonly type: 'revealTranslation';
       readonly vocabularyId: string;
       readonly contextId: string;
+    }
+  | {
+      readonly type: 'recordListeningEvent';
+      readonly event: Exclude<ListeningLearningEvent, 'answerCorrect'>;
+    }
+  | {
+      readonly type: 'recordListeningEvent';
+      readonly event: 'answerCorrect';
+      readonly elapsedMs?: number;
     };
+export type ListeningLearningEvent =
+  'replay' | 'subtitleUsed' | 'transcriptOpened' | 'hintUsed' | 'answerCorrect' | 'answerIncorrect';
 export type LearningDomainEvent =
   | { readonly type: 'vocabularySeen'; readonly vocabularyId: string; readonly contextId: string }
   | {

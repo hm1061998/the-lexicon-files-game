@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   CaseDefinition,
   GameEventMap,
+  LearningAction,
   SceneDefinition,
   UiStrings,
 } from '@lexicon/shared-types';
@@ -366,6 +367,12 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
     state.caseDefinition.evidences.find((item) => item.id === state.activeEvidenceId),
   );
   const store = useGameStore((state) => state);
+  const caseState = useGameStore((state) => state.caseState);
+  const listeningTask = useGameStore(
+    (state) =>
+      state.caseDefinition.listeningTasks.find((task) => task.evidenceId === activeEvidenceId) ??
+      null,
+  );
   const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
   const translationMode = useLearningStore((state) => state.translationMode);
   const setTranslationMode = useLearningStore((state) => state.setTranslationMode);
@@ -386,6 +393,22 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId }),
     [dispatchLearning],
   );
+  const onListeningAnswer = useCallback(
+    (taskId: string, optionId: string) => store.answerListeningTask(taskId, optionId),
+    [store.answerListeningTask],
+  );
+  const onListeningTelemetry = useCallback(
+    (
+      event: Extract<LearningAction, { type: 'recordListeningEvent' }>['event'],
+      elapsedMs?: number,
+    ) =>
+      dispatchLearning({
+        type: 'recordListeningEvent',
+        event,
+        ...(elapsedMs === undefined ? {} : { elapsedMs }),
+      }),
+    [dispatchLearning],
+  );
   if (activeEvidenceId === null || !evidence) return null;
   return (
     <EvidenceModal
@@ -400,6 +423,10 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       onTranslationModeChange={setTranslationMode}
       vocabularyTutorialSeen={vocabularyTutorialSeen}
       onVocabularyTutorialSeen={markVocabularyTutorialSeen}
+      {...(listeningTask ? { listeningTask } : {})}
+      listeningCompleted={Boolean(listeningTask && caseState.flags[listeningTask.completionFlag])}
+      onListeningAnswer={onListeningAnswer}
+      onListeningTelemetry={onListeningTelemetry}
     />
   );
 }

@@ -4,6 +4,11 @@ import type { EvidenceDefinition, UiStrings } from '@lexicon/shared-types';
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './evidence.css';
 import { VocabularyText } from '../vocabulary/VocabularyText';
+import { ListeningTaskPanel } from './ListeningTaskPanel';
+import type { ListeningAnswerResult, ListeningTaskDefinition } from '@lexicon/shared-types';
+import type { LearningAction } from '@lexicon/shared-types';
+
+type ListeningEvent = Extract<LearningAction, { type: 'recordListeningEvent' }>['event'];
 
 const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -20,6 +25,10 @@ export function EvidenceModal({
   onTranslationModeChange,
   vocabularyTutorialSeen = true,
   onVocabularyTutorialSeen,
+  listeningTask,
+  listeningCompleted = false,
+  onListeningAnswer,
+  onListeningTelemetry,
 }: {
   evidence: EvidenceDefinition;
   strings: UiStrings;
@@ -32,6 +41,10 @@ export function EvidenceModal({
   onTranslationModeChange?(mode: import('@lexicon/shared-types').TranslationMode): void;
   vocabularyTutorialSeen?: boolean;
   onVocabularyTutorialSeen?(): void;
+  listeningTask?: ListeningTaskDefinition;
+  listeningCompleted?: boolean;
+  onListeningAnswer?(taskId: string, optionId: string): ListeningAnswerResult;
+  onListeningTelemetry?(event: ListeningEvent, elapsedMs?: number): void;
 }): JSX.Element {
   const headingId = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -92,6 +105,16 @@ export function EvidenceModal({
               onTutorialSeen={onVocabularyTutorialSeen}
             />
           </p>
+          {evidence.category === 'audio' && listeningTask && onListeningAnswer && (
+            <ListeningTaskPanel
+              task={listeningTask}
+              mode={translationMode}
+              completed={listeningCompleted}
+              onAnswer={(optionId) => onListeningAnswer(listeningTask.id, optionId)}
+              onTelemetry={(event, elapsedMs) => onListeningTelemetry?.(event, elapsedMs)}
+              strings={strings}
+            />
+          )}
         </div>
       </PaperPanel>
     </div>

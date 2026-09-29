@@ -37,4 +37,18 @@ export interface UiStrings {
   readonly vocabularyLearningError: string;
   readonly vocabularyResetTitle: string;
   readonly vocabularyResetBody: string;
+  readonly listeningTimestamp: string;
+  readonly listeningPlay: string;
+  readonly listeningPause: string;
+  readonly listeningReplay: string;
+  readonly listeningQuestion: string;
+  readonly listeningTranscript: string;
+  readonly listeningTranslation: string;
+  readonly listeningShowTranscript: string;
+  readonly listeningHint: string;
+  readonly listeningRetry: string;
+  readonly listeningLoading: string;
+  readonly listeningPlaybackError: string;
+  readonly listeningMismatch: string;
+  readonly listeningCompleted: string;
 }

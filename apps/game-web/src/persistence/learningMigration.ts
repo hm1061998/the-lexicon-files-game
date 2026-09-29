@@ -63,6 +63,21 @@ export function parseLearningRecord(
   for (const key of ['translations', 'hints', 'transcriptOpens', 'audioReplays'] as const)
     if (!nonnegativeInteger(profile.assistance?.[key]))
       throw new Error(`Invalid ${key} assistance counter`);
+  const listening = profile.listening ?? {
+    subtitleUses: 0,
+    correctAnswers: 0,
+    incorrectAnswers: 0,
+    totalTimeToExtractFactMs: 0,
+    timedFacts: 0,
+  };
+  for (const key of ['subtitleUses', 'correctAnswers', 'incorrectAnswers', 'timedFacts'] as const)
+    if (!nonnegativeInteger(listening[key])) throw new Error(`Invalid ${key} listening counter`);
+  if (
+    typeof listening.totalTimeToExtractFactMs !== 'number' ||
+    !Number.isFinite(listening.totalTimeToExtractFactMs) ||
+    listening.totalTimeToExtractFactMs < 0
+  )
+    throw new Error('Invalid totalTimeToExtractFactMs listening counter');
   if (
     !profile.grammar ||
     typeof profile.grammar !== 'object' ||
@@ -92,5 +107,8 @@ export function parseLearningRecord(
     if (progress.nextReviewAt !== undefined && !Number.isFinite(Date.parse(progress.nextReviewAt)))
       throw new Error(`Invalid vocabulary review date: ${id}`);
   }
-  return raw as LearningRecordV1;
+  return {
+    ...record,
+    profile: { ...profile, listening },
+  } as unknown as LearningRecordV1;
 }

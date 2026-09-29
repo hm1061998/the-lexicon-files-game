@@ -36,5 +36,19 @@
   "vocabularyTutorial": "Nhấn vào từ được gạch chân để xem nghĩa.",
   "vocabularyLearningError": "Chưa thể lưu tiến trình học từ vựng.",
   "vocabularyResetTitle": "Đặt lại tiến trình từ vựng",
-  "vocabularyResetBody": "Hồ sơ học từ vựng sẽ được sao lưu trước khi đặt lại."
+  "vocabularyResetBody": "Hồ sơ học từ vựng sẽ được sao lưu trước khi đặt lại.",
+  "listeningTimestamp": "Thời điểm ghi âm",
+  "listeningPlay": "Phát bản ghi",
+  "listeningPause": "Tạm dừng",
+  "listeningReplay": "Phát lại từ đầu",
+  "listeningQuestion": "Câu hỏi điều tra",
+  "listeningTranscript": "Lời thoại",
+  "listeningTranslation": "Bản dịch",
+  "listeningShowTranscript": "Mở lời thoại",
+  "listeningHint": "Gợi ý từ khóa",
+  "listeningRetry": "Thử phát lại",
+  "listeningLoading": "Đang tải bản ghi…",
+  "listeningPlaybackError": "Không thể phát bản ghi. Bạn có thể thử lại.",
+  "listeningMismatch": "This interpretation doesn't match the evidence.",
+  "listeningCompleted": "Bạn đã rút ra fact từ bản ghi này."
 }

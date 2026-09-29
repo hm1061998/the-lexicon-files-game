@@ -15,6 +15,13 @@ export function createInitialLanguageProfile(): LanguageProfile {
     vocabulary: {},
     grammar: {},
     assistance: { translations: 0, hints: 0, transcriptOpens: 0, audioReplays: 0 },
+    listening: {
+      subtitleUses: 0,
+      correctAnswers: 0,
+      incorrectAnswers: 0,
+      totalTimeToExtractFactMs: 0,
+      timedFacts: 0,
+    },
   };
 }
 
@@ -36,6 +43,31 @@ export function applyLearningAction(
   });
   if (!Number.isFinite(Date.parse(nowIso)) || !nowIso.includes('T'))
     return fail('invalidTimestamp', 'Timestamp must be a valid ISO date-time.');
+  if (action.type === 'recordListeningEvent') {
+    if (
+      action.event === 'answerCorrect' &&
+      action.elapsedMs !== undefined &&
+      (!Number.isFinite(action.elapsedMs) || action.elapsedMs < 0)
+    )
+      return fail('invalidAction', 'Listening elapsed time is only valid for correct answers.');
+    if (action.event !== 'answerCorrect' && 'elapsedMs' in action)
+      return fail('invalidAction', 'Listening elapsed time is only valid for correct answers.');
+    const assistance = { ...profile.assistance };
+    if (action.event === 'replay') assistance.audioReplays += 1;
+    if (action.event === 'transcriptOpened') assistance.transcriptOpens += 1;
+    if (action.event === 'hintUsed') assistance.hints += 1;
+    const listening = { ...profile.listening };
+    if (action.event === 'subtitleUsed') listening.subtitleUses += 1;
+    if (action.event === 'answerCorrect') {
+      listening.correctAnswers += 1;
+      if (action.elapsedMs !== undefined) {
+        listening.totalTimeToExtractFactMs += action.elapsedMs;
+        listening.timedFacts += 1;
+      }
+    }
+    if (action.event === 'answerIncorrect') listening.incorrectAnswers += 1;
+    return { ok: true, profile: { ...profile, assistance, listening }, events: [] };
+  }
   const entry = catalogue.find((item) => item.id === action.vocabularyId);
   if (!entry) return fail('unknownVocabulary', `Unknown vocabulary id: ${action.vocabularyId}`);
   const context = contexts.find((item) => item.id === action.contextId);

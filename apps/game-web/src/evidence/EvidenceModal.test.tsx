@@ -13,7 +13,7 @@ describe('EvidenceModal', () => {
     );
     expect(html).toContain('role="dialog"');
     expect(html).toContain('aria-modal="true"');
-    expect(html).toContain(evidence.name);
+    expect(html).toContain(evidence.name.replaceAll("'", '&#x27;'));
     expect(html).toContain(evidence.description);
     expect(html).toContain(strings.close);
   });

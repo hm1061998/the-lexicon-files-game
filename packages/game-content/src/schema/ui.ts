@@ -42,6 +42,20 @@ const uiStringsSchema = z
     vocabularyLearningError: z.string().min(1),
     vocabularyResetTitle: z.string().min(1),
     vocabularyResetBody: z.string().min(1),
+    listeningTimestamp: z.string().min(1),
+    listeningPlay: z.string().min(1),
+    listeningPause: z.string().min(1),
+    listeningReplay: z.string().min(1),
+    listeningQuestion: z.string().min(1),
+    listeningTranscript: z.string().min(1),
+    listeningTranslation: z.string().min(1),
+    listeningShowTranscript: z.string().min(1),
+    listeningHint: z.string().min(1),
+    listeningRetry: z.string().min(1),
+    listeningLoading: z.string().min(1),
+    listeningPlaybackError: z.string().min(1),
+    listeningMismatch: z.string().min(1),
+    listeningCompleted: z.string().min(1),
   })
   .strict();
 

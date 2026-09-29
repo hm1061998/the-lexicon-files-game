@@ -21,7 +21,84 @@ const contexts = [
 
 describe('learning reducer', () => {
   it('starts at A2 with empty vocabulary progress', () => {
-    expect(createInitialLanguageProfile()).toMatchObject({ cefrEstimate: 'A2', vocabulary: {} });
+    expect(createInitialLanguageProfile()).toMatchObject({
+      cefrEstimate: 'A2',
+      vocabulary: {},
+      listening: {
+        subtitleUses: 0,
+        correctAnswers: 0,
+        incorrectAnswers: 0,
+        totalTimeToExtractFactMs: 0,
+        timedFacts: 0,
+      },
+    });
+  });
+
+  it('records listening assistance and answer telemetry', () => {
+    const initial = createInitialLanguageProfile();
+    const actions = [
+      { type: 'recordListeningEvent', event: 'replay' },
+      { type: 'recordListeningEvent', event: 'subtitleUsed' },
+      { type: 'recordListeningEvent', event: 'transcriptOpened' },
+      { type: 'recordListeningEvent', event: 'hintUsed' },
+      { type: 'recordListeningEvent', event: 'answerIncorrect' },
+      { type: 'recordListeningEvent', event: 'answerCorrect', elapsedMs: 1250 },
+    ] as const;
+    const result = actions.reduce((profile, action) => {
+      const next = applyLearningAction(
+        profile,
+        catalogue,
+        contexts,
+        action,
+        '2026-09-29T00:00:00.000Z',
+      );
+      if (!next.ok) throw new Error(next.error.detail);
+      return next.profile;
+    }, initial);
+    expect(result.assistance).toEqual({
+      translations: 0,
+      hints: 1,
+      transcriptOpens: 1,
+      audioReplays: 1,
+    });
+    expect(result.listening).toEqual({
+      subtitleUses: 1,
+      correctAnswers: 1,
+      incorrectAnswers: 1,
+      totalTimeToExtractFactMs: 1250,
+      timedFacts: 1,
+    });
+  });
+
+  it('rejects malformed listening elapsed times without changing the profile', () => {
+    const profile = createInitialLanguageProfile();
+    for (const elapsedMs of [-1, Number.NaN, Number.POSITIVE_INFINITY]) {
+      const result = applyLearningAction(
+        profile,
+        catalogue,
+        contexts,
+        { type: 'recordListeningEvent', event: 'answerCorrect', elapsedMs },
+        '2026-09-29T00:00:00.000Z',
+      );
+      expect(result).toMatchObject({ ok: false, profile, error: { code: 'invalidAction' } });
+    }
+  });
+
+  it('counts a correct answer without timing when playback never started', () => {
+    const result = applyLearningAction(
+      createInitialLanguageProfile(),
+      catalogue,
+      contexts,
+      { type: 'recordListeningEvent', event: 'answerCorrect' },
+      '2026-09-29T00:00:00.000Z',
+    );
+    expect(result.ok && result.profile.listening).toEqual({
+      subtitleUses: 0,
+      correctAnswers: 1,
+      incorrectAnswers: 0,
+      totalTimeToExtractFactMs: 0,
+      timedFacts: 0,
+    });
   });
 
   it('records one seen context and deduplicates retry', () => {
