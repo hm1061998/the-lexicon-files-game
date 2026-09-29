@@ -19,6 +19,7 @@ export type NotebookTab = 'people' | 'evidence' | 'vocabulary';
 export type GameStoreState = {
   caseDefinition: CaseDefinition;
   caseState: CaseState;
+  activeSceneId: string;
   nearby: { id: string; prompt: string } | null;
   paused: boolean;
   activeEvidenceId: string | null;
@@ -41,6 +42,7 @@ export type GameStoreState = {
   setPersistenceError(error: string | null): void;
   applyCaseEffects(effects: readonly Effect[]): CaseTransitionResult;
   answerListeningTask(taskId: string, optionId: string): ListeningAnswerResult;
+  transitionScene(sceneId: string, spawnId: string): boolean;
 };
 export type GameStore = StoreApi<GameStoreState>;
 function inputLocked(
@@ -52,12 +54,18 @@ export function createGameStore(init: {
   caseDefinition: CaseDefinition;
   initialState?: CaseState;
   initialPersistenceError?: string;
+  initialSceneId?: string;
 }): GameStore {
+  const initialSceneId = init.initialSceneId ?? init.caseDefinition.scenes[0]?.id;
+  const initialScene = init.caseDefinition.scenes.find(({ id }) => id === initialSceneId);
+  if (!initialScene || !initialScene.spawnPoints.default)
+    throw new Error(`Initial scene "${String(initialSceneId)}" or its default spawn is missing`);
   // Per-store action sequence also rejects callbacks from a closed/reopened session.
   let nextRevision = 0;
   return createStore<GameStoreState>((set, get) => ({
     caseDefinition: init.caseDefinition,
     caseState: init.initialState ?? createCaseState(init.caseDefinition),
+    activeSceneId: initialScene.id,
     nearby: null,
     paused: false,
     activeEvidenceId: null,
@@ -151,6 +159,12 @@ export function createGameStore(init: {
       const result = answerListeningTaskCore(s.caseDefinition, s.caseState, taskId, optionId);
       if (result.ok && result.correct) set({ caseState: result.state });
       return result;
+    },
+    transitionScene(sceneId, spawnId) {
+      const scene = get().caseDefinition.scenes.find(({ id }) => id === sceneId);
+      if (!scene || !scene.spawnPoints[spawnId]) return false;
+      if (get().activeSceneId !== sceneId) set({ activeSceneId: sceneId });
+      return true;
     },
   }));
 }

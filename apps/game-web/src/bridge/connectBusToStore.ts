@@ -9,9 +9,13 @@ export function connectBusToStore(bus: EventBus<GameEventMap>, store: GameStore)
   const offCleared = bus.on('interaction:cleared', () => {
     store.getState().setNearby(null);
   });
+  const offTransition = bus.on('scene:transitionRequested', () => {
+    store.getState().setNearby(null);
+  });
 
   return () => {
     offNearby();
     offCleared();
+    offTransition();
   };
 }

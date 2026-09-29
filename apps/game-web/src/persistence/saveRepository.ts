@@ -1,11 +1,12 @@
 import { openDB, type DBSchema } from 'idb';
 import type { CaseDefinition, GameState } from '@lexicon/shared-types';
 import { createCaseState } from '@lexicon/game-core';
-import { migrateVersion1Save, parseCurrentSaveRecord } from './saveMigration';
+import { migrateVersion1Save, migrateVersion2Save, parseCurrentSaveRecord } from './saveMigration';
 
 export type SaveRecord = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   caseId: string;
+  activeSceneId: string;
   state: GameState;
   updatedAt: number;
 };
@@ -27,23 +28,23 @@ export type SaveDatabaseFactory = () => Promise<SaveDatabase>;
 
 export type LoadSaveResult =
   | { status: 'missing' }
-  | { status: 'loaded'; state: GameState }
+  | { status: 'loaded'; state: GameState; activeSceneId: string }
   | { status: 'confirmation-required'; reason: string }
   | { status: 'unavailable'; error: string };
 
 export type SaveRepository = {
   loadSave(caseId: string, definition: CaseDefinition): Promise<LoadSaveResult>;
-  saveGameState(state: GameState): Promise<void>;
+  saveGameState(state: GameState, activeSceneId: string): Promise<void>;
   createFreshSaveAfterConfirmation(caseId: string, definition: CaseDefinition): Promise<GameState>;
 };
 
 const DATABASE_NAME = 'lexicon-game-saves';
-const DATABASE_VERSION = 1;
+export const SAVE_DATABASE_VERSION = 1;
 const OBJECT_STORE_SAVES = 'saves';
 const OBJECT_STORE_BACKUPS = 'backups';
 
 async function openSaveDatabase(): Promise<SaveDatabase> {
-  const database = await openDB<SaveDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
+  const database = await openDB<SaveDatabaseSchema>(DATABASE_NAME, SAVE_DATABASE_VERSION, {
     upgrade(db) {
       if (!db.objectStoreNames.contains(OBJECT_STORE_SAVES)) {
         db.createObjectStore(OBJECT_STORE_SAVES);
@@ -90,14 +91,20 @@ export function createSaveRepository(
       if (raw === undefined) return { status: 'missing' };
 
       try {
-        const legacy =
+        const version =
           typeof raw === 'object' &&
           raw !== null &&
           'schemaVersion' in raw &&
-          raw.schemaVersion === 1;
-        const record = legacy
-          ? migrateVersion1Save(raw, definition)
-          : parseCurrentSaveRecord(raw, caseId, definition);
+          (raw.schemaVersion === 1 || raw.schemaVersion === 2)
+            ? raw.schemaVersion
+            : null;
+        const record =
+          version === 1
+            ? migrateVersion1Save(raw, definition)
+            : version === 2
+              ? migrateVersion2Save(raw, definition)
+              : parseCurrentSaveRecord(raw, caseId, definition);
+        const legacy = version !== null;
         if (legacy) {
           try {
             await database.addBackup({ caseId, createdAt: Date.now(), raw });
@@ -109,7 +116,7 @@ export function createSaveRepository(
             };
           }
         }
-        return { status: 'loaded', state: record.state };
+        return { status: 'loaded', state: record.state, activeSceneId: record.activeSceneId };
       } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);
         try {
@@ -123,11 +130,12 @@ export function createSaveRepository(
         return { status: 'confirmation-required', reason };
       }
     },
-    async saveGameState(state) {
+    async saveGameState(state, activeSceneId) {
       const database = await openDatabase();
       await database.putSave({
-        schemaVersion: 2,
+        schemaVersion: 3,
         caseId: state.caseId,
+        activeSceneId,
         state,
         updatedAt: Date.now(),
       });
@@ -135,7 +143,9 @@ export function createSaveRepository(
     async createFreshSaveAfterConfirmation(caseId, definition) {
       if (caseId !== definition.id) throw new Error('Save caseId does not match its definition');
       const state = createCaseState(definition);
-      await this.saveGameState(state);
+      const activeSceneId = definition.scenes.find(({ id }) => id === 'main_office')?.id;
+      if (!activeSceneId) throw new Error('Default scene "main_office" is missing from case');
+      await this.saveGameState(state, activeSceneId);
       return state;
     },
   };

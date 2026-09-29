@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
-import type { EventBus, GameEventMap, SceneDefinition } from '@lexicon/shared-types';
+import type {
+  CaseDefinition,
+  EventBus,
+  GameEventMap,
+  SceneDefinition,
+} from '@lexicon/shared-types';
 import { createSceneAsset } from '../entities/createSceneAsset';
 import { createPlayer, movePlayer, type PlayerSprite } from '../entities/Player';
 import { installDebugHook } from '../debug';
@@ -11,7 +16,9 @@ import { InteractionTracker } from '../systems/InteractionTracker';
 export type InputLockSource = { isInputLocked(): boolean };
 
 export type WorldOptions = {
+  caseDefinition: CaseDefinition;
   scene: SceneDefinition;
+  spawnId: string;
   bus: EventBus<GameEventMap>;
   input: InputLockSource;
 };
@@ -29,6 +36,7 @@ export class WorldScene extends Phaser.Scene {
   private player!: PlayerSprite;
   private keys: MovementKeyMap | null = null;
   private bus!: EventBus<GameEventMap>;
+  private options!: WorldOptions;
   private inputLock!: InputLockSource;
   private interactKey: Phaser.Input.Keyboard.Key | null = null;
   private triggeredEventCount = 0;
@@ -40,6 +48,7 @@ export class WorldScene extends Phaser.Scene {
   private marker!: Phaser.GameObjects.Sprite;
   private markerTween: Phaser.Tweens.Tween | null = null;
   private unsubscribeNearby: (() => void) | null = null;
+  private unsubscribeTransition: (() => void) | null = null;
   private uninstallDebug: (() => void) | null = null;
 
   constructor() {
@@ -48,7 +57,10 @@ export class WorldScene extends Phaser.Scene {
 
   create(): void {
     const options = this.registry.get('world') as WorldOptions;
+    this.options = options;
     const def = options.scene;
+    const spawn = def.spawnPoints[options.spawnId];
+    if (!spawn) throw new Error(`Scene "${def.id}" has no spawn "${options.spawnId}"`);
     this.bus = options.bus;
     this.inputLock = options.input;
     this.areas = [];
@@ -84,7 +96,7 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
-    this.player = createPlayer(this, def.spawn.x, def.spawn.y);
+    this.player = createPlayer(this, spawn.x, spawn.y);
     this.physics.add.collider(this.player, colliders);
 
     const camera = this.cameras.main;
@@ -119,6 +131,10 @@ export class WorldScene extends Phaser.Scene {
         this.player.setDepth(computeDepth(y));
       },
     });
+
+    this.unsubscribeTransition = this.bus.on('scene:transitionRequested', ({ sceneId, spawnId }) =>
+      this.transitionTo(sceneId, spawnId),
+    );
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
@@ -165,7 +181,18 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  private transitionTo(sceneId: string, spawnId: string): void {
+    const scene = this.options.caseDefinition.scenes.find((candidate) => candidate.id === sceneId);
+    if (!scene || !scene.spawnPoints[spawnId]) return;
+    this.interactionTracker.clear();
+    this.registry.set('world', { ...this.options, scene, spawnId } satisfies WorldOptions);
+    this.scene.restart();
+  }
+
   private cleanup(): void {
+    this.interactionTracker?.clear();
+    this.unsubscribeTransition?.();
+    this.unsubscribeTransition = null;
     if (this.keys) {
       for (const key of Object.values(this.keys)) this.input.keyboard?.removeKey(key, true);
       this.keys = null;

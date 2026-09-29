@@ -22,11 +22,16 @@ describe('loadGameBootstrap', () => {
       ...createCaseState(definition),
       evidenceIds: ['meeting_minutes'],
     };
-    const repository = createRepository({ status: 'loaded', state: restored });
+    const repository = createRepository({
+      status: 'loaded',
+      state: restored,
+      activeSceneId: 'archive',
+    });
 
     await expect(loadGameBootstrap(definition, repository)).resolves.toEqual({
       status: 'ready',
       initialState: restored,
+      activeSceneId: 'archive',
       autosaveEnabled: true,
     });
   });
@@ -38,6 +43,7 @@ describe('loadGameBootstrap', () => {
     await expect(loadGameBootstrap(definition, repository)).resolves.toEqual({
       status: 'ready',
       initialState: createCaseState(definition),
+      activeSceneId: 'main_office',
       autosaveEnabled: true,
     });
   });
@@ -59,6 +65,7 @@ describe('loadGameBootstrap', () => {
     await expect(loadGameBootstrap(definition, repository)).resolves.toEqual({
       status: 'memory-only',
       initialState: createCaseState(definition),
+      activeSceneId: 'main_office',
       autosaveEnabled: false,
       error: 'blocked',
     });

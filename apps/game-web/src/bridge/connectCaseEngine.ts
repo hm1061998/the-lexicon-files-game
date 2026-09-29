@@ -9,11 +9,18 @@ export function connectCaseEngine(
 ): () => void {
   return bus.on('interaction:triggered', ({ interactableId }) => {
     if (store.getState().inputLocked) return;
-    const interaction = definition.scenes
-      .flatMap((scene) => scene.assets)
-      .find((asset) => asset.id === interactableId)?.interaction;
+    const currentScene = definition.scenes.find(({ id }) => id === store.getState().activeSceneId);
+    const interaction = currentScene?.assets.find(
+      (asset) => asset.id === interactableId,
+    )?.interaction;
     if (interaction?.npcId) {
       store.getState().startDialogue(interaction.npcId);
+      return;
+    }
+    if (interaction?.transition) {
+      const { targetSceneId: sceneId, targetSpawnId: spawnId } = interaction.transition;
+      if (store.getState().transitionScene(sceneId, spawnId))
+        bus.emit('scene:transitionRequested', { sceneId, spawnId });
       return;
     }
     if (interaction?.effects?.length) {

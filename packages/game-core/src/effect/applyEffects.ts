@@ -16,6 +16,8 @@ type MutableState = {
   objectiveStatuses: Record<string, ObjectiveStatus>;
   evidenceIds: string[];
   discoveredFactIds: string[];
+  timelineEventIds: string[];
+  contradictionIds: string[];
   flags: Record<string, boolean>;
 };
 
@@ -56,6 +58,8 @@ export function applyEffects(
     objectiveStatuses: { ...state.objectiveStatuses },
     evidenceIds: [...state.evidenceIds],
     discoveredFactIds: [...state.discoveredFactIds],
+    timelineEventIds: [...state.timelineEventIds],
+    contradictionIds: [...state.contradictionIds],
     flags: { ...state.flags },
   };
   const events: CaseDomainEvent[] = [];

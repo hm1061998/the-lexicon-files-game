@@ -60,6 +60,18 @@ describe('createGameStore', () => {
     expect(store.getState().caseState).toBe(restored);
   });
 
+  it('starts at a valid scene and transitions only to a declared scene and spawn', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition, initialSceneId: 'main_office' });
+
+    expect(store.getState().activeSceneId).toBe('main_office');
+    expect(store.getState().transitionScene('archive', 'from_office')).toBe(true);
+    expect(store.getState().activeSceneId).toBe('archive');
+    expect(store.getState().transitionScene('unknown', 'default')).toBe(false);
+    expect(store.getState().transitionScene('archive', 'unknown')).toBe(false);
+    expect(store.getState().activeSceneId).toBe('archive');
+  });
+
   it('starts with the Evidence notebook tab closed and unlocked', () => {
     const definition = loadCaseDefinition('case-001');
     const state = createGameStore({ caseDefinition: definition }).getState();

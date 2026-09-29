@@ -58,6 +58,25 @@ describe('connectCaseEngine', () => {
     expect(store.getState().caseState).toBe(before);
   });
 
+  it('handles only current-scene interactions and requests a validated scene transition', () => {
+    const definition = loadCaseDefinition('case-001');
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition: definition, initialSceneId: 'main_office' });
+    const transitions: { sceneId: string; spawnId: string }[] = [];
+    bus.on('scene:transitionRequested', (event) => transitions.push(event));
+    connectCaseEngine(bus, store, definition);
+
+    bus.emit('interaction:triggered', { interactableId: 'PLACEHOLDER_security_terminal' });
+    expect(store.getState().caseState.evidenceIds).toEqual([]);
+
+    bus.emit('interaction:triggered', { interactableId: 'hallway_door' });
+    expect(store.getState().activeSceneId).toBe('archive');
+    expect(transitions).toEqual([{ sceneId: 'archive', spawnId: 'from_office' }]);
+
+    bus.emit('interaction:triggered', { interactableId: 'PLACEHOLDER_security_terminal' });
+    expect(store.getState().caseState.evidenceIds).toEqual(['security_access_log']);
+  });
+
   it('disconnect stops applying interaction effects', () => {
     const definition = loadCaseDefinition('case-001');
     const bus = createEventBus<GameEventMap>();

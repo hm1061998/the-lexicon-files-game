@@ -14,6 +14,12 @@ export class InteractionTracker {
     return this.currentId;
   }
 
+  clear(): void {
+    if (this.currentId === null) return;
+    this.currentId = null;
+    this.bus.emit('interaction:cleared', {});
+  }
+
   update(pos: { x: number; y: number }, areas: readonly InteractableArea[]): string | null {
     const nearest = findNearestInteractable(pos, areas);
     const id = nearest?.id ?? null;

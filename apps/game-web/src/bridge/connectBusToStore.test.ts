@@ -29,6 +29,17 @@ describe('connectBusToStore', () => {
     expect(store.getState().nearby).toBeNull();
   });
 
+  it('clears nearby interaction when a scene transition is requested', () => {
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition });
+    connectBusToStore(bus, store);
+    store.getState().setNearby({ id: 'hallway_door', prompt: 'Enter Archive' });
+
+    bus.emit('scene:transitionRequested', { sceneId: 'archive', spawnId: 'from_office' });
+
+    expect(store.getState().nearby).toBeNull();
+  });
+
   it('disconnect stops syncing', () => {
     const bus = createEventBus<GameEventMap>();
     const store = createGameStore({ caseDefinition });

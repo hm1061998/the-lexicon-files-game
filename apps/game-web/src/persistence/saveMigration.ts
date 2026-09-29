@@ -2,6 +2,7 @@ import type { CaseDefinition, GameState, ObjectiveStatus } from '@lexicon/shared
 import { loadLegacySaveContract } from '@lexicon/game-content';
 import { createCaseState, reconcileDialogueProgress } from '@lexicon/game-core';
 import type { SaveRecord } from './saveRepository';
+
 type StateContract = {
   caseId: string;
   caseTitle: string;
@@ -9,10 +10,25 @@ type StateContract = {
   objectiveIds: readonly string[];
   evidenceIds: readonly string[];
   factIds: readonly string[];
+  timelineEventIds?: readonly string[];
+  contradictionIds?: readonly string[];
 };
+
+const PRE_PHASE_8_STATE_KEYS = [
+  'caseId',
+  'caseTitle',
+  'evidenceTotal',
+  'objectiveStatuses',
+  'evidenceIds',
+  'discoveredFactIds',
+  'flags',
+];
+const CURRENT_STATE_KEYS = [...PRE_PHASE_8_STATE_KEYS, 'timelineEventIds', 'contradictionIds'];
+
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
+
 function knownIds(value: unknown, ids: readonly string[]): value is string[] {
   return (
     Array.isArray(value) &&
@@ -20,20 +36,16 @@ function knownIds(value: unknown, ids: readonly string[]): value is string[] {
     new Set(value).size === value.length
   );
 }
-function validateState(value: unknown, contract: StateContract): GameState {
-  const keys = [
-    'caseId',
-    'caseTitle',
-    'evidenceTotal',
-    'objectiveStatuses',
-    'evidenceIds',
-    'discoveredFactIds',
-    'flags',
-  ];
+
+function validateState(
+  value: unknown,
+  contract: StateContract,
+  expectedKeys: readonly string[],
+): Record<string, unknown> {
   if (
     !isObject(value) ||
-    Object.keys(value).length !== keys.length ||
-    Object.keys(value).some((key) => !keys.includes(key))
+    Object.keys(value).length !== expectedKeys.length ||
+    Object.keys(value).some((key) => !expectedKeys.includes(key))
   )
     throw new Error('Save GameState fields do not match case');
   if (
@@ -58,9 +70,19 @@ function validateState(value: unknown, contract: StateContract): GameState {
     throw new Error('Save evidence or fact IDs do not match case');
   if (!isObject(value.flags) || !Object.values(value.flags).every((f) => typeof f === 'boolean'))
     throw new Error('Save flag values are invalid');
-  return value as unknown as GameState;
+  if (
+    expectedKeys === CURRENT_STATE_KEYS &&
+    (!knownIds(value.timelineEventIds, contract.timelineEventIds ?? []) ||
+      !knownIds(value.contradictionIds, contract.contradictionIds ?? []))
+  )
+    throw new Error('Save timeline or contradiction IDs do not match case');
+  return value;
 }
-function currentContract(definition: CaseDefinition): StateContract {
+
+function currentContract(definition: CaseDefinition): StateContract & {
+  timelineEventIds: readonly string[];
+  contradictionIds: readonly string[];
+} {
   return {
     caseId: definition.id,
     caseTitle: definition.title,
@@ -68,8 +90,11 @@ function currentContract(definition: CaseDefinition): StateContract {
     objectiveIds: definition.objectives.map((o) => o.id),
     evidenceIds: definition.evidences.map((e) => e.id),
     factIds: definition.facts.map((f) => f.id),
+    timelineEventIds: definition.timeline.events.map((event) => event.id),
+    contradictionIds: definition.contradictions.map((item) => item.id),
   };
 }
+
 function validateRecord(raw: unknown, caseId: string, version: number): Record<string, unknown> {
   if (!isObject(raw) || raw.schemaVersion !== version)
     throw new Error(
@@ -80,34 +105,80 @@ function validateRecord(raw: unknown, caseId: string, version: number): Record<s
     throw new Error('Save record updatedAt is invalid');
   return raw;
 }
+
+function resolveSceneId(value: unknown, definition: CaseDefinition): string {
+  if (typeof value !== 'string') throw new Error('Save activeSceneId is invalid');
+  const scene = definition.scenes.find(({ id }) => id === value);
+  if (!scene) throw new Error(`Save activeSceneId "${value}" does not match case`);
+  if (!scene.spawnPoints.default) throw new Error(`Scene "${value}" has no default spawn`);
+  return value;
+}
+
 export function parseCurrentSaveRecord(
   raw: unknown,
   caseId: string,
   definition: CaseDefinition,
 ): SaveRecord {
-  const record = validateRecord(raw, caseId, 2);
-  return {
-    schemaVersion: 2,
-    caseId,
-    updatedAt: record.updatedAt as number,
-    state: validateState(record.state, currentContract(definition)),
-  };
+  const record = validateRecord(raw, caseId, 3);
+  const activeSceneId = resolveSceneId(record.activeSceneId, definition);
+  const state = validateState(
+    record.state,
+    currentContract(definition),
+    CURRENT_STATE_KEYS,
+  ) as unknown as GameState;
+  return { schemaVersion: 3, caseId, activeSceneId, updatedAt: record.updatedAt as number, state };
 }
+
+export function migrateVersion2Save(raw: unknown, definition: CaseDefinition): SaveRecord {
+  const record = validateRecord(raw, definition.id, 2);
+  const contract = loadLegacySaveContract(definition.id, 2);
+  if (!contract) throw new Error('No supported legacy save contract');
+  const old = validateState(record.state, contract, PRE_PHASE_8_STATE_KEYS);
+  const objectiveStatuses: Record<string, ObjectiveStatus> = {
+    ...createCaseState(definition).objectiveStatuses,
+    ...(old.objectiveStatuses as Record<string, ObjectiveStatus>),
+  };
+  const reconciled = reconcileDialogueProgress(definition, {
+    ...(old as unknown as Omit<GameState, 'timelineEventIds' | 'contradictionIds'>),
+    objectiveStatuses,
+    timelineEventIds: [],
+    contradictionIds: [],
+  });
+  if (!reconciled.ok) throw new Error(`Save migration failed: ${reconciled.error.code}`);
+  return parseCurrentSaveRecord(
+    {
+      schemaVersion: 3,
+      caseId: definition.id,
+      activeSceneId: 'main_office',
+      updatedAt: record.updatedAt,
+      state: reconciled.state,
+    },
+    definition.id,
+    definition,
+  );
+}
+
 export function migrateVersion1Save(raw: unknown, definition: CaseDefinition): SaveRecord {
   const record = validateRecord(raw, definition.id, 1);
   const contract = loadLegacySaveContract(definition.id, 1);
   if (!contract) throw new Error('No supported legacy save contract');
-  const old = validateState(record.state, contract);
+  const old = validateState(record.state, contract, PRE_PHASE_8_STATE_KEYS);
   const objectiveStatuses: Record<string, ObjectiveStatus> = {
     ...createCaseState(definition).objectiveStatuses,
-    ...old.objectiveStatuses,
+    ...(old.objectiveStatuses as Record<string, ObjectiveStatus>),
   };
-  const reconciled = reconcileDialogueProgress(definition, { ...old, objectiveStatuses });
+  const reconciled = reconcileDialogueProgress(definition, {
+    ...(old as unknown as Omit<GameState, 'timelineEventIds' | 'contradictionIds'>),
+    objectiveStatuses,
+    timelineEventIds: [],
+    contradictionIds: [],
+  });
   if (!reconciled.ok) throw new Error(`Save migration failed: ${reconciled.error.code}`);
   return parseCurrentSaveRecord(
     {
-      schemaVersion: 2,
+      schemaVersion: 3,
       caseId: definition.id,
+      activeSceneId: 'main_office',
       updatedAt: record.updatedAt,
       state: reconciled.state,
     },

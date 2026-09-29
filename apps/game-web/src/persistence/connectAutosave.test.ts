@@ -19,7 +19,7 @@ describe('connectAutosave', () => {
     await flushQueue();
 
     expect(saveGameState).toHaveBeenCalledTimes(1);
-    expect(saveGameState).toHaveBeenCalledWith(store.getState().caseState);
+    expect(saveGameState).toHaveBeenCalledWith(store.getState().caseState, 'main_office');
     disconnect();
   });
 
@@ -35,6 +35,20 @@ describe('connectAutosave', () => {
     await flushQueue();
 
     expect(saveGameState).not.toHaveBeenCalled();
+    disconnect();
+  });
+
+  it('autosaves when the active scene changes without changing case progress', async () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition: definition });
+    const saveGameState = vi.fn(async () => {});
+    const disconnect = connectAutosave(store, saveGameState, vi.fn());
+
+    store.getState().transitionScene('archive', 'from_office');
+    await flushQueue();
+
+    expect(saveGameState).toHaveBeenCalledTimes(1);
+    expect(saveGameState).toHaveBeenCalledWith(store.getState().caseState, 'archive');
     disconnect();
   });
 

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "caseId": "case-001",
+  "caseTitle": "The Missing Report",
+  "evidenceTotal": 5,
+  "objectiveIds": ["find_what_happened", "talk_to_everyone"],
+  "evidenceIds": ["leo_phone_recording", "meeting_minutes"],
+  "factIds": [
+    "leo_outside_at_2029",
+    "meeting_started",
+    "david_statement_no_entry_after_20_00",
+    "david_collected_folder",
+    "david_took_report"
+  ]
+}

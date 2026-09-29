@@ -3,7 +3,6 @@ import type {
   CaseDefinition,
   GameEventMap,
   LearningAction,
-  SceneDefinition,
   UiStrings,
 } from '@lexicon/shared-types';
 import {
@@ -39,18 +38,18 @@ import { LearningStoreProvider } from '../state/LearningStoreContext';
 import { connectLearningAutosave } from '../persistence/connectLearningAutosave';
 import { useLearningStore } from '../state/LearningStoreContext';
 
-type StartContent = { scene: SceneDefinition; caseDefinition: CaseDefinition; strings: UiStrings };
+type StartContent = { caseDefinition: CaseDefinition; strings: UiStrings };
 type LoadResult = { ok: true; content: StartContent } | { ok: false; error: Error };
 
 function loadStartContent(): LoadResult {
   try {
     const caseDefinition = loadCaseDefinition(DEFAULT_START.caseId);
     const scene = caseDefinition.scenes.find(({ id }) => id === DEFAULT_START.sceneId);
-    if (!scene) throw new Error(`Start scene "${DEFAULT_START.sceneId}" is missing from case`);
+    if (!scene?.spawnPoints.default)
+      throw new Error(`Start scene "${DEFAULT_START.sceneId}" or its default spawn is missing`);
     return {
       ok: true,
       content: {
-        scene,
         caseDefinition,
         strings: loadUiStrings('vi'),
       },
@@ -93,6 +92,7 @@ export function GameCanvas() {
         setBootstrap({
           status: 'memory-only',
           initialState: createCaseState(result.content.caseDefinition),
+          activeSceneId: DEFAULT_START.sceneId,
           autosaveEnabled: false,
           error: error instanceof Error ? error.message : String(error),
         });
@@ -131,12 +131,18 @@ export function GameCanvas() {
               result.content.caseDefinition,
             )
             .then((initialState) => {
-              setBootstrap({ status: 'ready', initialState, autosaveEnabled: true });
+              setBootstrap({
+                status: 'ready',
+                initialState,
+                activeSceneId: DEFAULT_START.sceneId,
+                autosaveEnabled: true,
+              });
             })
             .catch((error: unknown) => {
               setBootstrap({
                 status: 'memory-only',
                 initialState: createCaseState(result.content.caseDefinition),
+                activeSceneId: DEFAULT_START.sceneId,
                 autosaveEnabled: false,
                 error: error instanceof Error ? error.message : String(error),
               });
@@ -146,6 +152,7 @@ export function GameCanvas() {
           setBootstrap({
             status: 'memory-only',
             initialState: createCaseState(result.content.caseDefinition),
+            activeSceneId: DEFAULT_START.sceneId,
             autosaveEnabled: false,
             error: result.content.strings.saveUnavailable,
           })
@@ -162,6 +169,7 @@ export function GameCanvas() {
     <GameRoot
       content={result.content}
       initialState={bootstrap.initialState}
+      initialSceneId={bootstrap.activeSceneId}
       autosaveEnabled={bootstrap.autosaveEnabled}
       {...(persistenceWarning ? { persistenceWarning } : {})}
       repository={repository}
@@ -211,6 +219,7 @@ function SaveRecoveryScreen({
 function GameRoot({
   content,
   initialState,
+  initialSceneId,
   autosaveEnabled,
   persistenceWarning,
   repository,
@@ -222,6 +231,7 @@ function GameRoot({
 }: {
   content: StartContent;
   initialState: ReturnType<typeof createCaseState>;
+  initialSceneId: string;
   autosaveEnabled: boolean;
   persistenceWarning?: string;
   repository: SaveRepository;
@@ -231,7 +241,10 @@ function GameRoot({
   learningRecoveryRequired: string | null;
   learningPersistenceError: string | null;
 }) {
-  const { scene, caseDefinition, strings } = content;
+  const { caseDefinition, strings } = content;
+  const scene = caseDefinition.scenes.find(({ id }) => id === initialSceneId);
+  if (!scene?.spawnPoints.default)
+    throw new Error(`Scene "${initialSceneId}" or its default spawn is missing from case`);
   const containerRef = useRef<HTMLDivElement>(null);
   const [learningPersistenceEnabled, setLearningPersistenceEnabled] = useState(
     learningPersistenceInitiallyEnabled,
@@ -245,6 +258,7 @@ function GameRoot({
       store: createGameStore({
         caseDefinition,
         initialState,
+        initialSceneId,
         ...(persistenceWarning ? { initialPersistenceError: persistenceWarning } : {}),
       }),
       bus: createEventBus<GameEventMap>(),
@@ -272,7 +286,7 @@ function GameRoot({
     const disconnectAutosave = autosaveEnabled
       ? connectAutosave(
           store,
-          (state) => repository.saveGameState(state),
+          (state, activeSceneId) => repository.saveGameState(state, activeSceneId),
           (error) => {
             const detail = error instanceof Error ? error.message : String(error);
             store.getState().setPersistenceError(`${strings.saveWriteFailed} ${detail}`);
@@ -280,7 +294,9 @@ function GameRoot({
         )
       : undefined;
     const game = createGame(container, {
+      caseDefinition,
       scene,
+      spawnId: 'default',
       bus,
       input: { isInputLocked: () => store.getState().inputLocked },
     });
