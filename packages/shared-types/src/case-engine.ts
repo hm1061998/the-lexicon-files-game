@@ -211,3 +211,15 @@ export type ContradictionResult =
       readonly events: readonly CaseDomainEvent[];
     }
   | { readonly ok: false; readonly state: GameState; readonly error: ContradictionError };
+
+export type AccusationError =
+  { readonly code: 'unknownSuspect' | 'caseAlreadyClosed'; readonly id: string } | CaseEngineError;
+
+export type AccusationResult =
+  | {
+      readonly ok: true;
+      readonly correct: boolean;
+      readonly state: GameState;
+      readonly events: readonly CaseDomainEvent[];
+    }
+  | { readonly ok: false; readonly state: GameState; readonly error: AccusationError };

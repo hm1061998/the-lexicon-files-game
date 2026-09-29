@@ -25,6 +25,8 @@ export type {
   EvidenceCategory,
   ObjectiveDefinition,
   CaseConclusionDefinition,
+  AccusationError,
+  AccusationResult,
   EvidenceDefinition,
   FactDefinition,
   ListeningOption,

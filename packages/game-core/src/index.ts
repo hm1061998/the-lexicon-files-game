@@ -11,3 +11,4 @@ export { reconcileDialogueProgress } from './dialogue/reconcileDialogueProgress'
 export { answerListeningTask } from './listening/answerListeningTask';
 export { placeTimelineEvent } from './timeline/placeTimelineEvent';
 export { submitContradiction } from './contradiction/submitContradiction';
+export { submitAccusation } from './conclusion/submitAccusation';

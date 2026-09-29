@@ -6,7 +6,9 @@ import type {
   Effect,
   GameState,
 } from '@lexicon/shared-types';
+import { loadCaseDefinition } from '@lexicon/game-content';
 import { createCaseState } from '../case/createCaseState';
+import { reconcileDialogueProgress } from './reconcileDialogueProgress';
 import { startDialogue, getAvailableChoices, chooseDialogueChoice } from './dialogueRunner';
 
 function fixture(): CaseDefinition {
@@ -249,5 +251,45 @@ describe('pure dialogue runner', () => {
     expect(fail.state).toBe(s);
     expect(fail.session).toBe(r.session);
     expect(s.flags.partial).toBeUndefined();
+  });
+});
+
+describe('objective activation on Case #001', () => {
+  const caseDefinition = loadCaseDefinition('case-001');
+  const objectiveId = caseDefinition.conclusion!.objectiveId;
+  function reconcileWith(flags: Record<string, boolean>, facts: string[]) {
+    const base = createCaseState(caseDefinition);
+    const result = reconcileDialogueProgress(caseDefinition, {
+      ...base,
+      flags,
+      discoveredFactIds: facts,
+    });
+    if (!result.ok) throw new Error(result.error.code);
+    return result;
+  }
+
+  it('keeps the conclusion objective locked at the start of the case', () => {
+    expect(createCaseState(caseDefinition).objectiveStatuses[objectiveId]).toBe('locked');
+  });
+
+  it('stays locked after the contradiction is found but before the confession is read', () => {
+    const r = reconcileWith({ david_contradiction_found: true }, [
+      'david_statement_no_entry_after_20_00',
+      'david_entry_20_32',
+    ]);
+    expect(r.state.objectiveStatuses[objectiveId]).toBe('locked');
+  });
+
+  it('stays locked with the fact but without the confession flag', () => {
+    const r = reconcileWith({}, ['david_took_report']);
+    expect(r.state.objectiveStatuses[objectiveId]).toBe('locked');
+  });
+
+  it('activates once both the confession flag and the fact are present, idempotently', () => {
+    const r = reconcileWith({ david_confession_read: true }, ['david_took_report']);
+    expect(r.state.objectiveStatuses[objectiveId]).toBe('active');
+    expect(r.events).toContainEqual({ type: 'objectiveActivated', objectiveId });
+    const again = reconcileDialogueProgress(caseDefinition, r.state);
+    expect(again.ok && again.events).toEqual([]);
   });
 });
