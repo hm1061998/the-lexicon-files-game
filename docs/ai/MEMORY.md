@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T11:13:18+07:00
+updated_at: 2026-09-29T11:15:01+07:00
 phase: phase-8
 status: in_progress
-result_commit: 550e792
+result_commit: 38f0a7d
 active_spec: docs/superpowers/specs/2026-09-29-phase-8-timeline-contradiction-design.md
 active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 ---
@@ -18,11 +18,11 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 ## Active Goal
 
-- Hoàn thiện Phase 8 theo spec được user duyệt. Hiện mới có design draft; không viết implementation plan/code trước khi user duyệt spec.
+- Hoàn thiện Phase 8 theo spec đã duyệt. Plan đã tạo và push; chưa viết code trước khi user review/approve plan và phương thức thực thi.
 
 ## Current Status
 
-- Branch `dev`: Phase 7 implementation/handoff pushed and verified at `44e06ff`; Phase 8 spec/approval/plan commits through `550e792` are local. No product code changed in Phase 8.
+- Branch `dev`: Phase 7 implementation/handoff pushed and verified at `44e06ff`; Phase 8 spec, plan, and synchronized memory pushed to `origin/dev` through `38f0a7d`. No product code changed in Phase 8.
 - Phase 7 complete: functionality, user audio audition, and automated verification passed. Verification: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`.
 - Phase 6 remains complete and pushed to `origin/dev` at `520ee4d`; Phase 5 remains complete through `f4ac2be`.
 
@@ -35,11 +35,11 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 - Independent review: không có Critical; năm Important findings đã sửa (preserve stage, strict encounter/context count, popup focus/ARIA/content, notebook metadata/modes/inline evidence, E2E recovery/hidden-context/keyboard coverage). Review ledger: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
 - Phase 7: authored audio evidence/listening task, pure answer transition and completion flag, Kokoro WAV/provenance, Howler playback/retry/cleanup, mode-aware accessible evidence panel, V1 learning telemetry migration, and 35 E2E tests. `evidenceTotal=5`, no backend/runtime TTS/dependency change. User audition accepted.
 - Phase 7 sign-off: user listened to the recording and confirmed “test ok” on 2026-09-29; plan and verification record the approval. Implementation and handoff pushed to `origin/dev` through `7c29114`.
-- Phase 8 scope and Vietnamese spec approved by user; Vietnamese implementation plan committed at `550e792` and awaits plan review before implementation.
+- Phase 8 scope and Vietnamese spec approved by user; Vietnamese implementation plan at `550e792` and synchronized memory are pushed through `38f0a7d`. Plan review is still required before implementation.
 
 ## In Progress
 
-- Phase 8: spec đã duyệt; implementation plan tại `docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md` đã tạo. Chờ user review plan/chọn cách thực thi; chưa có code.
+- Phase 8: spec đã duyệt; implementation plan tại `docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md` đã push lên `origin/dev` qua `38f0a7d`. Chờ user review plan/chọn cách thực thi; chưa có code.
 
 ## Active Decisions
 
@@ -64,7 +64,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 ## Verification
 
-- Phase 8 plan: spec approved by user; implementation plan created in Vietnamese and self-reviewed against spec, repository files, interfaces, tests, and review risks; Prettier check PASS; `git diff --check` PASS. Memory check will be rerun after this handoff update. No product-code gates apply yet.
+- Phase 8 plan: spec approved by user; implementation plan created in Vietnamese and self-reviewed against spec, repository files, interfaces, tests, and review risks; Prettier check PASS; `memory:check` PASS; `git diff --check` PASS. No product-code gates apply yet.
 - Phase 7: lint PASS (7 Nx projects); uncached unit/content tests PASS (7 targets; game-web 27 files/148 tests, game-content 10 files/72 tests); build PASS (141 modules; 1,809.14 kB JS / 437.53 kB gzip chunk warning); typecheck PASS; format PASS; full E2E PASS (35 tests, 1 worker); user audio audition accepted; push to `origin/dev` verified at `44e06ff`.
 - Phase 6 final: `npm run lint` PASS (7 Nx projects); `npm run test` PASS (25 files / 136 tests); `npm run build` PASS (134 modules; chunk warning: JS 1,761.37 kB, gzip 423.69 kB); `npm run typecheck` PASS; `npm run format:check` PASS; `npm run test:e2e` PASS (31 tests, 1 worker); `npm run memory:check` PASS; `npm run memory:test` PASS (30); `git diff --check` PASS.
 - Backend checks not run because `apps/api` unchanged. `npm ci` earlier reported 7 existing audit advisories (3 moderate, 3 high, 1 critical); no dependency was changed.
@@ -74,7 +74,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-8-timeline-contradiction.md
 
 - Spec Phase 8 đã được user duyệt; spec approval và plan được commit tại `550e792`. User đã yêu cầu push lên `dev`; chưa có implementation code.
 - Quy định dự án mới: mọi spec và implementation plan phải viết bằng tiếng Việt; đã ghi vào `AGENTS.md` tại `3d6752d`.
-- User approved the Phase 8 spec and requested plan creation plus push to `dev`. Plan review and execution method remain pending; no code yet.
+- User approved the Phase 8 spec and requested plan creation plus push to `dev`; spec, plan, and synchronized memory are on `origin/dev` through `38f0a7d`. Plan review and execution method remain pending; no code yet.
 - Phase 7 is complete and pushed to `origin/dev` through `44e06ff`; user approved the audio audition. Verification ledger: `docs/ai/2026-09-29-phase-7-audio-listening-verification.md`. Audio is 4.2 s, 201,644 bytes, mono 24 kHz PCM16; model/voice revisions and checksums are in `.provenance.json`.
 - Phase 6 is integrated and pushed: local/remote `dev` at `520ee4d` (then memory reconciliation `9177cfa`). Verification/review: `docs/ai/2026-09-28-phase-6-learning-engine-verification.md`.
 - Phase 5 is already pushed through `f4ac2be`. Minor evidence focus restoration Phase 4 remains deferred; dialogue has separate restoration verified.
