@@ -1,0 +1,248 @@
+[
+  {
+    "src": "assets/_incoming/chr_player_idle_ne.png",
+    "dest": "characters/player/chr_player_idle_ne.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_player_idle_se.png",
+    "dest": "characters/player/chr_player_idle_se.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_player_idle_sw.png",
+    "dest": "characters/player/chr_player_idle_sw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_player_idle_nw.png",
+    "dest": "characters/player/chr_player_idle_nw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_leo_idle_ne.png",
+    "dest": "characters/leo/chr_leo_idle_ne.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_leo_idle_se.png",
+    "dest": "characters/leo/chr_leo_idle_se.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_leo_idle_sw.png",
+    "dest": "characters/leo/chr_leo_idle_sw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_leo_idle_nw.png",
+    "dest": "characters/leo/chr_leo_idle_nw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_anna_idle_ne.png",
+    "dest": "characters/anna/chr_anna_idle_ne.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_anna_idle_se.png",
+    "dest": "characters/anna/chr_anna_idle_se.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_anna_idle_sw.png",
+    "dest": "characters/anna/chr_anna_idle_sw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_anna_idle_nw.png",
+    "dest": "characters/anna/chr_anna_idle_nw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_david_idle_ne.png",
+    "dest": "characters/david/chr_david_idle_ne.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_david_idle_se.png",
+    "dest": "characters/david/chr_david_idle_se.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_david_idle_sw.png",
+    "dest": "characters/david/chr_david_idle_sw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/chr_david_idle_nw.png",
+    "dest": "characters/david/chr_david_idle_nw.png",
+    "targetWidth": null,
+    "keyMagenta": true,
+    "frame": 160
+  },
+  {
+    "src": "assets/_incoming/scene_office_floor.png",
+    "dest": "environment/office/scene_office_floor.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "quantize": 256,
+    "note": "Full 2400x1600 floor, no alpha. Place origin [0.5,0.5] at world centre; Task 6 may scale."
+  },
+  {
+    "src": "assets/_incoming/scene_office_wall_back.png",
+    "dest": "environment/office/scene_office_wall_back.png",
+    "targetWidth": 1200,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "Source is a diagonal isometric wall slab on magenta; keyed, cropped to alpha bbox, 1200 px wide. Place with origin [0.5,1] at the back edge of the floor; it is an oblique slab (left end top-left, slopes down to right)."
+  },
+  {
+    "src": "assets/_incoming/scene_archive_floor.png",
+    "dest": "environment/archive/scene_archive_floor.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "quantize": 256,
+    "note": "Full 2400x1600 floor, no alpha. Place origin [0.5,0.5] at world centre; Task 6 may scale."
+  },
+  {
+    "src": "assets/_incoming/scene_archive_wall_back.png",
+    "dest": "environment/archive/scene_archive_wall_back.png",
+    "targetWidth": 1200,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "Source is a diagonal isometric wall slab on magenta; keyed, cropped to alpha bbox, 1200 px wide. Place with origin [0.5,1] at the back edge of the floor; it is an oblique slab (left end top-left, slopes down to right)."
+  },
+  {
+    "src": "assets/_incoming/prop_office_desk_01.png",
+    "dest": "environment/props/prop_office_desk_01.png",
+    "targetWidth": 360,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_note_01.png",
+    "dest": "environment/props/prop_note_01.png",
+    "targetWidth": 48,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_audio_recorder_01.png",
+    "dest": "environment/props/prop_audio_recorder_01.png",
+    "targetWidth": 56,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_door_hallway_01.png",
+    "dest": "environment/props/prop_door_hallway_01.png",
+    "targetWidth": 130,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_office_chair_01.png",
+    "dest": "environment/props/prop_office_chair_01.png",
+    "targetWidth": 90,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_office_plant_01.png",
+    "dest": "environment/props/prop_office_plant_01.png",
+    "targetWidth": 80,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_filing_cabinet_01.png",
+    "dest": "environment/props/prop_filing_cabinet_01.png",
+    "targetWidth": 120,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_meeting_table_01.png",
+    "dest": "environment/props/prop_meeting_table_01.png",
+    "targetWidth": 420,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/prop_security_terminal_01.png",
+    "dest": "environment/props/prop_security_terminal_01.png",
+    "targetWidth": 120,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
+  },
+  {
+    "src": "assets/_incoming/evidence_meeting_minutes.png",
+    "dest": "evidence/evidence_meeting_minutes.png",
+    "targetWidth": 480,
+    "keyMagenta": false,
+    "frame": null
+  },
+  {
+    "src": "assets/_incoming/evidence_leo_phone_recording.png",
+    "dest": "evidence/evidence_leo_phone_recording.png",
+    "targetWidth": 480,
+    "keyMagenta": false,
+    "frame": null
+  },
+  {
+    "src": "assets/_incoming/evidence_security_log.png",
+    "dest": "evidence/evidence_security_log.png",
+    "targetWidth": 480,
+    "keyMagenta": false,
+    "frame": null
+  },
+  {
+    "src": "assets/_incoming/paper_texture.png",
+    "dest": "textures/paper_texture.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null
+  }
+]
