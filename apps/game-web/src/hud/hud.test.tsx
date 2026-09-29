@@ -8,6 +8,9 @@ import { ObjectivePanel } from './ObjectivePanel';
 import { CaseProgress } from './CaseProgress';
 import { InteractionPrompt } from './InteractionPrompt';
 import { KeyHints } from './KeyHints';
+import { SettingsStoreProvider } from '../state/SettingsStoreContext';
+import { createSettingsStore } from '../state/settingsStore';
+import { createDefaultSettings } from '../persistence/settingsSchema';
 import { PauseMenu } from '../pause/PauseMenu';
 
 const strings = loadUiStrings('vi');
@@ -85,7 +88,13 @@ describe('KeyHints', () => {
 
 describe('PauseMenu', () => {
   it('is a modal dialog with resume button', () => {
-    const html = renderToString(<PauseMenu strings={strings} onResume={() => {}} />);
+    const html = renderToString(
+      <SettingsStoreProvider
+        store={createSettingsStore(createDefaultSettings({ prefersReducedMotion: false }))}
+      >
+        <PauseMenu strings={strings} onResume={() => {}} />
+      </SettingsStoreProvider>,
+    );
     expect(html).toContain('role="dialog"');
     expect(html).toContain('aria-modal="true"');
     expect(html).toContain(strings.paused);

@@ -4,7 +4,6 @@ import type { SettingsV1, SubtitlePreference } from '../persistence/settingsSche
 
 export type SettingsStoreState = {
   settings: SettingsV1;
-  notice: string | null;
   setTranslationMode(mode: TranslationMode): void;
   setVolume(volume: number): void;
   setSubtitles(subtitles: SubtitlePreference): void;
@@ -15,7 +14,6 @@ export type SettingsStore = StoreApi<SettingsStoreState>;
 export function createSettingsStore(initial: SettingsV1): SettingsStore {
   return createStore<SettingsStoreState>((set) => ({
     settings: initial,
-    notice: null,
     setTranslationMode: (translationMode) =>
       set((s) => ({ settings: { ...s.settings, translationMode } })),
     setVolume: (volume) =>

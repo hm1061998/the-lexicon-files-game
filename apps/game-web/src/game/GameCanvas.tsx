@@ -382,7 +382,10 @@ function GameRoot({
     if (settingsLoad.status === 'memory-only') return;
     return connectSettingsAutosave(
       settings,
-      (next) => settingsRepository.saveSettings(next),
+      async (next) => {
+        await settingsRepository.saveSettings(next);
+        setSettingsWriteError(null);
+      },
       () => setSettingsWriteError(strings.settingsUnavailable),
     );
   }, [settings, settingsRepository, settingsLoad.status, strings.settingsUnavailable]);

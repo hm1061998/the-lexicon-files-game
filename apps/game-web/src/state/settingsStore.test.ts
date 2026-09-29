@@ -7,7 +7,6 @@ describe('settings store', () => {
     const initial = createDefaultSettings({ prefersReducedMotion: false });
     const store = createSettingsStore(initial);
     expect(store.getState().settings).toEqual(initial);
-    expect(store.getState().notice).toBeNull();
   });
   it('clamps and rounds volume', () => {
     const store = createSettingsStore(createDefaultSettings({ prefersReducedMotion: false }));

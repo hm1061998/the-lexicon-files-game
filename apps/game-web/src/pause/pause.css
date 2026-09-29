@@ -28,3 +28,9 @@
   color: var(--lexicon-ink);
   cursor: pointer;
 }
+
+.pause-menu select,
+.pause-menu input,
+.pause-menu output {
+  font-size: 14px;
+}
