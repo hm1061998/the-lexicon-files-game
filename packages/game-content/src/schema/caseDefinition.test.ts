@@ -9,6 +9,21 @@ const caseRaw = {
   evidenceTotal: 5,
   initialObjectiveId: 'find_what_happened',
   sceneIds: ['main_office'],
+  timeline: {
+    slots: [{ id: '20_00', time: '20:00' }],
+    events: [
+      {
+        id: 'meeting_started',
+        text: 'The meeting began.',
+        slotId: '20_00',
+        location: 'Meeting room',
+        personIds: [],
+        source: 'Meeting Minutes',
+        confidence: 'Recorded in the minutes',
+        availability: { type: 'requiresFacts', factIds: ['meeting_started'] },
+      },
+    ],
+  },
 };
 
 const objectivesRaw = {
@@ -31,13 +46,26 @@ const fact = {
   sourceEvidenceIds: ['meeting_minutes'],
   unlockCondition: { type: 'hasEvidence', evidenceId: 'meeting_minutes' },
 };
-const factsRaw = { facts: [fact] };
+const secondFact = {
+  id: 'late_entry',
+  text: 'A person entered the meeting room later.',
+  sourceEvidenceIds: ['meeting_minutes'],
+  unlockCondition: { type: 'hasEvidence', evidenceId: 'meeting_minutes' },
+};
+const factsRaw = { facts: [fact, secondFact] };
+const contradiction = {
+  id: 'meeting_statement_vs_log',
+  factIds: ['meeting_started', 'late_entry'],
+  explanation: 'The statement conflicts with the access log.',
+  objectiveId: 'find_what_happened',
+};
 
 type RawInput = {
   caseRaw: unknown;
   objectivesRaw: unknown;
   evidencesRaw: unknown;
   factsRaw: unknown;
+  contradictionsRaw?: unknown;
   listeningTasksRaw?: unknown;
   sceneRaws: readonly unknown[];
   npcsRaw: unknown;
@@ -63,7 +91,12 @@ function sceneWithEffects(effects: readonly unknown[]): unknown {
       .map((asset) =>
         asset.id === 'objective_note'
           ? { ...asset, interaction: { ...asset.interaction, effects } }
-          : asset,
+          : asset.id === 'hallway_door'
+            ? {
+                ...asset,
+                interaction: { ...asset.interaction, transition: undefined },
+              }
+            : asset,
       ),
   };
 }
@@ -77,6 +110,7 @@ function makeInput(changes: Partial<RawInput> = {}): RawInput {
     objectivesRaw,
     evidencesRaw,
     factsRaw,
+    contradictionsRaw: { contradictions: [] },
     listeningTasksRaw: { tasks: [] },
     sceneRaws: [
       sceneWithEffects([{ type: 'completeObjective', objectiveId: 'find_what_happened' }]),
@@ -131,9 +165,153 @@ describe('parseCaseDefinition', () => {
       initialObjectiveId: 'find_what_happened',
       scenes: [{ id: 'main_office' }],
       evidences: [{ id: 'meeting_minutes' }],
-      facts: [{ id: 'meeting_started' }],
+      facts: [{ id: 'meeting_started' }, { id: 'late_entry' }],
       objectives: [{ id: 'find_what_happened' }],
     });
+  });
+
+  it('assembles timeline and contradiction definitions with valid cross-references', () => {
+    const definition = parse({ contradictionsRaw: { contradictions: [contradiction] } });
+
+    expect(definition.timeline).toEqual(caseRaw.timeline);
+    expect(definition.contradictions).toEqual([contradiction]);
+  });
+
+  it('rejects timeline events that reference an undeclared slot or fact', () => {
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          timeline: {
+            ...caseRaw.timeline,
+            events: [{ ...caseRaw.timeline.events[0], slotId: '21_05' }],
+          },
+        },
+      },
+      'unknown timeline slot id "21_05"',
+    );
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          timeline: {
+            ...caseRaw.timeline,
+            events: [
+              {
+                ...caseRaw.timeline.events[0],
+                availability: { type: 'requiresFacts', factIds: ['hidden_fact'] },
+              },
+            ],
+          },
+        },
+      },
+      'unknown fact id "hidden_fact"',
+    );
+  });
+
+  it('rejects timeline events that reference an unknown person', () => {
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          timeline: {
+            ...caseRaw.timeline,
+            events: [{ ...caseRaw.timeline.events[0], personIds: ['unknown_person'] }],
+          },
+        },
+      },
+      'unknown NPC id "unknown_person"',
+    );
+  });
+
+  it('rejects duplicate timeline slot and event IDs', () => {
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          timeline: {
+            slots: [caseRaw.timeline.slots[0], caseRaw.timeline.slots[0]],
+            events: caseRaw.timeline.events,
+          },
+        },
+      },
+      'timeline.slots: duplicate id "20_00"',
+    );
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          timeline: {
+            ...caseRaw.timeline,
+            events: [caseRaw.timeline.events[0], caseRaw.timeline.events[0]],
+          },
+        },
+      },
+      'timeline.events: duplicate id "meeting_started"',
+    );
+  });
+
+  it('rejects duplicate contradiction IDs', () => {
+    expectValidationIssue(
+      { contradictionsRaw: { contradictions: [contradiction, contradiction] } },
+      'contradictions: duplicate id "meeting_statement_vs_log"',
+    );
+  });
+
+  it('requires a contradiction to reference two distinct known facts and a known objective', () => {
+    expectValidationIssue(
+      {
+        contradictionsRaw: { contradictions: [{ ...contradiction, factIds: ['meeting_started'] }] },
+      },
+      'must reference exactly two distinct fact IDs',
+    );
+    expectValidationIssue(
+      {
+        contradictionsRaw: {
+          contradictions: [{ ...contradiction, factIds: ['meeting_started', 'hidden_fact'] }],
+        },
+      },
+      'unknown fact id "hidden_fact"',
+    );
+    expectValidationIssue(
+      {
+        contradictionsRaw: {
+          contradictions: [{ ...contradiction, objectiveId: 'hidden_objective' }],
+        },
+      },
+      'unknown objective id "hidden_objective"',
+    );
+  });
+
+  it('rejects a transition that references an unregistered destination scene or spawn', () => {
+    const source = sceneWithEffects([
+      { type: 'completeObjective', objectiveId: 'find_what_happened' },
+    ]) as {
+      assets: Array<{ id: string; interaction?: Record<string, unknown> }>;
+      [key: string]: unknown;
+    };
+    const door = source.assets.find(({ id }) => id === 'objective_note')!;
+    door.interaction = {
+      x: 0,
+      y: 0,
+      radius: 90,
+      prompt: 'Open door',
+      transition: { targetSceneId: 'archive', targetSpawnId: 'from_office' },
+    };
+
+    expectValidationIssue({ sceneRaws: [source] }, 'unknown target scene id "archive"');
+
+    const archive = structuredClone(source);
+    archive.id = 'archive';
+    archive.assets = [];
+    archive.spawnPoints = { default: { x: 1200, y: 1100 } };
+    expectValidationIssue(
+      {
+        caseRaw: { ...caseRaw, sceneIds: ['main_office', 'archive'] },
+        sceneRaws: [source, archive],
+      },
+      'unknown spawn id "from_office" in scene "archive"',
+    );
   });
 
   it.each([-1, 1.5])('rejects evidenceTotal %s', (evidenceTotal) => {

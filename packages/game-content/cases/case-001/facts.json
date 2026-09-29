@@ -53,6 +53,42 @@
         "key": "david_confession_read",
         "value": true
       }
+    },
+    {
+      "id": "anna_exit_20_18",
+      "text": "Anna Reed left the meeting room at 20:18.",
+      "sourceEvidenceIds": ["security_access_log"],
+      "unlockCondition": { "type": "hasEvidence", "evidenceId": "security_access_log" }
+    },
+    {
+      "id": "leo_exit_20_27",
+      "text": "Leo Tran left the meeting room at 20:27.",
+      "sourceEvidenceIds": ["security_access_log"],
+      "unlockCondition": { "type": "hasEvidence", "evidenceId": "security_access_log" }
+    },
+    {
+      "id": "david_entry_20_32",
+      "text": "David Cole entered the meeting room at 20:32.",
+      "sourceEvidenceIds": ["security_access_log"],
+      "unlockCondition": { "type": "hasEvidence", "evidenceId": "security_access_log" }
+    },
+    {
+      "id": "david_exit_20_36",
+      "text": "David Cole left the meeting room at 20:36.",
+      "sourceEvidenceIds": ["security_access_log"],
+      "unlockCondition": { "type": "hasEvidence", "evidenceId": "security_access_log" }
+    },
+    {
+      "id": "leo_entry_20_40",
+      "text": "Leo Tran entered the meeting room at 20:40.",
+      "sourceEvidenceIds": ["security_access_log"],
+      "unlockCondition": { "type": "hasEvidence", "evidenceId": "security_access_log" }
+    },
+    {
+      "id": "meeting_ended_20_45",
+      "text": "The meeting ended at 20:45.",
+      "sourceEvidenceIds": ["meeting_minutes"],
+      "unlockCondition": { "type": "hasEvidence", "evidenceId": "meeting_minutes" }
     }
   ]
 }

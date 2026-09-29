@@ -18,6 +18,20 @@ describe('parseUiStrings', () => {
     expect(strings.openNotebook).toBeTruthy();
   });
 
+  it('provides localized timeline and contradiction controls and feedback', () => {
+    const strings = parseUiStrings(viStrings, 'ui/vi.json');
+    expect(strings.timeline).toBe('Dòng thời gian');
+    expect(strings.timelineEmpty).toBeTruthy();
+    expect(strings.timelineSelectEvent).toBeTruthy();
+    expect(strings.timelineSelectSlot).toBeTruthy();
+    expect(strings.timelinePlace).toBeTruthy();
+    expect(strings.timelineMismatch).toBe('Something in the timeline is inconsistent.');
+    expect(strings.contradictionSelectFacts).toBeTruthy();
+    expect(strings.contradictionSubmit).toBeTruthy();
+    expect(strings.contradictionMismatch).toBe("This interpretation doesn't match the evidence.");
+    expect(strings.contradictionFound).toBeTruthy();
+  });
+
   it('rejects missing key', () => {
     const raw = { ...(viStrings as Record<string, unknown>) };
     delete raw.resume;

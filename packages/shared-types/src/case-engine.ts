@@ -55,6 +55,38 @@ export interface ListeningTaskDefinition {
   readonly correctEffects: readonly Effect[];
 }
 
+export interface TimelineSlotDefinition {
+  readonly id: string;
+  readonly time: string;
+}
+
+export type TimelineEventAvailability =
+  | { readonly type: 'availableFromStart' }
+  | { readonly type: 'requiresFacts'; readonly factIds: readonly string[] };
+
+export interface TimelineEventDefinition {
+  readonly id: string;
+  readonly text: string;
+  readonly slotId: string;
+  readonly location: string;
+  readonly personIds: readonly string[];
+  readonly source: string;
+  readonly confidence: string;
+  readonly availability: TimelineEventAvailability;
+}
+
+export interface TimelineDefinition {
+  readonly slots: readonly TimelineSlotDefinition[];
+  readonly events: readonly TimelineEventDefinition[];
+}
+
+export interface ContradictionDefinition {
+  readonly id: string;
+  readonly factIds: readonly [string, string];
+  readonly explanation: string;
+  readonly objectiveId: string;
+}
+
 export type Condition =
   | { readonly type: 'hasEvidence'; readonly evidenceId: string }
   | { readonly type: 'hasFact'; readonly factId: string }
@@ -84,6 +116,8 @@ export interface CaseDefinition {
   readonly vocabulary: readonly VocabularyEntry[];
   readonly vocabularyContexts: readonly VocabularyContextDefinition[];
   readonly listeningTasks: readonly ListeningTaskDefinition[];
+  readonly timeline: TimelineDefinition;
+  readonly contradictions: readonly ContradictionDefinition[];
 }
 
 export type ObjectiveStatus = 'locked' | 'active' | 'completed';
@@ -96,6 +130,8 @@ export interface GameState {
   readonly evidenceIds: readonly string[];
   readonly discoveredFactIds: readonly string[];
   readonly flags: Readonly<Record<string, boolean>>;
+  readonly timelineEventIds: readonly string[];
+  readonly contradictionIds: readonly string[];
 }
 
 export type CaseDomainEvent =

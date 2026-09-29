@@ -5,8 +5,10 @@ import case001 from '../../cases/case-001/case.json';
 import case001Objectives from '../../cases/case-001/objectives.json';
 import case001Evidences from '../../cases/case-001/evidences.json';
 import case001Facts from '../../cases/case-001/facts.json';
+import case001Contradictions from '../../cases/case-001/contradictions.json';
 import case001ListeningTasks from '../../cases/case-001/listening-tasks.json';
 import case001MainOffice from '../../cases/case-001/scenes/main_office.json';
+import case001Archive from '../../cases/case-001/scenes/archive.json';
 
 import case001Npcs from '../../cases/case-001/npcs.json';
 import case001Dialogues from '../../cases/case-001/dialogues.json';
@@ -17,6 +19,7 @@ type RegisteredCase = {
   objectives: unknown;
   evidences: unknown;
   facts: unknown;
+  contradictions: unknown;
   listeningTasks: unknown;
   npcs: unknown;
   dialogues: unknown;
@@ -30,11 +33,12 @@ const caseRegistry: Record<string, RegisteredCase> = {
     objectives: case001Objectives,
     evidences: case001Evidences,
     facts: case001Facts,
+    contradictions: case001Contradictions,
     listeningTasks: case001ListeningTasks,
     npcs: case001Npcs,
     dialogues: case001Dialogues,
     vocabulary: case001Vocabulary,
-    scenes: [case001MainOffice],
+    scenes: [case001MainOffice, case001Archive],
   },
 };
 
@@ -52,6 +56,7 @@ export function loadCaseDefinition(caseId: string): CaseDefinition {
       objectivesRaw: entry.objectives,
       evidencesRaw: entry.evidences,
       factsRaw: entry.facts,
+      contradictionsRaw: entry.contradictions,
       listeningTasksRaw: entry.listeningTasks,
       npcsRaw: entry.npcs,
       dialoguesRaw: entry.dialogues,

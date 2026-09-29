@@ -9,9 +9,52 @@ describe('parseSceneDefinition', () => {
     expect(scene.id).toBe('main_office');
   });
 
+  it('accepts named spawn points and an interaction scene transition', () => {
+    const raw = structuredClone(mainOffice) as {
+      spawn?: unknown;
+      spawnPoints?: unknown;
+      assets: Array<{ id: string; interaction?: Record<string, unknown> }>;
+    };
+    delete raw.spawn;
+    raw.spawnPoints = {
+      default: { x: 1200, y: 1100 },
+      from_archive: { x: 2050, y: 720 },
+    };
+    const door = raw.assets.find(({ id }) => id === 'hallway_door')!;
+    door.interaction = {
+      x: 0,
+      y: 20,
+      radius: 80,
+      prompt: 'Ra hành lang',
+      transition: { targetSceneId: 'archive', targetSpawnId: 'from_office' },
+    };
+
+    const scene = parseSceneDefinition(raw, 'main_office.json');
+
+    expect(scene.spawnPoints).toEqual({
+      default: { x: 1200, y: 1100 },
+      from_archive: { x: 2050, y: 720 },
+    });
+    expect(scene.assets.find(({ id }) => id === 'hallway_door')?.interaction?.transition).toEqual({
+      targetSceneId: 'archive',
+      targetSpawnId: 'from_office',
+    });
+  });
+
+  it('rejects scene without a default named spawn point', () => {
+    const raw = structuredClone(mainOffice) as {
+      spawn?: unknown;
+      spawnPoints?: unknown;
+    };
+    delete raw.spawn;
+    raw.spawnPoints = { from_archive: { x: 2050, y: 720 } };
+
+    expect(() => parseSceneDefinition(raw, 'main_office.json')).toThrow(ContentValidationError);
+  });
+
   it('rejects missing spawn', () => {
     const raw = { ...(mainOffice as Record<string, unknown>) };
-    delete raw.spawn;
+    delete raw.spawnPoints;
     try {
       parseSceneDefinition(raw, 'main_office.json');
       throw new Error('expected parseSceneDefinition to throw');
@@ -43,7 +86,13 @@ describe('parseSceneDefinition', () => {
   });
 
   it('rejects spawn outside worldBounds', () => {
-    const raw = { ...(mainOffice as Record<string, unknown>), spawn: { x: -50, y: -50 } };
+    const raw = {
+      ...(mainOffice as Record<string, unknown>),
+      spawnPoints: {
+        ...(mainOffice as { spawnPoints: Record<string, unknown> }).spawnPoints,
+        default: { x: -50, y: -50 },
+      },
+    };
     try {
       parseSceneDefinition(raw, 'main_office.json');
       throw new Error('expected parseSceneDefinition to throw');
@@ -86,7 +135,7 @@ describe('parseSceneDefinition', () => {
 
   it('error message names the source file', () => {
     const raw = { ...(mainOffice as Record<string, unknown>) };
-    delete raw.spawn;
+    delete raw.spawnPoints;
     try {
       parseSceneDefinition(raw, 'main_office.json');
       throw new Error('expected parseSceneDefinition to throw');

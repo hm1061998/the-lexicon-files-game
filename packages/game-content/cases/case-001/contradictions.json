@@ -1,1 +1,10 @@
-{}
+{
+  "contradictions": [
+    {
+      "id": "david_statement_vs_access_log",
+      "factIds": ["david_statement_no_entry_after_20_00", "david_entry_20_32"],
+      "explanation": "The security log records David entering the meeting room at 20:32, which conflicts with his statement that he did not enter after 20:00.",
+      "objectiveId": "compare_david_statement"
+    }
+  ]
+}

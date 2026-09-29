@@ -17,6 +17,17 @@ export interface InteractionArea {
   readonly prompt: string;
   readonly npcId?: string | undefined;
   readonly effects?: readonly Effect[] | undefined;
+  readonly transition?: SceneTransitionDefinition | undefined;
+}
+
+export interface SceneTransitionDefinition {
+  readonly targetSceneId: string;
+  readonly targetSpawnId: string;
+}
+
+export interface SpawnPointDefinition {
+  readonly x: number;
+  readonly y: number;
 }
 
 export interface SceneAssetDefinition {
@@ -41,6 +52,6 @@ export interface SceneDefinition {
     readonly width: number;
     readonly height: number;
   };
-  readonly spawn: { readonly x: number; readonly y: number };
+  readonly spawnPoints: Readonly<Record<string, SpawnPointDefinition>>;
   readonly assets: readonly SceneAssetDefinition[];
 }

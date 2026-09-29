@@ -10,9 +10,9 @@
     "width": 2400,
     "height": 1600
   },
-  "spawn": {
-    "x": 1200,
-    "y": 1100
+  "spawnPoints": {
+    "default": { "x": 1200, "y": 1100 },
+    "from_archive": { "x": 1980, "y": 740 }
   },
   "assets": [
     {
@@ -144,7 +144,11 @@
         "x": 0,
         "y": 20,
         "radius": 80,
-        "prompt": "Ra hành lang"
+        "prompt": "Ra hành lang",
+        "transition": {
+          "targetSceneId": "archive",
+          "targetSpawnId": "from_office"
+        }
       }
     },
     {

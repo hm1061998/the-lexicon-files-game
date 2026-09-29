@@ -19,6 +19,16 @@ export interface UiStrings {
   readonly evidence: string;
   readonly people: string;
   readonly vocabulary: string;
+  readonly timeline: string;
+  readonly timelineEmpty: string;
+  readonly timelineSelectEvent: string;
+  readonly timelineSelectSlot: string;
+  readonly timelinePlace: string;
+  readonly timelineMismatch: string;
+  readonly contradictionSelectFacts: string;
+  readonly contradictionSubmit: string;
+  readonly contradictionMismatch: string;
+  readonly contradictionFound: string;
   readonly close: string;
   readonly notebookEmptyPeople: string;
   readonly notebookEmptyVocabulary: string;

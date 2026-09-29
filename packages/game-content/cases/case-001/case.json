@@ -3,5 +3,110 @@
   "title": "The Missing Report",
   "evidenceTotal": 5,
   "initialObjectiveId": "find_what_happened",
-  "sceneIds": ["main_office"]
+  "sceneIds": ["main_office", "archive"],
+  "timeline": {
+    "slots": [
+      { "id": "20_00", "time": "20:00" },
+      { "id": "20_18", "time": "20:18" },
+      { "id": "20_27", "time": "20:27" },
+      { "id": "20_29", "time": "20:29" },
+      { "id": "20_32", "time": "20:32" },
+      { "id": "20_36", "time": "20:36" },
+      { "id": "20_40", "time": "20:40" },
+      { "id": "20_45", "time": "20:45" },
+      { "id": "21_05", "time": "21:05" }
+    ],
+    "events": [
+      {
+        "id": "meeting_started",
+        "text": "The meeting began.",
+        "slotId": "20_00",
+        "location": "Meeting room",
+        "personIds": [],
+        "source": "Meeting Minutes",
+        "confidence": "Recorded in the meeting minutes.",
+        "availability": { "type": "requiresFacts", "factIds": ["meeting_started"] }
+      },
+      {
+        "id": "anna_exit_20_18",
+        "text": "Anna left the meeting room.",
+        "slotId": "20_18",
+        "location": "Meeting room",
+        "personIds": ["anna"],
+        "source": "Security Access Log",
+        "confidence": "Recorded directly in the access log.",
+        "availability": { "type": "requiresFacts", "factIds": ["anna_exit_20_18"] }
+      },
+      {
+        "id": "leo_exit_20_27",
+        "text": "Leo left the meeting room.",
+        "slotId": "20_27",
+        "location": "Meeting room",
+        "personIds": ["leo"],
+        "source": "Security Access Log",
+        "confidence": "Recorded directly in the access log.",
+        "availability": { "type": "requiresFacts", "factIds": ["leo_exit_20_27"] }
+      },
+      {
+        "id": "leo_outside_at_2029",
+        "text": "Leo was outside the meeting room.",
+        "slotId": "20_29",
+        "location": "Outside the meeting room",
+        "personIds": ["leo"],
+        "source": "Leo's phone recording",
+        "confidence": "Heard in the recording.",
+        "availability": { "type": "requiresFacts", "factIds": ["leo_outside_at_2029"] }
+      },
+      {
+        "id": "david_entry_20_32",
+        "text": "David entered the meeting room.",
+        "slotId": "20_32",
+        "location": "Meeting room",
+        "personIds": ["david"],
+        "source": "Security Access Log",
+        "confidence": "Recorded directly in the access log.",
+        "availability": { "type": "requiresFacts", "factIds": ["david_entry_20_32"] }
+      },
+      {
+        "id": "david_exit_20_36",
+        "text": "David left the meeting room.",
+        "slotId": "20_36",
+        "location": "Meeting room",
+        "personIds": ["david"],
+        "source": "Security Access Log",
+        "confidence": "Recorded directly in the access log.",
+        "availability": { "type": "requiresFacts", "factIds": ["david_exit_20_36"] }
+      },
+      {
+        "id": "leo_entry_20_40",
+        "text": "Leo entered the meeting room again.",
+        "slotId": "20_40",
+        "location": "Meeting room",
+        "personIds": ["leo"],
+        "source": "Security Access Log",
+        "confidence": "Recorded directly in the access log.",
+        "availability": { "type": "requiresFacts", "factIds": ["leo_entry_20_40"] }
+      },
+      {
+        "id": "meeting_ended_20_45",
+        "text": "The meeting ended.",
+        "slotId": "20_45",
+        "location": "Meeting room",
+        "personIds": [],
+        "source": "Meeting Minutes",
+        "confidence": "Recorded in the meeting minutes.",
+        "availability": { "type": "requiresFacts", "factIds": ["meeting_ended_20_45"] }
+      },
+      {
+        "id": "report_missing_21_05",
+        "text": "The report was discovered missing.",
+        "slotId": "21_05",
+        "location": "Meeting room",
+        "personIds": [],
+        "source": "Case introduction",
+        "confidence": "Established in the case introduction.",
+        "availability": { "type": "availableFromStart" }
+      }
+    ]
+  }
 }

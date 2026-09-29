@@ -5,7 +5,7 @@ import { loadCaseDefinition } from './loadCaseDefinition';
 describe('loadCaseDefinition', () => {
   it('loads the minimal case, including its scene, evidence, fact, and objective', () => {
     const definition = loadCaseDefinition('case-001');
-    expect(definition.scenes.map((scene) => scene.id)).toEqual(['main_office']);
+    expect(definition.scenes.map((scene) => scene.id)).toEqual(['main_office', 'archive']);
     expect(definition.vocabulary).toHaveLength(20);
     expect(definition.vocabulary.map(({ id }) => id)).toEqual([
       'meeting',
@@ -39,6 +39,7 @@ describe('loadCaseDefinition', () => {
     expect(definition.evidences.map((item) => item.id)).toEqual([
       'leo_phone_recording',
       'meeting_minutes',
+      'security_access_log',
     ]);
     expect(definition.listeningTasks).toHaveLength(1);
     expect(definition.listeningTasks[0]).toMatchObject({
@@ -54,10 +55,18 @@ describe('loadCaseDefinition', () => {
       'david_statement_no_entry_after_20_00',
       'david_collected_folder',
       'david_took_report',
+      'anna_exit_20_18',
+      'leo_exit_20_27',
+      'david_entry_20_32',
+      'david_exit_20_36',
+      'leo_entry_20_40',
+      'meeting_ended_20_45',
     ]);
     expect(definition.objectives.map((item) => item.id)).toEqual([
       'find_what_happened',
       'talk_to_everyone',
+      'check_security_records',
+      'compare_david_statement',
     ]);
   });
 

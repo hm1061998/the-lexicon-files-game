@@ -8,15 +8,32 @@ import office from '../../cases/case-001/scenes/main_office.json';
 import vocabularyRaw from '../../cases/case-001/vocabulary.json';
 
 const evidencesRaw = {
-  evidences: [allEvidencesRaw.evidences.find((evidence) => evidence.id === 'meeting_minutes')!],
+  evidences: [
+    {
+      ...allEvidencesRaw.evidences.find((evidence) => evidence.id === 'meeting_minutes')!,
+      relatedFactIds: ['meeting_started'],
+    },
+  ],
 };
 const factsRaw = { facts: [fullFacts.facts.find((fact) => fact.id === 'meeting_started')!] };
+const dialogueCaseRaw = {
+  id: caseRaw.id,
+  title: caseRaw.title,
+  evidenceTotal: caseRaw.evidenceTotal,
+  initialObjectiveId: caseRaw.initialObjectiveId,
+  sceneIds: ['main_office'],
+  timeline: {
+    slots: [{ id: '20_00', time: '20:00' }],
+    events: [caseRaw.timeline.events.find((event) => event.id === 'meeting_started')!],
+  },
+};
 function input() {
   return {
-    caseRaw,
+    caseRaw: dialogueCaseRaw,
     objectivesRaw,
     evidencesRaw,
     factsRaw,
+    contradictionsRaw: { contradictions: [] },
     listeningTasksRaw: { tasks: [] },
     sceneRaws: [
       {
@@ -30,7 +47,9 @@ function input() {
                   ...a,
                   interaction: { ...a.interaction, npcId: 'anna' },
                 }
-              : a,
+              : a.id === 'hallway_door'
+                ? { ...a, interaction: { ...a.interaction, transition: undefined } }
+                : a,
           ),
       },
     ],

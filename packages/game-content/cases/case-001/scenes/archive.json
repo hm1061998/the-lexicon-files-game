@@ -1,0 +1,80 @@
+{
+  "id": "archive",
+  "size": {
+    "width": 2400,
+    "height": 1600
+  },
+  "worldBounds": {
+    "x": 0,
+    "y": 0,
+    "width": 2400,
+    "height": 1600
+  },
+  "spawnPoints": {
+    "default": { "x": 1200, "y": 1100 },
+    "from_office": { "x": 420, "y": 760 }
+  },
+  "assets": [
+    {
+      "id": "PLACEHOLDER_archive_floor",
+      "type": "background",
+      "texture": "ph_floor",
+      "x": 1200,
+      "y": 800,
+      "origin": [0.5, 0.5],
+      "depth": -1000,
+      "depthBias": 0
+    },
+    {
+      "id": "PLACEHOLDER_archive_wall",
+      "type": "wall",
+      "texture": "ph_wall",
+      "x": 1200,
+      "y": 420,
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "x": -1200,
+        "y": -40,
+        "width": 2400,
+        "height": 40
+      }
+    },
+    {
+      "id": "PLACEHOLDER_security_terminal",
+      "type": "interactable",
+      "texture": "ph_note",
+      "x": 1500,
+      "y": 1000,
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 80,
+        "prompt": "Kiểm tra nhật ký ra vào",
+        "effects": [
+          { "type": "addEvidence", "evidenceId": "security_access_log" },
+          { "type": "completeObjective", "objectiveId": "check_security_records" }
+        ]
+      }
+    },
+    {
+      "id": "PLACEHOLDER_archive_door",
+      "type": "interactable",
+      "texture": "ph_door",
+      "x": 420,
+      "y": 700,
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 20,
+        "radius": 80,
+        "prompt": "Quay lại Main Office",
+        "transition": {
+          "targetSceneId": "main_office",
+          "targetSpawnId": "from_archive"
+        }
+      }
+    }
+  ]
+}

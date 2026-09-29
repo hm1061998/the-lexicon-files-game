@@ -16,6 +16,8 @@ export type {
   RectCollision,
   InteractionArea,
   SceneAssetDefinition,
+  SceneTransitionDefinition,
+  SpawnPointDefinition,
   SceneDefinition,
 } from './scene';
 export type { UiStrings } from './case';
@@ -26,6 +28,11 @@ export type {
   FactDefinition,
   ListeningOption,
   ListeningTaskDefinition,
+  TimelineSlotDefinition,
+  TimelineEventAvailability,
+  TimelineEventDefinition,
+  TimelineDefinition,
+  ContradictionDefinition,
   Condition,
   Effect,
   CaseDefinition,

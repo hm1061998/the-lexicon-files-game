@@ -2,11 +2,13 @@ import { z } from 'zod';
 import type {
   CaseDefinition,
   Condition,
+  ContradictionDefinition,
   Effect,
   EvidenceDefinition,
   FactDefinition,
   ListeningTaskDefinition,
   ObjectiveDefinition,
+  TimelineDefinition,
 } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
 import { npcSchema, dialogueTreeSchema } from './dialogue';
@@ -23,6 +25,67 @@ const caseRawSchema = z
     evidenceTotal: z.number().int().min(0),
     initialObjectiveId: z.string().min(1),
     sceneIds: z.array(z.string().min(1)).min(1),
+    timeline: z
+      .object({
+        slots: z.array(
+          z
+            .object({
+              id: z.string().min(1),
+              time: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
+            })
+            .strict(),
+        ),
+        events: z.array(
+          z
+            .object({
+              id: z.string().min(1),
+              text: z.string().min(1),
+              slotId: z.string().min(1),
+              location: z.string().min(1),
+              personIds: z.array(z.string().min(1)),
+              source: z.string().min(1),
+              confidence: z.string().min(1),
+              availability: z.discriminatedUnion('type', [
+                z.object({ type: z.literal('availableFromStart') }).strict(),
+                z
+                  .object({
+                    type: z.literal('requiresFacts'),
+                    factIds: z.array(z.string().min(1)).min(1),
+                  })
+                  .strict(),
+              ]),
+            })
+            .strict(),
+        ),
+      })
+      .strict(),
+  })
+  .strict();
+
+const contradictionsRawSchema = z
+  .object({
+    contradictions: z.array(
+      z
+        .object({
+          id: z.string().min(1),
+          factIds: z
+            .array(z.string().min(1))
+            .length(2, 'must reference exactly two distinct fact IDs')
+            .transform((factIds) => [factIds[0]!, factIds[1]!] as const),
+          explanation: z.string().min(1),
+          objectiveId: z.string().min(1),
+        })
+        .strict()
+        .superRefine((contradiction, ctx) => {
+          if (contradiction.factIds[0] === contradiction.factIds[1]) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['factIds'],
+              message: 'must reference exactly two distinct fact IDs',
+            });
+          }
+        }),
+    ),
   })
   .strict();
 
@@ -100,6 +163,7 @@ type ParseCaseDefinitionInput = {
   objectivesRaw: unknown;
   evidencesRaw: unknown;
   factsRaw: unknown;
+  contradictionsRaw: unknown;
   listeningTasksRaw: unknown;
   sceneRaws: readonly unknown[];
   npcsRaw: unknown;
@@ -188,6 +252,7 @@ export function parseCaseDefinition(
   const objectivesResult = objectivesRawSchema.safeParse(input.objectivesRaw);
   const evidencesResult = evidencesRawSchema.safeParse(input.evidencesRaw);
   const factsResult = factsRawSchema.safeParse(input.factsRaw);
+  const contradictionsResult = contradictionsRawSchema.safeParse(input.contradictionsRaw);
   const listeningTasksResult = listeningTasksRawSchema.safeParse(input.listeningTasksRaw);
   const vocabularyResult = vocabularyCatalogueSchema.safeParse(input.vocabularyRaw);
   const scenesResult = input.sceneRaws.map((scene) => sceneDefinitionSchema.safeParse(scene));
@@ -204,6 +269,9 @@ export function parseCaseDefinition(
     appendSchemaIssues(issues, `${source}/evidences.json`, evidencesResult.error);
   }
   if (!factsResult.success) appendSchemaIssues(issues, `${source}/facts.json`, factsResult.error);
+  if (!contradictionsResult.success) {
+    appendSchemaIssues(issues, `${source}/contradictions.json`, contradictionsResult.error);
+  }
   if (!listeningTasksResult.success) {
     appendSchemaIssues(issues, `${source}/listening-tasks.json`, listeningTasksResult.error);
   }
@@ -222,6 +290,7 @@ export function parseCaseDefinition(
     !objectivesResult.success ||
     !evidencesResult.success ||
     !factsResult.success ||
+    !contradictionsResult.success ||
     !listeningTasksResult.success ||
     !vocabularyResult.success ||
     scenesResult.some((result) => !result.success)
@@ -233,6 +302,7 @@ export function parseCaseDefinition(
   const objectives = objectivesResult.data.objectives as ObjectiveDefinition[];
   const evidences = evidencesResult.data.evidences as EvidenceDefinition[];
   const facts = factsResult.data.facts as FactDefinition[];
+  const contradictions = contradictionsResult.data.contradictions as ContradictionDefinition[];
   const listeningTasks = listeningTasksResult.data.tasks as ListeningTaskDefinition[];
   const vocabulary = vocabularyResult.data.vocabulary;
   const scenes = scenesResult.map(
@@ -244,6 +314,9 @@ export function parseCaseDefinition(
     { label: 'objectives', ids: objectives.map(({ id }) => id) },
     { label: 'evidences', ids: evidences.map(({ id }) => id) },
     { label: 'facts', ids: facts.map(({ id }) => id) },
+    { label: 'timeline.slots', ids: caseData.timeline.slots.map(({ id }) => id) },
+    { label: 'timeline.events', ids: caseData.timeline.events.map(({ id }) => id) },
+    { label: 'contradictions', ids: contradictions.map(({ id }) => id) },
     { label: 'listeningTasks', ids: listeningTasks.map(({ id }) => id) },
     { label: 'scenes', ids: scenes.map(({ id }) => id) },
   ];
@@ -254,11 +327,13 @@ export function parseCaseDefinition(
   }
 
   const objectiveIds = new Set(objectives.map(({ id }) => id));
+  const npcIds = new Set(npcsResult.data.npcs.map(({ id }) => id));
   const vocabularyContexts: { id: string; vocabularyIds: readonly string[] }[] = [];
   const evidenceIds = new Set(evidences.map(({ id }) => id));
   const factIds = new Set(facts.map(({ id }) => id));
   const evidenceById = new Map(evidences.map((evidence) => [evidence.id, evidence]));
   const sceneById = new Map(scenes.map((scene) => [scene.id, scene]));
+  const slotIds = new Set(caseData.timeline.slots.map(({ id }) => id));
 
   if (!objectiveIds.has(caseData.initialObjectiveId)) {
     issues.push(
@@ -273,6 +348,39 @@ export function parseCaseDefinition(
       issues.push(`scene ${scene.id}: not referenced by case.json.sceneIds`);
     }
   }
+  caseData.timeline.events.forEach((event, eventIndex) => {
+    if (!slotIds.has(event.slotId)) {
+      issues.push(
+        `case.json.timeline.events.${eventIndex}.slotId: unknown timeline slot id "${event.slotId}"`,
+      );
+    }
+    if (event.availability.type === 'requiresFacts') {
+      event.availability.factIds.forEach((id) => {
+        if (!factIds.has(id)) {
+          issues.push(
+            `case.json.timeline.events.${eventIndex}.availability.factIds: unknown fact id "${id}"`,
+          );
+        }
+      });
+    }
+    event.personIds.forEach((id) => {
+      if (!npcIds.has(id)) {
+        issues.push(`case.json.timeline.events.${eventIndex}.personIds: unknown NPC id "${id}"`);
+      }
+    });
+  });
+  contradictions.forEach((contradiction, contradictionIndex) => {
+    contradiction.factIds.forEach((id) => {
+      if (!factIds.has(id)) {
+        issues.push(`contradictions.${contradictionIndex}.factIds: unknown fact id "${id}"`);
+      }
+    });
+    if (!objectiveIds.has(contradiction.objectiveId)) {
+      issues.push(
+        `contradictions.${contradictionIndex}.objectiveId: unknown objective id "${contradiction.objectiveId}"`,
+      );
+    }
+  });
 
   listeningTasks.forEach((task, taskIndex) => {
     const evidence = evidenceById.get(task.evidenceId);
@@ -397,6 +505,20 @@ export function parseCaseDefinition(
           issues,
         );
       });
+      const transition = asset.interaction?.transition;
+      if (transition) {
+        const targetScene = sceneById.get(transition.targetSceneId);
+        const transitionPath = `scenes.${sceneIndex}.assets.${assetIndex}.interaction.transition`;
+        if (!targetScene) {
+          issues.push(
+            `${transitionPath}.targetSceneId: unknown target scene id "${transition.targetSceneId}"`,
+          );
+        } else if (!Object.hasOwn(targetScene.spawnPoints, transition.targetSpawnId)) {
+          issues.push(
+            `${transitionPath}.targetSpawnId: unknown spawn id "${transition.targetSpawnId}" in scene "${transition.targetSceneId}"`,
+          );
+        }
+      }
     });
   });
 
@@ -432,5 +554,7 @@ export function parseCaseDefinition(
     vocabulary,
     vocabularyContexts,
     listeningTasks,
+    timeline: caseData.timeline as TimelineDefinition,
+    contradictions,
   };
 }

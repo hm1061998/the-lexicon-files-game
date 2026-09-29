@@ -15,18 +15,33 @@
       "caseId": "case-001",
       "name": "Meeting Minutes",
       "category": "document",
-      "description": "The meeting began at 8:00 PM. Anna left early for a client call, and Leo stepped outside for several minutes.",
+      "description": "The meeting began at 8:00 PM and ended at 8:45 PM. Anna left early for a client call, and Leo stepped outside for several minutes.",
       "vocabularyIds": ["meeting", "leave", "early", "client", "outside", "several"],
       "vocabularySpans": [
         { "start": 4, "end": 11, "vocabularyId": "meeting" },
-        { "start": 35, "end": 39, "vocabularyId": "leave" },
-        { "start": 40, "end": 45, "vocabularyId": "early" },
-        { "start": 52, "end": 58, "vocabularyId": "client" },
-        { "start": 81, "end": 88, "vocabularyId": "outside" },
-        { "start": 93, "end": 100, "vocabularyId": "several" }
+        { "start": 56, "end": 60, "vocabularyId": "leave" },
+        { "start": 61, "end": 66, "vocabularyId": "early" },
+        { "start": 73, "end": 79, "vocabularyId": "client" },
+        { "start": 102, "end": 109, "vocabularyId": "outside" },
+        { "start": 114, "end": 121, "vocabularyId": "several" }
       ],
-      "descriptionVi": "Cuộc họp bắt đầu lúc 8 giờ tối. Anna rời đi sớm để gọi cho một khách hàng, còn Leo bước ra ngoài trong vài phút.",
-      "relatedFactIds": ["meeting_started"]
+      "descriptionVi": "Cuộc họp bắt đầu lúc 8 giờ tối và kết thúc lúc 8 giờ 45. Anna rời đi sớm để gọi cho một khách hàng, còn Leo bước ra ngoài trong vài phút.",
+      "relatedFactIds": ["meeting_started", "meeting_ended_20_45"]
+    },
+    {
+      "id": "security_access_log",
+      "caseId": "case-001",
+      "name": "Security Access Log",
+      "category": "digital",
+      "description": "Anna Reed EXIT 20:18; Leo Tran EXIT 20:27; David Cole ENTRY 20:32; David Cole EXIT 20:36; Leo Tran ENTRY 20:40.",
+      "descriptionVi": "Anna Reed RỜI 20:18; Leo Tran RỜI 20:27; David Cole VÀO 20:32; David Cole RỜI 20:36; Leo Tran VÀO 20:40.",
+      "relatedFactIds": [
+        "anna_exit_20_18",
+        "leo_exit_20_27",
+        "david_entry_20_32",
+        "david_exit_20_36",
+        "leo_entry_20_40"
+      ]
     }
   ]
 }

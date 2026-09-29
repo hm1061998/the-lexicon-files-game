@@ -21,6 +21,20 @@ const interactionAreaSchema = z
     prompt: z.string().min(1),
     effects: z.array(effectSchema).optional(),
     npcId: z.string().min(1).optional(),
+    transition: z
+      .object({
+        targetSceneId: z.string().min(1),
+        targetSpawnId: z.string().min(1),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict();
+
+const spawnPointSchema = z
+  .object({
+    x: z.number(),
+    y: z.number(),
   })
   .strict();
 
@@ -58,12 +72,7 @@ export const sceneDefinitionSchema = z
         height: z.number().positive(),
       })
       .strict(),
-    spawn: z
-      .object({
-        x: z.number(),
-        y: z.number(),
-      })
-      .strict(),
+    spawnPoints: z.record(z.string().min(1), spawnPointSchema),
     assets: z.array(sceneAssetDefinitionSchema),
   })
   .strict()
@@ -80,18 +89,27 @@ export const sceneDefinitionSchema = z
       seenIds.add(asset.id);
     }
 
-    const { spawn, worldBounds } = scene;
-    const withinBounds =
-      spawn.x >= worldBounds.x &&
-      spawn.x <= worldBounds.x + worldBounds.width &&
-      spawn.y >= worldBounds.y &&
-      spawn.y <= worldBounds.y + worldBounds.height;
-    if (!withinBounds) {
+    const { spawnPoints, worldBounds } = scene;
+    if (!Object.hasOwn(spawnPoints, 'default')) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['spawn'],
-        message: 'spawn must be within worldBounds',
+        path: ['spawnPoints', 'default'],
+        message: 'default spawn point is required',
       });
+    }
+    for (const [id, spawn] of Object.entries(spawnPoints)) {
+      const withinBounds =
+        spawn.x >= worldBounds.x &&
+        spawn.x <= worldBounds.x + worldBounds.width &&
+        spawn.y >= worldBounds.y &&
+        spawn.y <= worldBounds.y + worldBounds.height;
+      if (!withinBounds) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['spawnPoints', id],
+          message: 'spawn point must be within worldBounds',
+        });
+      }
     }
   });
 

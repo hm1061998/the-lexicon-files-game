@@ -28,6 +28,16 @@
           }
         ]
       }
+    },
+    {
+      "id": "check_security_records",
+      "text": "Check the security records",
+      "initialStatus": "active"
+    },
+    {
+      "id": "compare_david_statement",
+      "text": "Compare David's statement with the evidence",
+      "initialStatus": "active"
     }
   ]
 }
