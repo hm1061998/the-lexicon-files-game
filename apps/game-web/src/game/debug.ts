@@ -6,6 +6,8 @@ export type LexiconDebug = {
   triggeredEvents(): number;
   teleport(x: number, y: number): void;
   markerY(): number | null;
+  paperOverlayAlpha(): number | null;
+  paperOverlayAlpha(): number | null;
 };
 
 declare global {

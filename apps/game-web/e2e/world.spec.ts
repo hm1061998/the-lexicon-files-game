@@ -7,6 +7,7 @@ type DebugApi = {
   nearbyEvents(): number;
   teleport(x: number, y: number): void;
   markerY(): number | null;
+  paperOverlayAlpha(): number | null;
 };
 
 declare global {
@@ -30,10 +31,19 @@ async function hold(page: Page, key: string, ms: number): Promise<void> {
   await page.keyboard.up(key);
 }
 
+/** Walk right until the note is in range; fixed hold times are too fragile on slow renderers. */
+async function walkToNote(page: Page): Promise<void> {
+  await page.keyboard.down('d');
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
+    .toBe('objective_note');
+  await page.keyboard.up('d');
+}
+
 test('player moves right while D is held', async ({ page }) => {
   await openWorld(page);
   const before = await player(page);
-  await hold(page, 'd', 500);
+  await hold(page, 'd', 1000);
   const after = await player(page);
   expect(after.x - before.x).toBeGreaterThanOrEqual(80);
 });
@@ -83,7 +93,7 @@ test('entering the note radius reports it nearby', async ({ page }) => {
 
 test('nearby event fires once per entry', async ({ page }) => {
   await openWorld(page);
-  await hold(page, 'd', 800);
+  await walkToNote(page);
   const count = await page.evaluate(() => window.__lexiconDebug!.nearbyEvents());
   expect(count).toBe(1);
 });
@@ -147,4 +157,38 @@ test('interaction marker floats, holds still under reduced motion, and floats ag
   await page.waitForTimeout(500);
   const f = await markerY();
   expect(e).not.toBe(f);
+});
+
+test('paper overlay is subtle and does not block movement or interaction', async ({ page }) => {
+  await openWorld(page);
+  const alpha = await page.evaluate(() => window.__lexiconDebug!.paperOverlayAlpha());
+  expect(alpha).not.toBeNull();
+  expect(alpha!).toBeGreaterThanOrEqual(0.1);
+  expect(alpha!).toBeLessThanOrEqual(0.18);
+
+  const before = await player(page);
+  await hold(page, 'd', 300);
+  expect((await player(page)).x).toBeGreaterThan(before.x);
+
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1400, 1100));
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
+    .toBe('objective_note');
+});
+
+test('scene transition fades and lands at the spawn; repeated requests restart once', async ({
+  page,
+}) => {
+  await openWorld(page);
+  await page.evaluate(() => window.__lexiconDebug!.teleport(2100, 700));
+  await expect(page.getByText('Ra hành lang', { exact: true })).toBeVisible();
+  await page.keyboard.press('e');
+  await page.keyboard.press('e');
+  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug?.player() ?? null), { timeout: 1000 })
+    .not.toBeNull();
+  const after = await player(page);
+  expect(after.x).toBeLessThan(2000);
+  await expect(page.locator('canvas')).toHaveCount(1);
 });

@@ -29,10 +29,24 @@ async function openWorld(page: Page): Promise<void> {
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 
-async function interactAt(page: Page, x: number, y: number, prompt: string): Promise<void> {
+async function interactAt(
+  page: Page,
+  x: number,
+  y: number,
+  prompt: string,
+  sceneSwap = false,
+): Promise<void> {
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), { x, y });
   await expect(page.getByText(prompt, { exact: true })).toBeVisible();
+  const previous = await page.evaluateHandle(() => window.__lexiconDebug);
   await page.keyboard.press('e');
+  // Scene transitions fade out first; wait until the new scene has installed its debug hook.
+  if (sceneSwap) {
+    await page.waitForFunction(
+      (old) => window.__lexiconDebug !== undefined && window.__lexiconDebug !== old,
+      previous,
+    );
+  }
 }
 
 async function saved(page: Page): Promise<SavedRecord | undefined> {
@@ -88,7 +102,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     .toEqual(['report_missing_21_05']);
   await page.keyboard.press('Escape');
 
-  await interactAt(page, 2100, 700, 'Ra hành lang');
+  await interactAt(page, 2100, 700, 'Ra hành lang', true);
   await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
   await interactAt(page, 1500, 1000, 'Kiểm tra nhật ký ra vào');
   await expect
@@ -99,7 +113,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     .toBe('completed');
   await page.keyboard.press('Escape');
 
-  await interactAt(page, 420, 700, 'Quay lại Main Office');
+  await interactAt(page, 420, 700, 'Quay lại Main Office', true);
   await expect(page.getByText('Nói chuyện với David', { exact: true })).toHaveCount(0);
   await page.evaluate(() => window.__lexiconDebug!.teleport(1900, 900));
   await expect(page.getByText('Nói chuyện với David', { exact: true })).toBeVisible();
@@ -161,7 +175,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(page.getByRole('dialog')).toContainText('...I may have gone in for a moment.');
   await page.keyboard.press('Escape');
 
-  await interactAt(page, 2100, 700, 'Ra hành lang');
+  await interactAt(page, 2100, 700, 'Ra hành lang', true);
   await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
   const recordBeforeReload = await saved(page);
   expect(recordBeforeReload).toMatchObject({
@@ -193,7 +207,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   expect(await saved(page)).toMatchObject(recordBeforeReload);
 
   // Phase 9: confession opens the conclusion; a wrong accusation changes nothing.
-  await interactAt(page, 420, 700, 'Quay lại Main Office');
+  await interactAt(page, 420, 700, 'Quay lại Main Office', true);
   await page.evaluate(() => window.__lexiconDebug!.teleport(1900, 900));
   await expect(page.getByText('Nói chuyện với David', { exact: true })).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });

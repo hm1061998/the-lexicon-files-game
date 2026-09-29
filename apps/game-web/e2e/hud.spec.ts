@@ -39,9 +39,22 @@ async function hold(page: Page, key: string, ms: number): Promise<void> {
   await page.keyboard.up(key);
 }
 
+/** Walk right until the note is in range; fixed hold times are too fragile on slow renderers. */
+async function walkToNote(page: Page): Promise<void> {
+  await page.keyboard.down('d');
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as unknown as { __lexiconDebug: DebugApi }).__lexiconDebug.nearby(),
+      ),
+    )
+    .toBe('objective_note');
+  await page.keyboard.up('d');
+}
+
 test('prompt appears near the note and disappears when leaving', async ({ page }) => {
   await openWorld(page);
-  await hold(page, 'd', 800);
+  await walkToNote(page);
   await expect(page.getByText('Đọc ghi chú')).toBeVisible();
   await hold(page, 'a', 1500);
   await expect(page.getByText('Đọc ghi chú')).toHaveCount(0);
@@ -61,7 +74,7 @@ test('canvas is not remounted by HUD updates', async ({ page }) => {
         (window as unknown as { __lexiconDebug: DebugApi }).__lexiconDebug.teleport(x, y),
       start,
     );
-    await hold(page, 'd', 800);
+    await walkToNote(page);
     await expect(page.getByText('Đọc ghi chú')).toBeVisible();
     await hold(page, 'a', 1500);
     await expect(page.getByText('Đọc ghi chú')).toHaveCount(0);
@@ -90,7 +103,7 @@ test('Esc pauses and blocks movement', async ({ page }) => {
 test('E near the note triggers interaction once', async ({ page }) => {
   await openWorld(page);
   const d = debug(page);
-  await hold(page, 'd', 800);
+  await walkToNote(page);
   await expect(page.getByText('Đọc ghi chú')).toBeVisible();
   await page.keyboard.press('e');
   await expect.poll(d.triggered).toBe(1);
@@ -113,7 +126,7 @@ test('reading the objective note completes the active objective', async ({ page 
   await page.locator('canvas').evaluate((canvas) => {
     canvas.dataset.marker = 'objective-transition';
   });
-  await hold(page, 'd', 800);
+  await walkToNote(page);
   await expect(page.getByText('Đọc ghi chú')).toBeVisible();
   await page.keyboard.press('e');
   await expect(page.getByText('Tìm hiểu điều gì đã xảy ra với bản báo cáo')).toHaveCount(0);

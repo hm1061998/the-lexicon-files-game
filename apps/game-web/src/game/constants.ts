@@ -14,3 +14,7 @@ export const PALETTE = {
 } as const;
 
 export const INTERACTION_RED = '#A4412D';
+
+export const PAPER_OVERLAY_KEY = 'paper_overlay';
+export const PAPER_OVERLAY_ALPHA = 0.14;
+export const SCENE_FADE_MS = 250;

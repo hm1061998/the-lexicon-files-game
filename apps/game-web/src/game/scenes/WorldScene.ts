@@ -7,7 +7,9 @@ import type {
 } from '@lexicon/shared-types';
 import { createSceneAsset } from '../entities/createSceneAsset';
 import { createPlayer, movePlayer, type PlayerSprite } from '../entities/Player';
+import { SCENE_FADE_MS } from '../constants';
 import { installDebugHook } from '../debug';
+import { addPaperOverlay } from '../paperOverlay';
 import { computeDepth } from '../systems/depth';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
@@ -56,6 +58,10 @@ export class WorldScene extends Phaser.Scene {
   private markerBaseY = 0;
   private markerFloat = { offset: 0 };
   private reducedMotion = false;
+  private paperOverlay: Phaser.GameObjects.TileSprite | null = null;
+  private transitioning = false;
+  private fadeInPending = false;
+  private fadeOutHandler: (() => void) | null = null;
   private unsubscribeNearby: (() => void) | null = null;
   private unsubscribeTransition: (() => void) | null = null;
   private uninstallDebug: (() => void) | null = null;
@@ -72,6 +78,7 @@ export class WorldScene extends Phaser.Scene {
     if (!spawn) throw new Error(`Scene "${def.id}" has no spawn "${options.spawnId}"`);
     this.bus = options.bus;
     this.inputLock = options.input;
+    this.transitioning = false;
     this.areas = [];
     this.depths.clear();
     this.interactionTracker = new InteractionTracker(this.bus);
@@ -111,6 +118,11 @@ export class WorldScene extends Phaser.Scene {
     const camera = this.cameras.main;
     camera.setBounds(b.x, b.y, b.width, b.height);
     camera.startFollow(this.player, true);
+    this.paperOverlay = addPaperOverlay(this);
+    // Fade in only when arriving through a transition; the initial boot stays instant so
+    // first-frame input latency is unaffected.
+    if (this.fadeInPending && !options.motion.reducedMotion()) camera.fadeIn(SCENE_FADE_MS);
+    this.fadeInPending = false;
 
     const keyboard = this.input.keyboard;
     if (keyboard) {
@@ -138,6 +150,7 @@ export class WorldScene extends Phaser.Scene {
       nearbyEvents: () => this.nearbyEventCount,
       triggeredEvents: () => this.triggeredEventCount,
       markerY: () => (this.marker.visible ? this.marker.y : null),
+      paperOverlayAlpha: () => this.paperOverlay?.alpha ?? null,
       teleport: (x, y) => {
         this.player.body.reset(x, y);
         this.player.setDepth(computeDepth(y));
@@ -218,13 +231,30 @@ export class WorldScene extends Phaser.Scene {
 
   private transitionTo(sceneId: string, spawnId: string): void {
     const scene = this.options.caseDefinition.scenes.find((candidate) => candidate.id === sceneId);
-    if (!scene || !scene.spawnPoints[spawnId]) return;
+    if (this.transitioning || !scene || !scene.spawnPoints[spawnId]) return;
+    this.transitioning = true;
+    this.fadeInPending = true;
     this.interactionTracker.clear();
     this.registry.set('world', { ...this.options, scene, spawnId } satisfies WorldOptions);
-    this.scene.restart();
+    if (this.options.motion.reducedMotion()) {
+      this.scene.restart();
+      return;
+    }
+    const camera = this.cameras.main;
+    this.fadeOutHandler = () => {
+      this.fadeOutHandler = null;
+      this.scene.restart();
+    };
+    camera.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, this.fadeOutHandler);
+    camera.fadeOut(SCENE_FADE_MS);
   }
 
   private cleanup(): void {
+    if (this.fadeOutHandler) {
+      this.cameras.main?.off(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, this.fadeOutHandler);
+      this.fadeOutHandler = null;
+    }
+    this.paperOverlay = null;
     this.interactionTracker?.clear();
     this.unsubscribeTransition?.();
     this.unsubscribeTransition = null;
