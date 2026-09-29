@@ -88,6 +88,14 @@ export interface UiStrings {
   readonly listeningShowTranscript: string;
   readonly listeningHint: string;
   readonly listeningRetry: string;
+  readonly settingsVolume: string;
+  readonly settingsSubtitles: string;
+  readonly settingsSubtitlesAuto: string;
+  readonly settingsSubtitlesOn: string;
+  readonly settingsSubtitlesOff: string;
+  readonly settingsReducedMotion: string;
+  readonly settingsRecovered: string;
+  readonly settingsUnavailable: string;
   readonly listeningLoading: string;
   readonly listeningPlaying: string;
   readonly listeningPaused: string;

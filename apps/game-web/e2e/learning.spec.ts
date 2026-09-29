@@ -25,13 +25,31 @@ async function profile(page: Page) {
     try {
       return await new Promise<
         | {
-            translationMode: string;
             vocabularyTutorialSeen: boolean;
             profile: { vocabulary: Record<string, { stage: string; encounterCount: number }> };
           }
         | undefined
       >((resolve, reject) => {
         const request = db.transaction('records').objectStore('records').get('local-profile');
+        request.onsuccess = () => resolve(request.result as typeof request.result);
+        request.onerror = () => reject(request.error);
+      });
+    } finally {
+      db.close();
+    }
+  });
+}
+
+async function settings(page: Page) {
+  return page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('lexicon-settings', 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    try {
+      return await new Promise<{ translationMode: string } | undefined>((resolve, reject) => {
+        const request = db.transaction('records').objectStore('records').get('local-settings');
         request.onsuccess = () => resolve(request.result as typeof request.result);
         request.onerror = () => reject(request.error);
       });
@@ -98,22 +116,22 @@ test('visible dialogue records only annotated contexts and persists mode/progres
   await page.getByRole('button', { name: 'Hiện bản dịch' }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).toContainText('rời đi');
   await page.getByLabel('Chế độ dịch').selectOption('Beginner');
-  await expect.poll(async () => (await profile(page))?.translationMode).toBe('Beginner');
+  await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
   await expect.poll(async () => (await profile(page))?.vocabularyTutorialSeen).toBe(true);
   await page.getByRole('button', { name: /left\. Xem nghĩa từ/ }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).toContainText('rời đi');
   await page.getByLabel('Chế độ dịch').selectOption('Immersion');
-  await expect.poll(async () => (await profile(page))?.translationMode).toBe('Immersion');
+  await expect.poll(async () => (await settings(page))?.translationMode).toBe('Immersion');
   await page.getByRole('button', { name: /left\. Xem nghĩa từ/ }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).not.toContainText('rời đi');
   await page.getByLabel('Chế độ dịch').selectOption('Beginner');
-  await expect.poll(async () => (await profile(page))?.translationMode).toBe('Beginner');
+  await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
   await page.reload();
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect
     .poll(async () => (await profile(page))?.profile.vocabulary.leave?.encounterCount)
     .toBe(1);
-  await expect.poll(async () => (await profile(page))?.translationMode).toBe('Beginner');
+  await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
   await expect.poll(async () => (await profile(page))?.vocabularyTutorialSeen).toBe(true);
   await page.keyboard.press('j');
   await page.getByRole('button', { name: 'Từ vựng', exact: true }).click();

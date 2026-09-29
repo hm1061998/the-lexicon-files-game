@@ -4,7 +4,6 @@ import type {
   GameEventMap,
   LanguageProfile,
   LearningAction,
-  TranslationMode,
   VocabularyContextDefinition,
   VocabularyEntry,
 } from '@lexicon/shared-types';
@@ -13,12 +12,10 @@ import type { LearningRecordV2 } from '../persistence/learningMigration';
 
 export type LearningStoreState = {
   profile: LanguageProfile;
-  translationMode: TranslationMode;
   vocabularyTutorialSeen: boolean;
   activeWord: { vocabularyId: string; contextId: string } | null;
   error: string | null;
   dispatchLearning(action: LearningAction): void;
-  setTranslationMode(mode: TranslationMode): void;
   markVocabularyTutorialSeen(): void;
   setActiveWord(word: LearningStoreState['activeWord']): void;
 };
@@ -27,21 +24,17 @@ export function createLearningStore({
   catalogue,
   contexts,
   initialRecord,
-  initialTranslationMode = 'Learning',
   bus,
   now = () => new Date().toISOString(),
 }: {
   catalogue: readonly VocabularyEntry[];
   contexts: readonly VocabularyContextDefinition[];
   initialRecord: LearningRecordV2;
-  // Temporary bridge until the settings store owns translationMode (Task 3).
-  initialTranslationMode?: TranslationMode;
   bus: EventBus<GameEventMap>;
   now?: () => string;
 }): LearningStore {
   return createStore<LearningStoreState>((set, get) => ({
     profile: initialRecord.profile,
-    translationMode: initialTranslationMode,
     vocabularyTutorialSeen: initialRecord.vocabularyTutorialSeen,
     activeWord: null,
     error: null,
@@ -66,9 +59,6 @@ export function createLearningStore({
             contextId: event.contextId,
           });
       }
-    },
-    setTranslationMode(mode) {
-      set({ translationMode: mode, activeWord: null });
     },
     markVocabularyTutorialSeen() {
       set({ vocabularyTutorialSeen: true });

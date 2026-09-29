@@ -9,6 +9,18 @@ describe('parseUiStrings', () => {
     expect(strings.objectiveHeading).toBe('Mục tiêu hiện tại');
   });
 
+  it('provides settings strings', () => {
+    const strings = parseUiStrings(viStrings, 'ui/vi.json');
+    expect(strings.settingsVolume).toBe('Âm lượng');
+    expect(strings.settingsSubtitles).toBe('Phụ đề bản ghi');
+    expect(strings.settingsSubtitlesAuto).toBe('Theo chế độ dịch');
+    expect(strings.settingsSubtitlesOn).toBe('Luôn hiện');
+    expect(strings.settingsSubtitlesOff).toBe('Tắt');
+    expect(strings.settingsReducedMotion).toBe('Giảm chuyển động');
+    expect(strings.settingsRecovered).toContain('khôi phục');
+    expect(strings.settingsUnavailable).toContain('phiên này');
+  });
+
   it('provides localized bootstrap and save recovery strings', () => {
     const strings = parseUiStrings(viStrings, 'ui/vi.json');
     expect(strings.loadingGame).toBe('Đang mở hồ sơ...');

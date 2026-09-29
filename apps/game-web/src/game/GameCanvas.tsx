@@ -3,7 +3,6 @@ import type {
   CaseDefinition,
   GameEventMap,
   LearningAction,
-  TranslationMode,
   UiStrings,
 } from '@lexicon/shared-types';
 import {
@@ -33,6 +32,15 @@ import {
   createLearningRepository,
   type LearningLoadResult,
 } from '../persistence/learningRepository';
+import {
+  createSettingsRepository,
+  type SettingsLoadResult,
+  type SettingsRepository,
+} from '../persistence/settingsRepository';
+import { createSettingsStore } from '../state/settingsStore';
+import { SettingsStoreProvider } from '../state/SettingsStoreContext';
+import { useTranslationMode } from '../state/useTranslationMode';
+import { connectSettingsAutosave } from '../persistence/connectSettingsAutosave';
 import { createDefaultLearningRecord } from '../persistence/learningMigration';
 import { createLearningStore } from '../state/learningStore';
 import { LearningStoreProvider } from '../state/LearningStoreContext';
@@ -77,20 +85,45 @@ export function GameCanvas({
   const result = useMemo(loadStartContent, []);
   const repository = useMemo(createSaveRepository, []);
   const learningRepository = useMemo(createLearningRepository, []);
+  const settingsRepository = useMemo(createSettingsRepository, []);
+  const bootPromiseRef = useRef<Promise<{
+    learning: LearningLoadResult;
+    settings: SettingsLoadResult;
+  }> | null>(null);
   const [learningLoad, setLearningLoad] = useState<LearningLoadResult | null>(null);
+  const [settingsLoad, setSettingsLoad] = useState<SettingsLoadResult | null>(null);
   const [bootstrap, setBootstrap] = useState<GameBootstrapResult | { status: 'loading' }>({
     status: 'loading',
   });
 
   useEffect(() => {
     if (!result.ok) return;
-    void learningRepository
+    // One load per mount: StrictMode re-runs effects and a second settings load
+    // would hide the "recovered" status of the first.
+    bootPromiseRef.current ??= learningRepository
       .loadLearning(
         result.content.caseDefinition.vocabulary,
         result.content.caseDefinition.vocabularyContexts,
       )
-      .then(setLearningLoad);
-  }, [result, learningRepository]);
+      .then(async (learning) => {
+        const legacy =
+          ('legacyTranslationMode' in learning ? learning.legacyTranslationMode : null) ??
+          (await learningRepository.findLegacyTranslationMode());
+        const settings = await settingsRepository.loadSettings(
+          legacy ? { translationMode: legacy } : {},
+        );
+        return { learning, settings };
+      });
+    let active = true;
+    void bootPromiseRef.current.then(({ learning, settings }) => {
+      if (!active) return;
+      setLearningLoad(learning);
+      setSettingsLoad(settings);
+    });
+    return () => {
+      active = false;
+    };
+  }, [result, learningRepository, settingsRepository]);
 
   useEffect(() => {
     if (!result.ok) return;
@@ -129,7 +162,8 @@ export function GameCanvas({
     return <div role="status">{result.content.strings.loadingGame}</div>;
   }
 
-  if (!learningLoad) return <div role="status">{result.content.strings.loadingGame}</div>;
+  if (!learningLoad || !settingsLoad)
+    return <div role="status">{result.content.strings.loadingGame}</div>;
 
   if (bootstrap.status === 'confirmation-required') {
     return (
@@ -195,11 +229,8 @@ export function GameCanvas({
           ? createDefaultLearningRecord()
           : learningLoad.record
       }
-      initialTranslationMode={
-        learningLoad.status === 'confirmation-required'
-          ? 'Learning'
-          : (learningLoad.legacyTranslationMode ?? 'Learning')
-      }
+      settingsRepository={settingsRepository}
+      settingsLoad={settingsLoad}
       learningPersistenceInitiallyEnabled={
         learningLoad.status === 'loaded' || learningLoad.status === 'missing'
       }
@@ -246,7 +277,8 @@ function GameRoot({
   repository,
   learningRepository,
   learningRecord,
-  initialTranslationMode,
+  settingsRepository,
+  settingsLoad,
   learningPersistenceInitiallyEnabled,
   learningRecoveryRequired,
   learningPersistenceError,
@@ -259,7 +291,8 @@ function GameRoot({
   repository: SaveRepository;
   learningRepository: ReturnType<typeof createLearningRepository>;
   learningRecord: ReturnType<typeof createDefaultLearningRecord>;
-  initialTranslationMode: TranslationMode;
+  settingsRepository: SettingsRepository;
+  settingsLoad: SettingsLoadResult;
   learningPersistenceInitiallyEnabled: boolean;
   learningRecoveryRequired: string | null;
   learningPersistenceError: string | null;
@@ -294,11 +327,12 @@ function GameRoot({
         catalogue: caseDefinition.vocabulary,
         contexts: caseDefinition.vocabularyContexts,
         initialRecord: learningRecord,
-        initialTranslationMode,
         bus,
       }),
-    [caseDefinition, learningRecord, initialTranslationMode, bus],
+    [caseDefinition, learningRecord, bus],
   );
+  const settings = useMemo(() => createSettingsStore(settingsLoad.settings), [settingsLoad]);
+  const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
   usePauseShortcut(store);
   useNotebookShortcut(store);
 
@@ -344,6 +378,22 @@ function GameRoot({
     );
   }, [learning, learningRepository, learningPersistenceEnabled, strings.vocabularyLearningError]);
 
+  useEffect(() => {
+    if (settingsLoad.status === 'memory-only') return;
+    return connectSettingsAutosave(
+      settings,
+      (next) => settingsRepository.saveSettings(next),
+      () => setSettingsWriteError(strings.settingsUnavailable),
+    );
+  }, [settings, settingsRepository, settingsLoad.status, strings.settingsUnavailable]);
+
+  const settingsNotice =
+    settingsLoad.status === 'memory-only' || settingsWriteError
+      ? strings.settingsUnavailable
+      : settingsLoad.status === 'recovered'
+        ? strings.settingsRecovered
+        : null;
+
   return (
     <div className="game-root" style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <div
@@ -354,48 +404,55 @@ function GameRoot({
       />
       <GameStoreProvider store={store}>
         <LearningStoreProvider store={learning}>
-          {showLearningRecovery && learningRecoveryRequired && (
-            <aside role="alert" className="learning-recovery-notice">
-              <p>
-                {strings.vocabularyLearningError} {learningRecoveryRequired}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  void learningRepository
-                    .createFreshLearningAfterConfirmation()
-                    .then(() => {
-                      setLearningPersistenceEnabled(true);
-                      setShowLearningRecovery(false);
-                      setLearningWriteError(null);
-                    })
-                    .catch((error: unknown) => {
-                      setLearningWriteError(
-                        error instanceof Error ? error.message : strings.vocabularyLearningError,
-                      );
-                    });
-                }}
-              >
-                {strings.vocabularyResetTitle}
-              </button>
-              <button type="button" onClick={() => setShowLearningRecovery(false)}>
-                {strings.cancel}
-              </button>
-            </aside>
-          )}
-          {(learningPersistenceError || learningWriteError) && (
-            <aside role="status" className="learning-recovery-notice">
-              {learningWriteError ??
-                `${strings.vocabularyLearningError} ${learningPersistenceError}`}
-            </aside>
-          )}
-          <Hud strings={strings} />
-          <PersistenceNotice strings={strings} />
-          <DialogueLayer strings={strings} returnFocusRef={containerRef} />
-          <PauseLayer strings={strings} store={store} />
-          <EvidenceLayer strings={strings} />
-          <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
-          <CaseSummaryLayer strings={strings} />
+          <SettingsStoreProvider store={settings}>
+            {settingsNotice && (
+              <aside role="status" className="learning-recovery-notice">
+                {settingsNotice}
+              </aside>
+            )}
+            {showLearningRecovery && learningRecoveryRequired && (
+              <aside role="alert" className="learning-recovery-notice">
+                <p>
+                  {strings.vocabularyLearningError} {learningRecoveryRequired}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void learningRepository
+                      .createFreshLearningAfterConfirmation()
+                      .then(() => {
+                        setLearningPersistenceEnabled(true);
+                        setShowLearningRecovery(false);
+                        setLearningWriteError(null);
+                      })
+                      .catch((error: unknown) => {
+                        setLearningWriteError(
+                          error instanceof Error ? error.message : strings.vocabularyLearningError,
+                        );
+                      });
+                  }}
+                >
+                  {strings.vocabularyResetTitle}
+                </button>
+                <button type="button" onClick={() => setShowLearningRecovery(false)}>
+                  {strings.cancel}
+                </button>
+              </aside>
+            )}
+            {(learningPersistenceError || learningWriteError) && (
+              <aside role="status" className="learning-recovery-notice">
+                {learningWriteError ??
+                  `${strings.vocabularyLearningError} ${learningPersistenceError}`}
+              </aside>
+            )}
+            <Hud strings={strings} />
+            <PersistenceNotice strings={strings} />
+            <DialogueLayer strings={strings} returnFocusRef={containerRef} />
+            <PauseLayer strings={strings} store={store} />
+            <EvidenceLayer strings={strings} />
+            <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
+            <CaseSummaryLayer strings={strings} />
+          </SettingsStoreProvider>
         </LearningStoreProvider>
       </GameStoreProvider>
     </div>
@@ -416,8 +473,7 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       null,
   );
   const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
-  const translationMode = useLearningStore((state) => state.translationMode);
-  const setTranslationMode = useLearningStore((state) => state.setTranslationMode);
+  const [translationMode, setTranslationMode] = useTranslationMode();
   const vocabularyTutorialSeen = useLearningStore((state) => state.vocabularyTutorialSeen);
   const markVocabularyTutorialSeen = useLearningStore((state) => state.markVocabularyTutorialSeen);
   const onEncounter = useCallback(
@@ -499,8 +555,7 @@ function NotebookLayer({
   const store = useGameStore((state) => state);
   const learningProfile = useLearningStore((state) => state.profile);
   const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
-  const setTranslationMode = useLearningStore((state) => state.setTranslationMode);
-  const translationMode = useLearningStore((state) => state.translationMode);
+  const [translationMode, setTranslationMode] = useTranslationMode();
   const onEncounter = useCallback(
     (vocabularyId: string, contextId: string) =>
       dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
@@ -553,14 +608,6 @@ function PersistenceNotice({ strings }: { strings: UiStrings }): JSX.Element | n
 
 function PauseLayer({ strings, store }: { strings: UiStrings; store: GameStore }) {
   const paused = useGameStore((state) => state.paused);
-  const learning = useLearningStore((state) => state);
   if (!paused) return null;
-  return (
-    <PauseMenu
-      strings={strings}
-      translationMode={learning.translationMode}
-      onTranslationModeChange={learning.setTranslationMode}
-      onResume={() => store.getState().setPaused(false)}
-    />
-  );
+  return <PauseMenu strings={strings} onResume={() => store.getState().setPaused(false)} />;
 }

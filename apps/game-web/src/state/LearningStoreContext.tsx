@@ -4,12 +4,10 @@ import { createInitialLanguageProfile } from '@lexicon/learning-engine';
 const Context = createContext<LearningStore | null>(null);
 const fallbackState: LearningStoreState = {
   profile: createInitialLanguageProfile(),
-  translationMode: 'Learning',
   vocabularyTutorialSeen: false,
   activeWord: null,
   error: null,
   dispatchLearning() {},
-  setTranslationMode() {},
   markVocabularyTutorialSeen() {},
   setActiveWord() {},
 };

@@ -3,6 +3,7 @@ import { getAvailableChoices } from '@lexicon/game-core';
 import { useGameStore } from '../state/GameStoreContext';
 import { DialogueView } from './DialogueView';
 import { useLearningStore } from '../state/LearningStoreContext';
+import { useTranslationMode } from '../state/useTranslationMode';
 import { useCallback } from 'react';
 export function DialogueLayer({
   strings,
@@ -13,8 +14,7 @@ export function DialogueLayer({
 }): JSX.Element | null {
   const state = useGameStore((s) => s);
   const dispatchLearning = useLearningStore((s) => s.dispatchLearning);
-  const translationMode = useLearningStore((s) => s.translationMode);
-  const setTranslationMode = useLearningStore((s) => s.setTranslationMode);
+  const [translationMode, setTranslationMode] = useTranslationMode();
   const vocabularyTutorialSeen = useLearningStore((s) => s.vocabularyTutorialSeen);
   const markVocabularyTutorialSeen = useLearningStore((s) => s.markVocabularyTutorialSeen);
   const onEncounter = useCallback(
