@@ -30,6 +30,8 @@ type DebugApi = {
   markerBaseY(): number | null;
   paperOverlayAlpha(): number | null;
   requestTransition(sceneId: string, spawnId: string): void;
+  storeSceneId(): string;
+  triggeredEvents(): number;
 };
 
 declare global {
@@ -41,6 +43,8 @@ declare global {
 async function openWorld(page: Page): Promise<void> {
   await page.goto('/');
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
+  // Key handlers attach with the HUD; wait for it before pressing keys.
+  await expect(page.locator('.hud-key-hints')).toBeVisible();
 }
 
 async function player(page: Page): Promise<{ x: number; y: number; depth: number }> {
@@ -482,4 +486,75 @@ test('scene textures load on entry only once across office and archive round tri
   for (const { url } of archiveOnlyTextures) expect(requests.get(url), url).toBe(1);
   for (const { url } of officeTextures) expect(requests.get(url) ?? 0, url).toBe(0);
   expect([...requests.values()].every((count) => count === 1)).toBe(true);
+});
+
+test('input is locked while a scene transition waits for its textures', async ({ page }) => {
+  const slow = archiveOnlyTextures[0]!;
+  await page.route(`**${slow.url}`, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await route.continue();
+  });
+  await openWorld(page);
+  // Standing at the office door: Ra hanh lang is nearby, so E would fire an interaction.
+  await page.evaluate(() => window.__lexiconDebug!.teleport(2100, 700));
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).not.toBeNull();
+  const triggeredBefore = await page.evaluate(() => window.__lexiconDebug!.triggeredEvents());
+  const office = await page.evaluateHandle(() => window.__lexiconDebug);
+  await page.evaluate(() => window.__lexiconDebug!.requestTransition('archive', 'from_office'));
+
+  // The old scene is still shown while the archive texture is in flight: it must be inert.
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBeNull();
+  const before = await player(page);
+  await page.keyboard.down('d');
+  await page.keyboard.press('e');
+  await page.waitForTimeout(500);
+  await page.keyboard.up('d');
+  expect((await player(page)).x).toBeCloseTo(before.x, 0);
+  expect(await page.evaluate(() => window.__lexiconDebug!.nearby())).toBeNull();
+  expect(await page.evaluate(() => window.__lexiconDebug!.markerY())).toBeNull();
+  expect(await page.evaluate(() => window.__lexiconDebug!.triggeredEvents())).toBe(triggeredBefore);
+  // Still waiting on the slow texture, i.e. this really was the loading window.
+  expect(await page.evaluate((prev) => window.__lexiconDebug === prev, office)).toBe(true);
+
+  await page.waitForFunction(
+    (previous) => window.__lexiconDebug !== undefined && window.__lexiconDebug !== previous,
+    office,
+    { timeout: 10_000 },
+  );
+  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+});
+
+test('the dev transition hook goes through the store so it matches the shown scene', async ({
+  page,
+}) => {
+  await openWorld(page);
+  expect(await page.evaluate(() => window.__lexiconDebug!.storeSceneId())).toBe('main_office');
+  await transitionAndWait(page, 'archive', 'from_office');
+  expect(await page.evaluate(() => window.__lexiconDebug!.storeSceneId())).toBe('archive');
+  await transitionAndWait(page, 'main_office', 'from_archive');
+  expect(await page.evaluate(() => window.__lexiconDebug!.storeSceneId())).toBe('main_office');
+});
+
+test('pushing into the desk does not play the walk animation', async ({ page }) => {
+  await openWorld(page);
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1020, 800));
+  await page.keyboard.down('d');
+  await expect.poll(async () => (await playerAnim(page)).playing).toBe(true);
+  // Blocked by the desk footprint; keep pushing for 500 ms after the body stopped.
+  await expect
+    .poll(async () => (await player(page)).x, { intervals: [150], timeout: 5000 })
+    .toBeGreaterThan(1000);
+  await expect
+    .poll(async () => {
+      const a = (await player(page)).x;
+      await page.waitForTimeout(150);
+      return (await player(page)).x === a;
+    })
+    .toBe(true);
+  await page.waitForTimeout(500);
+  const anim = await playerAnim(page);
+  const texture = await page.evaluate(() => window.__lexiconDebug!.playerTexture());
+  await page.keyboard.up('d');
+  expect(anim.playing).toBe(false);
+  expect(texture).toBe('tex_player_se');
 });

@@ -14,7 +14,10 @@ export type LexiconDebug = {
   /** Anchor the marker rests on when the float offset is zero, or null while hidden. */
   markerBaseY(): number | null;
   paperOverlayAlpha(): number | null;
+  /** Requests a transition through the real flow (store first, then the bus). */
   requestTransition(sceneId: string, spawnId: string): void;
+  /** `activeSceneId` of the game store; must match the scene Phaser shows once settled. */
+  storeSceneId(): string;
 };
 
 declare global {

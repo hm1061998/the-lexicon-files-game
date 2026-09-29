@@ -2,8 +2,9 @@ import Phaser from 'phaser';
 import type { CharacterSheet } from '@lexicon/shared-types';
 import { PLAYER_BODY, PLAYER_ORIGIN, PLAYER_SPEED } from '../constants';
 import { facingTextureKey, resolveTextureKey } from '../assetManifest';
-import { computeDepth } from '../systems/depth';
+import { computePlayerDepth } from '../systems/depth';
 import { nextFacing, type Facing } from '../systems/direction';
+import { isWalking } from '../systems/walkMotion';
 import { planWalk, registerCharacterAnimations, walkAnimKey } from './characterAnimations';
 
 export type PlayerSprite = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
@@ -37,7 +38,7 @@ export function createPlayer(
     player.height * PLAYER_ORIGIN[1] - PLAYER_BODY.height,
   );
   player.setCollideWorldBounds(true);
-  player.setDepth(computeDepth(y));
+  player.setDepth(computePlayerDepth(y));
   return player;
 }
 
@@ -48,10 +49,21 @@ export function currentWalk(player: PlayerSprite): { key: string; frame: number 
   return { key: anims.currentAnim.key, frame: anims.currentFrame.index - 1 };
 }
 
+function displacement(player: PlayerSprite): {
+  deltaX: number;
+  deltaY: number;
+  blocked: boolean;
+} {
+  const { body } = player;
+  return { deltaX: body.deltaX(), deltaY: body.deltaY(), blocked: !body.blocked.none };
+}
+
 /**
  * Applies velocity and depth, plays the walk of the facing while moving and shows the idle
  * still of the last facing when stopped. Returns the facing to remember (unchanged while idle).
  * Walk and idle frames share one 160 px canvas, so the feet-aligned body stays valid.
+ * The walk plays only while the body was actually displaced by the last physics step, so
+ * pushing into a wall or decor shows the idle still of the facing instead of walking in place.
  */
 export function movePlayer(
   player: PlayerSprite,
@@ -60,11 +72,11 @@ export function movePlayer(
   sheet: CharacterSheet,
 ): Facing {
   player.setVelocity(direction.x * PLAYER_SPEED, direction.y * PLAYER_SPEED);
-  player.setDepth(computeDepth(player.y));
+  player.setDepth(computePlayerDepth(player.y));
   const next = nextFacing(facing, direction.x, direction.y);
   const plan = planWalk({
     name: PLAYER_NAME,
-    moving: direction.x !== 0 || direction.y !== 0,
+    moving: (direction.x !== 0 || direction.y !== 0) && isWalking(displacement(player)),
     hasWalk: sheet.walk !== null && player.scene.anims.exists(walkAnimKey(PLAYER_NAME, next)),
     facing: next,
     current: currentWalk(player),

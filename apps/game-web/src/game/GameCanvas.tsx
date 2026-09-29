@@ -14,7 +14,7 @@ import {
 import { createCaseState } from '@lexicon/game-core';
 import { createEventBus } from '../bridge/eventBus';
 import { connectBusToStore } from '../bridge/connectBusToStore';
-import { connectCaseEngine } from '../bridge/connectCaseEngine';
+import { connectCaseEngine, requestSceneTransition } from '../bridge/connectCaseEngine';
 import { connectAutosave } from '../persistence/connectAutosave';
 import { createSaveRepository, type SaveRepository } from '../persistence/saveRepository';
 import { loadGameBootstrap, type GameBootstrapResult } from './bootstrapGame';
@@ -370,6 +370,10 @@ function GameRoot({
       spawnId: 'default',
       bus,
       input: { isInputLocked: () => store.getState().inputLocked },
+      transitions: {
+        request: (sceneId, spawnId) => requestSceneTransition(bus, store, sceneId, spawnId),
+        activeSceneId: () => store.getState().activeSceneId,
+      },
       motion: { reducedMotion: () => settings.getState().settings.reducedMotion },
     });
     return () => {

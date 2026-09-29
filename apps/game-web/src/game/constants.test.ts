@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CHARACTER_FIGURE_HEIGHT, CHARACTER_FRAME_SIZE, PLAYER_ORIGIN } from './constants';
 
-type ArtEntry = { dest: string; frame: number | null };
+type ArtEntry = { dest: string; frame: number | null; figureHeight?: number };
 
 const config = JSON.parse(
   readFileSync(
@@ -16,6 +16,12 @@ describe('character figure constants', () => {
   it('tracks the character frame size used by the art pipeline', () => {
     expect(characters.length).toBeGreaterThan(0);
     for (const entry of characters) expect(entry.frame, entry.dest).toBe(CHARACTER_FRAME_SIZE);
+  });
+
+  it('matches the figure height declared by the art pipeline config', () => {
+    for (const entry of characters) {
+      expect(entry.figureHeight, entry.dest).toBe(CHARACTER_FIGURE_HEIGHT);
+    }
   });
 
   it('keeps the visible figure inside the frame above the feet line', () => {

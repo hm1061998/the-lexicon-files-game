@@ -2,7 +2,14 @@ import { useEffect } from 'react';
 import type { GameStore } from '../state/gameStore';
 import { shouldHandleShortcut } from './shouldHandleShortcut';
 
-type EscapeEvent = { key: string; target: Element | null; preventDefault(): void };
+type EscapeEvent = {
+  key: string;
+  target: Element | null;
+  ctrlKey?: boolean;
+  metaKey?: boolean;
+  altKey?: boolean;
+  preventDefault(): void;
+};
 
 export function handleEscapeShortcut(store: GameStore, event: EscapeEvent): void {
   if (!shouldHandleShortcut(event, 'Escape')) return;
@@ -22,6 +29,9 @@ export function usePauseShortcut(store: GameStore): void {
       handleEscapeShortcut(store, {
         key: event.key,
         target,
+        ctrlKey: event.ctrlKey,
+        metaKey: event.metaKey,
+        altKey: event.altKey,
         preventDefault: () => event.preventDefault(),
       });
     }

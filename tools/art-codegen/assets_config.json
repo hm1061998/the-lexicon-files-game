@@ -4,112 +4,128 @@
     "dest": "characters/player/chr_player_idle_ne.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_player_idle_se.png",
     "dest": "characters/player/chr_player_idle_se.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_player_idle_sw.png",
     "dest": "characters/player/chr_player_idle_sw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_player_idle_nw.png",
     "dest": "characters/player/chr_player_idle_nw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_leo_idle_ne.png",
     "dest": "characters/leo/chr_leo_idle_ne.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_leo_idle_se.png",
     "dest": "characters/leo/chr_leo_idle_se.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_leo_idle_sw.png",
     "dest": "characters/leo/chr_leo_idle_sw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_leo_idle_nw.png",
     "dest": "characters/leo/chr_leo_idle_nw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_anna_idle_ne.png",
     "dest": "characters/anna/chr_anna_idle_ne.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_anna_idle_se.png",
     "dest": "characters/anna/chr_anna_idle_se.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_anna_idle_sw.png",
     "dest": "characters/anna/chr_anna_idle_sw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_anna_idle_nw.png",
     "dest": "characters/anna/chr_anna_idle_nw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_david_idle_ne.png",
     "dest": "characters/david/chr_david_idle_ne.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_david_idle_se.png",
     "dest": "characters/david/chr_david_idle_se.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_david_idle_sw.png",
     "dest": "characters/david/chr_david_idle_sw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/chr_david_idle_nw.png",
     "dest": "characters/david/chr_david_idle_nw.png",
     "targetWidth": null,
     "keyMagenta": true,
-    "frame": 160
+    "frame": 160,
+    "figureHeight": 100
   },
   {
     "src": "assets/_incoming/scene_office_floor.png",

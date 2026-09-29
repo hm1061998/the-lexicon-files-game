@@ -16,4 +16,12 @@ describe('shouldHandleShortcut', () => {
   it('ignores other keys', () => {
     expect(shouldHandleShortcut({ key: 'e', target: body }, 'Escape')).toBe(false);
   });
+
+  it.each(['ctrlKey', 'metaKey', 'altKey'] as const)('ignores the key with %s held', (modifier) => {
+    expect(shouldHandleShortcut({ key: 'j', target: body, [modifier]: true }, 'j')).toBe(false);
+  });
+
+  it('keeps handling the key with Shift held', () => {
+    expect(shouldHandleShortcut({ key: 'j', target: body, shiftKey: true }, 'j')).toBe(true);
+  });
 });

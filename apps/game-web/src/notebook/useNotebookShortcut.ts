@@ -5,6 +5,9 @@ import { shouldHandleShortcut } from '../pause/shouldHandleShortcut';
 type ShortcutEvent = {
   key: string;
   target: Element | null;
+  ctrlKey?: boolean;
+  metaKey?: boolean;
+  altKey?: boolean;
   preventDefault(): void;
 };
 
@@ -23,6 +26,9 @@ export function useNotebookShortcut(store: GameStore): void {
       handleNotebookShortcut(store, {
         key: event.key.toLowerCase(),
         target,
+        ctrlKey: event.ctrlKey,
+        metaKey: event.metaKey,
+        altKey: event.altKey,
         preventDefault: () => event.preventDefault(),
       });
     }

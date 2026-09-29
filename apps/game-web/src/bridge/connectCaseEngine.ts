@@ -1,6 +1,21 @@
 import type { CaseDefinition, EventBus, GameEventMap } from '@lexicon/shared-types';
 import type { GameStore } from '../state/gameStore';
 
+/**
+ * The one way to start a scene transition: the store learns the new active scene first, then
+ * Phaser is told to switch. Returns false (and emits nothing) for an unknown scene or spawn.
+ */
+export function requestSceneTransition(
+  bus: EventBus<GameEventMap>,
+  store: GameStore,
+  sceneId: string,
+  spawnId: string,
+): boolean {
+  if (!store.getState().transitionScene(sceneId, spawnId)) return false;
+  bus.emit('scene:transitionRequested', { sceneId, spawnId });
+  return true;
+}
+
 /** Resolves interaction IDs to content-authored effects and applies them through the case store. */
 export function connectCaseEngine(
   bus: EventBus<GameEventMap>,
@@ -19,8 +34,7 @@ export function connectCaseEngine(
     }
     if (interaction?.transition) {
       const { targetSceneId: sceneId, targetSpawnId: spawnId } = interaction.transition;
-      if (store.getState().transitionScene(sceneId, spawnId))
-        bus.emit('scene:transitionRequested', { sceneId, spawnId });
+      requestSceneTransition(bus, store, sceneId, spawnId);
       return;
     }
     if (interaction?.effects?.length) {

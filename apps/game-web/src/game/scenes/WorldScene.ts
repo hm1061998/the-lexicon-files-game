@@ -18,7 +18,7 @@ import { createShadow, syncShadow } from '../entities/shadow';
 import { CHARACTER_FIGURE_HEIGHT, INTERACTION_RED, SCENE_FADE_MS } from '../constants';
 import { installDebugHook, paperOverlayAlpha } from '../debug';
 import { shouldEmitAnchor, worldToScreen, type IdAnchor } from '../systems/anchorScreen';
-import { computeDepth } from '../systems/depth';
+import { computePlayerDepth } from '../systems/depth';
 import type { Facing } from '../systems/direction';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
@@ -29,6 +29,12 @@ import { markerBaseY, markerPositionY } from '../systems/markerFloat';
 
 export type InputLockSource = { isInputLocked(): boolean };
 
+/** Store-backed scene transitions: the same flow the case engine uses for door interactions. */
+export type TransitionSource = {
+  request(sceneId: string, spawnId: string): boolean;
+  activeSceneId(): string;
+};
+
 export type MotionSource = { reducedMotion(): boolean };
 
 export type WorldOptions = {
@@ -37,6 +43,7 @@ export type WorldOptions = {
   spawnId: string;
   bus: EventBus<GameEventMap>;
   input: InputLockSource;
+  transitions: TransitionSource;
   motion: MotionSource;
 };
 
@@ -229,11 +236,13 @@ export class WorldScene extends Phaser.Scene {
       highlightBounds: () => (this.outline?.visible ? this.outlineBounds : null),
       markerBaseY: () => (this.marker.visible ? this.markerBaseY : null),
       paperOverlayAlpha,
-      requestTransition: (sceneId, spawnId) =>
-        this.bus.emit('scene:transitionRequested', { sceneId, spawnId }),
+      requestTransition: (sceneId, spawnId) => {
+        this.options.transitions.request(sceneId, spawnId);
+      },
+      storeSceneId: () => this.options.transitions.activeSceneId(),
       teleport: (x, y) => {
         this.player.body.reset(x, y);
-        this.player.setDepth(computeDepth(y));
+        this.player.setDepth(computePlayerDepth(y));
       },
     });
 
@@ -251,6 +260,10 @@ export class WorldScene extends Phaser.Scene {
     this.publishPlayerPosition(delta);
     this.syncTargetVisuals(delta);
     if (!this.keys) return;
+    if (this.transitioning || this.pendingTransition) {
+      this.holdForTransition();
+      return;
+    }
     if (this.inputLock.isInputLocked()) {
       this.playerFacing = movePlayer(
         this.player,
@@ -280,6 +293,23 @@ export class WorldScene extends Phaser.Scene {
     );
     this.updateNearby();
     this.updateInteract(typing);
+  }
+
+  /**
+   * While a transition waits for textures or the fade, the old scene is frozen: the player
+   * stops, nothing is nearby, no marker/outline/anchor and E is consumed, so nothing can
+   * trigger against a scene that is about to be replaced.
+   */
+  private holdForTransition(): void {
+    this.playerFacing = movePlayer(
+      this.player,
+      { x: 0, y: 0 },
+      this.playerFacing,
+      this.options.caseDefinition.characterSheets.player,
+    );
+    this.interactionTracker.clear();
+    this.marker.setVisible(false);
+    if (this.interactKey) Phaser.Input.Keyboard.JustDown(this.interactKey);
   }
 
   /** Publishes the player position for the HUD (a view; Phaser stays the source). */
