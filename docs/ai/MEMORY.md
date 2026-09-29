@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-29T20:00:00+07:00
+updated_at: 2026-09-29T23:00:00+07:00
 phase: phase-10
-status: proposed
-result_commit: 7ef61fd
+status: complete
+result_commit: e222ce4
 active_spec: docs/superpowers/specs/2026-09-29-phase-10-persistence-settings-design.md
 active_plan: docs/superpowers/plans/2026-09-29-phase-10-persistence-settings.md
 ---
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-10-persistence-settings.md
 
 ## Current Phase
 
-- Phase 10 — Persistence (roadmap §29): Settings riêng + kiểm chứng auto-save. Phase 9 đã hoàn tất.
+- Phase 10 — Persistence (roadmap §29) hoàn tất bằng subagent-driven; Settings riêng + kiểm chứng auto-save. Verification: `docs/ai/2026-09-29-phase-10-persistence-settings-verification.md`.
 
 ## Active Goal
 
@@ -36,6 +36,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-10-persistence-settings.md
 - Phase 8 spec/plan, implementation Task 1–6 và handoff đồng bộ với `origin/dev` tại `3c67c11`.
 - Sau Phase 9 (`7ef61fd`): notebook có nút "Xem lại" mở lại modal evidence đã thu (audio/câu hỏi nghe); tương tác lại trong world vẫn không mở modal theo spec Phase 4 (đã bổ sung ghi chú).
 - Phase 9: hợp đồng kết luận `0b5303c`, reducer + activation `f0f00ac`, save V4 `7122925`, UI buộc tội `53122bf`, báo cáo CASE CLOSED `568c68a`, E2E hành trình `6f5240b`, fix final review `f6346f2`, verification `6782d55`.
+- Phase 10: Settings + learning V2 + áp dụng cài đặt + test auto-save/E2E (`1eb5f5e..e222ce4`); `translationMode` chỉ còn trong Settings.
 
 ## In Progress
 
@@ -52,7 +53,8 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-10-persistence-settings.md
 - Save hiện hành V4, IndexedDB database version 1; hợp đồng lịch sử V1/V2/V3 trong `cases/case-001/save-v*.json`.
 - Case đóng: store chặn di chuyển, sổ tay, pause và mọi ghi tiến độ; báo cáo dựng lại từ save + `LanguageProfile` hiện tại.
 - Commerce config Phase 8 trung lập, mặc định `free`, không paywall/entitlement client-side; Playwright worker = 1 cho thao tác di chuyển theo frames.
-- Deferred minor Phase 9: đọc lại feedback sai khi chọn lại cùng nghi phạm; mã `unknownSuspect` khi case không có conclusion; store trả `ok` khi bỏ qua ghi sau đóng case; warning lint cũ `GameCanvas.tsx` (`initialSceneId`).
+- Deferred minor Phase 9: đọc lại feedback sai khi chọn lại cùng nghi phạm; mã `unknownSuspect` khi case không có conclusion; store trả `ok` khi bỏ qua ghi sau đóng case; warning lint cũ `GameCanvas.tsx` (`initialSceneId`). Phase 10: marker tương tác chưa từng nổi (tween bị ghi đè từ Phase 1); on+Learning hiện transcript hai lần; thiếu test hook âm lượng/StrictMode boot.
+
 
 ## Blockers
 
@@ -60,7 +62,7 @@ active_plan: docs/superpowers/plans/2026-09-29-phase-10-persistence-settings.md
 
 ## Next Actions
 
-- Người dùng review plan Phase 10 (7 task) và chọn Native hoặc Subagent-driven.
+- Chờ người dùng yêu cầu bắt đầu Phase 11 (Visual Polish); không tự tiến sang phase khác.
 
 ## Verification
 
