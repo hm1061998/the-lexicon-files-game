@@ -103,6 +103,31 @@ describe('parseSceneDefinition', () => {
     }
   });
 
+  it('defaults asset scale to 1 and accepts an explicit positive scale', () => {
+    const raw = mainOffice as { assets: Array<Record<string, unknown>> };
+    const assets = raw.assets.map((asset, index) => {
+      const rest = { ...asset };
+      delete rest.scale;
+      return index === 0 ? rest : { ...rest, scale: 0.5 };
+    });
+    const scene = parseSceneDefinition({ ...raw, assets }, 'main_office.json');
+    expect(scene.assets[0]?.scale).toBe(1);
+    expect(scene.assets[1]?.scale).toBe(0.5);
+  });
+
+  it('rejects a non-positive asset scale', () => {
+    const raw = mainOffice as { assets: Array<Record<string, unknown>> };
+    const assets = raw.assets.map((asset, index) => (index === 0 ? { ...asset, scale: 0 } : asset));
+    try {
+      parseSceneDefinition({ ...raw, assets }, 'main_office.json');
+      throw new Error('expected parseSceneDefinition to throw');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ContentValidationError);
+      const validationError = err as ContentValidationError;
+      expect(validationError.issues.some((issue) => issue.includes('scale'))).toBe(true);
+    }
+  });
+
   it('rejects interaction radius 0', () => {
     const raw = mainOffice as { assets: Array<Record<string, unknown>> };
     const assets = raw.assets.map((asset, index) =>

@@ -4,6 +4,9 @@ export const PLAYER_ORIGIN: [number, number] = [0.5, 0.88];
 
 export const PLAYER_BODY = { width: 30, height: 18 };
 
+/** Visible figure height inside the 160x160 character frames (feet at 88%). */
+export const CHARACTER_FIGURE_HEIGHT = 100;
+
 export const PALETTE = {
   inkBlack: '#2A2521',
   paperCream: '#D8C5A4',

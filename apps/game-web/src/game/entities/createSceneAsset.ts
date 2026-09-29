@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { SceneAssetDefinition } from '@lexicon/shared-types';
+import { resolveTextureKey } from '../assetManifest';
 import { computeDepth } from '../systems/depth';
 
 export type SceneAssetObjects = {
@@ -11,14 +12,10 @@ export function createSceneAsset(
   scene: Phaser.Scene,
   asset: SceneAssetDefinition,
 ): SceneAssetObjects {
-  let texture = asset.texture;
-  if (!scene.textures.exists(texture)) {
-    console.warn(`[Scene] missing texture ${texture}`);
-    texture = 'ph_missing';
-  }
-
+  const texture = resolveTextureKey(scene, asset.texture);
   const sprite = scene.add.image(asset.x, asset.y, texture);
   sprite.setOrigin(asset.origin[0], asset.origin[1]);
+  sprite.setScale(asset.scale);
   sprite.setDepth(asset.depth ?? computeDepth(asset.y, asset.depthBias));
 
   let body: Phaser.GameObjects.Zone | null = null;

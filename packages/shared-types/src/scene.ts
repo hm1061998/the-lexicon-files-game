@@ -37,6 +37,8 @@ export interface SceneAssetDefinition {
   readonly x: number;
   readonly y: number;
   readonly origin: readonly [number, number];
+  /** Uniform display scale of the texture; collision/interaction stay in world pixels. */
+  readonly scale: number;
   readonly depth?: number | undefined;
   readonly depthBias: number;
   readonly collision?: RectCollision | undefined;

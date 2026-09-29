@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
+  playerTexture(): string;
   depthOf(id: string): number;
   nearby(): string | null;
   nearbyEvents(): number;
@@ -222,4 +223,46 @@ test('a transition requested during the arrival fade-in still switches scenes', 
       }),
   );
   expect(switchedBack).toBe(true);
+});
+
+test('real textures load without missing-texture or loader warnings', async ({ page }) => {
+  const warnings: string[] = [];
+  page.on('console', (msg) => {
+    const text = msg.text();
+    if (text.includes('[Scene] missing texture') || text.includes('[Assets] failed to load')) {
+      warnings.push(text);
+    }
+  });
+  await openWorld(page);
+  expect(await page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_se');
+  await page.evaluate(() => window.__lexiconDebug!.requestTransition('archive', 'from_office'));
+  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  expect(warnings).toEqual([]);
+});
+
+test('player stops at the desk footprint when walking into it from the side', async ({ page }) => {
+  await openWorld(page);
+  // Left of the desk, level with its footprint; walking right must be blocked.
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1020, 800));
+  await hold(page, 'd', 1500);
+  const after = await player(page);
+  expect(after.x).toBeLessThan(1200 - 75);
+  expect(after.x).toBeGreaterThan(1020);
+});
+
+test('player texture follows the facing and keeps it while idle', async ({ page }) => {
+  await openWorld(page);
+  const texture = () => page.evaluate(() => window.__lexiconDebug!.playerTexture());
+  expect(await texture()).toBe('tex_player_se');
+  await hold(page, 'a', 200);
+  expect(await texture()).toBe('tex_player_sw');
+  await page.waitForTimeout(200);
+  expect(await texture()).toBe('tex_player_sw');
+  await page.keyboard.down('w');
+  await page.keyboard.down('a');
+  await page.waitForTimeout(200);
+  // Checked while both keys are held: releasing them one by one resolves a single-axis facing.
+  expect(await texture()).toBe('tex_player_nw');
+  await page.keyboard.up('a');
+  await page.keyboard.up('w');
 });

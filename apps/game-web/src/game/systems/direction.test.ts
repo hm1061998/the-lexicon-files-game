@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveDirection } from './direction';
+import { nextFacing, resolveDirection } from './direction';
 
 describe('resolveDirection', () => {
   it('returns NE for (1,-1)', () => {
@@ -20,5 +20,16 @@ describe('resolveDirection', () => {
 
   it('returns null for (0,0)', () => {
     expect(resolveDirection(0, 0)).toBeNull();
+  });
+});
+
+describe('nextFacing', () => {
+  it('keeps the last facing while idle', () => {
+    expect(nextFacing('NW', 0, 0)).toBe('NW');
+  });
+
+  it('switches to the resolved direction while moving', () => {
+    expect(nextFacing('SE', -1, -1)).toBe('NW');
+    expect(nextFacing('NW', 1, 0)).toBe('SE');
   });
 });

@@ -10,3 +10,8 @@ export function resolveDirection(vx: number, vy: number): Facing | null {
   if (vx < 0 && vy >= 0) return 'SW';
   return 'NW';
 }
+
+/** Facing after a movement step: the resolved direction, or the last facing while idle. */
+export function nextFacing(current: Facing, vx: number, vy: number): Facing {
+  return resolveDirection(vx, vy) ?? current;
+}

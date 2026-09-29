@@ -1,5 +1,6 @@
 export type LexiconDebug = {
   player(): { x: number; y: number; depth: number };
+  playerTexture(): string;
   depthOf(id: string): number;
   nearby(): string | null;
   nearbyEvents(): number;

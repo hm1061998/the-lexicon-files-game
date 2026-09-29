@@ -11,14 +11,20 @@
     "height": 1600
   },
   "spawnPoints": {
-    "default": { "x": 1200, "y": 1100 },
-    "from_archive": { "x": 1980, "y": 740 }
+    "default": {
+      "x": 1200,
+      "y": 1100
+    },
+    "from_archive": {
+      "x": 1980,
+      "y": 740
+    }
   },
   "assets": [
     {
       "id": "floor",
       "type": "background",
-      "texture": "ph_floor",
+      "texture": "tex_office_floor",
       "x": 1200,
       "y": 800,
       "origin": [0.5, 0.5],
@@ -43,22 +49,24 @@
     {
       "id": "player_desk",
       "type": "prop",
-      "texture": "ph_desk",
+      "texture": "tex_office_desk",
       "x": 1200,
-      "y": 800,
+      "y": 820,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -110,
-        "y": -40,
-        "width": 220,
-        "height": 60
-      }
+        "x": -75,
+        "y": -70,
+        "width": 150,
+        "height": 70
+      },
+      "origin": [0.5, 1],
+      "scale": 0.45
     },
     {
       "id": "objective_note",
       "type": "interactable",
-      "texture": "ph_note",
+      "texture": "tex_note",
       "x": 1400,
       "y": 1100,
       "depthBias": 0,
@@ -73,12 +81,14 @@
             "objectiveId": "find_what_happened"
           }
         ]
-      }
+      },
+      "origin": [0.5, 0.5],
+      "scale": 0.8
     },
     {
       "id": "meeting_minutes",
       "type": "interactable",
-      "texture": "ph_note",
+      "texture": "tex_note",
       "x": 1000,
       "y": 1100,
       "depthBias": 0,
@@ -93,12 +103,14 @@
             "evidenceId": "meeting_minutes"
           }
         ]
-      }
+      },
+      "origin": [0.5, 0.5],
+      "scale": 0.8
     },
     {
       "id": "phone_recording",
       "type": "interactable",
-      "texture": "ph_audio_recorder",
+      "texture": "tex_audio_recorder",
       "x": 1200,
       "y": 1280,
       "depthBias": 0,
@@ -107,13 +119,20 @@
         "y": 0,
         "radius": 80,
         "prompt": "Nghe bản ghi điện thoại của Leo",
-        "effects": [{ "type": "addEvidence", "evidenceId": "leo_phone_recording" }]
-      }
+        "effects": [
+          {
+            "type": "addEvidence",
+            "evidenceId": "leo_phone_recording"
+          }
+        ]
+      },
+      "origin": [0.5, 1],
+      "scale": 0.5
     },
     {
       "id": "anna",
       "type": "npc",
-      "texture": "ph_npc",
+      "texture": "tex_anna_se",
       "x": 800,
       "y": 1000,
       "depthBias": 0,
@@ -136,7 +155,7 @@
     {
       "id": "hallway_door",
       "type": "interactable",
-      "texture": "ph_door",
+      "texture": "tex_door_hallway",
       "x": 2100,
       "y": 700,
       "depthBias": 0,
@@ -149,12 +168,14 @@
           "targetSceneId": "archive",
           "targetSpawnId": "from_office"
         }
-      }
+      },
+      "origin": [0.5, 1],
+      "scale": 0.5
     },
     {
       "id": "leo",
       "type": "npc",
-      "texture": "ph_npc",
+      "texture": "tex_leo_se",
       "x": 1600,
       "y": 1100,
       "depthBias": 0,
@@ -177,7 +198,7 @@
     {
       "id": "david",
       "type": "npc",
-      "texture": "ph_npc",
+      "texture": "tex_david_se",
       "x": 1850,
       "y": 900,
       "depthBias": 0,

@@ -6,16 +6,22 @@ import type {
   SceneDefinition,
 } from '@lexicon/shared-types';
 import { createSceneAsset } from '../entities/createSceneAsset';
-import { createPlayer, movePlayer, type PlayerSprite } from '../entities/Player';
-import { SCENE_FADE_MS } from '../constants';
+import {
+  PLAYER_INITIAL_FACING,
+  createPlayer,
+  movePlayer,
+  type PlayerSprite,
+} from '../entities/Player';
+import { CHARACTER_FIGURE_HEIGHT, SCENE_FADE_MS } from '../constants';
 import { installDebugHook } from '../debug';
 import { addPaperOverlay } from '../paperOverlay';
 import { computeDepth } from '../systems/depth';
+import type { Facing } from '../systems/direction';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
 import { InteractionTracker } from '../systems/InteractionTracker';
 import { markerMotion } from '../systems/markerMotion';
-import { markerPositionY } from '../systems/markerFloat';
+import { markerBaseY, markerPositionY } from '../systems/markerFloat';
 
 export type InputLockSource = { isInputLocked(): boolean };
 
@@ -33,7 +39,6 @@ export type WorldOptions = {
 type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
 
 const MARKER_DEPTH = 10000;
-const MARKER_OFFSET_Y = -90;
 const MARKER_FLOAT_DISTANCE = 4;
 const MARKER_FLOAT_DURATION_MS = 1000;
 
@@ -41,6 +46,7 @@ export class WorldScene extends Phaser.Scene {
   static readonly KEY = 'World';
 
   private player!: PlayerSprite;
+  private playerFacing: Facing = PLAYER_INITIAL_FACING;
   private keys: MovementKeyMap | null = null;
   private bus!: EventBus<GameEventMap>;
   private options!: WorldOptions;
@@ -50,6 +56,7 @@ export class WorldScene extends Phaser.Scene {
   private unsubscribeTriggered: (() => void) | null = null;
   private areas: InteractableArea[] = [];
   private depths = new Map<string, number>();
+  private markerAnchors = new Map<string, number>();
   private interactionTracker!: InteractionTracker;
   private nearbyEventCount = 0;
   private marker!: Phaser.GameObjects.Sprite;
@@ -81,6 +88,7 @@ export class WorldScene extends Phaser.Scene {
     this.transitioning = false;
     this.areas = [];
     this.depths.clear();
+    this.markerAnchors.clear();
     this.interactionTracker = new InteractionTracker(this.bus);
     this.nearbyEventCount = 0;
     this.triggeredEventCount = 0;
@@ -102,6 +110,10 @@ export class WorldScene extends Phaser.Scene {
       this.depths.set(asset.id, sprite.depth);
       if (body) colliders.add(body);
       if (asset.interaction) {
+        // Character frames carry transparent headroom, so use the figure height for NPCs.
+        const visualTop =
+          asset.type === 'npc' ? asset.y - CHARACTER_FIGURE_HEIGHT : sprite.getTopCenter().y;
+        this.markerAnchors.set(asset.id, markerBaseY(asset.y + asset.interaction.y, visualTop));
         this.areas.push({
           id: asset.id,
           x: asset.x + asset.interaction.x,
@@ -113,6 +125,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.player = createPlayer(this, spawn.x, spawn.y);
+    this.playerFacing = PLAYER_INITIAL_FACING;
     this.physics.add.collider(this.player, colliders);
 
     const camera = this.cameras.main;
@@ -145,6 +158,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.uninstallDebug = installDebugHook({
       player: () => ({ x: this.player.x, y: this.player.y, depth: this.player.depth }),
+      playerTexture: () => this.player.texture.key,
       depthOf: (id) => this.depths.get(id) ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
@@ -172,7 +186,7 @@ export class WorldScene extends Phaser.Scene {
     this.applyMarkerPosition();
     if (!this.keys) return;
     if (this.inputLock.isInputLocked()) {
-      movePlayer(this.player, { x: 0, y: 0 });
+      this.playerFacing = movePlayer(this.player, { x: 0, y: 0 }, this.playerFacing);
       // Consume a press made while locked so it does not fire after unlock.
       if (this.interactKey) Phaser.Input.Keyboard.JustDown(this.interactKey);
       return;
@@ -187,7 +201,7 @@ export class WorldScene extends Phaser.Scene {
       },
       typing,
     );
-    movePlayer(this.player, direction);
+    this.playerFacing = movePlayer(this.player, direction, this.playerFacing);
     this.updateNearby();
     this.updateInteract(typing);
   }
@@ -223,7 +237,7 @@ export class WorldScene extends Phaser.Scene {
     const area = id ? this.areas.find((candidate) => candidate.id === id) : undefined;
     if (area) {
       this.markerBaseX = area.x;
-      this.markerBaseY = area.y + MARKER_OFFSET_Y;
+      this.markerBaseY = this.markerAnchors.get(area.id) ?? area.y;
       this.applyMarkerPosition();
       this.marker.setVisible(true);
     } else {

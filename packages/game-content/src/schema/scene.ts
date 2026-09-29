@@ -48,6 +48,7 @@ const sceneAssetDefinitionSchema = z
     x: z.number(),
     y: z.number(),
     origin: z.tuple([z.number(), z.number()]).default([0.5, 0.9]),
+    scale: z.number().positive().default(1),
     depth: z.number().optional(),
     depthBias: z.number().default(0),
     collision: rectCollisionSchema.optional(),
