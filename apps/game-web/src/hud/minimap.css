@@ -1,0 +1,73 @@
+.hud-minimap {
+  position: absolute;
+  top: 72px;
+  right: 16px;
+  width: 216px;
+  box-sizing: border-box;
+  padding: 10px 8px 6px;
+  pointer-events: none;
+}
+
+.minimap-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--lexicon-border);
+  background: var(--lexicon-beige);
+}
+
+.minimap-floor {
+  fill: none;
+  stroke: var(--lexicon-border);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-solid {
+  fill: var(--lexicon-dusty-olive);
+  stroke: var(--lexicon-border);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-marker-interactable {
+  fill: var(--lexicon-investigation-red);
+  stroke: var(--lexicon-paper);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-marker-door {
+  fill: var(--lexicon-paper);
+  stroke: var(--lexicon-border);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-marker-npc {
+  fill: none;
+  stroke: var(--lexicon-border);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-player {
+  fill: var(--lexicon-ink);
+  stroke: var(--lexicon-paper);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-label {
+  margin: 6px 0 0;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 719px) {
+  .hud-minimap {
+    display: none;
+  }
+}

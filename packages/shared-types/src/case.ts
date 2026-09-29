@@ -65,6 +65,8 @@ export interface UiStrings {
   readonly evidenceEmpty: string;
   readonly evidenceReview: string;
   readonly openNotebook: string;
+  readonly minimapTitle: string;
+  readonly toggleMap: string;
   readonly vocabularyMode: string;
   readonly vocabularyModeBeginner: string;
   readonly vocabularyModeLearning: string;

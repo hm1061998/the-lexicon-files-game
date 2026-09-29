@@ -70,6 +70,8 @@ const uiStringsSchema = z
     evidenceEmpty: z.string().min(1),
     evidenceReview: z.string().min(1),
     openNotebook: z.string().min(1),
+    minimapTitle: z.string().min(1),
+    toggleMap: z.string().min(1),
     vocabularyMode: z.string().min(1),
     vocabularyModeBeginner: z.string().min(1),
     vocabularyModeLearning: z.string().min(1),

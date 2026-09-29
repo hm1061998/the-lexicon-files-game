@@ -23,6 +23,7 @@ import { Hud } from '../hud/Hud';
 import { PauseMenu } from '../pause/PauseMenu';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
 import { useNotebookShortcut } from '../notebook/useNotebookShortcut';
+import { useMinimapShortcut } from '../hud/useMinimapShortcut';
 import { EvidenceModal } from '../evidence/EvidenceModal';
 import { NotebookPanel } from '../notebook/NotebookPanel';
 import { createGameStore, type GameStore } from '../state/gameStore';
@@ -342,6 +343,7 @@ function GameRoot({
   const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
   usePauseShortcut(store);
   useNotebookShortcut(store);
+  useMinimapShortcut(store);
   // Dev-only: `?noPaperOverlay` lets perf measurements compare with and without the grain.
   const showPaperOverlay = !(
     import.meta.env.DEV && new URLSearchParams(window.location.search).has('noPaperOverlay')

@@ -319,3 +319,28 @@ function applyAudioEvidence(definition: ReturnType<typeof loadCaseDefinition>) {
     .getState()
     .applyCaseEffects([{ type: 'addEvidence', evidenceId: 'leo_phone_recording' }]).state;
 }
+
+describe('minimap state', () => {
+  it('stores the published player position and resets it on scene change', () => {
+    const caseDefinition = loadCaseDefinition('case-001');
+    const store = createGameStore({ caseDefinition });
+    expect(store.getState().playerPosition).toBeNull();
+    store.getState().setPlayerPosition({ x: 10, y: 20 });
+    expect(store.getState().playerPosition).toEqual({ x: 10, y: 20 });
+    const other = caseDefinition.scenes.find(({ id }) => id !== store.getState().activeSceneId)!;
+    store.getState().transitionScene(other.id, Object.keys(other.spawnPoints)[0]!);
+    expect(store.getState().playerPosition).toBeNull();
+  });
+
+  it('is visible by default and toggles unless input is locked', () => {
+    const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });
+    expect(store.getState().minimapVisible).toBe(true);
+    store.getState().toggleMinimap();
+    expect(store.getState().minimapVisible).toBe(false);
+    store.getState().toggleMinimap();
+    expect(store.getState().minimapVisible).toBe(true);
+    store.getState().togglePause();
+    store.getState().toggleMinimap();
+    expect(store.getState().minimapVisible).toBe(true);
+  });
+});

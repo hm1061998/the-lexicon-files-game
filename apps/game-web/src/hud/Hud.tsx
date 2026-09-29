@@ -1,6 +1,7 @@
 import type { UiStrings } from '@lexicon/shared-types';
 import { ObjectivePanel } from './ObjectivePanel';
 import { CaseProgress } from './CaseProgress';
+import { Minimap } from './Minimap';
 import { InteractionPrompt } from './InteractionPrompt';
 import { KeyHints } from './KeyHints';
 import './hud.css';
@@ -10,6 +11,7 @@ export function Hud({ strings }: { strings: UiStrings }): JSX.Element {
     <div className="hud">
       <ObjectivePanel strings={strings} />
       <CaseProgress strings={strings} />
+      <Minimap strings={strings} />
       <InteractionPrompt strings={strings} />
       <KeyHints strings={strings} />
     </div>

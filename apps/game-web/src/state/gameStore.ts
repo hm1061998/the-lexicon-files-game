@@ -27,6 +27,10 @@ export type GameStoreState = {
   caseState: CaseState;
   activeSceneId: string;
   nearby: { id: string; prompt: string } | null;
+  /** Published view of the Phaser player position (Phaser stays the source); null until known. */
+  playerPosition: { x: number; y: number } | null;
+  /** HUD-only visibility of the minimap; deliberately not saved or in settings. */
+  minimapVisible: boolean;
   paused: boolean;
   activeEvidenceId: string | null;
   notebookOpen: boolean;
@@ -36,6 +40,9 @@ export type GameStoreState = {
   inputLocked: boolean;
   persistenceError: string | null;
   setNearby(n: { id: string; prompt: string } | null): void;
+  setPlayerPosition(position: { x: number; y: number } | null): void;
+  /** Toggles the minimap; no-op while input is locked (pause, modal, closed case). */
+  toggleMinimap(): void;
   togglePause(): void;
   setPaused(p: boolean): void;
   openEvidence(id: string): void;
@@ -92,6 +99,8 @@ export function createGameStore(init: {
     caseState: initialCaseState,
     activeSceneId: initialScene.id,
     nearby: null,
+    playerPosition: null,
+    minimapVisible: true,
     paused: false,
     activeEvidenceId: null,
     notebookOpen: false,
@@ -103,6 +112,12 @@ export function createGameStore(init: {
     persistenceError: init.initialPersistenceError ?? null,
     setNearby(nearby) {
       set({ nearby });
+    },
+    setPlayerPosition(playerPosition) {
+      set({ playerPosition });
+    },
+    toggleMinimap() {
+      set((s) => (s.inputLocked ? s : { minimapVisible: !s.minimapVisible }));
     },
     togglePause() {
       get().setPaused(!get().paused);
@@ -229,7 +244,7 @@ export function createGameStore(init: {
     transitionScene(sceneId, spawnId) {
       const scene = get().caseDefinition.scenes.find(({ id }) => id === sceneId);
       if (!scene || !scene.spawnPoints[spawnId]) return false;
-      if (get().activeSceneId !== sceneId) set({ activeSceneId: sceneId });
+      if (get().activeSceneId !== sceneId) set({ activeSceneId: sceneId, playerPosition: null });
       return true;
     },
   }));

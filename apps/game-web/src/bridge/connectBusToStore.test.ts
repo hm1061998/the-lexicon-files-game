@@ -40,6 +40,27 @@ describe('connectBusToStore', () => {
     expect(store.getState().nearby).toBeNull();
   });
 
+  it('player:moved publishes the position to the store', () => {
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition });
+    connectBusToStore(bus, store);
+
+    bus.emit('player:moved', { x: 12, y: 34 });
+
+    expect(store.getState().playerPosition).toEqual({ x: 12, y: 34 });
+  });
+
+  it('a scene transition clears the published player position', () => {
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition });
+    connectBusToStore(bus, store);
+    bus.emit('player:moved', { x: 12, y: 34 });
+
+    bus.emit('scene:transitionRequested', { sceneId: 'archive', spawnId: 'from_office' });
+
+    expect(store.getState().playerPosition).toBeNull();
+  });
+
   it('disconnect stops syncing', () => {
     const bus = createEventBus<GameEventMap>();
     const store = createGameStore({ caseDefinition });

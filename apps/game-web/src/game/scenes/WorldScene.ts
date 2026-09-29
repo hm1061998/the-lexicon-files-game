@@ -23,6 +23,7 @@ import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
 import { InteractionTracker } from '../systems/InteractionTracker';
 import { markerMotion } from '../systems/markerMotion';
+import { shouldEmitPlayerMoved } from '../systems/playerMoved';
 import { markerBaseY, markerPositionY } from '../systems/markerFloat';
 
 export type InputLockSource = { isInputLocked(): boolean };
@@ -69,6 +70,8 @@ export class WorldScene extends Phaser.Scene {
   private markerFloat = { offset: 0 };
   private reducedMotion = false;
   private transitioning = false;
+  private lastPublished: { x: number; y: number } | null = null;
+  private sinceLastPublishMs = 0;
   private fadeInPending = false;
   private fadeOutHandler: (() => void) | null = null;
   private pendingTransition: { loaded: boolean; faded: boolean } | null = null;
@@ -140,6 +143,9 @@ export class WorldScene extends Phaser.Scene {
     );
     this.playerFacing = PLAYER_INITIAL_FACING;
     this.playerShadow = createShadow(this, this.player);
+    // Publish the start position once so the HUD minimap has a dot before the first move.
+    this.lastPublished = null;
+    this.publishPlayerPosition(0);
     // After the physics step has moved the sprite, so the shadow never trails a frame behind.
     this.events.on(Phaser.Scenes.Events.PRE_RENDER, this.syncPlayerShadow, this);
     this.physics.add.collider(this.player, colliders);
@@ -201,9 +207,10 @@ export class WorldScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
   }
 
-  override update(): void {
+  override update(_time: number, delta: number): void {
     this.syncMarkerMotion();
     this.applyMarkerPosition();
+    this.publishPlayerPosition(delta);
     if (!this.keys) return;
     if (this.inputLock.isInputLocked()) {
       this.playerFacing = movePlayer(
@@ -234,6 +241,18 @@ export class WorldScene extends Phaser.Scene {
     );
     this.updateNearby();
     this.updateInteract(typing);
+  }
+
+  /** Publishes the player position for the HUD (a view; Phaser stays the source). */
+  private publishPlayerPosition(deltaMs: number): void {
+    // A leaving scene must not publish a stale position for the destination's minimap.
+    if (this.transitioning) return;
+    this.sinceLastPublishMs += deltaMs;
+    const next = { x: this.player.x, y: this.player.y };
+    if (!shouldEmitPlayerMoved(this.lastPublished, next, this.sinceLastPublishMs)) return;
+    this.lastPublished = next;
+    this.sinceLastPublishMs = 0;
+    this.bus.emit('player:moved', next);
   }
 
   private syncPlayerShadow(): void {

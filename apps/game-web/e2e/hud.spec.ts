@@ -295,3 +295,69 @@ test('panel entrance animates unless reduced motion is on', async ({ page }) => 
     await page.locator('.pause-menu').evaluate((el) => getComputedStyle(el).animationName),
   ).toBe('none');
 });
+
+type Box = { x: number; y: number; width: number; height: number };
+
+function overlaps(a: Box, b: Box): boolean {
+  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+}
+
+test('minimap shows the player, follows movement and toggles with M', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openWorld(page);
+  const minimap = page.locator('.hud-minimap');
+  await expect(minimap).toBeVisible();
+  await expect(minimap.getByText('Bản đồ nhỏ')).toBeVisible();
+  const dot = minimap.locator('.minimap-player');
+  await expect(dot).toHaveCount(1);
+  const before = Number(await dot.getAttribute('cx'));
+  await hold(page, 'd', 500);
+  await expect.poll(async () => Number(await dot.getAttribute('cx'))).toBeGreaterThan(before);
+
+  await page.keyboard.press('m');
+  await expect(minimap).toHaveCount(0);
+  await page.keyboard.press('m');
+  await expect(minimap).toBeVisible();
+});
+
+test('minimap M is ignored while typing and while paused', async ({ page }) => {
+  await openWorld(page);
+  await page.evaluate(() => {
+    const input = document.createElement('input');
+    input.id = 'lexicon-map-input';
+    document.body.appendChild(input);
+  });
+  await page.focus('#lexicon-map-input');
+  await page.keyboard.type('m');
+  await expect(page.locator('#lexicon-map-input')).toHaveValue('m');
+  await expect(page.locator('.hud-minimap')).toBeVisible();
+  await page.evaluate(() => document.getElementById('lexicon-map-input')!.blur());
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('m');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.hud-minimap')).toBeVisible();
+});
+
+test('minimap does not overlap the other HUD elements', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openWorld(page);
+  await walkToNote(page);
+  await expect(page.getByText('Đọc ghi chú')).toBeVisible();
+  const minimap = (await page.locator('.hud-minimap').boundingBox())!;
+  for (const selector of [
+    '.hud-objective-panel',
+    '.hud-case-progress',
+    '.hud-interaction-prompt',
+    '.hud-key-hints',
+  ]) {
+    const box = await page.locator(selector).boundingBox();
+    expect(box, selector).not.toBeNull();
+    expect(overlaps(minimap, box!), selector).toBe(false);
+  }
+});
+
+test('minimap is hidden on narrow viewports', async ({ page }) => {
+  await page.setViewportSize({ width: 700, height: 720 });
+  await openWorld(page);
+  await expect(page.locator('.hud-minimap')).toBeHidden();
+});

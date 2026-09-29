@@ -28,6 +28,8 @@ describe('parseUiStrings', () => {
     expect(strings.createFreshSave).toBeTruthy();
     expect(strings.notebook).toBe('Sổ tay điều tra');
     expect(strings.openNotebook).toBeTruthy();
+    expect(strings.minimapTitle).toBe('Bản đồ nhỏ');
+    expect(strings.toggleMap).toBe('Bản đồ');
   });
 
   it('provides localized timeline and contradiction controls and feedback', () => {

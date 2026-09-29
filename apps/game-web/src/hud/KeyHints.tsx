@@ -11,6 +11,9 @@ export function KeyHints({ strings }: { strings: UiStrings }): JSX.Element {
         <Keycap>J</Keycap> — {strings.openNotebook}
       </span>
       <span className="hud-key-hint">
+        <Keycap>M</Keycap> — {strings.toggleMap}
+      </span>
+      <span className="hud-key-hint">
         <Keycap>Esc</Keycap> — {strings.pause}
       </span>
     </PaperPanel>
