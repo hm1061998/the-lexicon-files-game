@@ -1,5 +1,5 @@
 import type { NPCDefinition, DialogueTree } from './dialogue';
-import type { FacingTextureMap, SceneDefinition, TextureEntry } from './scene';
+import type { CharacterSheets, SceneDefinition, TextureEntry } from './scene';
 import type { VocabularyContextDefinition, VocabularyEntry, VocabularySpan } from './learning';
 
 export type EvidenceCategory = 'document' | 'audio' | 'photo' | 'object' | 'statement' | 'digital';
@@ -129,10 +129,10 @@ export interface CaseDefinition {
   readonly timeline: TimelineDefinition;
   readonly contradictions: readonly ContradictionDefinition[];
   readonly conclusion?: CaseConclusionDefinition | undefined;
-  /** Textures used by every scene (player facings, paper overlay); loaded once at boot. */
+  /** Textures used by every scene (player facings and walk sheet, paper overlay); loaded once at boot. */
   readonly sharedTextures: readonly TextureEntry[];
-  /** Player texture key per facing; each key is one of `sharedTextures`. */
-  readonly playerTextures: FacingTextureMap;
+  /** Character textures by name (`player` required); every key is one of `sharedTextures`. */
+  readonly characterSheets: CharacterSheets;
 }
 
 export type ObjectiveStatus = 'locked' | 'active' | 'completed';

@@ -36,3 +36,9 @@ Thay đổi:
 - Xóa `paperOverlay.ts`, `PAPER_OVERLAY_KEY/ALPHA`, texture `paper_overlay` khỏi `sharedTextures` của case (Phaser không còn load nó).
 - E2E: alpha trong [0.10, 0.18], `pointer-events: none`, `elementFromPoint` giữa màn hình là `CANVAS`, thứ tự DOM canvas < overlay < HUD, click/tương tác vẫn hoạt động.
 - Ảnh chụp trước/sau đã xem: hạt giấy vẫn thấy được nhưng tinh tế, không đổi bố cục/màu HUD.
+
+## Hoạt ảnh đi bộ và giảm chuyển động (Task 6)
+
+**Ruling:** hoạt ảnh đi bộ của player là phản hồi di chuyển chức năng (cho biết nhân vật đang đi và theo hướng nào), nên **không** bị tắt khi bật "Giảm chuyển động". Giảm chuyển động chỉ tắt hiệu ứng trang trí (marker nhấp nhô, fade chuyển cảnh). Ruling này là ngoại lệ có chủ đích của Global Constraint "giảm chuyển động tắt mọi hoạt ảnh mới" trong plan Phase 11B. Bóng `shadow_soft` là ảnh tĩnh, không có chuyển động riêng.
+
+Kiểm chứng: E2E `reduced motion keeps the walk animation (functional movement feedback)` bật giảm chuyển động qua menu tạm dừng rồi giữ D: `playerAnim().playing === true` và ≥ 3 frame khác nhau trong 600 ms.

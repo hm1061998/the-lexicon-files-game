@@ -7,7 +7,7 @@ import type { Facing } from './systems/direction';
 const FILE_LOAD_ERROR = 'loaderror';
 const LOAD_COMPLETE = 'complete';
 
-/** Texture key for a facing, as declared by content (`CaseDefinition.playerTextures`). */
+/** Texture key for a facing, as declared by content (`CharacterSheet.idle`). */
 export function facingTextureKey(textures: FacingTextureMap, facing: Facing): string {
   return textures[facing];
 }
@@ -22,9 +22,13 @@ export function queueMissingTextures(
   textures: readonly TextureEntry[],
 ): number {
   let queued = 0;
-  for (const { key, url } of textures) {
+  for (const { key, url, frameWidth, frameHeight } of textures) {
     if (scene.textures.exists(key)) continue;
-    scene.load.image(key, url);
+    if (frameWidth !== undefined && frameHeight !== undefined) {
+      scene.load.spritesheet(key, url, { frameWidth, frameHeight });
+    } else {
+      scene.load.image(key, url);
+    }
     queued += 1;
   }
   return queued;

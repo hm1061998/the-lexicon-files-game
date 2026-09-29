@@ -21,6 +21,7 @@ const archiveOnlyTextures = archiveTextures.filter(
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
   playerTexture(): string;
+  playerAnim(): { key: string | null; frame: number | null; playing: boolean };
   depthOf(id: string): number;
   nearby(): string | null;
   nearbyEvents(): number;
@@ -346,9 +347,75 @@ test('player texture follows the facing and keeps it while idle', async ({ page 
   await page.keyboard.down('a');
   await page.waitForTimeout(200);
   // Checked while both keys are held: releasing them one by one resolves a single-axis facing.
-  expect(await texture()).toBe('tex_player_nw');
+  expect(await playerAnim(page)).toMatchObject({ key: 'player_walk_nw', playing: true });
   await page.keyboard.up('a');
   await page.keyboard.up('w');
+});
+
+async function playerAnim(
+  page: Page,
+): Promise<{ key: string | null; frame: number | null; playing: boolean }> {
+  return page.evaluate(() => window.__lexiconDebug!.playerAnim());
+}
+
+/** Distinct walk frames seen while sampling for `ms`. */
+async function framesDuring(page: Page, ms: number): Promise<Set<number>> {
+  const seen = new Set<number>();
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    const { frame } = await playerAnim(page);
+    if (frame !== null) seen.add(frame);
+    await page.waitForTimeout(40);
+  }
+  return seen;
+}
+
+test('walking plays the walk animation and stopping returns to the idle still', async ({
+  page,
+}) => {
+  await openWorld(page);
+  expect(await playerAnim(page)).toMatchObject({ playing: false });
+  await page.keyboard.down('d');
+  await expect.poll(async () => (await playerAnim(page)).playing).toBe(true);
+  expect((await playerAnim(page)).key).toMatch(/^player_walk_/);
+  expect((await framesDuring(page, 600)).size).toBeGreaterThanOrEqual(3);
+  await page.keyboard.up('d');
+  await expect.poll(async () => (await playerAnim(page)).playing).toBe(false);
+  expect(await page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_se');
+});
+
+test('changing direction mid-walk switches the walk without console errors', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') errors.push(msg.text());
+  });
+  page.on('pageerror', (err) => errors.push(err.message));
+  await openWorld(page);
+  await page.keyboard.down('a');
+  await expect.poll(async () => (await playerAnim(page)).key).toBe('player_walk_sw');
+  await page.waitForTimeout(250);
+  await page.keyboard.up('a');
+  await page.keyboard.down('d');
+  await expect.poll(async () => (await playerAnim(page)).key).toBe('player_walk_se');
+  expect((await playerAnim(page)).playing).toBe(true);
+  await page.keyboard.up('d');
+  await expect.poll(async () => (await playerAnim(page)).playing).toBe(false);
+  expect(await page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_se');
+  expect(errors).toEqual([]);
+});
+
+test('reduced motion keeps the walk animation (functional movement feedback)', async ({ page }) => {
+  await openWorld(page);
+  await page.keyboard.press('Escape');
+  const pause = page.getByRole('dialog');
+  await expect(pause).toBeVisible();
+  await pause.getByLabel('Giảm chuyển động').check();
+  await page.keyboard.press('Escape');
+  await expect(pause).toBeHidden();
+  await page.keyboard.down('d');
+  await expect.poll(async () => (await playerAnim(page)).playing).toBe(true);
+  expect((await framesDuring(page, 600)).size).toBeGreaterThanOrEqual(3);
+  await page.keyboard.up('d');
 });
 
 async function transitionAndWait(page: Page, sceneId: string, spawnId: string): Promise<void> {

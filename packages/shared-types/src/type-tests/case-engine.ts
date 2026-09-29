@@ -88,11 +88,11 @@ const definition = {
   timeline: { slots: [], events: [] },
   contradictions: [],
   sharedTextures: [{ key: 'tex_player_se', url: '/assets/player_se.png' }],
-  playerTextures: {
-    NE: 'tex_player_se',
-    SE: 'tex_player_se',
-    SW: 'tex_player_se',
-    NW: 'tex_player_se',
+  characterSheets: {
+    player: {
+      idle: { NE: 'tex_player_se', SE: 'tex_player_se', SW: 'tex_player_se', NW: 'tex_player_se' },
+      walk: null,
+    },
   },
   conclusion: {
     suspectNpcIds: ['anna'],

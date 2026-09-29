@@ -23,7 +23,7 @@ const dialogueCaseRaw = {
   initialObjectiveId: caseRaw.initialObjectiveId,
   sceneIds: ['main_office'],
   sharedTextures: caseRaw.sharedTextures,
-  playerTextures: caseRaw.playerTextures,
+  characterSheets: caseRaw.characterSheets,
   timeline: {
     slots: [{ id: '20_00', time: '20:00' }],
     events: [caseRaw.timeline.events.find((event) => event.id === 'meeting_started')!],

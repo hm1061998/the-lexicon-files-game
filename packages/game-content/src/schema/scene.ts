@@ -47,8 +47,14 @@ export const textureEntrySchema = z
       .string()
       .startsWith('/assets/', 'must start with "/assets/"')
       .refine((url) => !url.includes('..'), 'must not contain ".."'),
+    frameWidth: z.number().int().positive().optional(),
+    frameHeight: z.number().int().positive().optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (entry) => (entry.frameWidth === undefined) === (entry.frameHeight === undefined),
+    'frameWidth and frameHeight go together',
+  );
 
 /** Reports duplicate keys in a texture list as `<label>: duplicate texture key "<key>"`. */
 export function findDuplicateTextureKeys(textures: readonly { key: string }[]): string[] {

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type {
   CaseDefinition,
+  CharacterSheets,
   Condition,
   ContradictionDefinition,
   Effect,
@@ -39,14 +40,24 @@ const caseRawSchema = z
       .optional(),
     sceneIds: z.array(z.string().min(1)).min(1),
     sharedTextures: z.array(textureEntrySchema),
-    playerTextures: z
-      .object({
-        NE: z.string().min(1),
-        SE: z.string().min(1),
-        SW: z.string().min(1),
-        NW: z.string().min(1),
-      })
-      .strict(),
+    characterSheets: z
+      .record(
+        z.string().min(1),
+        z
+          .object({
+            idle: z
+              .object({
+                NE: z.string().min(1),
+                SE: z.string().min(1),
+                SW: z.string().min(1),
+                NW: z.string().min(1),
+              })
+              .strict(),
+            walk: z.string().min(1).nullable(),
+          })
+          .strict(),
+      )
+      .refine((sheets) => 'player' in sheets, 'characterSheets must declare "player"'),
     timeline: z
       .object({
         slots: z.array(
@@ -266,8 +277,10 @@ function validateEffectReferences(
 
 function validateTextureReferences(
   caseData: {
-    sharedTextures: readonly { key: string; url: string }[];
-    playerTextures: Readonly<Record<string, string>>;
+    sharedTextures: readonly { key: string; url: string; frameWidth?: number | undefined }[];
+    characterSheets: Readonly<
+      Record<string, { idle: Readonly<Record<string, string>>; walk: string | null }>
+    >;
   },
   scenes: readonly { id: string; textures: readonly { key: string; url: string }[] }[],
   issues: string[],
@@ -275,12 +288,20 @@ function validateTextureReferences(
   for (const key of findDuplicateTextureKeys(caseData.sharedTextures)) {
     issues.push(`case.json.sharedTextures: duplicate texture key "${key}"`);
   }
-  const shared = new Set(caseData.sharedTextures.map(({ key }) => key));
-  for (const [facing, key] of Object.entries(caseData.playerTextures)) {
-    if (!key.startsWith(PLACEHOLDER_TEXTURE_PREFIX) && !shared.has(key)) {
-      issues.push(
-        `case.json.playerTextures.${facing}: texture "${key}" is not declared in sharedTextures`,
-      );
+  const shared = new Map(caseData.sharedTextures.map((entry) => [entry.key, entry]));
+  for (const [name, sheet] of Object.entries(caseData.characterSheets)) {
+    const path = `case.json.characterSheets.${name}`;
+    for (const [facing, key] of Object.entries(sheet.idle)) {
+      if (!key.startsWith(PLACEHOLDER_TEXTURE_PREFIX) && !shared.has(key)) {
+        issues.push(`${path}.idle.${facing}: texture "${key}" is not declared in sharedTextures`);
+      }
+    }
+    if (sheet.walk === null) continue;
+    const walk = shared.get(sheet.walk);
+    if (!walk) {
+      issues.push(`${path}.walk: texture "${sheet.walk}" is not declared in sharedTextures`);
+    } else if (walk.frameWidth === undefined) {
+      issues.push(`${path}.walk: texture "${sheet.walk}" needs frameWidth and frameHeight`);
     }
   }
   // Textures are cached by key across scenes, so one key must always mean one file.
@@ -660,6 +681,7 @@ export function parseCaseDefinition(
     contradictions,
     ...(conclusion ? { conclusion } : {}),
     sharedTextures: caseData.sharedTextures,
-    playerTextures: caseData.playerTextures,
+    // The schema refinement guarantees the `player` entry.
+    characterSheets: caseData.characterSheets as CharacterSheets,
   };
 }

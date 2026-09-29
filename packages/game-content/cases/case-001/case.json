@@ -13,13 +13,24 @@
     { "key": "tex_player_ne", "url": "/assets/characters/player/chr_player_idle_ne.png" },
     { "key": "tex_player_se", "url": "/assets/characters/player/chr_player_idle_se.png" },
     { "key": "tex_player_sw", "url": "/assets/characters/player/chr_player_idle_sw.png" },
-    { "key": "tex_player_nw", "url": "/assets/characters/player/chr_player_idle_nw.png" }
+    { "key": "tex_player_nw", "url": "/assets/characters/player/chr_player_idle_nw.png" },
+    {
+      "key": "sheet_player_walk",
+      "url": "/assets/characters/player/chr_player_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    }
   ],
-  "playerTextures": {
-    "NE": "tex_player_ne",
-    "SE": "tex_player_se",
-    "SW": "tex_player_sw",
-    "NW": "tex_player_nw"
+  "characterSheets": {
+    "player": {
+      "idle": {
+        "NE": "tex_player_ne",
+        "SE": "tex_player_se",
+        "SW": "tex_player_sw",
+        "NW": "tex_player_nw"
+      },
+      "walk": "sheet_player_walk"
+    }
   },
   "timeline": {
     "slots": [

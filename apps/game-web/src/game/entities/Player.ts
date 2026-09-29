@@ -1,25 +1,33 @@
 import Phaser from 'phaser';
-import type { FacingTextureMap } from '@lexicon/shared-types';
+import type { CharacterSheet } from '@lexicon/shared-types';
 import { PLAYER_BODY, PLAYER_ORIGIN, PLAYER_SPEED } from '../constants';
 import { facingTextureKey, resolveTextureKey } from '../assetManifest';
 import { computeDepth } from '../systems/depth';
 import { nextFacing, type Facing } from '../systems/direction';
+import { planWalk, registerCharacterAnimations, walkAnimKey } from './characterAnimations';
 
 export type PlayerSprite = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
 export const PLAYER_INITIAL_FACING: Facing = 'SE';
 
+/** Character name of the player in `CaseDefinition.characterSheets` and its anim keys. */
+export const PLAYER_NAME = 'player';
+
 export function createPlayer(
   scene: Phaser.Scene,
   x: number,
   y: number,
-  textures: FacingTextureMap,
+  sheet: CharacterSheet,
 ): PlayerSprite {
   const texture = resolveTextureKey(
     scene,
-    facingTextureKey(textures, PLAYER_INITIAL_FACING),
+    facingTextureKey(sheet.idle, PLAYER_INITIAL_FACING),
     'ph_player',
   );
+  // A walk sheet that failed to load leaves the player on its idle stills.
+  if (sheet.walk && scene.textures.exists(sheet.walk)) {
+    registerCharacterAnimations(scene, PLAYER_NAME, sheet.walk);
+  }
   const player = scene.physics.add.sprite(x, y, texture);
   player.setOrigin(PLAYER_ORIGIN[0], PLAYER_ORIGIN[1]);
   player.body.setSize(PLAYER_BODY.width, PLAYER_BODY.height, false);
@@ -33,23 +41,40 @@ export function createPlayer(
   return player;
 }
 
+/** Walk animation currently playing on the player and its 0-based frame, or null. */
+export function currentWalk(player: PlayerSprite): { key: string; frame: number } | null {
+  const { anims } = player;
+  if (!anims.isPlaying || !anims.currentAnim || !anims.currentFrame) return null;
+  return { key: anims.currentAnim.key, frame: anims.currentFrame.index - 1 };
+}
+
 /**
- * Applies velocity and depth, and swaps the facing texture only when the facing changes.
- * Returns the facing to remember (unchanged while idle).
+ * Applies velocity and depth, plays the walk of the facing while moving and shows the idle
+ * still of the last facing when stopped. Returns the facing to remember (unchanged while idle).
+ * Walk and idle frames share one 160 px canvas, so the feet-aligned body stays valid.
  */
 export function movePlayer(
   player: PlayerSprite,
   direction: { x: number; y: number },
   facing: Facing,
-  textures: FacingTextureMap,
+  sheet: CharacterSheet,
 ): Facing {
   player.setVelocity(direction.x * PLAYER_SPEED, direction.y * PLAYER_SPEED);
   player.setDepth(computeDepth(player.y));
   const next = nextFacing(facing, direction.x, direction.y);
-  if (next !== facing) {
-    const key = facingTextureKey(textures, next);
-    // Frames share one canvas size, so the feet-aligned body stays valid after the swap.
-    if (player.scene.textures.exists(key)) player.setTexture(key);
+  const plan = planWalk({
+    name: PLAYER_NAME,
+    moving: direction.x !== 0 || direction.y !== 0,
+    hasWalk: sheet.walk !== null && player.scene.anims.exists(walkAnimKey(PLAYER_NAME, next)),
+    facing: next,
+    current: currentWalk(player),
+  });
+  if (plan.type === 'play') {
+    player.anims.play({ key: plan.key, startFrame: plan.startFrame }, true);
+  } else if (plan.type === 'idle') {
+    if (player.anims.isPlaying) player.anims.stop();
+    const key = facingTextureKey(sheet.idle, plan.facing);
+    if (player.texture.key !== key && player.scene.textures.exists(key)) player.setTexture(key);
   }
   return next;
 }

@@ -34,7 +34,20 @@ describe('content texture manifests', () => {
     for (const definition of cases) {
       const shared = new Set(definition.sharedTextures.map(({ key }) => key));
       for (const facing of ['NE', 'SE', 'SW', 'NW'] as const) {
-        expect(shared.has(definition.playerTextures[facing]), facing).toBe(true);
+        expect(shared.has(definition.characterSheets.player.idle[facing]), facing).toBe(true);
+      }
+    }
+  });
+
+  it('declare walk sheets as 8x4 spritesheets of 160 px frames', () => {
+    for (const definition of cases) {
+      for (const [name, sheet] of Object.entries(definition.characterSheets)) {
+        if (sheet.walk === null) continue;
+        const entry = definition.sharedTextures.find(({ key }) => key === sheet.walk);
+        expect(entry, name).toMatchObject({ frameWidth: 160, frameHeight: 160 });
+        // PNG IHDR: width and height are big-endian at bytes 16 and 20.
+        const png = readFileSync(`${publicDir}${entry!.url}`);
+        expect([png.readUInt32BE(16), png.readUInt32BE(20)], name).toEqual([1280, 640]);
       }
     }
   });
@@ -96,6 +109,7 @@ function fakeScene(existing: string[], failing: string[] = []) {
   };
   const load = {
     image: vi.fn((key: string, url: string) => queued.push({ key, url })),
+    spritesheet: vi.fn((key: string, url: string) => queued.push({ key, url })),
     on: vi.fn(on),
     off: vi.fn(off),
     once: vi.fn((event: string, fn: Listener) => {
@@ -132,6 +146,18 @@ describe('loadSceneTextures', () => {
     expect(load.image).toHaveBeenCalledTimes(1);
     expect(load.image).toHaveBeenCalledWith('tex_b', '/b.png');
     expect(load.start).toHaveBeenCalledTimes(1);
+  });
+
+  it('queues an entry with frame dimensions as a spritesheet', async () => {
+    const { scene, load } = fakeScene([]);
+    await loadSceneTextures(scene, [
+      { key: 'sheet_walk', url: '/walk.png', frameWidth: 160, frameHeight: 160 },
+    ]);
+    expect(load.image).not.toHaveBeenCalled();
+    expect(load.spritesheet).toHaveBeenCalledWith('sheet_walk', '/walk.png', {
+      frameWidth: 160,
+      frameHeight: 160,
+    });
   });
 
   it('resolves without starting the loader when everything is loaded', async () => {

@@ -1,6 +1,8 @@
 export type LexiconDebug = {
   player(): { x: number; y: number; depth: number };
   playerTexture(): string;
+  /** Walk animation on the player: key and 0-based frame while playing, nulls when idle. */
+  playerAnim(): { key: string | null; frame: number | null; playing: boolean };
   depthOf(id: string): number;
   nearby(): string | null;
   nearbyEvents(): number;

@@ -10,9 +10,11 @@ import { createSceneAsset } from '../entities/createSceneAsset';
 import {
   PLAYER_INITIAL_FACING,
   createPlayer,
+  currentWalk,
   movePlayer,
   type PlayerSprite,
 } from '../entities/Player';
+import { createShadow, syncShadow } from '../entities/shadow';
 import { CHARACTER_FIGURE_HEIGHT, SCENE_FADE_MS } from '../constants';
 import { installDebugHook, paperOverlayAlpha } from '../debug';
 import { computeDepth } from '../systems/depth';
@@ -46,6 +48,7 @@ export class WorldScene extends Phaser.Scene {
   static readonly KEY = 'World';
 
   private player!: PlayerSprite;
+  private playerShadow: Phaser.GameObjects.Image | null = null;
   private playerFacing: Facing = PLAYER_INITIAL_FACING;
   private keys: MovementKeyMap | null = null;
   private bus!: EventBus<GameEventMap>;
@@ -108,6 +111,7 @@ export class WorldScene extends Phaser.Scene {
     for (const asset of def.assets) {
       const { sprite, body } = createSceneAsset(this, asset);
       this.depths.set(asset.id, sprite.depth);
+      if (asset.type === 'npc') createShadow(this, { x: asset.x, y: asset.y, depth: sprite.depth });
       if (body) colliders.add(body);
       if (asset.interaction) {
         // Character frames carry transparent headroom, so use the figure height for NPCs.
@@ -128,8 +132,16 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
-    this.player = createPlayer(this, spawn.x, spawn.y, options.caseDefinition.playerTextures);
+    this.player = createPlayer(
+      this,
+      spawn.x,
+      spawn.y,
+      options.caseDefinition.characterSheets.player,
+    );
     this.playerFacing = PLAYER_INITIAL_FACING;
+    this.playerShadow = createShadow(this, this.player);
+    // After the physics step has moved the sprite, so the shadow never trails a frame behind.
+    this.events.on(Phaser.Scenes.Events.PRE_RENDER, this.syncPlayerShadow, this);
     this.physics.add.collider(this.player, colliders);
 
     const camera = this.cameras.main;
@@ -162,6 +174,10 @@ export class WorldScene extends Phaser.Scene {
     this.uninstallDebug = installDebugHook({
       player: () => ({ x: this.player.x, y: this.player.y, depth: this.player.depth }),
       playerTexture: () => this.player.texture.key,
+      playerAnim: () => {
+        const walk = currentWalk(this.player);
+        return { key: walk?.key ?? null, frame: walk?.frame ?? null, playing: walk !== null };
+      },
       depthOf: (id) => this.depths.get(id) ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
@@ -194,7 +210,7 @@ export class WorldScene extends Phaser.Scene {
         this.player,
         { x: 0, y: 0 },
         this.playerFacing,
-        this.options.caseDefinition.playerTextures,
+        this.options.caseDefinition.characterSheets.player,
       );
       // Consume a press made while locked so it does not fire after unlock.
       if (this.interactKey) Phaser.Input.Keyboard.JustDown(this.interactKey);
@@ -214,12 +230,18 @@ export class WorldScene extends Phaser.Scene {
       this.player,
       direction,
       this.playerFacing,
-      this.options.caseDefinition.playerTextures,
+      this.options.caseDefinition.characterSheets.player,
     );
     this.updateNearby();
     this.updateInteract(typing);
   }
 
+  private syncPlayerShadow(): void {
+    if (this.playerShadow) syncShadow(this.playerShadow, this.player);
+  }
+
+  // Reduced motion pauses decorative motion only (marker float, fades). The walk animation is
+  // functional movement feedback and keeps playing (Phase 11B ruling).
   private syncMarkerMotion(): void {
     const next = this.options.motion.reducedMotion();
     const action = markerMotion(this.reducedMotion, next);
@@ -317,6 +339,9 @@ export class WorldScene extends Phaser.Scene {
     this.unsubscribeTriggered = null;
     this.uninstallDebug?.();
     this.uninstallDebug = null;
+    this.events.off(Phaser.Scenes.Events.PRE_RENDER, this.syncPlayerShadow, this);
+    // Scene display objects (shadows, sprites) are destroyed by the scene itself.
+    this.playerShadow = null;
     this.events.off(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     this.events.off(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
   }

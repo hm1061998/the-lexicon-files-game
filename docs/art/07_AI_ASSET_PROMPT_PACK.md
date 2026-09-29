@@ -78,6 +78,45 @@ Mỗi nhân vật cần **4 ảnh idle**, cùng khung hình, cùng chiều cao, 
 
 Portrait (tuỳ chọn, ưu tiên 3): `portrait_leo_neutral.png`, `portrait_anna_neutral.png`, `portrait_david_neutral.png` — `head-and-shoulders portrait of <mô tả nhân vật>, neutral expression, flat muted background, hand-drawn ink outline`.
 
+### 4.4 Walk sheet — ảnh đi bộ thật thay bản thủ tục
+
+Game đang dùng sheet đi bộ **tạm** sinh bằng code từ 4 ảnh idle (`tools/art-codegen/make_walk_frames.py`). Ảnh thật thay vào **cùng tên file, cùng lưới** là chạy, không sửa code.
+
+**Hợp đồng sheet trong game** (`apps/game-web/public/assets/characters/<tên>/chr_<tên>_walk.png`):
+
+| Mục | Giá trị |
+|---|---|
+| Lưới | **8 cột × 4 hàng**, ô vuông bằng nhau |
+| Thứ tự hàng (trên → dưới) | `NE`, `SE`, `SW`, `NW` (giống turn-around idle) |
+| Cột | 8 khung của một chu kỳ bước, lặp liền mạch (khung 8 nối về khung 1), 10 fps |
+| Ô trong game | 160×160 px, sheet 1280×640, RGBA nền trong suốt |
+| Chân | đế giày của khung thấp nhất trong hàng ở **88%** chiều cao ô (hàng 141); nhân vật cao ~100 px |
+| Khung 1 | gần giống pose idle của hướng đó (hai chân khép) |
+
+**Prompt** — dán STYLE_LOCK (mục 2, giữ dòng "Background" magenta), đính kèm 4 ảnh idle `chr_<tên>_idle_*.png` của đúng nhân vật làm tham chiếu, rồi dán:
+
+```text
+Sprite sheet of the SAME character as the attached reference images, same outfit, same proportions, same line weight and colours.
+Walk cycle, 8 frames per row, 4 rows, arranged as a strict grid of 8 columns x 4 rows of equal square cells, no gaps drawn, no borders, no numbers, no text.
+Row 1: walking towards the upper-right (back three-quarter view, NE). Row 2: walking towards the lower-right (front three-quarter view, SE).
+Row 3: walking towards the lower-left (front three-quarter view, SW). Row 4: walking towards the upper-left (back three-quarter view, NW).
+Each row is one looping step cycle: frame 1 contact with feet together like the idle pose, frames 2-4 right leg steps forward, frame 5 passing, frames 6-8 left leg steps forward, then back to frame 1.
+Subtle body bob (a few pixels), arms swing slightly, no running, no jumping.
+Every cell: the whole figure fits with margin, the character is centred horizontally, the soles of the lowest foot sit on the same horizontal line in every cell (about 88% of the cell height from the top), same figure height in every cell.
+Flat solid pure magenta #FF00FF background everywhere, no floor, no shadow on the ground.
+```
+
+Mô tả nhân vật gắn thêm vào prompt: dùng dòng của nhân vật ở bảng 4.3. Nếu công cụ khó giữ 32 khung một lần, tạo **từng hàng** (8×1) cùng kích thước ô rồi ghép dọc theo thứ tự NE, SE, SW, NW trước khi cắt.
+
+**Đặt file thay thế:**
+
+1. Lưu sheet gốc vào `assets/_incoming/chr_<tên>_walk_raw.png` (không commit). Kích thước bất kỳ nhưng rộng chia hết cho 8, cao chia hết cho 4.
+2. Chạy bằng Python venv: `python tools/art-codegen/slice_walk_sheet.py assets/_incoming/chr_<tên>_walk_raw.png <tên>`. Tool tách nền magenta, dùng một tỉ lệ chung cho cả sheet (nhân vật cao nhất → 100 px), đưa đế giày thấp nhất mỗi hàng về dòng 88% (khung nhấc chân vẫn giữ độ nhấc) và ghi đè `apps/game-web/public/assets/characters/<tên>/chr_<tên>_walk.png`.
+3. Kiểm tra hợp đồng: `python -m unittest test_make_walk_frames` trong `tools/art-codegen` (kích thước, chân 88%, khung khác nhau, vòng lặp liền mạch, không viền magenta).
+4. Ghi dòng mới vào `assets/PROVENANCE.md`, thay dòng "code-derived" của file đó.
+
+Chỉ player đang được nối vào game (`characterSheets.player.walk` trong `case.json`). NPC đứng yên nên dùng ảnh idle; sheet NPC chỉ để xem trước.
+
 ## 5. Tiêu chí tôi dùng để nhận/loại ảnh
 
 - Đúng góc isometric và hướng sáng; không có chữ đọc được, logo, watermark.

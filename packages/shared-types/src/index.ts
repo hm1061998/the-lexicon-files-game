@@ -22,6 +22,8 @@ export type {
   TextureEntry,
   CharacterFacing,
   FacingTextureMap,
+  CharacterSheet,
+  CharacterSheets,
 } from './scene';
 export type { UiStrings } from './case';
 export type {

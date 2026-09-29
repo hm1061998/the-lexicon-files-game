@@ -14,8 +14,19 @@ const caseRaw = {
     { key: 'tex_hero_se', url: '/assets/characters/hero/se.png' },
     { key: 'tex_hero_sw', url: '/assets/characters/hero/sw.png' },
     { key: 'tex_hero_nw', url: '/assets/characters/hero/nw.png' },
+    {
+      key: 'sheet_hero_walk',
+      url: '/assets/characters/hero/walk.png',
+      frameWidth: 160,
+      frameHeight: 160,
+    },
   ],
-  playerTextures: { NE: 'tex_hero_ne', SE: 'tex_hero_se', SW: 'tex_hero_sw', NW: 'tex_hero_nw' },
+  characterSheets: {
+    player: {
+      idle: { NE: 'tex_hero_ne', SE: 'tex_hero_se', SW: 'tex_hero_sw', NW: 'tex_hero_nw' },
+      walk: 'sheet_hero_walk',
+    },
+  },
   timeline: {
     slots: [{ id: '20_00', time: '20:00' }],
     events: [
@@ -644,16 +655,59 @@ describe('case conclusion contract', () => {
     );
   });
 
-  it('exposes the shared textures and the player facing texture map', () => {
+  it('exposes the shared textures and the character sheets', () => {
     const definition = parse();
-    expect(definition.playerTextures).toEqual(caseRaw.playerTextures);
+    expect(definition.characterSheets).toEqual(caseRaw.characterSheets);
     expect(definition.sharedTextures).toEqual(caseRaw.sharedTextures);
   });
 
-  it('rejects a player facing texture that is not a shared texture', () => {
+  const player = caseRaw.characterSheets.player;
+  const withPlayer = (sheet: object) => ({
+    caseRaw: { ...caseRaw, characterSheets: { player: { ...player, ...sheet } } },
+  });
+
+  it('rejects an idle facing texture that is not a shared texture', () => {
     expectValidationIssue(
-      { caseRaw: { ...caseRaw, playerTextures: { ...caseRaw.playerTextures, SW: 'tex_ghost' } } },
-      'case.json.playerTextures.SW: texture "tex_ghost" is not declared in sharedTextures',
+      withPlayer({ idle: { ...player.idle, SW: 'tex_ghost' } }),
+      'case.json.characterSheets.player.idle.SW: texture "tex_ghost" is not declared in sharedTextures',
+    );
+  });
+
+  it('requires a player character sheet', () => {
+    expectValidationIssue(
+      { caseRaw: { ...caseRaw, characterSheets: { hero: player } } },
+      'characterSheets must declare "player"',
+    );
+  });
+
+  it('accepts a character without a walk sheet', () => {
+    const definition = parse(withPlayer({ walk: null }));
+    expect(definition.characterSheets.player.walk).toBeNull();
+  });
+
+  it('rejects a walk sheet that is not declared or not a spritesheet', () => {
+    expectValidationIssue(
+      withPlayer({ walk: 'sheet_ghost' }),
+      'case.json.characterSheets.player.walk: texture "sheet_ghost" is not declared in sharedTextures',
+    );
+    expectValidationIssue(
+      withPlayer({ walk: 'tex_hero_se' }),
+      'case.json.characterSheets.player.walk: texture "tex_hero_se" needs frameWidth and frameHeight',
+    );
+  });
+
+  it('rejects a texture with only one frame dimension', () => {
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          sharedTextures: [
+            ...caseRaw.sharedTextures,
+            { key: 'sheet_half', url: '/assets/half.png', frameWidth: 160 },
+          ],
+        },
+      },
+      'frameWidth and frameHeight go together',
     );
   });
 

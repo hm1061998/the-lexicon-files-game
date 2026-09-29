@@ -4,12 +4,30 @@ import type { Effect } from './case-engine';
 export interface TextureEntry {
   readonly key: string;
   readonly url: string;
+  /** Set (with `frameHeight`) when the file is a spritesheet of equal frames. */
+  readonly frameWidth?: number | undefined;
+  readonly frameHeight?: number | undefined;
 }
 
 export type CharacterFacing = 'NE' | 'SE' | 'SW' | 'NW';
 
 /** Texture key per facing for a character, declared in content. */
 export type FacingTextureMap = Readonly<Record<CharacterFacing, string>>;
+
+/**
+ * Textures of one character: an idle still per facing and, optionally, a walk spritesheet
+ * (8 columns x 4 rows NE, SE, SW, NW; see docs/art/07 "Walk sheet"). `walk: null` keeps the
+ * idle still while moving.
+ */
+export interface CharacterSheet {
+  readonly idle: FacingTextureMap;
+  readonly walk: string | null;
+}
+
+/** Character sheets by character name; `player` is always present. */
+export type CharacterSheets = { readonly player: CharacterSheet } & Readonly<
+  Record<string, CharacterSheet>
+>;
 
 export type SceneAssetType = 'background' | 'wall' | 'prop' | 'interactable' | 'npc';
 
