@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { queueMissingTextures, warnFailedTexture } from '../assetManifest';
 import { PALETTE } from '../constants';
 import { generatePlaceholderTextures } from '../textures';
-import { generatePaperOverlayTexture } from '../paperOverlay';
 import { WorldScene, type WorldOptions } from './WorldScene';
 
 export class BootScene extends Phaser.Scene {
@@ -24,7 +23,6 @@ export class BootScene extends Phaser.Scene {
     this.load.off(Phaser.Loader.Events.FILE_LOAD_ERROR, warnFailedTexture);
     this.cameras.main.setBackgroundColor(PALETTE.inkBlack);
     generatePlaceholderTextures(this);
-    generatePaperOverlayTexture(this);
     this.scene.start(WorldScene.KEY);
   }
 }

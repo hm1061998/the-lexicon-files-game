@@ -14,8 +14,7 @@ import {
   type PlayerSprite,
 } from '../entities/Player';
 import { CHARACTER_FIGURE_HEIGHT, SCENE_FADE_MS } from '../constants';
-import { installDebugHook } from '../debug';
-import { addPaperOverlay } from '../paperOverlay';
+import { installDebugHook, paperOverlayAlpha } from '../debug';
 import { computeDepth } from '../systems/depth';
 import type { Facing } from '../systems/direction';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
@@ -66,7 +65,6 @@ export class WorldScene extends Phaser.Scene {
   private markerBaseY = 0;
   private markerFloat = { offset: 0 };
   private reducedMotion = false;
-  private paperOverlay: Phaser.GameObjects.TileSprite | null = null;
   private transitioning = false;
   private fadeInPending = false;
   private fadeOutHandler: (() => void) | null = null;
@@ -133,7 +131,6 @@ export class WorldScene extends Phaser.Scene {
     const camera = this.cameras.main;
     camera.setBounds(b.x, b.y, b.width, b.height);
     camera.startFollow(this.player, true);
-    this.paperOverlay = addPaperOverlay(this);
     // Fade in only when arriving through a transition; the initial boot stays instant so
     // first-frame input latency is unaffected.
     if (this.fadeInPending && !options.motion.reducedMotion()) camera.fadeIn(SCENE_FADE_MS);
@@ -166,7 +163,7 @@ export class WorldScene extends Phaser.Scene {
       nearbyEvents: () => this.nearbyEventCount,
       triggeredEvents: () => this.triggeredEventCount,
       markerY: () => (this.marker.visible ? this.marker.y : null),
-      paperOverlayAlpha: () => this.paperOverlay?.alpha ?? null,
+      paperOverlayAlpha,
       requestTransition: (sceneId, spawnId) =>
         this.bus.emit('scene:transitionRequested', { sceneId, spawnId }),
       teleport: (x, y) => {
@@ -296,7 +293,6 @@ export class WorldScene extends Phaser.Scene {
       this.cameras.main?.off(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, this.fadeOutHandler);
       this.fadeOutHandler = null;
     }
-    this.paperOverlay = null;
     this.interactionTracker?.clear();
     this.unsubscribeTransition?.();
     this.unsubscribeTransition = null;

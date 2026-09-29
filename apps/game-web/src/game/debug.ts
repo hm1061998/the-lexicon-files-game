@@ -17,6 +17,12 @@ declare global {
   }
 }
 
+/** Opacity of the CSS paper grain layer, or null when it is absent (e.g. `?noPaperOverlay`). */
+export function paperOverlayAlpha(): number | null {
+  const overlay = document.querySelector('.game-paper-overlay');
+  return overlay ? Number(getComputedStyle(overlay).opacity) : null;
+}
+
 /** Dev-only test hook; stripped from production builds via `import.meta.env.DEV`. */
 export function installDebugHook(api: LexiconDebug): () => void {
   if (!import.meta.env.DEV) return () => {};

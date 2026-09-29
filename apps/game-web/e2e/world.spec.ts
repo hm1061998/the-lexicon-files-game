@@ -186,6 +186,30 @@ test('paper overlay is subtle and does not block movement or interaction', async
   expect(alpha!).toBeGreaterThanOrEqual(0.1);
   expect(alpha!).toBeLessThanOrEqual(0.18);
 
+  const overlay = page.locator('.game-paper-overlay');
+  await expect(overlay).toHaveCount(1);
+  await expect(overlay).toHaveCSS('pointer-events', 'none');
+  const topAtCenter = await page.evaluate(() => {
+    const el = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+    return { isOverlay: el?.classList.contains('game-paper-overlay') ?? false, tag: el?.tagName };
+  });
+  expect(topAtCenter.isOverlay).toBe(false);
+  expect(topAtCenter.tag).toBe('CANVAS');
+  const order = await page.evaluate(() => {
+    const ov = document.querySelector('.game-paper-overlay')!;
+    const canvas = document.querySelector('canvas')!;
+    const hud = document.querySelector('.hud')!;
+    return {
+      afterCanvas: !!(canvas.compareDocumentPosition(ov) & Node.DOCUMENT_POSITION_FOLLOWING),
+      beforeHud: !!(ov.compareDocumentPosition(hud) & Node.DOCUMENT_POSITION_FOLLOWING),
+      overlayZ: getComputedStyle(ov).zIndex,
+      hudZ: getComputedStyle(hud).zIndex,
+    };
+  });
+  expect(order.afterCanvas).toBe(true);
+  expect(order.beforeHud).toBe(true);
+  expect(order.overlayZ).toBe(order.hudZ); // both auto: DOM order decides, HUD paints above
+
   const before = await player(page);
   await hold(page, 'd', 300);
   expect((await player(page)).x).toBeGreaterThan(before.x);

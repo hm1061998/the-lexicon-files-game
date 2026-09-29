@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
 import { REGISTERED_CASE_IDS, loadCaseDefinition } from '@lexicon/game-content';
 import type { TextureEntry } from '@lexicon/shared-types';
-import { PAPER_OVERLAY_KEY } from './constants';
 import { facingTextureKey, loadSceneTextures, resolveTextureKey } from './assetManifest';
 
 const publicDir = fileURLToPath(new URL('../../public', import.meta.url));
@@ -31,10 +30,9 @@ describe('content texture manifests', () => {
     }
   });
 
-  it('share the paper overlay texture and map all four player facings', () => {
+  it('map all four player facings', () => {
     for (const definition of cases) {
       const shared = new Set(definition.sharedTextures.map(({ key }) => key));
-      expect(shared.has(PAPER_OVERLAY_KEY)).toBe(true);
       for (const facing of ['NE', 'SE', 'SW', 'NW'] as const) {
         expect(shared.has(definition.playerTextures[facing]), facing).toBe(true);
       }

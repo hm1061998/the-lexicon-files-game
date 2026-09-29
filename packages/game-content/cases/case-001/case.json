@@ -13,8 +13,7 @@
     { "key": "tex_player_ne", "url": "/assets/characters/player/chr_player_idle_ne.png" },
     { "key": "tex_player_se", "url": "/assets/characters/player/chr_player_idle_se.png" },
     { "key": "tex_player_sw", "url": "/assets/characters/player/chr_player_idle_sw.png" },
-    { "key": "tex_player_nw", "url": "/assets/characters/player/chr_player_idle_nw.png" },
-    { "key": "paper_overlay", "url": "/assets/textures/paper_texture.png" }
+    { "key": "tex_player_nw", "url": "/assets/characters/player/chr_player_idle_nw.png" }
   ],
   "playerTextures": {
     "NE": "tex_player_ne",

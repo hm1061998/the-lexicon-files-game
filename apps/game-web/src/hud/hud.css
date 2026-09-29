@@ -99,3 +99,14 @@
   animation: none !important;
   transition: none !important;
 }
+
+/* Paper grain over the world canvas, under the HUD (later siblings paint above). */
+.game-paper-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image: url('/assets/textures/paper_texture.png');
+  background-size: 1024px 1024px;
+  background-repeat: repeat;
+}

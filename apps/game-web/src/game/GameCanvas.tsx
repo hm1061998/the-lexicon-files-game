@@ -342,6 +342,10 @@ function GameRoot({
   const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
   usePauseShortcut(store);
   useNotebookShortcut(store);
+  // Dev-only: `?noPaperOverlay` lets perf measurements compare with and without the grain.
+  const showPaperOverlay = !(
+    import.meta.env.DEV && new URLSearchParams(window.location.search).has('noPaperOverlay')
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -417,6 +421,7 @@ function GameRoot({
         aria-label={strings.caseFile}
         style={{ width: '100%', height: '100%' }}
       />
+      {showPaperOverlay && <div className="game-paper-overlay" aria-hidden="true" />}
       <GameStoreProvider store={store}>
         <LearningStoreProvider store={learning}>
           <SettingsStoreProvider store={settings}>
