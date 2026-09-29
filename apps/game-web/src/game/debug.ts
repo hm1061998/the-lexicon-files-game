@@ -5,6 +5,7 @@ export type LexiconDebug = {
   nearbyEvents(): number;
   triggeredEvents(): number;
   teleport(x: number, y: number): void;
+  markerY(): number | null;
 };
 
 declare global {

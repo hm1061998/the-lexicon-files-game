@@ -13,6 +13,7 @@ import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
 import { InteractionTracker } from '../systems/InteractionTracker';
 import { markerMotion } from '../systems/markerMotion';
+import { markerPositionY } from '../systems/markerFloat';
 
 export type InputLockSource = { isInputLocked(): boolean };
 
@@ -51,7 +52,9 @@ export class WorldScene extends Phaser.Scene {
   private nearbyEventCount = 0;
   private marker!: Phaser.GameObjects.Sprite;
   private markerTween: Phaser.Tweens.Tween | null = null;
+  private markerBaseX = 0;
   private markerBaseY = 0;
+  private markerFloat = { offset: 0 };
   private reducedMotion = false;
   private unsubscribeNearby: (() => void) | null = null;
   private unsubscribeTransition: (() => void) | null = null;
@@ -120,8 +123,8 @@ export class WorldScene extends Phaser.Scene {
     this.marker.setVisible(false);
     this.reducedMotion = options.motion.reducedMotion();
     this.markerTween = this.tweens.add({
-      targets: this.marker,
-      y: `-=${MARKER_FLOAT_DISTANCE}`,
+      targets: this.markerFloat,
+      offset: -MARKER_FLOAT_DISTANCE,
       duration: MARKER_FLOAT_DURATION_MS,
       yoyo: true,
       repeat: -1,
@@ -134,6 +137,7 @@ export class WorldScene extends Phaser.Scene {
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
       triggeredEvents: () => this.triggeredEventCount,
+      markerY: () => (this.marker.visible ? this.marker.y : null),
       teleport: (x, y) => {
         this.player.body.reset(x, y);
         this.player.setDepth(computeDepth(y));
@@ -150,6 +154,7 @@ export class WorldScene extends Phaser.Scene {
 
   override update(): void {
     this.syncMarkerMotion();
+    this.applyMarkerPosition();
     if (!this.keys) return;
     if (this.inputLock.isInputLocked()) {
       movePlayer(this.player, { x: 0, y: 0 });
@@ -178,10 +183,17 @@ export class WorldScene extends Phaser.Scene {
     this.reducedMotion = next;
     if (action === 'pause') {
       this.markerTween?.pause();
-      this.marker.y = this.markerBaseY;
+      this.markerFloat.offset = 0;
     } else if (action === 'resume') {
       this.markerTween?.resume();
     }
+  }
+
+  private applyMarkerPosition(): void {
+    this.marker.setPosition(
+      this.markerBaseX,
+      markerPositionY(this.markerBaseY, this.markerFloat.offset),
+    );
   }
 
   private updateInteract(typing: boolean): void {
@@ -195,8 +207,9 @@ export class WorldScene extends Phaser.Scene {
     const id = this.interactionTracker.update(this.player, this.areas);
     const area = id ? this.areas.find((candidate) => candidate.id === id) : undefined;
     if (area) {
+      this.markerBaseX = area.x;
       this.markerBaseY = area.y + MARKER_OFFSET_Y;
-      this.marker.setPosition(area.x, this.markerBaseY);
+      this.applyMarkerPosition();
       this.marker.setVisible(true);
     } else {
       this.marker.setVisible(false);

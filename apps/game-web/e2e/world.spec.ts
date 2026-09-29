@@ -6,6 +6,7 @@ type DebugApi = {
   nearby(): string | null;
   nearbyEvents(): number;
   teleport(x: number, y: number): void;
+  markerY(): number | null;
 };
 
 declare global {
@@ -115,4 +116,35 @@ test('single canvas and no console errors', async ({ page }) => {
   await openWorld(page);
   await expect(page.locator('canvas')).toHaveCount(1);
   expect(errors).toEqual([]);
+});
+
+test('interaction marker floats, holds still under reduced motion, and floats again', async ({
+  page,
+}) => {
+  await openWorld(page);
+  await page.evaluate(() => window.__lexiconDebug!.teleport(1400, 1100));
+  const markerY = () => page.evaluate(() => window.__lexiconDebug!.markerY());
+  await expect.poll(markerY).not.toBeNull();
+
+  const a = await markerY();
+  await page.waitForTimeout(500);
+  const b = await markerY();
+  expect(a).not.toBe(b);
+
+  await page.keyboard.press('Escape');
+  const pause = page.getByRole('dialog');
+  await expect(pause).toBeVisible();
+  await pause.getByLabel('Giảm chuyển động').check();
+  await page.waitForTimeout(200);
+  const c = await markerY();
+  await page.waitForTimeout(500);
+  const d = await markerY();
+  expect(c).toBe(d);
+
+  await pause.getByLabel('Giảm chuyển động').uncheck();
+  await page.waitForTimeout(200);
+  const e = await markerY();
+  await page.waitForTimeout(500);
+  const f = await markerY();
+  expect(e).not.toBe(f);
 });

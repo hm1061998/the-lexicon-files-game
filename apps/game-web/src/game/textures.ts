@@ -27,11 +27,31 @@ const PLACEHOLDERS: readonly PlaceholderSpec[] = [
   { key: 'ph_door', width: 110, height: 200, fill: PALETTE.mutedGreen, stroke: PALETTE.inkBlack },
   { key: 'ph_npc', width: 48, height: 100, fill: PALETTE.mutedGreen, stroke: PALETTE.inkBlack },
   { key: 'ph_player', width: 48, height: 100, fill: PALETTE.darkBrown, stroke: PALETTE.paperCream },
-  { key: 'ph_marker', width: 24, height: 24, fill: INTERACTION_RED },
   { key: 'ph_missing', width: 64, height: 64, fill: '#FF00FF' },
 ];
 
+/** Interaction marker: red diamond, 2px ink outline, no glow. */
+function generateMarkerTexture(scene: Phaser.Scene): void {
+  if (scene.textures.exists('ph_marker')) return;
+  const size = 24;
+  const mid = size / 2;
+  const g = scene.make.graphics({ x: 0, y: 0 }, false);
+  const points = [
+    new Phaser.Geom.Point(mid, 1),
+    new Phaser.Geom.Point(size - 1, mid),
+    new Phaser.Geom.Point(mid, size - 1),
+    new Phaser.Geom.Point(1, mid),
+  ];
+  g.fillStyle(toColor(INTERACTION_RED), 1);
+  g.fillPoints(points, true);
+  g.lineStyle(2, toColor(PALETTE.inkBlack), 1);
+  g.strokePoints(points, true, true);
+  g.generateTexture('ph_marker', size, size);
+  g.destroy();
+}
+
 export function generatePlaceholderTextures(scene: Phaser.Scene): void {
+  generateMarkerTexture(scene);
   for (const spec of PLACEHOLDERS) {
     if (scene.textures.exists(spec.key)) continue;
     const g = scene.make.graphics({ x: 0, y: 0 }, false);
