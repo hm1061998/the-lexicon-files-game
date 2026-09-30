@@ -7,8 +7,8 @@ import type {
 export const WALL_THICKNESS = 0.25;
 // Updated from deterministic image export metadata; pivot is the footprint centre.
 export const WALL_MODULE_ART = {
-  u: { origin: [0.5, 0.85] as const, scale: 1 },
-  v: { origin: [0.5, 0.85] as const, scale: 1 },
+  u: { origin: [0.5, 110 / 130] as const, scale: 1 },
+  v: { origin: [0.5, 110 / 130] as const, scale: 1 },
 };
 export function expandWalls(walls: readonly WallSegmentDefinition[]): {
   assets: SceneAssetDefinition[];

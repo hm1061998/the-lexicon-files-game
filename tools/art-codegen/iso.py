@@ -50,8 +50,9 @@ SQ = 1 / math.sqrt(2)
 class Cam:
     def __init__(self, mode="iso"):
         self.mode = mode
-        if mode == "iso":
-            s, c = math.sin(PHI), math.cos(PHI)
+        if mode in ("iso", "dimetric"):
+            angle = math.radians(30) if mode == "dimetric" else PHI
+            s, c = math.sin(angle), math.cos(angle)
             self.r = np.array([SQ, -SQ, 0])
             self.d = np.array([s * SQ, s * SQ, -c])
             self.c = np.array([c * SQ, c * SQ, s])
@@ -324,6 +325,9 @@ class Scene:
         alpha_obj = np.maximum(obj.astype(float), lines if bg is not None else 0)
         ink = C["ink"]
         col = rgb * (1 - lines[..., None]) + ink * lines[..., None]
+        if bg == "alpha":
+            # Coverage already lives in alpha: exterior ink must not be multiplied twice.
+            col[~obj] = ink
         # premultiplied downsample
         pm = col * alpha_obj[..., None]
         pm = pm.reshape(H, S, W, S, 3).mean((1, 3))

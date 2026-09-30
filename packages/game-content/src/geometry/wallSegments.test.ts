@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { expandWalls } from './wallSegments';
+import { expandWalls, WALL_MODULE_ART } from './wallSegments';
+import { readFileSync } from 'node:fs';
 import type { WallSegmentDefinition } from '@lexicon/shared-types';
 
 const wall: WallSegmentDefinition = {
@@ -12,6 +13,14 @@ const wall: WallSegmentDefinition = {
   openings: [{ id: 'door', start: 4, end: 6 }],
 };
 describe('expandWalls', () => {
+  it('matches the generated PNG floor pivot metadata', () => {
+    for (const axis of ['u', 'v'] as const) {
+      const png = readFileSync(new URL(`../../../../apps/game-web/public/assets/environment/office/wall_${axis}.png`, import.meta.url));
+      expect(png.readUInt32BE(16)).toBe(80);
+      expect(png.readUInt32BE(20)).toBe(130);
+      expect(WALL_MODULE_ART[axis].origin).toEqual([0.5, 110 / 130]);
+    }
+  });
   it('emits modules and skips openings with exact shared edges', () => {
     const { assets, doorways } = expandWalls([wall]);
     expect(assets).toHaveLength(10);

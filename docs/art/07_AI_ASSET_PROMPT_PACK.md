@@ -1,5 +1,13 @@
 # 07 — Bộ prompt tạo art bằng công cụ AI miễn phí
 
+## Bộ môi trường dimetric có model — Phase 11E
+
+`tools/art-codegen/build_environment.py` tạo sàn, tường, khung cửa và furniture cùng phép chiếu 2:1. Camera module/furniture mới dùng pitch 30°: sin(pitch)=0.5, kết hợp yaw 45° tạo cạnh sàn có độ dốc 1:2. Tham chiếu 35° của art/06 được giữ cho phong cách minh họa; pixel geometry runtime 128×64 là hợp đồng chính xác. Không xoay ảnh front-view để giả cạnh dimetric.
+
+Tường dài 1 đơn vị, dày 0.25, ảnh 80×130, floor pivot `(40,110)`; module dịch `(64,32)` theo u hoặc `(-64,32)` theo v. Khung cửa rộng 2 đơn vị và nền trong suốt. Sàn 16×12 xuất 1792×896; điểm gốc nằm ở `(768,0)`.
+
+Furniture được tái render minh họa với outline, grain và palette cũ, không thay character/evidence. `environment-models.json` lưu footprint và pivot đo trực tiếp từ world geometry; kiểm tra footprint/collision trên logical plane, không lấy hàng alpha cuối làm collider. Hình thoi chạm sàn có đỉnh cuối nên alpha ở hàng cuối không thể phủ 90% chiều ngang.
+
 Tài liệu vận hành (không đổi product rule). Nguồn sự thật về phong cách, kích thước và tên file vẫn là `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md` và ảnh trong `docs/concept/`. Khi có mâu thuẫn, dùng `art/06`.
 
 ## 1. Quy trình
