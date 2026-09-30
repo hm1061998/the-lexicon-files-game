@@ -2,7 +2,7 @@
 schema_version: 1
 updated_at: 2026-09-30T23:59:59+07:00
 phase: phase-11c
-status: in_progress
+status: blocked
 result_commit: a4670bb
 active_spec: docs/superpowers/specs/2026-09-29-phase-11-visual-polish-design.md
 active_plan: docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cleanup.md
@@ -10,7 +10,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cl
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; `result_commit` là commit code cuối đã hoàn tất của Phase 11C (Task 1–3); Task 4 đang làm dở trong working tree, chưa commit.
+- Snapshot duy trì bằng Git; `result_commit` là commit code cuối đã hoàn tất của Phase 11C (Task 1–3); Task 4 đã bị dừng theo yêu cầu người dùng; mã `wip` của Task 4 (`9ee5011`, `7306b1d`) đã commit và push nhưng chưa test, chưa review.
 
 ## Current Phase
 
@@ -22,10 +22,10 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cl
 
 ## Current Status
 
-- Phase 11C tiến độ: Task 1 HUD chrome (`0f916c2`, sửa `2113a70`), Task 2 bong bóng prompt gắn vào vật + viền đỏ (`196cd85`, sửa `687b48f`), Task 3 độ bền engine (`a4670bb`) đã commit và qua review. Task 4 (tường ngăn, nhãn phòng `labels`, nội thất dày, minimap tường ngăn) **đang làm dở, chưa commit**; Task 5 (vệ sinh tồn đọng) và Task 6 (verification + memory) chưa bắt đầu.
-- Điều khoản OpenAI cho ảnh nhân vật ChatGPT đã được chủ dự án xác nhận (chat 2026-09-30, commit `71ac432`); nhánh `dev` đã push lên `origin`.
+- Phase 11C tiến độ: Task 1 HUD chrome (`0f916c2`, sửa `2113a70`), Task 2 bong bóng prompt gắn vào vật + viền đỏ (`196cd85`, sửa `687b48f`), Task 3 độ bền engine (`a4670bb`) đã commit và qua review. Task 4 (tường ngăn, nhãn phòng `labels`, nội thất dày, minimap tường ngăn) **đã dừng theo yêu cầu người dùng** vì kết quả chưa đạt kỳ vọng; mã `wip` ở `9ee5011`/`7306b1d` (chưa chạy test, chưa review) đã push, nên coi là bản nháp chưa đảm bảo build/E2E. Task 5 (vệ sinh tồn đọng) và Task 6 (verification + memory) **chưa làm, chờ người dùng yêu cầu**.
+- Điều khoản OpenAI cho ảnh nhân vật ChatGPT đã được chủ dự án xác nhận (chat 2026-09-30, commit `71ac432`); nhánh `dev` đã push lên `origin` (tới `9423fe4` + commit memory này).
 - Phase 11B: manifest texture theo scene trong `packages/game-content`; tường thẳng + nội thất; ảnh evidence trong modal; paper overlay CSS; marker/terminal/hằng số/transcript/lint/test hook; sheet đi bộ 8x4 (tạm, sinh bằng code) + hoạt ảnh theo frame; minimap phím `M`. Gate PASS (lint/test/build/typecheck/format/E2E 67 x2 không flaky/memory/unittest 25); ledger `docs/ai/2026-09-30-phase-11b-verification.md` (có đối chiếu concept và sai lệch).
-- Scene chưa giống concept về cấu trúc phòng (Task 4 đang xử lý; concept isometric cắt lớp, game 2D trục thẳng nên vẫn khác cấu trúc).
+- Scene chưa giống concept về cấu trúc phòng (Task 4 bị dừng, người dùng chưa hài lòng — xem Phase 11D; concept isometric cắt lớp, game 2D trục thẳng nên vẫn khác cấu trúc).
 - Font nội dung `Cambria, "Times New Roman", Georgia, serif`; đã xác nhận dấu thanh tiếng Việt hiển thị đúng.
 
 ## Completed
@@ -36,7 +36,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cl
 
 ## In Progress
 
-- Phase 11C Task 4 (subagent đang chạy): thay đổi chưa commit trong working tree (scene JSON, partition_*.png, minimap, WorldScene labels). Nếu phiên bị ngắt: kiểm `git status`, chạy `npm run test:e2e`, đừng commit WIP chưa qua test.
+- Không có việc đang chạy. Phase 11C tạm dừng sau Task 3; Task 4 đã dừng, Task 5–6 chờ người dùng yêu cầu. Trước khi tiếp tục cần chạy `npm run test` và `npm run test:e2e` để biết mã `wip` Task 4 còn dùng được không (nếu không thì `git revert` hai commit `wip` hoặc làm lại theo Phase 11D).
 
 ## Active Decisions
 
@@ -57,11 +57,11 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cl
 
 ## Next Actions
 
-- Hoàn tất Task 4 (commit, review), rồi Task 5 (vệ sinh: Ctrl/Alt/Meta cho WASD/E, aria minimap, paper texture nhỏ, bỏ sheet NPC không dùng, khung đi bộ có vung tay, triage minor Phase 10 cũ) và Task 6 (verification + đối chiếu concept + memory).
-- **Sau Phase 11C:** làm Phase 11D theo `docs/ai/2026-09-30-phase-11d-user-feedback-backlog.md` (phòng quá rộng/đồ thưa, vật chứng trên bàn, cửa ra hành lang, tên NPC trên đầu, NPC xoay hướng khi đối thoại, nhịp thở); Task 4 `wip` đã commit nhưng người dùng chưa hài lòng — xem lại bố cục.
-- Đọc plan Phase 11C và ledger SDD `.superpowers/sdd/2026-09-30-phase-11c-concept-fidelity-and-cleanup/progress.md` (git-ignored) nếu còn; nếu mất, dựa vào `git log` từ `5908b15`.
-- Tạo walk sheet thật (8x4) theo `docs/art/07` §Walk sheet, chạy `slice_walk_sheet.py`, thay file cùng tên (tùy chọn).
-- Người dùng review/merge `dev`; chờ yêu cầu Phase 12 (không tự bắt đầu).
+- **Chờ người dùng yêu cầu.** Không tự làm Task 5–6 của Phase 11C, không tự làm Phase 11D/Phase 12.
+- Khi được yêu cầu: quyết định số phận mã `wip` Task 4 (kiểm test/E2E; giữ, sửa hoặc revert) rồi làm Phase 11D theo `docs/ai/2026-09-30-phase-11d-user-feedback-backlog.md` (phòng nhỏ hơn + nội thất logic, vật chứng trên bàn, cửa ra hành lang, tên NPC, NPC xoay hướng, nhịp thở).
+- Sau đó Task 5 (vệ sinh: Ctrl/Alt/Meta cho WASD/E, aria minimap, paper texture nhỏ, bỏ sheet NPC không dùng, khung đi bộ có vung tay, triage minor Phase 10 cũ) và Task 6 (verification + đối chiếu concept + memory) của plan Phase 11C.
+- Ledger SDD `.superpowers/sdd/2026-09-30-phase-11c-concept-fidelity-and-cleanup/progress.md` (git-ignored) có thể còn; nếu mất, dựa vào `git log` từ `5908b15`.
+- Tạo walk sheet thật (8x4) theo `docs/art/07` §Walk sheet, chạy `slice_walk_sheet.py`, thay file cùng tên (tùy chọn); người dùng tự review/merge `dev`.
 
 ## Verification
 
