@@ -1,16 +1,16 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T11:16:00+07:00
+updated_at: 2026-09-30T11:24:00+07:00
 phase: phase-11d
 status: in_progress
-result_commit: cae3e02
+result_commit: aced4c1
 active_spec: docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md
 active_plan: none
 ---
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec `cae3e02`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, bố cục được xem lại trong Phase 11D.
+- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec/backlog/art update `aced4c1`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, bố cục được xem lại trong Phase 11D.
 
 ## Current Phase
 
@@ -37,7 +37,7 @@ active_plan: none
 
 ## In Progress
 
-- Spec `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md` đã commit (`cae3e02`), chưa có plan/code; chờ người dùng review spec.
+- Spec Phase 11D có cập nhật walk sheet player/NPC tại `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md` (commit `aced4c1`); chưa có plan/code, chờ người dùng review bản cập nhật.
 
 ## Active Decisions
 
@@ -46,7 +46,7 @@ active_plan: none
 - `game-core`/`learning-engine` TS thuần; UI qua store/event; không hardcode Case #001 trong React/Phaser; gameplay local-first, không API.
 - Save case V4, IndexedDB `lexicon-game-saves` v1; `lexicon-learning` v1 (record V2); `lexicon-settings` v1. Case đóng: store chặn di chuyển, sổ tay, pause, minimap và ghi tiến độ. Playwright worker = 1; E2E cần dev server; commerce mặc định `free`.
 - Font hệ thống, ngăn xếp serif; palette khóa theo `docs/art/06` §5; đỏ chỉ cho clue/evidence/objective/contradiction/marker.
-- Art: ảnh AI do người dùng tạo, xử lý bằng `tools/art-codegen` (`.venv-art-codegen`, ignored) ra PNG trong `assets/`; `assets/_incoming/` không commit; `paper_grain_cream_tile_1024.png` là nguồn. Python unittest 35 pass; arm swing bị bỏ vì tay dính silhouette thân.
+- Art: ảnh AI do người dùng tạo, xử lý bằng `tools/art-codegen` (`.venv-art-codegen`, ignored) ra PNG trong `assets/`; `assets/_incoming/` không commit; `paper_grain_cream_tile_1024.png` là nguồn. Python unittest 35 pass; arm swing bị bỏ vì tay dính silhouette thân. Phase 11D yêu cầu thay walk sheet procedural player và thêm walk sheet bốn hướng cho Anna, Leo, David, chuẩn 8×4/10 fps theo `docs/art/07`.
 - Texture manifest = trường `textures` của scene JSON; `characterSheets`/`sharedTextures` ở `case.json` (CaseDefinition), đều trong `packages/game-content`; tải theo scene (`loadSceneTextures`); `loader.timeout` 15 s.
 - Paper overlay world là CSS `.game-paper-overlay`; hoạt ảnh đi bộ không bị "Giảm chuyển động" tắt (phản hồi chức năng); anim key `actor_action_direction` (`player_walk_se`).
 - Minor ngoài phạm vi còn lại: input trong lúc tải scene, hook dev `requestTransition` bỏ qua store, hoạt ảnh đi tại chỗ khi va chạm, prompt chưa có FPS GPU thật.
