@@ -3,6 +3,7 @@ import type { SceneDefinition } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
 import { effectSchema } from './caseEngine';
 import { assetPathSchema } from './assetPath';
+import { validateSceneGeometry } from '../geometry/sceneGeometry';
 
 const rectCollisionSchema = z
   .object({
@@ -28,21 +29,38 @@ const logicalPointSchema = z.object({ u: z.number().finite(), v: z.number().fini
 
 export const MIN_OPENING_WIDTH = 2;
 const footprintSchema = logicalCollisionSchema.omit({ type: true });
-const wallOpeningSchema = z.object({ id: z.string().min(1), start: z.number().int(), end: z.number().int() }).strict();
-const wallSegmentSchema = z.object({
-  id: z.string().min(1), kind: z.enum(['office', 'archive']), axis: z.enum(['u', 'v']),
-  line: z.number().finite(), start: z.number().int(), end: z.number().int(), openings: z.array(wallOpeningSchema),
-}).strict().superRefine((wall, ctx) => {
-  if (wall.start >= wall.end) ctx.addIssue({ code: 'custom', message: 'wall start must be before end' });
-  const sorted = [...wall.openings].sort((a, b) => a.start - b.start);
-  const ids = new Set<string>();
-  sorted.forEach((o, i) => {
-    if (ids.has(o.id)) ctx.addIssue({ code: 'custom', message: `duplicate opening id "${o.id}"` });
-    ids.add(o.id);
-    if (o.start < wall.start || o.end > wall.end || o.end - o.start < MIN_OPENING_WIDTH) ctx.addIssue({ code: 'custom', message: 'opening must be within wall and at least 2 units wide' });
-    if (i > 0 && o.start < sorted[i - 1]!.end) ctx.addIssue({ code: 'custom', message: 'overlapping openings' });
+const wallOpeningSchema = z
+  .object({ id: z.string().min(1), start: z.number().int(), end: z.number().int() })
+  .strict();
+const wallSegmentSchema = z
+  .object({
+    id: z.string().min(1),
+    kind: z.enum(['office', 'archive']),
+    axis: z.enum(['u', 'v']),
+    line: z.number().finite(),
+    start: z.number().int(),
+    end: z.number().int(),
+    openings: z.array(wallOpeningSchema),
+  })
+  .strict()
+  .superRefine((wall, ctx) => {
+    if (wall.start >= wall.end)
+      ctx.addIssue({ code: 'custom', message: 'wall start must be before end' });
+    const sorted = [...wall.openings].sort((a, b) => a.start - b.start);
+    const ids = new Set<string>();
+    sorted.forEach((o, i) => {
+      if (ids.has(o.id))
+        ctx.addIssue({ code: 'custom', message: `duplicate opening id "${o.id}"` });
+      ids.add(o.id);
+      if (o.start < wall.start || o.end > wall.end || o.end - o.start < MIN_OPENING_WIDTH)
+        ctx.addIssue({
+          code: 'custom',
+          message: 'opening must be within wall and at least 2 units wide',
+        });
+      if (i > 0 && o.start < sorted[i - 1]!.end)
+        ctx.addIssue({ code: 'custom', message: 'overlapping openings' });
+    });
   });
-});
 
 const surfaceOffsetSchema = z
   .object({
@@ -216,16 +234,45 @@ export const sceneDefinitionSchema = z
   .strict()
   .superRefine((scene, ctx) => {
     if (scene.walls !== undefined) {
-      if (!scene.projection || !('u' in scene.worldBounds)) ctx.addIssue({ code: 'custom', path: ['walls'], message: 'walls require a dimetric scene' });
+      if (!scene.projection || !('u' in scene.worldBounds))
+        ctx.addIssue({
+          code: 'custom',
+          path: ['walls'],
+          message: 'walls require a dimetric scene',
+        });
       const wallIds = new Set<string>();
       for (const wall of scene.walls) {
-        if (wallIds.has(wall.id)) ctx.addIssue({ code: 'custom', path: ['walls'], message: `duplicate wall id "${wall.id}"` });
+        if (wallIds.has(wall.id))
+          ctx.addIssue({
+            code: 'custom',
+            path: ['walls'],
+            message: `duplicate wall id "${wall.id}"`,
+          });
         wallIds.add(wall.id);
       }
       scene.assets.forEach((asset, index) => {
-        const f = asset.footprint, c = asset.collision;
-        if (['wall', 'prop', 'interactable'].includes(asset.type) && !asset.restsOn && !f) ctx.addIssue({ code: 'custom', path: ['assets', index], message: `asset "${asset.id}" requires footprint` });
-        if (f && c && ('u' in c) && (c.u < f.u - 1e-9 || c.v < f.v - 1e-9 || c.u + c.width > f.u + f.width + 1e-9 || c.v + c.height > f.v + f.height + 1e-9)) ctx.addIssue({ code: 'custom', path: ['assets', index], message: `asset "${asset.id}": collision must be inside footprint` });
+        const f = asset.footprint,
+          c = asset.collision;
+        if (['wall', 'prop', 'interactable'].includes(asset.type) && !asset.restsOn && !f)
+          ctx.addIssue({
+            code: 'custom',
+            path: ['assets', index],
+            message: `asset "${asset.id}" requires footprint`,
+          });
+        if (
+          f &&
+          c &&
+          'u' in c &&
+          (c.u < f.u - 1e-9 ||
+            c.v < f.v - 1e-9 ||
+            c.u + c.width > f.u + f.width + 1e-9 ||
+            c.v + c.height > f.v + f.height + 1e-9)
+        )
+          ctx.addIssue({
+            code: 'custom',
+            path: ['assets', index],
+            message: `asset "${asset.id}": collision must be inside footprint`,
+          });
       });
     }
     const seenIds = new Set<string>();
@@ -351,5 +398,8 @@ export function parseSceneDefinition(raw: unknown, source: string): SceneDefinit
     const issues = result.error.issues.map(formatIssue);
     throw new ContentValidationError(source, issues);
   }
-  return result.data as unknown as SceneDefinition;
+  const scene = result.data as unknown as SceneDefinition;
+  const geometryErrors = validateSceneGeometry(scene);
+  if (geometryErrors.length) throw new ContentValidationError(source, geometryErrors);
+  return scene;
 }

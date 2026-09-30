@@ -1,4 +1,6 @@
 export { sceneDefinitionSchema, parseSceneDefinition } from './schema/scene';
+export { expandWalls, WALL_THICKNESS, WALL_MODULE_ART } from './geometry/wallSegments';
+export { validateSceneGeometry, PLAYER_LOGICAL_BODY } from './geometry/sceneGeometry';
 export { conditionSchema, effectSchema } from './schema/caseEngine';
 export { parseCaseDefinition } from './schema/caseDefinition';
 export {

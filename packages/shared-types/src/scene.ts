@@ -101,6 +101,8 @@ export type SpawnPointDefinition = { readonly x: number; readonly y: number } | 
 
 interface SceneAssetCommon {
   readonly footprint?: LogicalRectFootprint | undefined;
+  /** Original segment span, for classifying expanded wall modules as occluders. */
+  readonly wallSpan?: number | undefined;
   readonly id: string;
   readonly type: SceneAssetType;
   readonly texture: string;
