@@ -121,11 +121,11 @@
 
 **Interfaces:**
 - Consumes: scene clock `timeMs/deltaMs`, `breathingPhaseOffset(characterId)`, trạng thái movement/dialogue/reduced-motion và scale API của Phaser sprite.
-- Produces: pure helper `breathing(state: BreathingState): { scaleX: 1; scaleY: number }` với amplitude/period nhỏ hơn 0.008/1800ms và blend-weight tường minh; per-actor blend state do `WorldScene` sở hữu, không dùng timer/global singleton.
+- Produces: `updateBreathingWeight(currentWeight: number, idle: boolean, deltaMs: number): number` và `breathing(state: BreathingState): { scaleX: 1; scaleY: number }`, với `BreathingState={timeMs:number; phaseOffset:number; idleWeight:number; reducedMotion:boolean}`; per-actor blend state do `WorldScene` sở hữu, không dùng timer/global singleton.
 
-- [ ] **Step 1: Viết test unit thất bại** cho biên độ nhỏ hơn ±0.8%, chu kỳ dài hơn 1.8s, phase offset khác nhau; scale trung tính ở walking/dialogue/reducedMotion; blend weight clamp với delta 0/âm/lớn và không tạo NaN.
+- [ ] **Step 1: Viết test unit thất bại** cho amplitude ±0.0035, period 3200ms, phase offset khác nhau; reducedMotion trả scale trung tính; `updateBreathingWeight` clamp weight 0..1, bỏ qua delta âm, cap delta ở 100ms và không tạo NaN.
 - [ ] **Step 2: Chạy `breathing.test.ts`** xác nhận helper chưa hỗ trợ envelope/blend mới.
-- [ ] **Step 3: Implement pure breathing output** với smooth idle weight, sin phase ổn định và scaleX=1; chọn amplitude/period/blend duration trong phạm vi spec, giữ đúng một bộ giá trị có test.
+- [ ] **Step 3: Implement `updateBreathingWeight(currentWeight, idle, deltaMs)`** tiến/lùi tuyến tính trong 450ms, cap `deltaMs` tối đa 100ms; implement `breathing(state)` với `scaleY=1+sin((timeMs/3200)×2π+phaseOffset)×0.0035×idleWeight`, `scaleX=1`, và neutral scale khi reduced motion.
 - [ ] **Step 4: Thêm browser tests thất bại** cho player và NPC: idle scale dao động nhỏ/liên tục; walk/dialogue/reduced-motion về trung tính theo blend; feet screen position/collider/logical position không đổi.
 - [ ] **Step 5: Tích hợp per-actor weight vào `WorldScene`** cho player/NPC trên scene clock; khi walking/dialogue/reducedMotion bắt đầu hoặc kết thúc thì blend weight tiến/lùi có delta cap, mỗi NPC giữ phase offset ổn định; reset/cleanup state theo scene lifecycle.
 - [ ] **Step 6: Chạy unit và E2E** với idle→walk→idle, dialogue→idle và reduced-motion; lặp E2E animation nếu runner hỗ trợ để loại flake; kiểm tra screenshot/scale range và foot anchor.
