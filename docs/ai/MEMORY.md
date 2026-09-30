@@ -1,31 +1,31 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T11:24:00+07:00
+updated_at: 2026-09-30T11:41:00+07:00
 phase: phase-11d
 status: in_progress
-result_commit: aced4c1
+result_commit: c2f7b50
 active_spec: docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md
 active_plan: none
 ---
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec/backlog/art update `aced4c1`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, bố cục được xem lại trong Phase 11D.
+- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec update `c2f7b50`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, scene được dựng lại trong Phase 11D.
 
 ## Current Phase
 
-- Phase 11C Task 5–6 đã hoàn tất trên `dev`; Task 4 WIP được chuyển sang điều chỉnh trong Phase 11D, không được tính đạt. Spec Phase 11D đã viết/commit, chờ người dùng duyệt trước khi lập plan. Phase 12 chưa bắt đầu.
+- Phase 11C Task 5–6 đã hoàn tất trên `dev`; Task 4 WIP được chuyển sang điều chỉnh trong Phase 11D, không được tính đạt. Người dùng duyệt hướng dimetric 2:1; spec chuyển toàn bộ scene chơi được Case #001 sang logical plane + projection. Chờ duyệt spec trước plan. Phase 12 chưa bắt đầu.
 
 ## Active Goal
 
-- Thực hiện Phase 11D theo spec đã duyệt `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md`: thu gọn/bố trí scene, đặt vật chứng trên bàn, đưa cửa lên tường, tên và hướng NPC, nhịp thở.
+- Thực hiện Phase 11D theo spec được duyệt `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md`: chuyển Case #001 sang dimetric 2:1, dựng lại scene, đặt vật chứng trên bàn, đưa cửa lên tường, tên/hướng/nhịp thở NPC/player và walk sheet mới.
 
 ## Current Status
 
 - Phase 11C Task 1 HUD chrome (`0f916c2`, sửa `2113a70`), Task 2 prompt/outline (`196cd85`, sửa `687b48f`), Task 3 engine (`a4670bb`) đã commit. Task 4 layout WIP (`9ee5011`, `7306b1d`) chưa đạt mong đợi, chuyển sang 11D. Task 5 commit `9ef78aa`; Task 6 ledger `ba337b9`. Gate và so sánh ảnh ở `docs/ai/2026-09-30-phase-11c-verification.md`.
 - Điều khoản OpenAI cho ảnh nhân vật ChatGPT đã được chủ dự án xác nhận (chat 2026-09-30, commit `71ac432`); các commit Phase 11C mới hiện chỉ ở local `dev`, chưa push.
 - Phase 11B: manifest texture theo scene trong `packages/game-content`; tường thẳng + nội thất; ảnh evidence trong modal; paper overlay CSS; marker/terminal/hằng số/transcript/lint/test hook; sheet đi bộ 8x4 (tạm, sinh bằng code) + hoạt ảnh theo frame; minimap phím `M`. Gate PASS (lint/test/build/typecheck/format/E2E 67 x2 không flaky/memory/unittest 25); ledger `docs/ai/2026-09-30-phase-11b-verification.md` (có đối chiếu concept và sai lệch).
-- Scene còn khác concept: game 2D trục thẳng, concept isometric; sàn rộng, nội thất thưa, meeting minutes cạnh bàn thay vì trên mặt bàn, cửa đứng trên sàn. Phase 11D backlog ghi đủ feedback.
+- Runtime hiện vẫn là tọa độ 2D trục thẳng; Phase 11D đã được đổi scope sang dimetric 2:1 theo yêu cầu. Trước chuyển đổi: sàn rộng, nội thất thưa, meeting minutes cạnh bàn, cửa đứng trên sàn.
 - Font nội dung `Cambria, "Times New Roman", Georgia, serif`; đã xác nhận dấu thanh tiếng Việt hiển thị đúng.
 
 ## Completed
@@ -37,11 +37,12 @@ active_plan: none
 
 ## In Progress
 
-- Spec Phase 11D có cập nhật walk sheet player/NPC tại `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md` (commit `aced4c1`); chưa có plan/code, chờ người dùng review bản cập nhật.
+- Spec Phase 11D được cập nhật/commit `c2f7b50`: dimetric 2:1, projection, controls, collision/depth/minimap, scene dựng lại, evidence tabletop, cửa, NPC và walk sheets. Chưa có plan/code; chờ người dùng review spec.
 
 ## Active Decisions
 
 - Tuân theo product truth docs/01–03 và `docs/architecture/ARCHITECTURE.md`; mâu thuẫn tài liệu thì hỏi. Spec và plan viết tiếng Việt (AGENTS.md). Chỉ npm + Nx, không thêm dependency nếu native đủ.
+- Phase 11D dùng dimetric 2:1, projector logical `(u,v)` sang `(x,y)`, W=NW/D=NE/S=SE/A=SW; collision logic nằm trên logical plane. Giữ Phaser/React/event architecture và gameplay state.
 - Người dùng tự merge `dev` vào `main`; không hỏi hay đề xuất merge. Ưu tiên tối ưu token: subagent sonnet cho task, opus chỉ final review, prompt ngắn trỏ file brief, gộp task nhỏ.
 - `game-core`/`learning-engine` TS thuần; UI qua store/event; không hardcode Case #001 trong React/Phaser; gameplay local-first, không API.
 - Save case V4, IndexedDB `lexicon-game-saves` v1; `lexicon-learning` v1 (record V2); `lexicon-settings` v1. Case đóng: store chặn di chuyển, sổ tay, pause, minimap và ghi tiến độ. Playwright worker = 1; E2E cần dev server; commerce mặc định `free`.
@@ -59,7 +60,7 @@ active_plan: none
 
 - Review/duyệt spec tiếng Việt Phase 11D.
 - Viết và xin duyệt implementation plan Phase 11D trước khi code.
-- Thực hiện Phase 11D theo từng nhóm trong plan; giữ 2D top-down, gameplay/content IDs và product rules ổn định.
+- Chuyển Phase 11D sang plan sau khi spec được duyệt; giữ game 2D isometric dimetric, gameplay/content IDs và product rules ổn định.
 - Phase 12 chờ chỉ đạo sau 11D.
 
 ## Verification
