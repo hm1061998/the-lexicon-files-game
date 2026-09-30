@@ -1,20 +1,20 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T11:41:00+07:00
+updated_at: 2026-09-30T12:03:00+07:00
 phase: phase-11d
 status: in_progress
-result_commit: c2f7b50
+result_commit: e666fb7
 active_spec: docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-09-30-phase-11d-isometric-dimetric.md
 ---
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec update `c2f7b50`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, scene được dựng lại trong Phase 11D.
+- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec `c2f7b50`, plan `e666fb7`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, scene được dựng lại trong Phase 11D.
 
 ## Current Phase
 
-- Phase 11C Task 5–6 đã hoàn tất trên `dev`; Task 4 WIP được chuyển sang điều chỉnh trong Phase 11D, không được tính đạt. Người dùng duyệt hướng dimetric 2:1; spec chuyển toàn bộ scene chơi được Case #001 sang logical plane + projection. Chờ duyệt spec trước plan. Phase 12 chưa bắt đầu.
+- Phase 11C Task 5–6 đã hoàn tất trên `dev`; Task 4 WIP được chuyển sang điều chỉnh trong Phase 11D, không được tính đạt. Người dùng đã duyệt spec dimetric 2:1; plan đã commit và chờ review trước khi code. Native inline được chọn. Phase 12 chưa bắt đầu.
 
 ## Active Goal
 
@@ -37,12 +37,12 @@ active_plan: none
 
 ## In Progress
 
-- Spec Phase 11D được cập nhật/commit `c2f7b50`: dimetric 2:1, projection, controls, collision/depth/minimap, scene dựng lại, evidence tabletop, cửa, NPC và walk sheets. Chưa có plan/code; chờ người dùng review spec.
+- Spec Phase 11D `c2f7b50` và plan tiếng Việt `e666fb7` đã commit; plan gồm 8 task, chưa có implementation; chờ người dùng review/duyệt plan.
 
 ## Active Decisions
 
 - Tuân theo product truth docs/01–03 và `docs/architecture/ARCHITECTURE.md`; mâu thuẫn tài liệu thì hỏi. Spec và plan viết tiếng Việt (AGENTS.md). Chỉ npm + Nx, không thêm dependency nếu native đủ.
-- Phase 11D dùng dimetric 2:1, projector logical `(u,v)` sang `(x,y)`, W=NW/D=NE/S=SE/A=SW; collision logic nằm trên logical plane. Giữ Phaser/React/event architecture và gameplay state.
+- Phase 11D dùng dimetric 2:1, projector logical `(u,v)` sang `(x,y)`, W=NW/D=NE/S=SE/A=SW; collision logic nằm trên logical plane. Giữ Phaser/React/event architecture và gameplay state. Người dùng chọn native inline cho implementation Phase 11D.
 - Người dùng tự merge `dev` vào `main`; không hỏi hay đề xuất merge. Ưu tiên tối ưu token: subagent sonnet cho task, opus chỉ final review, prompt ngắn trỏ file brief, gộp task nhỏ.
 - `game-core`/`learning-engine` TS thuần; UI qua store/event; không hardcode Case #001 trong React/Phaser; gameplay local-first, không API.
 - Save case V4, IndexedDB `lexicon-game-saves` v1; `lexicon-learning` v1 (record V2); `lexicon-settings` v1. Case đóng: store chặn di chuyển, sổ tay, pause, minimap và ghi tiến độ. Playwright worker = 1; E2E cần dev server; commerce mặc định `free`.
@@ -54,13 +54,13 @@ active_plan: none
 
 ## Blockers
 
-- Chờ người dùng duyệt spec Phase 11D trước khi lập plan; đây là cổng bắt buộc trong `.agents/skills/brainstorming/SKILL.md` và AGENTS.md.
+- Chờ người dùng duyệt plan Phase 11D trước khi code; đây là review gate của AGENTS.md/`writing-plans`.
 
 ## Next Actions
 
-- Review/duyệt spec tiếng Việt Phase 11D.
-- Viết và xin duyệt implementation plan Phase 11D trước khi code.
-- Chuyển Phase 11D sang plan sau khi spec được duyệt; giữ game 2D isometric dimetric, gameplay/content IDs và product rules ổn định.
+- Review/duyệt plan tiếng Việt Phase 11D.
+- Sau khi duyệt, thực hiện plan native theo từng task và gate.
+- Giữ game 2D isometric dimetric; bảo toàn gameplay/content IDs/product rules khi thực hiện plan đã duyệt.
 - Phase 12 chờ chỉ đạo sau 11D.
 
 ## Verification
@@ -69,7 +69,7 @@ active_plan: none
 
 ## Latest Handoff
 
-- Tiếp tục Phase 11D từ cổng review spec; sau khi duyệt, plan review → implementation theo từng phase gate.
+- Tiếp tục Phase 11D từ cổng review plan `docs/superpowers/plans/2026-09-30-phase-11d-isometric-dimetric.md`; native implementation sau khi người dùng duyệt.
 
 ## Required Reading
 
