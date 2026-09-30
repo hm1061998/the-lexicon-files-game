@@ -47,6 +47,9 @@ type DebugApi = {
   logicalPlayer(): { u: number; v: number } | null;
   playerTexture(): string;
   textureOf(id: string): string | undefined;
+  npcTexture(id: string): string | undefined;
+  npcScaleY(id: string): number | undefined;
+  npcName(id: string): string | undefined;
   playerAnim(): { key: string | null; frame: number | null; playing: boolean };
   depthOf(id: string): number;
   nearby(): string | null;
@@ -105,6 +108,35 @@ test('D moves northeast along the selected dimetric projection', async ({ page }
   const after = await player(page);
   expect(after.x - before.x).toBeGreaterThanOrEqual(40);
   expect(before.y - after.y).toBeGreaterThanOrEqual(15);
+});
+
+test('NPC name comes from case content and dialogue faces player and NPC toward each other', async ({ page }) => {
+  await openWorld(page);
+  const anna = logicalPosition(officePositions, 'anna');
+  await page.evaluate(([u, v]) => window.__lexiconDebug!.teleportLogical(u! + 0.3, v! + 0.6), [anna.u, anna.v]);
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBe('anna');
+  expect(await page.evaluate(() => window.__lexiconDebug!.npcName('anna'))).toBe('Anna Reed');
+  await page.keyboard.press('e');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_ne');
+  expect(await page.evaluate(() => window.__lexiconDebug!.npcTexture('anna'))).toBe('tex_anna_sw');
+  await page.getByRole('button', { name: 'Đóng' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  expect(await page.evaluate(() => window.__lexiconDebug!.npcTexture('anna'))).toBe('tex_anna_sw');
+});
+
+test('NPC breathing stays visual-only and stops during dialogue', async ({ page }) => {
+  await openWorld(page);
+  await page.waitForTimeout(500);
+  const before = await page.evaluate(() => window.__lexiconDebug!.npcScaleY('anna'));
+  expect(before).toBeGreaterThanOrEqual(0.992);
+  expect(before).toBeLessThanOrEqual(1.008);
+  const anna = logicalPosition(officePositions, 'anna');
+  await page.evaluate(([u, v]) => window.__lexiconDebug!.teleportLogical(u! + 0.3, v! + 0.6), [anna.u, anna.v]);
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBe('anna');
+  await page.keyboard.press('e');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.npcScaleY('anna'))).toBe(1);
 });
 
 test('player cannot walk through the desk', async ({ page }) => {

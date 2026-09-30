@@ -22,14 +22,25 @@ export function connectCaseEngine(
   store: GameStore,
   definition: CaseDefinition,
 ): () => void {
-  return bus.on('interaction:triggered', ({ interactableId }) => {
+  let activeDialogueNpcId: string | null = null;
+  const unsubscribeStore = store.subscribe((next, previous) => {
+    if (previous.dialogueSession && !next.dialogueSession) {
+      const npcId = activeDialogueNpcId ?? previous.dialogueSession.npcId;
+      activeDialogueNpcId = null;
+      bus.emit('dialogue:ended', { npcId });
+    }
+  });
+  const unsubscribeBus = bus.on('interaction:triggered', ({ interactableId }) => {
     if (store.getState().inputLocked) return;
     const currentScene = definition.scenes.find(({ id }) => id === store.getState().activeSceneId);
     const interaction = currentScene?.assets.find(
       (asset) => asset.id === interactableId,
     )?.interaction;
     if (interaction?.npcId) {
-      store.getState().startDialogue(interaction.npcId);
+      if (store.getState().startDialogue(interaction.npcId)) {
+        activeDialogueNpcId = interaction.npcId;
+        bus.emit('dialogue:started', { npcId: interaction.npcId });
+      }
       return;
     }
     if (interaction?.transition) {
@@ -45,4 +56,9 @@ export function connectCaseEngine(
       }
     }
   });
+  return () => {
+    unsubscribeBus();
+    unsubscribeStore();
+    activeDialogueNpcId = null;
+  };
 }

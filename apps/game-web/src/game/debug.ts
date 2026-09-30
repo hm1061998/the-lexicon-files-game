@@ -7,6 +7,9 @@ export type LexiconDebug = {
   depthOf(id: string): number;
   /** Texture key currently rendered for a scene asset (including `ph_missing` fallbacks). */
   textureOf(id: string): string | undefined;
+  npcTexture(id: string): string | undefined;
+  npcScaleY(id: string): number | undefined;
+  npcName(id: string): string | undefined;
   /** Texts of the room labels drawn in the current scene, in content order. */
   labels(): string[];
   /** Current alpha of an occluding wall/board (NaN for any other id). */

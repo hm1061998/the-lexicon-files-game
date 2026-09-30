@@ -33,6 +33,10 @@ import { projectScenePoint, projectVisualAnchor, projectWorldBounds } from '../s
 import { moveWithCollisions, type LogicalRect } from '../systems/logicalCollision';
 import { resolveIsoInput, screenSpeedVector } from '../systems/isoInput';
 import { unprojectIso, type LogicalPoint } from '../systems/isometricProjection';
+import { facingToward } from '../systems/facingToward';
+import { breathing } from '../systems/breathing';
+import { nameTagPosition } from '../systems/nameTagLayout';
+import { facingTextureKey } from '../assetManifest';
 
 export type InputLockSource = { isInputLocked(): boolean };
 
@@ -122,6 +126,11 @@ export class WorldScene extends Phaser.Scene {
   private logicalPosition: LogicalPoint | null = null;
   private logicalBounds: LogicalRect | null = null;
   private logicalSolids: LogicalRect[] = [];
+  private npcVisuals = new Map<string, { sprite: Phaser.GameObjects.Image; point: LogicalPoint; tag: Phaser.GameObjects.Text; tagWidth: number; tagHeight: number; phase: number }>();
+  private unsubscribeDialogueStarted: (() => void) | null = null;
+  private unsubscribeDialogueEnded: (() => void) | null = null;
+  private dialogueNpcId: string | null = null;
+  private facingTweens: Phaser.Tweens.Tween[] = [];
 
   constructor() {
     super(WorldScene.KEY);
@@ -139,6 +148,8 @@ export class WorldScene extends Phaser.Scene {
     this.areas = [];
     this.depths.clear();
     this.assetTextures.clear();
+    this.npcVisuals.clear();
+    this.dialogueNpcId = null;
     this.occluders = [];
     this.markerAnchors.clear();
     this.targetBounds.clear();
@@ -179,7 +190,21 @@ export class WorldScene extends Phaser.Scene {
       const { sprite, body } = createSceneAsset(this, resolved, def.projection);
       this.depths.set(asset.id, sprite.depth);
       this.assetTextures.set(asset.id, sprite.texture.key);
-      if (asset.type === 'npc') createShadow(this, { x: floorPoint.x, y: floorPoint.y, depth: sprite.depth });
+      if (asset.type === 'npc') {
+        createShadow(this, { x: floorPoint.x, y: floorPoint.y, depth: sprite.depth });
+        const npc = options.caseDefinition.npcs.find(({ id }) => id === asset.id);
+        if (npc && 'u' in resolved.floorAnchor) {
+          const tag = this.add.text(0, 0, npc.name, {
+            fontFamily: 'Cambria, "Times New Roman", Georgia, serif', fontSize: '18px',
+            color: '#332820', backgroundColor: '#F2E8D5', padding: { x: 8, y: 4 },
+          }).setOrigin(0.5, 0.5).setDepth(sprite.depth + 1);
+          this.npcVisuals.set(asset.id, {
+            sprite, point: resolved.floorAnchor,
+            tag, tagWidth: tag.width, tagHeight: tag.height,
+            phase: Array.from(asset.id).reduce((n, c) => n + c.charCodeAt(0), 0) * 0.37,
+          });
+        }
+      }
       if (body) colliders.add(body);
       if (logicalMode && resolved.collision && 'u' in resolved.collision && 'u' in resolved.floorAnchor) {
         this.logicalSolids.push({
@@ -306,6 +331,9 @@ export class WorldScene extends Phaser.Scene {
       },
       depthOf: (id) => this.depths.get(id) ?? Number.NaN,
       textureOf: (id) => this.assetTextures.get(id),
+      npcTexture: (id) => this.npcVisuals.get(id)?.sprite.texture.key,
+      npcScaleY: (id) => this.npcVisuals.get(id)?.sprite.scaleY,
+      npcName: (id) => this.npcVisuals.get(id)?.tag.text,
       labels: () => this.roomLabels.map(({ text }) => text),
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
@@ -341,12 +369,33 @@ export class WorldScene extends Phaser.Scene {
     this.unsubscribeTransition = this.bus.on('scene:transitionRequested', ({ sceneId, spawnId }) =>
       this.transitionTo(sceneId, spawnId),
     );
+    this.unsubscribeDialogueStarted = this.bus.on('dialogue:started', ({ npcId }) => {
+      this.dialogueNpcId = npcId;
+      const visual = this.npcVisuals.get(npcId);
+      if (!visual || !this.logicalPosition) return;
+      const du = visual.point.u - this.logicalPosition.u;
+      const dv = visual.point.v - this.logicalPosition.v;
+      this.playerFacing = movePlayer(this.player, { x: du - dv, y: du + dv }, this.playerFacing,
+        options.caseDefinition.characterSheets.player, false);
+      const playerTexture = facingTextureKey(options.caseDefinition.characterSheets.player.idle, this.playerFacing);
+      if (this.textures.exists(playerTexture)) this.changeFacingTexture(this.player, playerTexture);
+      const npcFacing = facingToward(visual.point, this.logicalPosition);
+      const npcSheet = options.caseDefinition.characterSheets[npcId];
+      if (npcSheet) {
+        const texture = facingTextureKey(npcSheet.idle, npcFacing);
+        if (this.textures.exists(texture)) this.changeFacingTexture(visual.sprite, texture);
+      }
+    });
+    this.unsubscribeDialogueEnded = this.bus.on('dialogue:ended', ({ npcId }) => {
+      if (this.dialogueNpcId === npcId) this.dialogueNpcId = null;
+    });
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
   }
 
   override update(_time: number, delta: number): void {
+    this.syncNpcPresentation(_time);
     this.syncMarkerMotion();
     this.applyMarkerPosition();
     this.publishPlayerPosition(delta);
@@ -392,6 +441,38 @@ export class WorldScene extends Phaser.Scene {
     );
     this.updateNearby();
     this.updateInteract(typing);
+  }
+
+  private syncNpcPresentation(timeMs: number): void {
+    for (const [id, visual] of this.npcVisuals) {
+      const scale = breathing({ timeMs, phaseOffset: visual.phase, walking: false,
+        inDialogue: this.dialogueNpcId === id, reducedMotion: this.options.motion.reducedMotion() });
+      visual.sprite.setScale(1, scale.scaleY);
+      const promptRect = this.interactionTracker.current === id && !this.inputLock.isInputLocked()
+        ? { x: visual.sprite.x - 64, y: visual.sprite.y - CHARACTER_FIGURE_HEIGHT - 56, width: 128, height: 32 }
+        : null;
+      const pos = nameTagPosition({ centerX: visual.sprite.x, feetY: visual.sprite.y,
+        figureHeight: CHARACTER_FIGURE_HEIGHT, tagHeight: visual.tagHeight, tagWidth: visual.tagWidth,
+        gap: 8, prompt: promptRect });
+      visual.tag.setPosition(pos.x, pos.y);
+    }
+  }
+
+  private changeFacingTexture(sprite: Phaser.GameObjects.GameObject & {
+    setAlpha(value: number): unknown;
+    setTexture(key: string): unknown;
+  }, texture: string): void {
+    this.facingTweens.filter((tween) => tween.targets.includes(sprite)).forEach((tween) => tween.stop());
+    if (this.options.motion.reducedMotion()) {
+      sprite.setTexture(texture);
+      sprite.setAlpha(1);
+      return;
+    }
+    sprite.setAlpha(0.72);
+    sprite.setTexture(texture);
+    this.facingTweens.push(this.tweens.add({
+      targets: sprite, alpha: 1, duration: 160, ease: 'Sine.Out',
+    }));
   }
 
   /**
@@ -654,6 +735,15 @@ export class WorldScene extends Phaser.Scene {
     this.outlineBounds = null;
     this.unsubscribeTransition?.();
     this.unsubscribeTransition = null;
+    this.unsubscribeDialogueStarted?.();
+    this.unsubscribeDialogueStarted = null;
+    this.unsubscribeDialogueEnded?.();
+    this.unsubscribeDialogueEnded = null;
+    for (const visual of this.npcVisuals.values()) visual.tag.destroy();
+    this.npcVisuals.clear();
+    this.dialogueNpcId = null;
+    this.facingTweens.forEach((tween) => tween.stop());
+    this.facingTweens = [];
     if (this.keys) {
       for (const key of Object.values(this.keys)) this.input.keyboard?.removeKey(key, true);
       this.keys = null;

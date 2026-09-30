@@ -54,7 +54,7 @@ export type GameStoreState = {
   reviewEvidence(id: string): void;
   toggleNotebook(): void;
   setNotebookTab(tab: NotebookTab): void;
-  startDialogue(npcId: string): void;
+  startDialogue(npcId: string): boolean;
   chooseDialogue(action: DialogueAction): void;
   closeDialogue(): void;
   setPersistenceError(error: string | null): void;
@@ -172,14 +172,15 @@ export function createGameStore(init: {
     },
     startDialogue(npcId) {
       const s = get();
-      if (s.inputLocked) return;
+      if (s.inputLocked) return false;
       const r = runStartDialogue(s.caseDefinition, s.caseState, npcId);
       if (!r.ok) {
         set({ dialogueError: `${r.error.code}: ${r.error.detail}` });
-        return;
+        return false;
       }
       const dialogueSession = { ...r.session, revision: nextRevision++ };
       set({ caseState: r.state, dialogueSession, dialogueError: null, inputLocked: true });
+      return true;
     },
     chooseDialogue(action) {
       const s = get();

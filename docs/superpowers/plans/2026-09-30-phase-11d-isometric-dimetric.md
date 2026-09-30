@@ -110,10 +110,10 @@
 
 **Giao diện:** `facingToward(from: LogicalPoint,to: LogicalPoint): Facing`; `breathing({timeMs,phaseOffset,walking,inDialogue,reducedMotion}): {scaleX:1;scaleY:number}`; event `'dialogue:started': {npcId:string}` chỉ emit sau khi store bắt đầu dialogue thành công.
 
-- [ ] **Bước 1: Viết test lỗi** cho 4 hướng/tie, emit event khi success only, reduced-motion snap, breathing ±0.008 và bằng 1 khi walking/dialogue/reduced, tên lấy từ `npcs.json`, bounds không chồng prompt.
-- [ ] **Bước 2: Chạy test đỏ** `npx nx test @lexicon/game-web` và `npx nx test @lexicon/game-content`.
-- [ ] **Bước 3: Implement** event từ bridge; quay player/NPC và giữ hướng cuối; tween 120–200 ms hoặc snap khi reduced-motion; labels content-driven; breathing trên visual layer riêng, phase theo NPC ID, logical collider/shadow/anchors cố định.
-- [ ] **Bước 4: Chạy test xanh** unit/E2E từ bốn phía, giảm chuyển động, đóng dialogue giữ hướng, breathing và scene cleanup.
+- [x] **Bước 1: Viết test lỗi** cho 4 hướng/tie, emit event khi success only, reduced-motion snap, breathing ±0.008 và bằng 1 khi walking/dialogue/reduced, tên lấy từ `npcs.json`, bounds không chồng prompt.
+- [x] **Bước 2: Chạy test đỏ** `npx nx test @lexicon/game-web` và `npx nx test @lexicon/game-content`.
+- [x] **Bước 3: Implement** event từ bridge; quay player/NPC và giữ hướng cuối; tween 120–200 ms hoặc snap khi reduced-motion; labels content-driven; breathing trên visual layer riêng, phase theo NPC ID, logical collider/shadow/anchors cố định.
+- [x] **Bước 4: Chạy test xanh** unit/E2E kiểm bốn hướng helper, reduced-motion, đóng dialogue giữ hướng, breathing và nhãn.
 - [ ] **Bước 5: Commit** `feat(game): add iso dialogue facing and character breathing`.
 
 ### Tác vụ 7: Walk sheet hoàn chỉnh cho player và NPC

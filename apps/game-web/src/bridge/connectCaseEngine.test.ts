@@ -58,6 +58,27 @@ describe('connectCaseEngine', () => {
     expect(store.getState().caseState).toBe(before);
   });
 
+  it('emits dialogue lifecycle events only after a dialogue opens and when it closes', () => {
+    const definition = loadCaseDefinition('case-001');
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition: definition });
+    const events: string[] = [];
+    bus.on('dialogue:started', ({ npcId }) => events.push(`started:${npcId}`));
+    bus.on('dialogue:ended', ({ npcId }) => events.push(`ended:${npcId}`));
+    connectCaseEngine(bus, store, definition);
+
+    bus.emit('interaction:triggered', { interactableId: 'anna' });
+    expect(events).toEqual(['started:anna']);
+    expect(store.getState().dialogueSession?.npcId).toBe('anna');
+
+    store.getState().closeDialogue();
+    expect(events).toEqual(['started:anna', 'ended:anna']);
+
+    store.setState({ inputLocked: true });
+    bus.emit('interaction:triggered', { interactableId: 'anna' });
+    expect(events).toEqual(['started:anna', 'ended:anna']);
+  });
+
   it('handles only current-scene interactions and requests a validated scene transition', () => {
     const definition = loadCaseDefinition('case-001');
     const bus = createEventBus<GameEventMap>();
