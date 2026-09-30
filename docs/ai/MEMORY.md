@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T15:20:00+07:00
+updated_at: 2026-09-30T15:30:00+07:00
 phase: phase-11e
 status: in_progress
-result_commit: 676e6fb
+result_commit: 05a8485
 active_spec: docs/superpowers/specs/2026-09-30-phase-11e-controls-visual-ux-design.md
 active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 ---
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## Current Phase
 
-- Phase 11D is complete. Phase 11E spec was approved and plan is committed locally in `676e6fb`; waiting for user plan review and execution-method choice. No Phase 11E implementation has started. Phase 12 remains Testing & Performance in the roadmap and has not started.
+- Phase 11D is complete. Phase 11E spec was approved and plan is committed locally in `676e6fb` + refinement `05a8485`; waiting for user plan review and execution-method choice. No Phase 11E implementation has started. Phase 12 remains Testing & Performance in the roadmap and has not started.
 
 ## Active Goal
 
@@ -24,7 +24,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 - Phase 11D Tasks 1–5 migrated projection/runtime/content/scene; Task 6 added dialogue-facing NPC/player, names and initial breathing; Task 7 added real 8×4 walk sheets for player, Anna, Leo and David; Task 8 reconciled docs and completed visual review/full direct-runner verification.
 - Verification details, screenshot verdicts and limitations: `docs/ai/2026-09-30-phase-11d-verification.md`. Screenshots are in ignored `.superpowers/sdd/2026-09-30-phase-11d-isometric-dimetric/`.
-- Phase 11E spec: `docs/superpowers/specs/2026-09-30-phase-11e-controls-visual-ux-design.md`; user approved each design section. Plan: `docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md` (commit `676e6fb`), not yet approved. Spec asks to retain dimetric 2:1, map W/A/S/D to screen up/left/down/right, modularize office/archive composition, improve evidence-modal internal scrolling/UI consistency, and smooth idle breathing for player and NPCs.
+- Phase 11E spec: `docs/superpowers/specs/2026-09-30-phase-11e-controls-visual-ux-design.md`; user approved each design section. Plan: `docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md` (latest commit `05a8485`), not yet approved. Spec asks to retain dimetric 2:1, map W/A/S/D to screen up/left/down/right, modularize office/archive composition, improve evidence-modal internal scrolling/UI consistency, and smooth idle breathing for player and NPCs.
 - Remaining observations included in Phase 11E scope: office/archive density and wall/floor seams; evidence modal usability at 1280×720 and 760×600; current breathing feels jerky and runtime only applies it to NPCs although the old spec requested player and NPC.
 - Root `npm` executable is unavailable in this environment; Nx npm-script targets cannot launch. Equivalent installed Vitest, TypeScript, ESLint, Vite, Prettier, Python, Playwright and memory runners passed. Vite reports the existing ~1.9 MB JS chunk warning.
 
@@ -66,7 +66,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## Latest Handoff
 
-- Phase 11D complete locally at `94ce745`; no push. Phase 11E spec `ca89b59` approved; plan `676e6fb` awaits user review and execution method. Do not implement before approval. Phase 11D ledger: `docs/ai/2026-09-30-phase-11d-verification.md`.
+- Phase 11D complete locally at `94ce745`; no push. Phase 11E spec `ca89b59` approved; plan latest commit `05a8485` awaits user review and execution method. Do not implement before approval. Phase 11D ledger: `docs/ai/2026-09-30-phase-11d-verification.md`.
 
 ## Required Reading
 
