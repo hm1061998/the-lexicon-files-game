@@ -41,6 +41,12 @@ npm run test:e2e -- apps/game-web/e2e/feedback-viewport.spec.ts apps/game-web/e2
 npm run test:e2e -- apps/game-web/e2e/feedback-evidence-prompt.spec.ts apps/game-web/e2e/hud.spec.ts --workers=1 --reporter=line
 28 passed (1.9m)
 
+npm run test:e2e -- apps/game-web/e2e/world.spec.ts apps/game-web/e2e/hud.spec.ts apps/game-web/e2e/scene-layout.spec.ts apps/game-web/e2e/feedback-minimap.spec.ts apps/game-web/e2e/feedback-audio.spec.ts --repeat-each=3 --workers=1 --reporter=line
+The first 3× run executed 237 cases: 236 passed; one HUD assertion failed only on its third repeat because it assumed a second, overlapping evidence prompt would always open immediately after E. The assertion was corrected to wait for the valid new prompt and check that the already-collected item is no longer named.
+
+npm exec -- nx run @lexicon/game-web:test:e2e -- apps/game-web/e2e/hud.spec.ts --grep=collecting --repeat-each=3 --workers=1 --reporter=line
+3 passed (24.3s) after the correction. The other 236 cases had passed in all three rounds; the only failed case was rerun three times and passed each time.
+
 .venv-art-codegen\Scripts\python.exe -m unittest discover -s tools/art-codegen -p 'test_*.py' -v
 Ran 44 tests — OK
 
@@ -53,7 +59,7 @@ git diff --check
 exit 0 (only Git's LF→CRLF advisory on tracked files)
 ```
 
-`npm run format:check` first identified three recently edited files; they were formatted and the rerun passed. A focused eligibility assertion confirmed a collected item no longer remains the active interaction; where another evidence item overlaps the same radius, the prompt correctly moves to that still-available item.
+`npm run format:check` first identified three recently edited files; they were formatted and the rerun passed. A focused eligibility assertion confirmed a collected item no longer remains the active interaction; where another evidence item overlaps the same radius, the prompt correctly moves to that still-available item. The 3× stability run exposed and removed an order-sensitive test expectation, then the affected scenario passed 3/3.
 
 Screenshots saved in `.superpowers/sdd/2026-09-30-phase-11e-feedback-polish/`: `office-1280x720.png`, `archive-1280x720.png`, `compact-760x600.png`, and `interaction-prompt.png`. These are technical review evidence; human visual/audio acceptance is still open.
 

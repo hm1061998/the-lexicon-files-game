@@ -216,9 +216,9 @@ test('collecting evidence opens modal, locks movement, and adds it to the notebo
   );
   await expect(page.getByText('Meeting Minutes')).toBeVisible();
   await page.keyboard.press('Escape');
-  await page.keyboard.press('e');
-  await expect(page.getByRole('dialog')).toContainText("Leo's Phone Recording");
-  await page.getByRole('button', { name: 'Đóng' }).click();
+  const prompt = page.locator('.hud-interaction-prompt');
+  await expect(prompt).toContainText('Nghe bản ghi điện thoại của Leo');
+  await expect(prompt).not.toContainText('Đọc biên bản cuộc họp');
   await expect(page.locator('canvas')).toHaveCount(1);
 });
 

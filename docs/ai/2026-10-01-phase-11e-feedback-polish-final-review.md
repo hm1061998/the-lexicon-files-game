@@ -17,6 +17,7 @@ Review date: 2026-10-01. The independent reviewer returned findings, then stoppe
 
 - Full Playwright: 108/108 passed.
 - Feedback + HUD + scene-layout browser set: 58/58 passed; follow-up evidence + HUD set: 28/28 passed.
+- World/HUD/scene-layout/feedback-minimap/audio repeated 3×: 236 cases passed on each round; one order-sensitive HUD assertion was corrected and its scenario passed 3/3 after the change.
 - Root lint/test/build/typecheck/format, Python art/audio tests, and WAV validator passed. Details and command outputs are in `docs/ai/2026-10-01-phase-11e-feedback-polish-verification.md`.
 
 No unresolved code finding from the returned partial review is known. Human visual/audio audition remains open; the later camera/music/nameplate/dialogue-notebook redesign feedback is out of this approved plan and is specified separately.

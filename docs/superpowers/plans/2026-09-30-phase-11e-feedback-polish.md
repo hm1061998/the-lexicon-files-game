@@ -10,7 +10,7 @@
 
 **Spec:** [Spec đã duyệt](../specs/2026-09-30-phase-11e-feedback-polish-design.md).
 
-**Trạng thái:** Người dùng đã duyệt plan bằng “duyệt plan” ngày 2026-09-30 và chọn tiếp tục Native inline. Tasks 1–10 đã được triển khai và technical gates đạt; Task 11 còn chờ vòng lặp E2E 3 lần như kế hoạch, verdict review đầy đủ và người dùng nghe/xem nghiệm thu. Checkout `dev`, chỉ commit local.
+**Trạng thái:** Người dùng đã duyệt plan bằng “duyệt plan” ngày 2026-09-30 và chọn tiếp tục Native inline. Tasks 1–10 đã triển khai; technical gates và vòng lặp stability 3× của Task 11 đã đạt. Còn chờ verdict review độc lập đầy đủ và người dùng nghe/xem nghiệm thu. Checkout `dev`, chỉ commit local.
 
 ## Ràng buộc chung
 
@@ -196,7 +196,7 @@ Python art: `.venv-art-codegen/Scripts/python.exe -m unittest discover -s tools/
 **Interfaces:** tiêu thụ deliverables Tasks 1–10; sản xuất ledger command/output, ảnh hai scene + compact/prompt, audio samples ba NPC/SFX, danh sách giới hạn còn lại. Human visual/audio acceptance riêng với technical gates.
 
 - [x] Chạy `npm run lint`, `npm run test`, `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run memory:check`; chạy registered content validation trong test suite, Python art/audio suite và audio asset validator. Dán output/exit code vào verification, không dùng baseline để ghi pass mới; backend không đổi không báo dotnet đã chạy.
-- [ ] Chạy full `npm run test:e2e -- --workers=1 --reporter=line`; repeat world/HUD/layout/feedback-minimap/audio suites 3 lần với một worker. Nếu fail dùng systematic-debugging, tái hiện/root cause rồi rerun nhóm bị ảnh hưởng; không tăng timeout để che lỗi. Lưu log/ảnh local trong `.superpowers/`.
+- [x] Full Playwright đạt 108/108. Repeated world/HUD/layout/feedback-minimap/audio suites 3 lần với một worker; 236 case ổn định qua cả 3 lượt. Một HUD assertion về evidence thứ hai là order-sensitive, được thay bằng prompt invariant và rerun riêng 3/3 pass. Output/giải thích tại verification report.
 - [ ] Native final review một reviewer mới theo `executing-plans`/`requesting-code-review`, sau khi các gates pass; sửa findings cần thiết và chạy lại tests liên quan. Không triển khai task bằng subagent hoặc mở thread mới. Review artifact lưu repo, không kết luận sạch khi reviewer còn chạy.
 - [ ] Tạo screenshot Office/Archive ở 1280×720, compact 760×600, label floor/wall/prompt close-up; gửi mẫu WAV ít nhất một câu trọn vẹn mỗi NPC và hai steps/SFX. Xin human nghiệm thu visual/voice; technical-pass không thay cho audition. Backlog modal/header/breathing và Phase 12 vẫn tách rõ.
 - [ ] Commit verification/review/plan status trước, cập nhật `docs/ai/MEMORY.md` với result commit rồi `npm run memory:check`, commit memory riêng. Chỉ đánh dấu task technical complete theo gate thực; Phase 11E chưa complete nếu backlog hoặc human acceptance còn thiếu.
