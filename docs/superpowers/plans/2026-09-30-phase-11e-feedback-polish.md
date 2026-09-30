@@ -10,7 +10,7 @@
 
 **Spec:** [Spec đã duyệt](../specs/2026-09-30-phase-11e-feedback-polish-design.md).
 
-**Trạng thái:** Plan đề xuất, chờ người dùng review bản này; chưa triển khai feedback. Checkout `dev` hiện tại, Native inline, chỉ commit local.
+**Trạng thái:** Người dùng đã duyệt plan bằng “duyệt plan” ngày 2026-09-30 và hỏi so sánh subagent/Native. Khuyến nghị giữ Native đã chọn, với một reviewer độc lập cuối; chưa triển khai feedback. Checkout `dev` hiện tại, chỉ commit local.
 
 ## Ràng buộc chung
 
@@ -207,4 +207,4 @@ Python art: `.venv-art-codegen/Scripts/python.exe -m unittest discover -s tools/
 - Contract: mount/cue/voice metadata optional cho compatibility; event tọa độ canvas CSS vs movement world pixels riêng; một HUD state/field, một owner audio/root, một voice/session generation.
 - Các rủi ro trong Review Focus có test gắn task; TDD RED cần chứng minh logic thay đổi, không ép baseline hợp lệ fail. Không full function bodies, không checklist không có oracle.
 - Những quyết định implementation mới (voice map, stride/gain, exact Archive spawn) cụ thể để review; không đổi product/learning rule. Mọi giá trị visual/audio cần kiểm ảnh/nghe, được điều chỉnh trong phạm vi spec khi nghiệm thu.
-- Plan chờ user review trước code theo `writing-plans`; Native được giữ nguyên.
+- Người dùng đã review và duyệt plan; gate written plan review đã đạt. Native được giữ nguyên; review độc lập cuối theo `executing-plans`.
