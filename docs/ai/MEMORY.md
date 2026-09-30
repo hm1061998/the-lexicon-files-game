@@ -1,29 +1,31 @@
 ---
 schema_version: 1
 updated_at: 2026-09-30T23:59:59+07:00
-phase: phase-11b
-status: complete
-result_commit: 62ed46e
+phase: phase-11c
+status: in_progress
+result_commit: a4670bb
 active_spec: docs/superpowers/specs/2026-09-29-phase-11-visual-polish-design.md
-active_plan: docs/superpowers/plans/2026-09-30-phase-11b-backlog-and-character-motion.md
+active_plan: docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cleanup.md
 ---
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; `result_commit` là commit code/verification cuối của Phase 11B (sau đó chỉ có commit tài liệu/memory).
+- Snapshot duy trì bằng Git; `result_commit` là commit code cuối đã hoàn tất của Phase 11C (Task 1–3); Task 4 đang làm dở trong working tree, chưa commit.
 
 ## Current Phase
 
-- Phase 11B — backlog Phase 11 + chuyển động nhân vật + minimap **hoàn tất** trên `dev` (plan `2026-09-30-phase-11b-backlog-and-character-motion.md`). Phase 0A–11B xong; người dùng tự merge `main`. Chưa bắt đầu Phase 12.
+- Phase 11C — bám concept + dọn tồn đọng **đang thực hiện** trên `dev` (plan `2026-09-30-phase-11c-concept-fidelity-and-cleanup.md`, 6 task). Phase 0A–11B đã xong; người dùng tự merge `main`. Chưa bắt đầu Phase 12.
 
 ## Active Goal
 
-- Chờ chỉ đạo: Phase 12 chưa được yêu cầu.
+- Hoàn tất Phase 11C: HUD/scene gần `docs/concept/ingame_main_office_hud.webp` (trong hệ 2D trục thẳng), rồi dọn tồn đọng test/asset/tài liệu và verification.
 
 ## Current Status
 
+- Phase 11C tiến độ: Task 1 HUD chrome (`0f916c2`, sửa `2113a70`), Task 2 bong bóng prompt gắn vào vật + viền đỏ (`196cd85`, sửa `687b48f`), Task 3 độ bền engine (`a4670bb`) đã commit và qua review. Task 4 (tường ngăn, nhãn phòng `labels`, nội thất dày, minimap tường ngăn) **đang làm dở, chưa commit**; Task 5 (vệ sinh tồn đọng) và Task 6 (verification + memory) chưa bắt đầu.
+- Điều khoản OpenAI cho ảnh nhân vật ChatGPT đã được chủ dự án xác nhận (chat 2026-09-30, commit `71ac432`); nhánh `dev` đã push lên `origin`.
 - Phase 11B: manifest texture theo scene trong `packages/game-content`; tường thẳng + nội thất; ảnh evidence trong modal; paper overlay CSS; marker/terminal/hằng số/transcript/lint/test hook; sheet đi bộ 8x4 (tạm, sinh bằng code) + hoạt ảnh theo frame; minimap phím `M`. Gate PASS (lint/test/build/typecheck/format/E2E 67 x2 không flaky/memory/unittest 25); ledger `docs/ai/2026-09-30-phase-11b-verification.md` (có đối chiếu concept và sai lệch).
-- Scene vẫn chưa giống concept (thưa nội thất, không phòng phân vùng/nhãn phòng, control pause/sổ tay dùng style trình duyệt). Art AI (gồm nhân vật ChatGPT) đã commit trên `dev` cục bộ, chưa push; `assets/_incoming/` giữ cục bộ. Chủ dự án đã xác nhận điều khoản đầu ra OpenAI (chat 2026-09-30); không còn chặn merge/push.
+- Scene chưa giống concept về cấu trúc phòng (Task 4 đang xử lý; concept isometric cắt lớp, game 2D trục thẳng nên vẫn khác cấu trúc).
 - Font nội dung `Cambria, "Times New Roman", Georgia, serif`; đã xác nhận dấu thanh tiếng Việt hiển thị đúng.
 
 ## Completed
@@ -34,7 +36,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11b-backlog-and-character-m
 
 ## In Progress
 
-- Không có việc đang dở.
+- Phase 11C Task 4 (subagent đang chạy): thay đổi chưa commit trong working tree (scene JSON, partition_*.png, minimap, WorldScene labels). Nếu phiên bị ngắt: kiểm `git status`, chạy `npm run test:e2e`, đừng commit WIP chưa qua test.
 
 ## Active Decisions
 
@@ -55,10 +57,10 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11b-backlog-and-character-m
 
 ## Next Actions
 
+- Hoàn tất Task 4 (commit, review), rồi Task 5 (vệ sinh: Ctrl/Alt/Meta cho WASD/E, aria minimap, paper texture nhỏ, bỏ sheet NPC không dùng, khung đi bộ có vung tay, triage minor Phase 10 cũ) và Task 6 (verification + đối chiếu concept + memory).
+- Đọc plan Phase 11C và ledger SDD `.superpowers/sdd/2026-09-30-phase-11c-concept-fidelity-and-cleanup/progress.md` (git-ignored) nếu còn; nếu mất, dựa vào `git log` từ `5908b15`.
+- Tạo walk sheet thật (8x4) theo `docs/art/07` §Walk sheet, chạy `slice_walk_sheet.py`, thay file cùng tên (tùy chọn).
 - Người dùng review/merge `dev`; chờ yêu cầu Phase 12 (không tự bắt đầu).
-- Tạo walk sheet thật (8x4) theo `docs/art/07` §Walk sheet, chạy `slice_walk_sheet.py`, thay file cùng tên.
-- Làm giàu scene theo concept: nội thất dày hơn, phòng phân vùng/nhãn phòng, style lại select/slider/checkbox trong pause và sổ tay.
-- Dọn các minor còn treo (xem Active Decisions).
 
 ## Verification
 
