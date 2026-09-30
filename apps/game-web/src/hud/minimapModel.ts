@@ -1,4 +1,5 @@
 import type { SceneDefinition } from '@lexicon/shared-types';
+import { expandWalls } from '@lexicon/game-content';
 import {
   projectScenePoint,
   projectVisualAnchor,
@@ -61,7 +62,7 @@ export function buildMinimapModel(
   const solids: MinimapRect[] = [];
   const partitions: MinimapRect[] = [];
   const markers: MinimapMarker[] = [];
-  for (const resolved of resolveSceneAssets(scene.assets)) {
+  for (const resolved of resolveSceneAssets([...scene.assets, ...expandWalls(scene.walls ?? []).assets])) {
     const { asset, floorAnchor, collision, interactionAnchor } = resolved;
     if (collision) {
       let rect: MinimapRect;
@@ -85,7 +86,7 @@ export function buildMinimapModel(
       } else {
         throw new Error(`scene asset "${asset.id}" has collision in a different coordinate space`);
       }
-      const partition = asset.type === 'wall' && collision.width < b.width;
+      const partition = asset.type === 'wall' && (asset.wallSpan ?? collision.width) < b.width;
       (partition ? partitions : solids).push(rect);
     }
     if (asset.interaction && interactionAnchor) {

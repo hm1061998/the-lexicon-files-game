@@ -11,7 +11,7 @@ export type Box = { x: number; y: number; width: number; height: number };
  * without a footprint). Furniture, evidence and characters never fade.
  */
 export function isOccluder(asset: SceneAssetDefinition, worldWidth: number): boolean {
-  if (asset.type === 'wall') return (asset.collision?.width ?? 0) < worldWidth;
+  if (asset.type === 'wall') return (asset.wallSpan ?? asset.collision?.width ?? 0) < worldWidth;
   return asset.type === 'prop' && asset.collision === undefined;
 }
 

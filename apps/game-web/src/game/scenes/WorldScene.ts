@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { expandWalls } from '@lexicon/game-content';
 import type {
   CaseDefinition,
   EventBus,
@@ -211,7 +212,7 @@ export class WorldScene extends Phaser.Scene {
     );
 
     const colliders = this.physics.add.staticGroup();
-    const resolvedAssets = resolveSceneAssets(def.assets);
+    const resolvedAssets = resolveSceneAssets([...def.assets, ...expandWalls(def.walls ?? []).assets]);
     for (const resolved of resolvedAssets) {
       const { asset } = resolved;
       const floorPoint = projectScenePoint(def, resolved.floorAnchor);

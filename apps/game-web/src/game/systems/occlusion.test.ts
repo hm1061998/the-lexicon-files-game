@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { SceneAssetDefinition } from '@lexicon/shared-types';
 import { OCCLUDED_ALPHA, isOccluder, occluderAlpha } from './occlusion';
+import { expandWalls } from '@lexicon/game-content';
 
 const WORLD_WIDTH = 2400;
 
@@ -19,6 +20,11 @@ function asset(overrides: Partial<SceneAssetDefinition>): SceneAssetDefinition {
 }
 
 describe('isOccluder', () => {
+  it('classifies expanded wall modules using the whole segment span', () => {
+    const base = { id: 'wall', kind: 'office' as const, axis: 'u' as const, line: 0, start: 0, end: 16, openings: [] };
+    expect(isOccluder(expandWalls([base]).assets[0]!, 16)).toBe(false);
+    expect(isOccluder(expandWalls([{ ...base, line: 5, end: 6 }]).assets[0]!, 16)).toBe(true);
+  });
   it('treats inner walls and wall-hung boards as occluders', () => {
     const inner = asset({
       type: 'wall',

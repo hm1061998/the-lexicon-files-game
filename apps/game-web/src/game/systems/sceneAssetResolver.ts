@@ -15,6 +15,7 @@ export interface ResolvedSceneAsset {
   readonly floorAnchor: SpatialPoint;
   readonly visualAnchor: VisualAnchor;
   readonly collision: RectCollision | LogicalRectCollision | null;
+  readonly footprint: LogicalRectCollision | null;
   readonly interactionAnchor: VisualAnchor | null;
 }
 
@@ -92,6 +93,7 @@ export function resolveSceneAssets(
       floorAnchor,
       visualAnchor,
       collision: asset.collision ?? null,
+      footprint: asset.footprint && 'u' in floorAnchor ? { type: 'rect', u: floorAnchor.u + asset.footprint.u, v: floorAnchor.v + asset.footprint.v, width: asset.footprint.width, height: asset.footprint.height } : null,
       interactionAnchor,
     };
     resolving.delete(asset.id);

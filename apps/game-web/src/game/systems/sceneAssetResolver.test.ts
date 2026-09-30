@@ -5,6 +5,17 @@ import type { SceneAssetDefinition } from '@lexicon/shared-types';
 const asset = (values: Record<string, unknown>) => values as unknown as SceneAssetDefinition;
 
 describe('resolveSceneAssets', () => {
+  it('exposes footprint independently and preserves logical anchors across visual transforms', () => {
+    const base = asset({ id: 'desk', type: 'prop', texture: 'desk', position: { u: 2, v: 3 }, footprint: { u: -1, v: -1, width: 2, height: 2 }, collision: { type: 'rect', u: -0.5, v: -0.5, width: 1, height: 1 }, interaction: { x: 0, y: 0.6, radius: 80, prompt: 'Use' }, origin: [0.5, 0.9], scale: 1, elevationPx: 0 });
+    const [a] = resolveSceneAssets([base]);
+    const [b] = resolveSceneAssets([{ ...base, origin: [0.1, 0.2], scale: 3, elevationPx: 40 }]);
+    expect(a!.footprint).toEqual({ type: 'rect', u: 1, v: 2, width: 2, height: 2 });
+    expect(b!.footprint).toEqual(a!.footprint);
+    expect(b!.collision).toEqual(a!.collision);
+    expect(b!.floorAnchor).toEqual(a!.floorAnchor);
+    expect(b!.interactionAnchor).toMatchObject({ u: 2, v: 3.6 });
+    expect(b!.visualAnchor.elevationPx).toBe(40);
+  });
   it('resolves a tabletop child after its parent and keeps floor depth separate from elevation', () => {
     const assets = [
       asset({
