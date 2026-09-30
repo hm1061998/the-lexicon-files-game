@@ -69,12 +69,12 @@
 - Consumes: `SceneDefinition`, projection/content validators, obstacle/path helpers hiện có và WASD screen-relative từ Task 1.
 - Produces: hai scene JSON giữ nguyên public IDs/gameplay contract nhưng có logical placement, footprint, scale và đường đi được rà lại.
 
-- [ ] **Step 1: Thêm test scene contract thất bại** cho tập scene/asset/interactable IDs, spawn bounds, doorway, evidence/interactables và path reachability trước khi chỉnh composition.
-- [ ] **Step 2: Chạy test scene-layout/content** để ghi nhận baseline; giữ mọi test reachability hiện hữu.
-- [ ] **Step 3: Chỉnh vị trí/footprint/scale bằng asset modular hiện có** để sàn, back/side walls và cửa khép mép; nhóm nội thất theo khu chức năng, giữ lối đi rõ, spawn/doorway không bị block.
-- [ ] **Step 4: Kiểm tra screenshot office 1280×720 và archive 1280×720** trong browser; sửa seam, tường lạc mép, props che đường đi hoặc depth nếu có.
-- [ ] **Step 5: Chạy content validation và toàn bộ `scene-layout.spec.ts`**, gồm ID preservation, path từ từng spawn tới mọi interactable, evidence trên mặt bàn, hai chiều door transition; chụp lại screenshot review.
-- [ ] **Step 6: Commit** với thông điệp `feat(content): refine office and archive layouts`.
+- [x] **Step 1: Thêm test scene contract thất bại** cho tập scene/asset/interactable IDs, spawn bounds, doorway, evidence/interactables và path reachability trước khi chỉnh composition.
+- [x] **Step 2: Chạy test scene-layout/content** để ghi nhận baseline; giữ mọi test reachability hiện hữu.
+- [x] **Step 3: Chỉnh vị trí/footprint/scale bằng asset modular hiện có** để sàn, back/side walls và cửa khép mép; nhóm nội thất theo khu chức năng, giữ lối đi rõ, spawn/doorway không bị block.
+- [x] **Step 4: Kiểm tra screenshot office 1280×720 và archive 1280×720** trong browser; sửa seam, tường lạc mép, props che đường đi hoặc depth nếu có.
+- [x] **Step 5: Chạy content validation và toàn bộ `scene-layout.spec.ts`**, gồm ID preservation, path từ từng spawn tới mọi interactable, evidence trên mặt bàn, hai chiều door transition; chụp lại screenshot review.
+- [x] **Step 6: Commit** với thông điệp `feat(content): refine office and archive layouts`.
 
 ### Task 3: Evidence modal có header cố định và body cuộn nội bộ
 

@@ -209,7 +209,7 @@
         "v": 7.25
       },
       "angle": 63.435,
-      "scale": 0.6
+      "scale": 0.26
     },
     {
       "id": "partition_office_meeting_e_s",
@@ -229,7 +229,7 @@
         "v": 12
       },
       "angle": 63.435,
-      "scale": 0.6
+      "scale": 0.41
     },
     {
       "id": "partition_office_invest_e",
@@ -249,7 +249,7 @@
         "v": 4
       },
       "angle": 63.435,
-      "scale": 0.6
+      "scale": 0.34
     },
     {
       "id": "partition_office_hall_w",
@@ -269,7 +269,7 @@
         "v": 4.05
       },
       "angle": 63.435,
-      "scale": 0.6
+      "scale": 0.34
     },
     {
       "id": "partition_office_hall_n",
@@ -1192,7 +1192,7 @@
         "height": 6.45
       },
       "origin": [0.5, 1],
-      "scale": 0.6,
+      "scale": 1.18,
       "angle": 63.435,
       "depthBias": 0
     },

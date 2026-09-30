@@ -185,7 +185,7 @@
         "v": 4.05
       },
       "angle": 63.435,
-      "scale": 0.6
+      "scale": 0.34
     },
     {
       "id": "partition_archive_store_n_w",
@@ -245,7 +245,7 @@
         "v": 12
       },
       "angle": 63.435,
-      "scale": 0.6
+      "scale": 0.47
     },
     {
       "id": "partition_archive_security_s",
@@ -1018,7 +1018,7 @@
         "height": 6.45
       },
       "origin": [0.5, 1],
-      "scale": 0.12,
+      "scale": 0.192,
       "angle": 153.435,
       "depthBias": 0
     },

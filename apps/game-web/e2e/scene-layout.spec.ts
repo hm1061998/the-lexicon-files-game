@@ -6,6 +6,8 @@ type Rect = Point & { width: number; height: number; id?: string };
 type SceneAsset = {
   id: string;
   type: string;
+  texture?: string;
+  scale?: number;
   position?: Point;
   restsOn?: string;
   surfaceOffset?: Point & { elevationPx: number };
@@ -19,6 +21,7 @@ type SceneAsset = {
 };
 type SceneJson = {
   id: string;
+  textures: Array<{ key: string; url: string }>;
   projection: { originX: number; originY: number; tileWidth: 128; tileHeight: 64 };
   worldBounds: Point & { width: number; height: number };
   spawnPoints: Record<string, Point>;
@@ -35,8 +38,138 @@ function readScene(file: string): SceneJson {
     ),
   ) as SceneJson;
 }
+function textureSize(scene: SceneJson, key: string): { width: number; height: number } {
+  const texture = scene.textures.find((item) => item.key === key);
+  if (!texture) throw new Error(`Unknown texture ${key}`);
+  const assetPath = texture.url.replace(/^\//, '');
+  const bytes = readFileSync(
+    new URL(`../../../apps/game-web/public/${assetPath}`, import.meta.url),
+  );
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
 const scenes = ['main_office.json', 'archive.json'].map(readScene);
 const sceneById = new Map(scenes.map((scene) => [scene.id, scene]));
+const expectedAssetIds: Record<string, string[]> = {
+  main_office: [
+    'floor',
+    'wall_back',
+    'partition_office_meeting_n',
+    'partition_office_meeting_e_n',
+    'partition_office_meeting_e_s',
+    'partition_office_invest_e',
+    'partition_office_hall_w',
+    'partition_office_hall_n',
+    'partition_office_east_n',
+    'player_desk',
+    'objective_note',
+    'meeting_minutes',
+    'phone_recording',
+    'anna',
+    'hallway_door',
+    'leo',
+    'david',
+    'decor_plant_back_left',
+    'decor_cabinet_back_1',
+    'decor_cabinet_back_2',
+    'decor_plant_tall_invest',
+    'decor_file_boxes_invest',
+    'decor_coat_rack_invest',
+    'decor_desk_west',
+    'decor_chair_desk_west',
+    'decor_desk_invest',
+    'decor_chair_desk_invest',
+    'decor_plant_meeting_corner',
+    'decor_credenza_meeting',
+    'decor_meeting_table',
+    'decor_plant_front_left',
+    'decor_plant_meeting_wall',
+    'decor_cabinet_meeting_1',
+    'decor_cabinet_meeting_2',
+    'decor_plant_meeting',
+    'decor_plant_tall_hall',
+    'decor_cabinet_back_3',
+    'decor_plant_back_mid',
+    'decor_water_cooler',
+    'decor_chair_player_desk',
+    'decor_file_boxes_hall',
+    'decor_coat_rack_hall',
+    'decor_plant_back_right',
+    'decor_cabinet_east_1',
+    'decor_cabinet_east_2',
+    'decor_desk_east',
+    'decor_chair_desk_east',
+    'decor_file_boxes_east',
+    'decor_plant_front_right',
+    'decor_plant_tall_east',
+    'decor_whiteboard_meeting',
+    'decor_bulletin_east',
+    'west_wall_upper',
+    'west_wall_lower',
+    'east_outer_wall',
+  ],
+  archive: [
+    'PLACEHOLDER_archive_floor',
+    'PLACEHOLDER_archive_wall',
+    'partition_archive_hall_n',
+    'partition_archive_hall_e',
+    'partition_archive_store_n_w',
+    'partition_archive_store_n_e',
+    'partition_archive_store_e',
+    'partition_archive_security_s',
+    'PLACEHOLDER_security_terminal',
+    'PLACEHOLDER_archive_door',
+    'decor_cabinet_wall_1',
+    'decor_cabinet_wall_2',
+    'decor_plant_corridor',
+    'decor_shelf_r1_1',
+    'decor_shelf_r1_2',
+    'decor_shelf_r1_3',
+    'decor_shelf_r1_4',
+    'decor_shelf_r1_5',
+    'decor_shelf_r1_6',
+    'decor_shelf_r1_7',
+    'decor_shelf_r1_8',
+    'decor_shelf_r2_1',
+    'decor_shelf_r2_2',
+    'decor_cabinet_left_1',
+    'decor_cabinet_left_2',
+    'decor_file_boxes_store',
+    'decor_shelf_r2_3',
+    'decor_shelf_r2_4',
+    'decor_cabinet_row_1',
+    'decor_cabinet_row_2',
+    'decor_chair_terminal',
+    'decor_credenza_security',
+    'decor_file_boxes_security',
+    'decor_cabinet_mid_1',
+    'decor_cabinet_mid_2',
+    'decor_cabinet_mid_3',
+    'decor_desk_security',
+    'decor_plant_corner',
+    'decor_plant_tall_security',
+    'decor_reading_table',
+    'decor_cabinet_row_4',
+    'decor_cabinet_row_5',
+    'decor_file_boxes_reading',
+    'decor_plant_reading',
+    'decor_bulletin_reading',
+    'archive_west_wall_upper',
+    'archive_west_wall_lower',
+    'archive_east_outer_wall',
+  ],
+};
+const expectedInteractableIds: Record<string, string[]> = {
+  main_office: [
+    'objective_note',
+    'meeting_minutes',
+    'phone_recording',
+    'anna',
+    'hallway_door',
+    'leo',
+    'david',
+  ],
+  archive: ['PLACEHOLDER_security_terminal', 'PLACEHOLDER_archive_door'],
+};
 const body: Rect = { u: -0.18, v: -0.18, width: 0.36, height: 0.36 };
 const step = 0.25;
 
@@ -215,6 +348,30 @@ async function drive(page: Page, route: readonly Point[], targetId: string): Pro
 }
 
 for (const scene of scenes) {
+  test(`${scene.id}: public scene and interactable IDs are preserved`, () => {
+    expect(scene.assets.map(({ id }) => id).sort()).toEqual(expectedAssetIds[scene.id]!.sort());
+    expect(
+      scene.assets
+        .filter(({ interaction }) => interaction)
+        .map(({ id }) => id)
+        .sort(),
+    ).toEqual(expectedInteractableIds[scene.id]!.sort());
+  });
+
+  test(`${scene.id}: wall art length matches its logical footprint`, () => {
+    const screenPixelsPerLogicalUnit = Math.hypot(64, 32);
+    const mismatchedWalls = scene.assets.flatMap((asset) => {
+      if (asset.type !== 'wall' || !asset.texture || !asset.collision) return [];
+      const { width, height } = textureSize(scene, asset.texture);
+      const artLength = Math.max(width, height) * (asset.scale ?? 1);
+      const footprintLength =
+        Math.max(asset.collision.width, asset.collision.height) * screenPixelsPerLogicalUnit;
+      const ratio = artLength / footprintLength;
+      return ratio < 0.8 || ratio > 1.25 ? [{ id: asset.id, ratio }] : [];
+    });
+    expect(mismatchedWalls).toEqual([]);
+  });
+
   test(`${scene.id}: assets, spawns, bounds and labels use logical dimetric coordinates`, () => {
     expect(scene.projection).toMatchObject({ tileWidth: 128, tileHeight: 64 });
     expect(scene.worldBounds.width).toBeGreaterThan(0);
@@ -317,8 +474,8 @@ test('office/archive doorway transitions are two-way and the doorway footprint s
     .toBe('main_office');
 });
 
-test('scene review captures desktop office and compact archive views', async ({ page }) => {
-  const output = '../../.superpowers/sdd/2026-09-30-phase-11d-isometric-dimetric';
+test('scene review captures office and archive at desktop viewport', async ({ page }) => {
+  const output = '../../.superpowers/sdd/2026-09-30-phase-11e-controls-visual-ux';
   mkdirSync(output, { recursive: true });
   await page.setViewportSize({ width: 1280, height: 720 });
   await open(page);
@@ -327,7 +484,7 @@ test('scene review captures desktop office and compact archive views', async ({ 
   const previous = await page.evaluateHandle(() => window.__lexiconDebug);
   await page.evaluate(() => window.__lexiconDebug!.requestTransition('archive', 'from_office'));
   await page.waitForFunction((old) => window.__lexiconDebug !== old, previous);
-  await page.setViewportSize({ width: 760, height: 600 });
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.waitForTimeout(400);
-  await page.screenshot({ path: `${output}/archive-760x600.png` });
+  await page.screenshot({ path: `${output}/archive-1280x720.png` });
 });
