@@ -65,6 +65,22 @@ export interface SurfaceOffset extends LogicalPoint {
   readonly elevationPx: number;
 }
 
+export type LogicalRectFootprint = Omit<LogicalRectCollision, 'type'>;
+export interface WallOpening {
+  readonly id: string;
+  readonly start: number;
+  readonly end: number;
+}
+export interface WallSegmentDefinition {
+  readonly id: string;
+  readonly kind: 'office' | 'archive';
+  readonly axis: 'u' | 'v';
+  readonly line: number;
+  readonly start: number;
+  readonly end: number;
+  readonly openings: readonly WallOpening[];
+}
+
 export interface InteractionArea {
   /** Pixel offsets in legacy scenes; logical offsets in dimetric scenes. */
   readonly x: number;
@@ -84,6 +100,7 @@ export interface SceneTransitionDefinition {
 export type SpawnPointDefinition = { readonly x: number; readonly y: number } | LogicalPoint;
 
 interface SceneAssetCommon {
+  readonly footprint?: LogicalRectFootprint | undefined;
   readonly id: string;
   readonly type: SceneAssetType;
   readonly texture: string;
@@ -140,6 +157,7 @@ export type SceneLabelDefinition = SceneLabelCommon &
   ({ readonly x: number; readonly y: number } | LogicalPoint);
 
 export interface SceneDefinition {
+  readonly walls?: readonly WallSegmentDefinition[] | undefined;
   readonly id: string;
   /** Optional during migration; legacy scenes continue to use world pixel coordinates. */
   readonly projection?: IsoProjection | undefined;

@@ -1,8 +1,43 @@
 import { describe, expect, it } from 'vitest';
-import { parseSceneDefinition } from './scene';
+import { parseSceneDefinition, sceneDefinitionSchema } from './scene';
 import { ContentValidationError } from '../loader/ContentValidationError';
 import mainOffice from '../../cases/case-001/scenes/main_office.json';
 import archive from '../../cases/case-001/scenes/archive.json';
+
+describe('static model schema', () => {
+  const wall = { id: 'west', kind: 'office', axis: 'v', line: 0, start: 0, end: 12, openings: [{ id: 'hallway', start: 4, end: 6 }] };
+  const prop = { id: 'desk', type: 'prop', texture: 'ph_desk', position: { u: 2, v: 3 }, footprint: { u: -0.5, v: -0.5, width: 1, height: 1 }, collision: { type: 'rect', u: -0.4, v: -0.4, width: 0.8, height: 0.8 } };
+  const model = (assets: unknown[] = [prop], walls: unknown[] = [wall]) => ({ id: 'model', projection: { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 }, size: { width: 1792, height: 896 }, worldBounds: { u: 0, v: 0, width: 16, height: 12 }, spawnPoints: { default: { u: 1, v: 5 } }, textures: [], assets, walls });
+  it('accepts a dimetric prop with footprint containing its collision and walls with openings', () => {
+    expect(sceneDefinitionSchema.safeParse(model()).success).toBe(true);
+  });
+  it.each(['wall', 'prop', 'interactable'])('rejects a migrated %s without footprint', (type) => {
+    const { footprint: _footprint, ...bare } = prop;
+    const parsed = sceneDefinitionSchema.safeParse(model([{ ...bare, type }]));
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) expect(parsed.error.issues.some(i => i.message.includes('footprint') && i.path[0] === 'assets')).toBe(true);
+  });
+  it('rejects a collision that is not inside the footprint', () => {
+    const parsed = sceneDefinitionSchema.safeParse(model([{ ...prop, collision: { ...prop.collision, width: 2 } }]));
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) expect(parsed.error.message).toContain('collision must be inside footprint');
+  });
+  it.each([
+    { ...wall, start: 0.5 }, { ...wall, start: 12, end: 0 },
+    { ...wall, openings: [{ id: 'bad', start: -1, end: 2 }] },
+    { ...wall, openings: [{ id: 'a', start: 2, end: 5 }, { id: 'b', start: 4, end: 6 }] },
+    { ...wall, openings: [{ id: 'narrow', start: 4, end: 5 }] },
+  ])('rejects invalid wall ranges/openings: %o', (invalid) => {
+    expect(sceneDefinitionSchema.safeParse(model([], [invalid])).success).toBe(false);
+  });
+  it('rejects duplicate wall ids', () => {
+    expect(sceneDefinitionSchema.safeParse(model([], [wall, wall])).success).toBe(false);
+  });
+  it('rejects walls in a legacy scene', () => {
+    const raw = { ...model([], []), projection: undefined, worldBounds: { x: 0, y: 0, width: 10, height: 10 }, spawnPoints: { default: { x: 1, y: 1 } } };
+    expect(sceneDefinitionSchema.safeParse(raw).success).toBe(false);
+  });
+});
 
 describe('parseSceneDefinition', () => {
   it('accepts the Main Office scene', () => {
