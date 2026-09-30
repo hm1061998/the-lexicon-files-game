@@ -85,6 +85,16 @@ const sceneAssetDefinitionSchema = z
   })
   .strict();
 
+const sceneLabelSchema = z
+  .object({
+    id: z.string().min(1),
+    text: z.string().trim().min(1, 'label text must not be empty'),
+    x: z.number(),
+    y: z.number(),
+    angle: z.number().optional(),
+  })
+  .strict();
+
 export const sceneDefinitionSchema = z
   .object({
     id: z.string().min(1),
@@ -105,6 +115,7 @@ export const sceneDefinitionSchema = z
     spawnPoints: z.record(z.string().min(1), spawnPointSchema),
     textures: z.array(textureEntrySchema),
     assets: z.array(sceneAssetDefinitionSchema),
+    labels: z.array(sceneLabelSchema).optional(),
   })
   .strict()
   .superRefine((scene, ctx) => {
@@ -140,6 +151,29 @@ export const sceneDefinitionSchema = z
     });
 
     const { spawnPoints, worldBounds } = scene;
+    const within = (p: { x: number; y: number }) =>
+      p.x >= worldBounds.x &&
+      p.x <= worldBounds.x + worldBounds.width &&
+      p.y >= worldBounds.y &&
+      p.y <= worldBounds.y + worldBounds.height;
+    const labelIds = new Set<string>();
+    (scene.labels ?? []).forEach((label, index) => {
+      if (labelIds.has(label.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['labels', index, 'id'],
+          message: `scene "${scene.id}": duplicate label id "${label.id}"`,
+        });
+      }
+      labelIds.add(label.id);
+      if (!within(label)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['labels', index],
+          message: `scene "${scene.id}": label "${label.id}" must be within worldBounds`,
+        });
+      }
+    });
     if (!Object.hasOwn(spawnPoints, 'default')) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -148,12 +182,7 @@ export const sceneDefinitionSchema = z
       });
     }
     for (const [id, spawn] of Object.entries(spawnPoints)) {
-      const withinBounds =
-        spawn.x >= worldBounds.x &&
-        spawn.x <= worldBounds.x + worldBounds.width &&
-        spawn.y >= worldBounds.y &&
-        spawn.y <= worldBounds.y + worldBounds.height;
-      if (!withinBounds) {
+      if (!within(spawn)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['spawnPoints', id],

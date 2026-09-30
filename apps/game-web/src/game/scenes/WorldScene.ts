@@ -6,6 +6,7 @@ import type {
   SceneDefinition,
 } from '@lexicon/shared-types';
 import { loadSceneTextures } from '../assetManifest';
+import { createRoomLabel } from '../entities/createRoomLabel';
 import { createSceneAsset } from '../entities/createSceneAsset';
 import {
   PLAYER_INITIAL_FACING,
@@ -24,6 +25,7 @@ import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
 import { InteractionTracker } from '../systems/InteractionTracker';
 import { markerMotion } from '../systems/markerMotion';
+import { isOccluder, occluderAlpha } from '../systems/occlusion';
 import { shouldEmitPlayerMoved } from '../systems/playerMoved';
 import { markerBaseY, markerPositionY } from '../systems/markerFloat';
 
@@ -53,6 +55,8 @@ const MARKER_DEPTH = 10000;
 /** Red target outline: above the sprites, just under the marker. */
 const OUTLINE_DEPTH = MARKER_DEPTH - 1;
 const OUTLINE_WIDTH_PX = 2;
+/** Room signs: above every wall and prop, under the target outline and the marker. */
+const LABEL_DEPTH = OUTLINE_DEPTH - 1;
 const OUTLINE_PADDING = 6;
 /** Figure width / height of an NPC, used to outline the figure rather than its sprite frame. */
 const NPC_FIGURE_ASPECT = 0.45;
@@ -79,6 +83,14 @@ export class WorldScene extends Phaser.Scene {
   private markerAnchors = new Map<string, number>();
   private targetBounds = new Map<string, () => Bounds>();
   private outline: Phaser.GameObjects.Graphics | null = null;
+  private roomLabels: Array<{ text: string; sign: Phaser.GameObjects.Container }> = [];
+  /** Inner walls and wall-hung boards that fade while the player stands behind them. */
+  private occluders: Array<{
+    id: string;
+    sprite: Phaser.GameObjects.Image;
+    feetY: number;
+    box: Bounds;
+  }> = [];
   private outlineBounds: Bounds | null = null;
   private lastAnchor: IdAnchor | null = null;
   /** Canvas CSS size, cached; refreshed on Phaser scale 'resize' instead of every frame. */
@@ -117,6 +129,7 @@ export class WorldScene extends Phaser.Scene {
     this.transitioning = false;
     this.areas = [];
     this.depths.clear();
+    this.occluders = [];
     this.markerAnchors.clear();
     this.targetBounds.clear();
     this.lastAnchor = null;
@@ -142,6 +155,11 @@ export class WorldScene extends Phaser.Scene {
       this.depths.set(asset.id, sprite.depth);
       if (asset.type === 'npc') createShadow(this, { x: asset.x, y: asset.y, depth: sprite.depth });
       if (body) colliders.add(body);
+      if (isOccluder(asset, b.width)) {
+        // Static sprites: bounds are measured once, not every frame.
+        const { x, y, width, height } = sprite.getBounds();
+        this.occluders.push({ id: asset.id, sprite, feetY: asset.y, box: { x, y, width, height } });
+      }
       if (asset.interaction) {
         // Character frames carry transparent headroom, so use the figure height for NPCs.
         const visualTop =
@@ -173,6 +191,11 @@ export class WorldScene extends Phaser.Scene {
         });
       }
     }
+
+    this.roomLabels = (def.labels ?? []).map((label) => ({
+      text: label.text,
+      sign: createRoomLabel(this, label, LABEL_DEPTH),
+    }));
 
     this.player = createPlayer(
       this,
@@ -229,6 +252,8 @@ export class WorldScene extends Phaser.Scene {
         return { key: walk?.key ?? null, frame: walk?.frame ?? null, playing: walk !== null };
       },
       depthOf: (id) => this.depths.get(id) ?? Number.NaN,
+      labels: () => this.roomLabels.map(({ text }) => text),
+      alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
       triggeredEvents: () => this.triggeredEventCount,
@@ -259,6 +284,7 @@ export class WorldScene extends Phaser.Scene {
     this.applyMarkerPosition();
     this.publishPlayerPosition(delta);
     this.syncTargetVisuals(delta);
+    this.syncOccluders();
     if (!this.keys) return;
     if (this.transitioning || this.pendingTransition) {
       this.holdForTransition();
@@ -354,6 +380,21 @@ export class WorldScene extends Phaser.Scene {
     this.lastAnchor = next;
     this.sinceAnchorMs = 0;
     this.bus.emit('interaction:anchor', { interactableId: id!, x: anchor.x, y: anchor.y });
+  }
+
+  /** Walls the player is behind drop to 45% so the player never disappears (art/06 §29). */
+  private syncOccluders(): void {
+    if (this.occluders.length === 0) return;
+    const width = CHARACTER_FIGURE_HEIGHT * NPC_FIGURE_ASPECT;
+    const figure = {
+      x: this.player.x - width / 2,
+      y: this.player.y - CHARACTER_FIGURE_HEIGHT,
+      width,
+      height: CHARACTER_FIGURE_HEIGHT,
+    };
+    for (const { sprite, feetY, box } of this.occluders) {
+      sprite.setAlpha(occluderAlpha(box, feetY, figure, this.player.y));
+    }
   }
 
   private refreshCanvasSize(): void {
@@ -487,6 +528,9 @@ export class WorldScene extends Phaser.Scene {
     this.scale.off(Phaser.Scale.Events.RESIZE, this.refreshCanvasSize, this);
     this.outline?.destroy();
     this.outline = null;
+    for (const { sign } of this.roomLabels) sign.destroy();
+    this.roomLabels = [];
+    this.occluders = [];
     this.outlineBounds = null;
     this.unsubscribeTransition?.();
     this.unsubscribeTransition = null;

@@ -8,6 +8,7 @@ import './minimap.css';
 // Marker sizes are in world units: the map is ~2400 units wide drawn at ~200 px.
 const MARKER_R = 88;
 const PLAYER_R = 84;
+const ROOM_DOT_R = 34;
 
 function Marker({ marker }: { marker: MinimapMarker }): JSX.Element {
   const { x, y, kind } = marker;
@@ -58,6 +59,25 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
             y={r.y}
             width={r.width}
             height={r.height}
+          />
+        ))}
+        {model.partitions.map((r, index) => (
+          <rect
+            key={index}
+            className="minimap-partition"
+            x={r.x}
+            y={r.y}
+            width={r.width}
+            height={r.height}
+          />
+        ))}
+        {model.labels.map((label) => (
+          <circle
+            key={label.id}
+            className="minimap-room"
+            cx={label.x}
+            cy={label.y}
+            r={ROOM_DOT_R}
           />
         ))}
         {model.markers.map((marker) => (

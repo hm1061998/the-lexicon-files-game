@@ -74,6 +74,20 @@ export interface SceneAssetDefinition {
   readonly interaction?: InteractionArea | undefined;
 }
 
+/**
+ * A room sign drawn in the world (e.g. on a partition wall). Text comes from content; the label
+ * is decoration only: not interactive and without game logic.
+ */
+export interface SceneLabelDefinition {
+  readonly id: string;
+  readonly text: string;
+  /** Centre of the sign in world pixels. */
+  readonly x: number;
+  readonly y: number;
+  /** Rotation in degrees, clockwise. */
+  readonly angle?: number | undefined;
+}
+
 export interface SceneDefinition {
   readonly id: string;
   readonly size: { readonly width: number; readonly height: number };
@@ -87,4 +101,5 @@ export interface SceneDefinition {
   /** Textures this scene's assets use; loaded when the scene is entered. `ph_*` are generated. */
   readonly textures: readonly TextureEntry[];
   readonly assets: readonly SceneAssetDefinition[];
+  readonly labels?: readonly SceneLabelDefinition[] | undefined;
 }

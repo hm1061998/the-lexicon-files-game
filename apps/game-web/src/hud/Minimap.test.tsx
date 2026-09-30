@@ -38,6 +38,14 @@ describe('Minimap', () => {
     expect(html).not.toContain('minimap-player');
   });
 
+  it('draws inner partitions and a text-free dot per room label', () => {
+    const html = render({});
+    expect(model.partitions.length).toBeGreaterThan(0);
+    expect(html.match(/class="minimap-partition"/g)).toHaveLength(model.partitions.length);
+    expect(html.match(/class="minimap-room"/g)).toHaveLength(model.labels.length);
+    for (const label of scene.labels ?? []) expect(html).not.toContain(label.text);
+  });
+
   it('draws the player once a position is published', () => {
     expect(render({ playerPosition: { x: 400, y: 500 } })).toContain('minimap-player');
   });

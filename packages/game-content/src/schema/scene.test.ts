@@ -261,3 +261,77 @@ describe('scene textures', () => {
 function raw0Key(): string {
   return (mainOffice as unknown as { textures: Array<{ key: string }> }).textures[0]!.key;
 }
+
+describe('scene labels', () => {
+  type RawLabel = { id: string; text: string; x: number; y: number; angle?: number };
+  const withLabels = (labels: RawLabel[]): unknown => ({
+    ...(structuredClone(mainOffice) as Record<string, unknown>),
+    labels,
+  });
+  const issuesOf = (raw: unknown): string[] => {
+    try {
+      parseSceneDefinition(raw, 'main_office.json');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ContentValidationError);
+      return (err as ContentValidationError).issues;
+    }
+    throw new Error('expected parseSceneDefinition to throw');
+  };
+
+  it('accepts room labels with an optional angle', () => {
+    const scene = parseSceneDefinition(
+      withLabels([
+        { id: 'room_a', text: 'PHÒNG A', x: 400, y: 800 },
+        { id: 'room_b', text: 'PHÒNG B', x: 1400, y: 900, angle: -4 },
+      ]),
+      'main_office.json',
+    );
+    expect(scene.labels).toEqual([
+      { id: 'room_a', text: 'PHÒNG A', x: 400, y: 800 },
+      { id: 'room_b', text: 'PHÒNG B', x: 1400, y: 900, angle: -4 },
+    ]);
+  });
+
+  it('keeps labels optional', () => {
+    const raw = structuredClone(mainOffice) as Record<string, unknown>;
+    delete raw.labels;
+    expect(parseSceneDefinition(raw, 'main_office.json').labels).toBeUndefined();
+  });
+
+  it('rejects an empty or blank label text', () => {
+    for (const text of ['', '   ']) {
+      const issues = issuesOf(withLabels([{ id: 'room_a', text, x: 400, y: 800 }]));
+      expect(issues.some((issue) => issue.includes('labels'))).toBe(true);
+    }
+  });
+
+  it('rejects duplicate label ids', () => {
+    const issues = issuesOf(
+      withLabels([
+        { id: 'room_a', text: 'A', x: 400, y: 800 },
+        { id: 'room_a', text: 'B', x: 500, y: 800 },
+      ]),
+    );
+    expect(
+      issues.some((issue) => issue.includes('labels') && issue.includes('duplicate label id')),
+    ).toBe(true);
+  });
+
+  it('rejects a label outside worldBounds', () => {
+    const issues = issuesOf(withLabels([{ id: 'room_a', text: 'A', x: 400, y: 20 }]));
+    expect(issues.some((issue) => issue.includes('labels') && issue.includes('worldBounds'))).toBe(
+      true,
+    );
+  });
+
+  it('gives every real scene at least one uniquely named room label', () => {
+    for (const [raw, source] of [
+      [mainOffice, 'main_office.json'],
+      [archive, 'archive.json'],
+    ] as const) {
+      const labels = parseSceneDefinition(raw, source).labels ?? [];
+      expect(labels.length, source).toBeGreaterThan(0);
+      expect(new Set(labels.map(({ id }) => id)).size, source).toBe(labels.length);
+    }
+  });
+});

@@ -320,6 +320,156 @@ def audio_recorder():
     return s
 
 
+# ------------------------------------------------------------------ Phase 11C furnishing
+def coat_rack():
+    s = Scene()
+    wood = M["wood"]
+    for k in range(4):                                                  # splayed feet
+        a = k * math.pi / 2 + math.pi / 4
+        rod(s, [0, 0, 0.10], [0.24 * math.cos(a), 0.24 * math.sin(a), 0.01], 0.035, wood)
+    s.cyl(0, 0, 0.0, 0.05, 0.12, wood)
+    s.cyl(0, 0, 0.1, 0.022, 1.62, wood, top=M["wood_lt"])
+    s.cyl(0, 0, 1.70, 0.035, 0.05, wood, top=M["wood_lt"])
+    for k in range(4):                                                  # hooks
+        a = k * math.pi / 2
+        rod(s, [0.01 * math.cos(a), 0.01 * math.sin(a), 1.62], [0.12 * math.cos(a), 0.12 * math.sin(a), 1.70], 0.02, M["metal_dk"])
+    coat = mix("brown", "beige", 0.18)
+    # trench coat hanging from the front hook: shoulders, body, belt, collar
+    s.box(-0.17, 0.05, 0.62, 0.34, 0.12, 0.92, coat, top=mix(coat, "cream", 0.1))
+    s.box(-0.20, 0.04, 1.36, 0.40, 0.14, 0.20, coat)
+    s.box(-0.17, 0.17, 1.05, 0.34, 0.004, 0.045, mix(coat, "ink", 0.35), lw=0.7)
+    s.box(-0.02, 0.171, 0.66, 0.012, 0.002, 0.86, mix(coat, "ink", 0.3), lw=0.5)
+    s.quad([[-0.10, 0.181, 1.56], [0.0, 0.181, 1.46], [0.10, 0.181, 1.56]], mix(coat, "ink", 0.2), n=[0, 1, 0], lw=0.8)
+    # hat on the left hook
+    s.cyl(-0.05, -0.12, 1.66, 0.13, 0.015, mix("ink", "brown", 0.4))
+    s.cyl(-0.05, -0.12, 1.675, 0.075, 0.09, mix("ink", "brown", 0.4), top=mix("ink", "brown", 0.5))
+    return s
+
+
+def water_cooler():
+    s = Scene()
+    body = mix(M["plaster"], "gray", 0.18)
+    W, D, H = 0.34, 0.34, 0.98
+    s.box(0, 0, 0, W, D, 0.06, M["metal_dk"])
+    s.box(0.01, 0.01, 0.06, W - 0.02, D - 0.02, H - 0.06, body, top=mix(body, "cream", 0.2))
+    s.box(0.05, D - 0.01, 0.52, W - 0.10, 0.012, 0.20, mix(body, "ink", 0.18), lw=0.8)   # tap recess
+    for x in (0.10, 0.21):
+        s.box(x, D, 0.63, 0.04, 0.04, 0.05, M["metal_dk"], lw=0.7)
+    s.box(0.07, D - 0.002, 0.50, W - 0.14, 0.06, 0.02, M["metal"], lw=0.8)             # drip tray
+    s.box(0.06, D - 0.009, 0.14, W - 0.12, 0.004, 0.30, mix(body, "beige", 0.3), lw=0.6)  # cabinet door
+    glass = mix(M["glass"], "green", 0.30)
+    s.cyl(W / 2, D / 2, H, 0.05, 0.04, mix(glass, "ink", 0.2))
+    s.cyl(W / 2, D / 2, H + 0.04, 0.13, 0.36, glass, r2=0.13, top=mix(glass, "cream", 0.2))
+    s.cyl(W / 2, D / 2, H + 0.40, 0.13, 0.05, glass, r2=0.06, top=mix(glass, "cream", 0.2))
+    for z in (H + 0.12, H + 0.26):
+        s.cyl(W / 2, D / 2, z, 0.132, 0.012, mix(glass, "ink", 0.15))
+    # stack of paper cups on the side
+    s.cyl(W + 0.04, D * 0.6, 0.62, 0.035, 0.16, M["paper"], r2=0.04)
+    s.box(W, D * 0.6 - 0.04, 0.60, 0.02, 0.08, 0.22, M["metal"], lw=0.7)
+    return s
+
+
+def file_boxes():
+    s = Scene()
+    lr = np.random.default_rng(17)
+    specs = [(0.0, 0.0, 0.0, 0.52, 0.38, 0.30, 0.0), (0.54, 0.04, 0.0, 0.46, 0.36, 0.28, 0.08),
+             (0.04, 0.02, 0.30, 0.48, 0.36, 0.28, -0.06), (0.10, 0.44, 0.0, 0.44, 0.34, 0.26, 0.12)]
+    for x, y, z, w, d, h, rot in specs:
+        col = mix(M["cardboard"], "gray", lr.uniform(0, 0.3))
+        s.box(x, y, z, w, d, h, col, rot=rot, pivot=(x + w / 2, y + d / 2))
+        s.box(x - 0.008, y - 0.008, z + h - 0.05, w + 0.016, d + 0.016, 0.062, mix(col, "ink", 0.12), lw=0.8,
+              rot=rot, pivot=(x + w / 2, y + d / 2))                   # lid, a little proud of the box
+        st = len(s.faces)
+        s.box(x + w / 2 - 0.08, y + d, z + h * 0.30, 0.16, 0.004, 0.09, M["paper"], lw=0.7)
+        s.box(x + w / 2 - 0.05, y + d, z + h * 0.10, 0.10, 0.004, 0.04, mix("brown", "ink", 0.3), lw=0.5)
+        s.rotate(st, rot, (x + w / 2, y + d / 2))
+    paper_stack(s, 0.08, 0.06, 0.58, 3, w=0.30, d=0.22, col=M["cardboard"], folder=True, rot=0.2)
+    return s
+
+
+def plant_tall():
+    s = Scene()
+    s.cyl(0, 0, 0, 0.17, 0.46, mix("brown", "beige", 0.35), r2=0.20, top=mix("brown", "ink", 0.2))
+    s.cyl(0, 0, 0.44, 0.205, 0.04, mix("brown", "beige", 0.45))
+    s.disc(0, 0, 0.482, 0.18, mix("brown", "ink", 0.25), decal=False)
+    lr = np.random.default_rng(23)
+    rod(s, [0, 0, 0.48], [0.02, 0.01, 1.35], 0.03, mix("brown", "olive", 0.3))
+    for k in range(30):                                                # broad leaves along a stem
+        zb = lr.uniform(0.75, 1.45)
+        a = lr.uniform(0, 2 * math.pi)
+        L = lr.uniform(0.22, 0.34)
+        wdt = lr.uniform(0.06, 0.09)
+        base = np.array([0.02 * math.cos(a), 0.02 * math.sin(a), zb])
+        hor = np.array([math.cos(a), math.sin(a), 0.])
+        side = np.array([-math.sin(a), math.cos(a), 0.])
+        tip = base + hor * L + np.array([0, 0, lr.uniform(-0.12, 0.10)])
+        mid = (base + tip) / 2 + np.array([0, 0, 0.03])
+        col = mix(mix("olive", "green", lr.uniform(0.3, 0.9)), "ink", lr.uniform(0.05, 0.2))
+        g = s.gid()
+        s.face([base, mid - side * wdt, tip, mid + side * wdt], np.cross(side, tip - base), col, lw=0.8, group=g, two=True)
+        s.stroke([base + [0, 0, 0.003], tip + [0, 0, 0.003]], w=0.6, alpha=0.3)
+    return s
+
+
+def archive_shelf(seed=29):
+    s = Scene()
+    lr = np.random.default_rng(seed)
+    W, D, H = 1.20, 0.45, 1.95
+    for x in (0.0, W - 0.04):
+        for y in (0.0, D - 0.04):
+            s.box(x, y, 0, 0.04, 0.04, H, M["metal_dk"])
+    for lvl in range(5):
+        z = 0.06 + lvl * 0.46
+        s.box(0, 0, z, W, D, 0.03, M["metal"], lw=1.0)
+        if lvl == 4:
+            continue
+        x = 0.05
+        while x < W - 0.30:
+            if lr.random() < 0.15:
+                x += 0.22
+                continue
+            if lr.random() < 0.6:
+                bw = lr.uniform(0.28, 0.36)
+                bh = lr.uniform(0.26, 0.32)
+                col = mix(M["cardboard"], "gray", lr.uniform(0, 0.35))
+                s.box(x, 0.04, z + 0.03, bw, D - 0.08, bh, col, lw=1.0)
+                s.box(x + bw / 2 - 0.06, D - 0.039, z + 0.03 + bh * 0.5, 0.12, 0.002, 0.07, M["paper"], lw=0.6)
+                x += bw + 0.03
+            else:
+                for k in range(lr.integers(3, 6)):
+                    bw = 0.07
+                    col = mix(lr.choice(["gray", "green", "brown", "beige"]), "ink", lr.uniform(0.05, 0.3))
+                    s.box(x, 0.06, z + 0.03, bw, D - 0.12, lr.uniform(0.30, 0.36), col, lw=0.8)
+                    x += bw + 0.005
+                x += 0.03
+    return s
+
+
+def credenza():
+    s = Scene()
+    W, D, H = 1.30, 0.45, 0.72
+    s.box(0, 0, 0, W, D, 0.06, mix(M["wood"], "ink", 0.2))
+    s.box(0, 0, 0.06, W, D, H - 0.06, M["wood"], top=M["wood_lt"])
+    for k in range(3):                                                   # doors
+        s.box(0.03 + k * (W - 0.06) / 3, D, 0.10, (W - 0.06) / 3 - 0.02, 0.012, H - 0.16, M["wood"], lw=0.9)
+        s.box(0.03 + (k + 0.5) * (W - 0.06) / 3 - 0.03, D + 0.012, H - 0.22, 0.06, 0.012, 0.02, M["metal_dk"], lw=0.7)
+    for k in range(5):                                                   # binders on top
+        s.box(0.10 + k * 0.08, 0.12, H, 0.07, 0.26, 0.30, mix(["gray", "green", "brown", "beige", "gray"][k], "ink", 0.2), lw=0.8)
+        s.box(0.115 + k * 0.08, 0.381, H + 0.16, 0.04, 0.002, 0.06, M["paper"], lw=0.5)
+    paper_stack(s, 0.66, 0.10, H, 5, w=0.30, d=0.22, rot=0.1)
+    s.cyl(1.10, 0.22, H, 0.10, 0.14, M["ceramic"], r2=0.12, top=mix("brown", "ink", 0.2))   # small plant pot
+    lr = np.random.default_rng(5)
+    for k in range(14):
+        a = lr.uniform(0, 2 * math.pi)
+        base = np.array([1.10, 0.22, H + 0.14])
+        hor = np.array([math.cos(a), math.sin(a), 0.])
+        side = np.array([-math.sin(a), math.cos(a), 0.])
+        tip = base + hor * 0.16 + np.array([0, 0, lr.uniform(0.08, 0.2)])
+        g = s.gid()
+        s.face([base - side * 0.02, base + side * 0.02, tip], np.cross(side, tip - base), mix("olive", "green", lr.uniform(0, 0.6)), lw=0.7, group=g, two=True)
+    return s
+
+
 BUILDERS = dict(
     prop_office_desk_01=office_desk,
     prop_office_chair_01=lambda: office_chair(math.radians(-20)),
@@ -330,6 +480,13 @@ BUILDERS = dict(
     prop_note_01=note,
     prop_security_terminal_01=security_terminal,
     prop_audio_recorder_01=audio_recorder,
+    prop_coat_rack_01=coat_rack,
+    prop_water_cooler_01=water_cooler,
+    prop_file_boxes_01=file_boxes,
+    prop_plant_tall_01=plant_tall,
+    prop_archive_shelf_01=archive_shelf,
+    prop_archive_shelf_02=lambda: archive_shelf(37),
+    prop_credenza_01=credenza,
 )
 
 if __name__ == "__main__":

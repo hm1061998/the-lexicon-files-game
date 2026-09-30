@@ -234,6 +234,182 @@
     "note": "origin [0.5,1] (bbox cropped, feet at bottom)"
   },
   {
+    "src": "assets/_incoming/partition_office_meeting_n.png",
+    "dest": "environment/office/partition_office_meeting_n.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'h', 1084 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision."
+  },
+  {
+    "src": "assets/_incoming/partition_office_meeting_e_n.png",
+    "dest": "environment/office/partition_office_meeting_e_n.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'v', 130 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision (south end post)."
+  },
+  {
+    "src": "assets/_incoming/partition_office_meeting_e_s.png",
+    "dest": "environment/office/partition_office_meeting_e_s.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'v', 360 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision (south end post)."
+  },
+  {
+    "src": "assets/_incoming/partition_office_invest_e.png",
+    "dest": "environment/office/partition_office_invest_e.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'v', 220 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision (south end post)."
+  },
+  {
+    "src": "assets/_incoming/partition_office_hall_n.png",
+    "dest": "environment/office/partition_office_hall_n.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'h', 512 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision."
+  },
+  {
+    "src": "assets/_incoming/partition_office_hall_w.png",
+    "dest": "environment/office/partition_office_hall_w.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'v', 226 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision (south end post)."
+  },
+  {
+    "src": "assets/_incoming/partition_office_east_n.png",
+    "dest": "environment/office/partition_office_east_n.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'h', 620 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision."
+  },
+  {
+    "src": "assets/_incoming/partition_archive_hall_n.png",
+    "dest": "environment/archive/partition_archive_hall_n.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'h', 712 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision."
+  },
+  {
+    "src": "assets/_incoming/partition_archive_hall_e.png",
+    "dest": "environment/archive/partition_archive_hall_e.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'v', 226 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision (south end post)."
+  },
+  {
+    "src": "assets/_incoming/partition_archive_store_n_w.png",
+    "dest": "environment/archive/partition_archive_store_n_w.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'h', 560 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision."
+  },
+  {
+    "src": "assets/_incoming/partition_archive_store_n_e.png",
+    "dest": "environment/archive/partition_archive_store_n_e.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'h', 444 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision."
+  },
+  {
+    "src": "assets/_incoming/partition_archive_store_e.png",
+    "dest": "environment/archive/partition_archive_store_e.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'v', 640 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision (south end post)."
+  },
+  {
+    "src": "assets/_incoming/partition_archive_security_s.png",
+    "dest": "environment/archive/partition_archive_security_s.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Inner wall, oblique elevation (scenes.partition 'h', 1000 px); RGBA with glass, not keyed. Origin [0.5,1] on the south edge of the collision."
+  },
+  {
+    "src": "assets/_incoming/prop_whiteboard_01.png",
+    "dest": "environment/props/prop_whiteboard_01.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Wall-hung board (scenes.wall_board), RGBA with 68 px empty below: origin [0.5,1] on the wall's floor line, y just in front of the wall."
+  },
+  {
+    "src": "assets/_incoming/prop_bulletin_board_01.png",
+    "dest": "environment/props/prop_bulletin_board_01.png",
+    "targetWidth": null,
+    "keyMagenta": false,
+    "frame": null,
+    "note": "Wall-hung board (scenes.wall_board), RGBA with 68 px empty below: origin [0.5,1] on the wall's floor line, y just in front of the wall."
+  },
+  {
+    "src": "assets/_incoming/prop_coat_rack_01.png",
+    "dest": "environment/props/prop_coat_rack_01.png",
+    "targetWidth": 49,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom); width at 95 px/m like the desk"
+  },
+  {
+    "src": "assets/_incoming/prop_water_cooler_01.png",
+    "dest": "environment/props/prop_water_cooler_01.png",
+    "targetWidth": 46,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom); width at 95 px/m like the desk"
+  },
+  {
+    "src": "assets/_incoming/prop_file_boxes_01.png",
+    "dest": "environment/props/prop_file_boxes_01.png",
+    "targetWidth": 112,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom); width at 95 px/m like the desk"
+  },
+  {
+    "src": "assets/_incoming/prop_plant_tall_01.png",
+    "dest": "environment/props/prop_plant_tall_01.png",
+    "targetWidth": 63,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom); width at 95 px/m like the desk"
+  },
+  {
+    "src": "assets/_incoming/prop_archive_shelf_01.png",
+    "dest": "environment/props/prop_archive_shelf_01.png",
+    "targetWidth": 112,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom); width at 95 px/m like the desk"
+  },
+  {
+    "src": "assets/_incoming/prop_archive_shelf_02.png",
+    "dest": "environment/props/prop_archive_shelf_02.png",
+    "targetWidth": 112,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom); width at 95 px/m like the desk"
+  },
+  {
+    "src": "assets/_incoming/prop_credenza_01.png",
+    "dest": "environment/props/prop_credenza_01.png",
+    "targetWidth": 118,
+    "keyMagenta": true,
+    "frame": null,
+    "note": "origin [0.5,1] (bbox cropped, feet at bottom); width at 95 px/m like the desk"
+  },
+  {
     "src": "assets/_incoming/evidence_meeting_minutes.png",
     "dest": "evidence/evidence_meeting_minutes.png",
     "targetWidth": 480,

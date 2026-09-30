@@ -19,6 +19,7 @@ export type {
   SceneTransitionDefinition,
   SpawnPointDefinition,
   SceneDefinition,
+  SceneLabelDefinition,
   TextureEntry,
   CharacterFacing,
   FacingTextureMap,

@@ -26,3 +26,6 @@ export const PALETTE = {
 export const INTERACTION_RED = '#A4412D';
 
 export const SCENE_FADE_MS = 250;
+
+/** Font stack of room labels; mirrors the `--lexicon-font-body` token of `@lexicon/ui`. */
+export const LABEL_FONT_FAMILY = 'Cambria, "Times New Roman", Georgia, serif';

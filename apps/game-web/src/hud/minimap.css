@@ -30,6 +30,18 @@
   vector-effect: non-scaling-stroke;
 }
 
+.minimap-partition {
+  fill: var(--lexicon-ink);
+  stroke: var(--lexicon-ink);
+  stroke-width: 2.5px;
+  vector-effect: non-scaling-stroke;
+}
+
+.minimap-room {
+  fill: var(--lexicon-warm-gray);
+  stroke: none;
+}
+
 .minimap-marker-interactable {
   fill: var(--lexicon-investigation-red);
   stroke: var(--lexicon-paper);

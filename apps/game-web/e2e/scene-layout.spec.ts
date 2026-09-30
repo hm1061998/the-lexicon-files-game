@@ -11,11 +11,13 @@ type Asset = {
   collision?: Rect;
   interaction?: { x: number; y: number; radius: number };
 };
+type Label = { id: string; text: string; x: number; y: number };
 type SceneJson = {
   id: string;
   worldBounds: Rect;
   spawnPoints: Record<string, { x: number; y: number }>;
   assets: Asset[];
+  labels?: Label[];
 };
 type Area = { id: string; x: number; y: number; radius: number };
 type Point = { x: number; y: number };
@@ -34,6 +36,10 @@ const BODY_H = 18;
 // Generous margin: the steering below may overshoot a waypoint by a few frames of movement.
 const CLEARANCE = 24;
 const GRID = 10;
+// Every interaction point (evidence, NPC, door) keeps this much free floor to any other collision.
+const MIN_INTERACTION_CLEARANCE = 48;
+// Blocking scene furniture: decor props and inner room walls.
+const BLOCKING = /^(?:decor|partition)_/;
 
 function worldRects(scene: SceneJson): Array<Rect & { id: string }> {
   return scene.assets
@@ -143,7 +149,15 @@ function findPath(scene: SceneJson, from: Point, target: Area): Point[] | null {
   return null;
 }
 
+function distanceToRect(p: Point, r: Rect): number {
+  const dx = Math.max(r.x - p.x, 0, p.x - (r.x + r.width));
+  const dy = Math.max(r.y - p.y, 0, p.y - (r.y + r.height));
+  return Math.hypot(dx, dy);
+}
+
 type DebugApi = {
+  labels(): string[];
+  alphaOf(id: string): number;
   player(): { x: number; y: number };
   nearby(): string | null;
   teleport(x: number, y: number): void;
@@ -257,7 +271,7 @@ for (const { file, spawn } of CASES) {
   const scene = readScene(file);
 
   test(`${scene.id}: decor footprints stay clear of interaction points and spawns`, () => {
-    const decor = worldRects(scene).filter((r) => r.id.startsWith('decor_'));
+    const decor = worldRects(scene).filter((r) => BLOCKING.test(r.id));
     for (const r of decor) {
       for (const a of areas(scene)) {
         const inside = a.x >= r.x && a.x <= r.x + r.width && a.y >= r.y && a.y <= r.y + r.height;
@@ -269,43 +283,122 @@ for (const { file, spawn } of CASES) {
     }
   });
 
+  test(`${scene.id}: every interaction point keeps ${MIN_INTERACTION_CLEARANCE} px to other collisions`, () => {
+    const rects = worldRects(scene);
+    for (const a of areas(scene)) {
+      for (const r of rects) {
+        if (r.id === a.id) continue; // an object's own footprint (terminal, NPC body)
+        expect(
+          distanceToRect(a, r),
+          `${a.id} is ${Math.round(distanceToRect(a, r))} px from ${r.id}`,
+        ).toBeGreaterThanOrEqual(MIN_INTERACTION_CLEARANCE);
+      }
+    }
+  });
+
+  test(`${scene.id}: every interaction point is reachable from every spawn`, () => {
+    for (const [id, p] of Object.entries(scene.spawnPoints)) {
+      for (const target of areas(scene)) {
+        expect(findPath(scene, p, target), `spawn ${id} -> ${target.id}`).not.toBeNull();
+      }
+    }
+  });
+
+  test(`${scene.id}: room labels have unique ids and text inside the world`, () => {
+    const labels = scene.labels ?? [];
+    expect(labels.length).toBeGreaterThan(0);
+    expect(new Set(labels.map(({ id }) => id)).size).toBe(labels.length);
+    const b = scene.worldBounds;
+    for (const l of labels) {
+      expect(l.text.trim().length, l.id).toBeGreaterThan(0);
+      expect(l.x >= b.x && l.x <= b.x + b.width && l.y >= b.y && l.y <= b.y + b.height, l.id).toBe(
+        true,
+      );
+    }
+  });
+
+  test(`${scene.id}: room labels from content are drawn in the scene`, async ({ page }) => {
+    await open(page, scene, spawn);
+    await expect
+      .poll(() => page.evaluate(() => window.__lexiconDebug!.labels()))
+      .toEqual((scene.labels ?? []).map(({ text }) => text));
+  });
+
+  test(`${scene.id}: room walls fade while the player stands behind them`, async ({ page }) => {
+    const rects = worldRects(scene);
+    const walls = rects.filter((r) => r.id.startsWith('partition_') && r.width > r.height);
+    expect(walls.length).toBeGreaterThan(0);
+    await open(page, scene, spawn);
+    const alpha = (id: string) => page.evaluate((i) => window.__lexiconDebug!.alphaOf(i), id);
+    const teleport = (p: Point) =>
+      page.evaluate(([x, y]) => window.__lexiconDebug!.teleport(x!, y!), [p.x, p.y]);
+    for (const r of walls) {
+      // Probe along the wall for a free spot just behind it and one just in front of it.
+      const xs = Array.from({ length: 9 }, (_, k) => r.x + ((k + 1) * r.width) / 10);
+      const behind = xs
+        .map((x) => ({ x, y: r.y - 30 }))
+        .find((p) => !blockedAt(scene, rects, p, 0));
+      const front = xs
+        .map((x) => ({ x, y: r.y + r.height + BODY_H + 20 }))
+        .find((p) => !blockedAt(scene, rects, p, 0));
+      expect(behind && front, `${r.id}: no free spot on both sides`).toBeTruthy();
+      await teleport(behind!);
+      await expect.poll(() => alpha(r.id), { message: `${r.id} behind` }).toBeLessThan(1);
+      await teleport(front!);
+      await expect.poll(() => alpha(r.id), { message: `${r.id} in front` }).toBe(1);
+    }
+  });
+
   test(`${scene.id}: every interactable is reachable on foot from spawn "${spawn}"`, async ({
     page,
   }) => {
     test.setTimeout(120_000);
     await open(page, scene, spawn);
+    const nearbyNow = () => page.evaluate(() => window.__lexiconDebug!.nearby());
     for (const target of areas(scene)) {
-      const from = await playerPos(page);
-      const path = findPath(scene, from, target);
-      expect(path, `no walkable path to ${target.id}`).not.toBeNull();
-      await walk(page, path!, target.id);
-      await expect
-        .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()), { timeout: 2000 })
-        .toBe(target.id);
+      // A leg that only grazes the interaction circle can coast out of it after the key is
+      // released on a slow frame; re-plan from where the player stopped (at most twice more).
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const from = await playerPos(page);
+        const path = findPath(scene, from, target);
+        expect(path, `no walkable path to ${target.id}`).not.toBeNull();
+        await walk(page, path!, target.id);
+        await page.waitForTimeout(300);
+        if ((await nearbyNow()) === target.id) break;
+      }
+      await expect.poll(nearbyNow, { timeout: 2000 }).toBe(target.id);
     }
   });
 
-  test(`${scene.id}: player cannot walk through decor props`, async ({ page }) => {
+  test(`${scene.id}: player cannot walk through decor props or room walls`, async ({ page }) => {
+    test.setTimeout(120_000);
     const rects = worldRects(scene);
-    const decor = rects.filter((r) => r.id.startsWith('decor_'));
-    expect(decor.length).toBeGreaterThan(0);
+    const blocking = rects.filter((r) => BLOCKING.test(r.id));
+    expect(blocking.some((r) => r.id.startsWith('decor_'))).toBe(true);
+    expect(blocking.some((r) => r.id.startsWith('partition_'))).toBe(true);
     await open(page, scene, spawn);
-    for (const r of decor) {
+    for (const r of blocking) {
       const cx = r.x + r.width / 2;
-      // Approach from below (walking up) or from above (walking down), whichever side is free.
-      const below = { x: cx, y: r.y + r.height + BODY_H + 24 };
-      const above = { x: cx, y: r.y - 24 };
-      const fromBelow = !blockedAt(scene, rects, below);
-      const start = fromBelow ? below : above;
-      expect(blockedAt(scene, rects, start), `${r.id}: no free side to test from`).toBe(false);
+      const cy = r.y + r.height / 2;
+      // Approach from whichever side is free: walk up from below, down from above, or sideways.
+      const sides = [
+        { start: { x: cx, y: r.y + r.height + BODY_H + 24 }, key: 'w' },
+        { start: { x: cx, y: r.y - 24 }, key: 's' },
+        { start: { x: r.x - BODY_W / 2 - 24, y: cy + BODY_H / 2 }, key: 'd' },
+        { start: { x: r.x + r.width + BODY_W / 2 + 24, y: cy + BODY_H / 2 }, key: 'a' },
+      ] as const;
+      const side = sides.find(({ start }) => !blockedAt(scene, rects, start));
+      expect(side, `${r.id}: no free side to test from`).toBeDefined();
+      const { start, key } = side!;
       await page.evaluate(([x, y]) => window.__lexiconDebug!.teleport(x!, y!), [start.x, start.y]);
-      const key = fromBelow ? 'w' : 's';
       await page.keyboard.down(key);
       await page.waitForTimeout(700);
       await page.keyboard.up(key);
       const p = await playerPos(page);
-      if (fromBelow) expect(p.y - BODY_H, r.id).toBeGreaterThanOrEqual(r.y + r.height - 2);
-      else expect(p.y, r.id).toBeLessThanOrEqual(r.y + 2);
+      if (key === 'w') expect(p.y - BODY_H, r.id).toBeGreaterThanOrEqual(r.y + r.height - 2);
+      else if (key === 's') expect(p.y, r.id).toBeLessThanOrEqual(r.y + 2);
+      else if (key === 'd') expect(p.x + BODY_W / 2, r.id).toBeLessThanOrEqual(r.x + 2);
+      else expect(p.x - BODY_W / 2, r.id).toBeGreaterThanOrEqual(r.x + r.width - 2);
     }
   });
 }

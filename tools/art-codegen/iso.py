@@ -64,6 +64,13 @@ class Cam:
             self.d = np.array([0, math.sin(p), -math.cos(p)])
             self.c = np.array([0, math.cos(p), math.sin(p)])
             l = np.array([-0.35, 0.8, 0.5])
+        elif mode == "oblique":
+            # the game's own 2D projection: floor y maps 1:1 to screen y and height rises
+            # straight up (screen_y = y - z), so wall caps match their collision footprints
+            self.r = np.array([1., 0, 0])
+            self.d = np.array([0, 1., -1.])
+            self.c = np.array([0, 0.6, 0.8])
+            l = np.array([-0.35, 0.75, 0.55])
         else:
             self.r = np.array([1., 0, 0])
             self.d = np.array([0, -1., 0])
@@ -270,7 +277,7 @@ class Scene:
         stripes = ndi.gaussian_filter(stripes * (brk > 0.35), 0.8 * S / 4 + 0.5)
         rgb = rgb * (1 - hatch_k * hat[..., None] * stripes[..., None])
         # soft mottled pencil on everything
-        mott = ndi.gaussian_filter(rng.standard_normal((HH // 4, WW // 4)), 2.0)
+        mott = ndi.gaussian_filter(rng.standard_normal((HH // 4 + 1, WW // 4 + 1)), 2.0)
         mott = np.kron(mott / (mott.std() + 1e-9), np.ones((4, 4)))[:HH, :WW]
         rgb = rgb * (1 + 0.018 * mott[..., None])
 
@@ -331,6 +338,11 @@ class Scene:
         if bg == "magenta":
             keep = al >= 0.5
             out = np.where(keep[..., None], out, MAGENTA)
+        elif bg == "alpha":
+            # straight RGBA: ink silhouette included, nothing rendered stays fully transparent
+            rgba = np.dstack([np.round(out), np.round(np.clip(al, 0, 1) * 255)]).astype(np.uint8)
+            rgba[rgba[..., 3] == 0, :3] = 0
+            return Image.fromarray(rgba, "RGBA"), al
         elif bg is None:
             pass
         return Image.fromarray(np.round(out).astype(np.uint8)), al

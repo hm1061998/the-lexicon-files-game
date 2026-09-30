@@ -87,11 +87,49 @@ describe('buildMinimapModel', () => {
     expect(buildMinimapModel(s, { x: 3, y: 4 }).player).toEqual({ x: 3, y: 4 });
   });
 
-  it('models every real scene: one marker per interaction, one solid per collision', () => {
+  it('models every real scene: one marker per interaction, each collision a solid or partition', () => {
     for (const real of caseDefinition.scenes) {
       const model = buildMinimapModel(real, null);
       expect(model.markers).toHaveLength(real.assets.filter((a) => a.interaction).length);
-      expect(model.solids).toHaveLength(real.assets.filter((a) => a.collision).length);
+      expect(model.solids.length + model.partitions.length).toBe(
+        real.assets.filter((a) => a.collision).length,
+      );
+      expect(model.partitions.length, real.id).toBeGreaterThan(0);
     }
+  });
+
+  it('draws inner walls as partitions, keeping the full-width back wall a solid', () => {
+    const model = buildMinimapModel(
+      scene([
+        asset({
+          id: 'back',
+          type: 'wall',
+          collision: { type: 'rect', x: -100, y: -40, width: 2400, height: 40 },
+        }),
+        asset({
+          id: 'inner',
+          type: 'wall',
+          x: 500,
+          y: 900,
+          collision: { type: 'rect', x: -300, y: -24, width: 600, height: 24 },
+        }),
+        asset({ id: 'desk', collision: { type: 'rect', x: 0, y: -10, width: 20, height: 10 } }),
+      ]),
+      null,
+    );
+    expect(model.partitions).toEqual([{ x: 200, y: 876, width: 600, height: 24 }]);
+    expect(model.solids).toEqual([
+      { x: 0, y: 160, width: 2400, height: 40 },
+      { x: 100, y: 190, width: 20, height: 10 },
+    ]);
+  });
+
+  it('places a dot per room label, without text', () => {
+    const model = buildMinimapModel(
+      { ...scene([]), labels: [{ id: 'room', text: 'PHÒNG', x: 300, y: 700 }] },
+      null,
+    );
+    expect(model.labels).toEqual([{ id: 'room', x: 300, y: 700 }]);
+    expect(buildMinimapModel(scene([]), null).labels).toEqual([]);
   });
 });
