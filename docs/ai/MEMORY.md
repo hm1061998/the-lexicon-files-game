@@ -1,24 +1,24 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T11:07:00+07:00
+updated_at: 2026-09-30T11:16:00+07:00
 phase: phase-11d
 status: in_progress
-result_commit: ba337b9
-active_spec: docs/ai/2026-09-30-phase-11d-user-feedback-backlog.md
+result_commit: cae3e02
+active_spec: docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md
 active_plan: none
 ---
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; Phase 11C Task 5 commit `9ef78aa`, verification Task 6 commit `ba337b9`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, bố cục được xem lại trong Phase 11D.
+- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec `cae3e02`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, bố cục được xem lại trong Phase 11D.
 
 ## Current Phase
 
-- Phase 11C Task 5–6 đã hoàn tất trên `dev`; Task 4 WIP được chuyển sang điều chỉnh trong Phase 11D, không được tính đạt. Đang bắt đầu thiết kế Phase 11D theo backlog tiếng Việt; spec cần người dùng duyệt trước khi lập plan. Phase 12 chưa bắt đầu.
+- Phase 11C Task 5–6 đã hoàn tất trên `dev`; Task 4 WIP được chuyển sang điều chỉnh trong Phase 11D, không được tính đạt. Spec Phase 11D đã viết/commit, chờ người dùng duyệt trước khi lập plan. Phase 12 chưa bắt đầu.
 
 ## Active Goal
 
-- Thiết kế rồi thực hiện Phase 11D theo `docs/ai/2026-09-30-phase-11d-user-feedback-backlog.md`: thu gọn/bố trí scene, đặt vật chứng trên bàn, đưa cửa lên tường, tên và hướng NPC, nhịp thở. Chờ duyệt spec rồi plan trước code.
+- Thực hiện Phase 11D theo spec đã duyệt `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md`: thu gọn/bố trí scene, đặt vật chứng trên bàn, đưa cửa lên tường, tên và hướng NPC, nhịp thở.
 
 ## Current Status
 
@@ -37,7 +37,7 @@ active_plan: none
 
 ## In Progress
 
-- Phase 11D design đang chờ người dùng duyệt hướng tiếp cận trong chat. Chưa viết spec/plan và chưa sửa code Phase 11D.
+- Spec `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md` đã commit (`cae3e02`), chưa có plan/code; chờ người dùng review spec.
 
 ## Active Decisions
 
@@ -53,12 +53,11 @@ active_plan: none
 
 ## Blockers
 
-- Chờ người dùng duyệt hướng Phase 11D trước khi viết spec; đây là cổng thiết kế trong `.agents/skills/brainstorming/SKILL.md` và workflow AGENTS.md.
+- Chờ người dùng duyệt spec Phase 11D trước khi lập plan; đây là cổng bắt buộc trong `.agents/skills/brainstorming/SKILL.md` và AGENTS.md.
 
 ## Next Actions
 
-- Duyệt hướng thiết kế Phase 11D trong chat.
-- Sau khi duyệt hướng, viết spec tiếng Việt; xin duyệt spec trước khi lập plan.
+- Review/duyệt spec tiếng Việt Phase 11D.
 - Viết và xin duyệt implementation plan Phase 11D trước khi code.
 - Thực hiện Phase 11D theo từng nhóm trong plan; giữ 2D top-down, gameplay/content IDs và product rules ổn định.
 - Phase 12 chờ chỉ đạo sau 11D.
@@ -69,7 +68,7 @@ active_plan: none
 
 ## Latest Handoff
 
-- Tiếp tục Phase 11D: chốt thiết kế với người dùng, sau đó spec review → plan review → implementation theo từng phase gate.
+- Tiếp tục Phase 11D từ cổng review spec; sau khi duyệt, plan review → implementation theo từng phase gate.
 
 ## Required Reading
 
