@@ -416,11 +416,7 @@ function GameRoot({
         : null;
 
   return (
-    <div
-      className="game-root"
-      data-reduced-motion={reducedMotion ? 'true' : 'false'}
-      style={{ position: 'relative', width: '100vw', height: '100vh' }}
-    >
+    <div className="game-root" data-reduced-motion={reducedMotion ? 'true' : 'false'}>
       <div
         ref={containerRef}
         tabIndex={-1}
