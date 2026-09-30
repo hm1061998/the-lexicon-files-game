@@ -1,5 +1,12 @@
 {
   "id": "main_office",
+  "projection": {
+    "type": "dimetric-2:1",
+    "originX": 0,
+    "originY": 0,
+    "tileWidth": 128,
+    "tileHeight": 64
+  },
   "size": {
     "width": 2400,
     "height": 1600

@@ -31,6 +31,15 @@ export type CharacterSheets = { readonly player: CharacterSheet } & Readonly<
 
 export type SceneAssetType = 'background' | 'wall' | 'prop' | 'interactable' | 'npc';
 
+/** Fixed 2:1 dimetric projection for content positions stored on the logical floor plane. */
+export interface IsoProjection {
+  readonly type: 'dimetric-2:1';
+  readonly originX: number;
+  readonly originY: number;
+  readonly tileWidth: 128;
+  readonly tileHeight: 64;
+}
+
 export interface RectCollision {
   readonly type: 'rect';
   readonly x: number;
@@ -90,6 +99,8 @@ export interface SceneLabelDefinition {
 
 export interface SceneDefinition {
   readonly id: string;
+  /** Optional during migration; legacy scenes continue to use world pixel coordinates. */
+  readonly projection?: IsoProjection | undefined;
   readonly size: { readonly width: number; readonly height: number };
   readonly worldBounds: {
     readonly x: number;

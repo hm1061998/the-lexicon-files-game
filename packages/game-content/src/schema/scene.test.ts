@@ -10,6 +10,34 @@ describe('parseSceneDefinition', () => {
     expect(scene.id).toBe('main_office');
   });
 
+  it('accepts the optional fixed dimetric 2:1 projection metadata', () => {
+    const scene = parseSceneDefinition(
+      {
+        ...(mainOffice as Record<string, unknown>),
+        projection: {
+          type: 'dimetric-2:1',
+          originX: 0,
+          originY: 0,
+          tileWidth: 128,
+          tileHeight: 64,
+        },
+      },
+      'main_office.json',
+    );
+    expect(scene.projection?.type).toBe('dimetric-2:1');
+  });
+
+  it.each([
+    { type: 'dimetric-3:2', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 },
+    { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 96, tileHeight: 64 },
+    { type: 'dimetric-2:1', originX: 0, originY: Number.NaN, tileWidth: 128, tileHeight: 64 },
+    { type: 'dimetric-2:1', originX: Number.POSITIVE_INFINITY, originY: 0, tileWidth: 128, tileHeight: 64 },
+  ])('rejects invalid projection metadata: %o', (projection) => {
+    expect(() =>
+      parseSceneDefinition({ ...(mainOffice as Record<string, unknown>), projection }, 'bad.json'),
+    ).toThrow(ContentValidationError);
+  });
+
   it('accepts named spawn points and an interaction scene transition', () => {
     const raw = structuredClone(mainOffice) as {
       spawn?: unknown;

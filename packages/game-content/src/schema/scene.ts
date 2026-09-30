@@ -93,9 +93,20 @@ const sceneLabelSchema = z
   })
   .strict();
 
+const isoProjectionSchema = z
+  .object({
+    type: z.literal('dimetric-2:1'),
+    originX: z.number().finite(),
+    originY: z.number().finite(),
+    tileWidth: z.literal(128),
+    tileHeight: z.literal(64),
+  })
+  .strict();
+
 export const sceneDefinitionSchema = z
   .object({
     id: z.string().min(1),
+    projection: isoProjectionSchema.optional(),
     size: z
       .object({
         width: z.number().positive(),

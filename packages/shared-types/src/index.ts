@@ -13,6 +13,7 @@ export type {
 } from './learning';
 export type {
   SceneAssetType,
+  IsoProjection,
   RectCollision,
   InteractionArea,
   SceneAssetDefinition,
