@@ -2,36 +2,32 @@
   "id": "main_office",
   "projection": {
     "type": "dimetric-2:1",
-    "originX": 0,
-    "originY": 0,
+    "originX": 832,
+    "originY": 180,
     "tileWidth": 128,
     "tileHeight": 64
   },
   "size": {
-    "width": 2400,
-    "height": 1600
+    "width": 1920,
+    "height": 1080
   },
   "worldBounds": {
-    "x": 0,
-    "y": 160,
-    "width": 2400,
-    "height": 1440
+    "u": 0,
+    "v": 0,
+    "width": 16,
+    "height": 12
   },
   "spawnPoints": {
     "default": {
-      "x": 1200,
-      "y": 1100
+      "u": 8.1,
+      "v": 7
     },
     "from_archive": {
-      "x": 1980,
-      "y": 740
+      "u": 0.45,
+      "v": 4.65
     }
   },
   "textures": [
-    {
-      "key": "tex_office_floor",
-      "url": "/assets/environment/office/scene_office_floor.png"
-    },
     {
       "key": "tex_office_desk",
       "url": "/assets/environment/props/prop_office_desk_01.png"
@@ -135,170 +131,239 @@
     {
       "key": "tex_bulletin_board",
       "url": "/assets/environment/props/prop_bulletin_board_01.png"
+    },
+    {
+      "key": "tex_dimetric_floor",
+      "url": "/assets/environment/common/scene_diamond_floor.png"
     }
   ],
   "assets": [
     {
       "id": "floor",
       "type": "background",
-      "texture": "tex_office_floor",
-      "x": 1200,
-      "y": 800,
-      "origin": [0.5, 0.5],
-      "depth": -1000,
-      "depthBias": 0
+      "texture": "tex_dimetric_floor",
+      "origin": [
+        0.5,
+        0.5
+      ],
+      "depth": -10000,
+      "depthBias": 0,
+      "position": {
+        "u": 8,
+        "v": 6
+      },
+      "scale": 1
     },
     {
       "id": "wall_back",
       "type": "wall",
       "texture": "tex_office_wall",
-      "x": 1200,
-      "y": 420,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -1200,
-        "y": -40,
-        "width": 2400,
-        "height": 40
+        "u": -8,
+        "v": -0.3333333333333333,
+        "width": 16,
+        "height": 0.3333333333333333
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        0.9
+      ],
+      "position": {
+        "u": 8,
+        "v": 0.33
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "partition_office_meeting_n",
       "type": "wall",
       "texture": "tex_partition_office_meeting_n",
-      "x": 542,
-      "y": 900,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -542,
-        "y": -24,
-        "width": 1084,
-        "height": 24
+        "u": -3.6133333333333333,
+        "v": -0.2,
+        "width": 7.226666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 3.6133333333333333,
+        "v": 6.166666666666667
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "partition_office_meeting_e_n",
       "type": "wall",
       "texture": "tex_partition_office_meeting_e_n",
-      "x": 1072,
-      "y": 1030,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -12,
-        "y": -130,
-        "width": 24,
-        "height": 130
+        "u": -0.08,
+        "v": -1.0833333333333333,
+        "width": 0.16,
+        "height": 1.0833333333333333
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 7.1466666666666665,
+        "v": 7.25
+      },
+      "angle": 63.435,
+      "scale": 0.6
     },
     {
       "id": "partition_office_meeting_e_s",
       "type": "wall",
       "texture": "tex_partition_office_meeting_e_s",
-      "x": 1072,
-      "y": 1600,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -12,
-        "y": -360,
-        "width": 24,
-        "height": 360
+        "u": -0.08,
+        "v": -3,
+        "width": 0.16,
+        "height": 3
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 7.1466666666666665,
+        "v": 12
+      },
+      "angle": 63.435,
+      "scale": 0.6
     },
     {
       "id": "partition_office_invest_e",
       "type": "wall",
       "texture": "tex_partition_office_invest_e",
-      "x": 1072,
-      "y": 640,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -12,
-        "y": -220,
-        "width": 24,
-        "height": 220
+        "u": -0.08,
+        "v": -1.8333333333333333,
+        "width": 0.16,
+        "height": 1.8333333333333333
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 7.1466666666666665,
+        "v": 4
+      },
+      "angle": 63.435,
+      "scale": 0.6
     },
     {
       "id": "partition_office_hall_w",
       "type": "wall",
       "texture": "tex_partition_office_hall_w",
-      "x": 1900,
-      "y": 646,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -12,
-        "y": -226,
-        "width": 24,
-        "height": 226
+        "u": -0.08,
+        "v": -1.8833333333333333,
+        "width": 0.16,
+        "height": 1.8833333333333333
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 12.666666666666666,
+        "v": 4.05
+      },
+      "angle": 63.435,
+      "scale": 0.6
     },
     {
       "id": "partition_office_hall_n",
       "type": "wall",
       "texture": "tex_partition_office_hall_n",
-      "x": 2144,
-      "y": 670,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -256,
-        "y": -24,
-        "width": 512,
-        "height": 24
+        "u": -1.7066666666666668,
+        "v": -0.2,
+        "width": 3.4133333333333336,
+        "height": 0.2
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 14.293333333333333,
+        "v": 4.25
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "partition_office_east_n",
       "type": "wall",
       "texture": "tex_partition_office_east_n",
-      "x": 2090,
-      "y": 1250,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -310,
-        "y": -24,
-        "width": 620,
-        "height": 24
+        "u": -2.066666666666667,
+        "v": -0.2,
+        "width": 4.133333333333334,
+        "height": 0.2
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 13.933333333333334,
+        "v": 9.083333333333334
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "player_desk",
       "type": "prop",
       "texture": "tex_office_desk",
-      "x": 1200,
-      "y": 820,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -75,
-        "y": -70,
-        "width": 150,
-        "height": 70
+        "u": -0.5,
+        "v": -0.5833333333333334,
+        "width": 1,
+        "height": 0.5833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.45
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.45,
+      "position": {
+        "u": 8,
+        "v": 5.5
+      }
     },
     {
       "id": "objective_note",
       "type": "interactable",
       "texture": "tex_note",
-      "x": 1400,
-      "y": 1100,
       "depthBias": 0,
       "interaction": {
         "x": 0,
@@ -312,15 +377,22 @@
           }
         ]
       },
-      "origin": [0.5, 0.5],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        0.5
+      ],
+      "scale": 0.8,
+      "restsOn": "player_desk",
+      "surfaceOffset": {
+        "u": 0.12,
+        "v": 0.1,
+        "elevationPx": 52
+      }
     },
     {
       "id": "meeting_minutes",
       "type": "interactable",
       "texture": "tex_note",
-      "x": 1000,
-      "y": 1100,
       "depthBias": 0,
       "interaction": {
         "x": 0,
@@ -334,15 +406,22 @@
           }
         ]
       },
-      "origin": [0.5, 0.5],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        0.5
+      ],
+      "scale": 0.8,
+      "restsOn": "decor_meeting_table",
+      "surfaceOffset": {
+        "u": -0.35,
+        "v": 0.1,
+        "elevationPx": 55
+      }
     },
     {
       "id": "phone_recording",
       "type": "interactable",
       "texture": "tex_audio_recorder",
-      "x": 1200,
-      "y": 1280,
       "depthBias": 0,
       "interaction": {
         "x": 0,
@@ -356,22 +435,29 @@
           }
         ]
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "restsOn": "decor_meeting_table",
+      "surfaceOffset": {
+        "u": 0.4,
+        "v": 0.2,
+        "elevationPx": 55
+      }
     },
     {
       "id": "anna",
       "type": "npc",
       "texture": "tex_anna_se",
-      "x": 800,
-      "y": 1000,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -15,
-        "y": -9,
-        "width": 30,
-        "height": 18
+        "u": -0.1,
+        "v": -0.075,
+        "width": 0.2,
+        "height": 0.15
       },
       "interaction": {
         "x": 0,
@@ -380,18 +466,23 @@
         "prompt": "Nói chuyện với Anna",
         "npcId": "anna"
       },
-      "origin": [0.5, 0.88]
+      "origin": [
+        0.5,
+        0.88
+      ],
+      "position": {
+        "u": 5.333333333333333,
+        "v": 7
+      }
     },
     {
       "id": "hallway_door",
       "type": "interactable",
       "texture": "tex_door_hallway",
-      "x": 2100,
-      "y": 700,
       "depthBias": 0,
       "interaction": {
         "x": 0,
-        "y": 20,
+        "y": 0.16666666666666666,
         "radius": 80,
         "prompt": "Ra hành lang",
         "transition": {
@@ -399,22 +490,27 @@
           "targetSpawnId": "from_office"
         }
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "position": {
+        "u": 0.4,
+        "v": 4.65
+      }
     },
     {
       "id": "leo",
       "type": "npc",
       "texture": "tex_leo_se",
-      "x": 1600,
-      "y": 1100,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -15,
-        "y": -9,
-        "width": 30,
-        "height": 18
+        "u": -0.1,
+        "v": -0.075,
+        "width": 0.2,
+        "height": 0.15
       },
       "interaction": {
         "x": 0,
@@ -423,21 +519,26 @@
         "prompt": "Nói chuyện với Leo",
         "npcId": "leo"
       },
-      "origin": [0.5, 0.88]
+      "origin": [
+        0.5,
+        0.88
+      ],
+      "position": {
+        "u": 10.666666666666666,
+        "v": 7.833333333333333
+      }
     },
     {
       "id": "david",
       "type": "npc",
       "texture": "tex_david_se",
-      "x": 1850,
-      "y": 900,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -15,
-        "y": -9,
-        "width": 30,
-        "height": 18
+        "u": -0.1,
+        "v": -0.075,
+        "width": 0.2,
+        "height": 0.15
       },
       "interaction": {
         "x": 0,
@@ -446,608 +547,859 @@
         "prompt": "Nói chuyện với David",
         "npcId": "david"
       },
-      "origin": [0.5, 0.88]
+      "origin": [
+        0.5,
+        0.88
+      ],
+      "position": {
+        "u": 12.333333333333334,
+        "v": 6.166666666666667
+      }
     },
     {
       "id": "decor_plant_back_left",
       "type": "prop",
       "texture": "tex_office_plant",
-      "x": 70,
-      "y": 444,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -21,
-        "y": -24,
-        "width": 43,
-        "height": 24
+        "u": -0.14,
+        "v": -0.2,
+        "width": 0.2866666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 0.4666666666666667,
+        "v": 2.3666666666666667
+      }
     },
     {
       "id": "decor_cabinet_back_1",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 180,
-      "y": 449,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 1.2,
+        "v": 2.408333333333333
+      }
     },
     {
       "id": "decor_cabinet_back_2",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 256,
-      "y": 449,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 1.7066666666666668,
+        "v": 2.408333333333333
+      }
     },
     {
       "id": "decor_plant_tall_invest",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 400,
-      "y": 470,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -19,
-        "y": -20,
-        "width": 39,
-        "height": 20
+        "u": -0.12666666666666668,
+        "v": -0.16666666666666666,
+        "width": 0.26,
+        "height": 0.16666666666666666
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 2.6666666666666665,
+        "v": 2.5833333333333335
+      }
     },
     {
       "id": "decor_file_boxes_invest",
       "type": "prop",
       "texture": "tex_file_boxes",
-      "x": 820,
-      "y": 470,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -38,
-        "y": -35,
-        "width": 77,
-        "height": 35
+        "u": -0.25333333333333335,
+        "v": -0.2916666666666667,
+        "width": 0.5133333333333333,
+        "height": 0.2916666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 5.466666666666667,
+        "v": 2.5833333333333335
+      }
     },
     {
       "id": "decor_coat_rack_invest",
       "type": "prop",
       "texture": "tex_coat_rack",
-      "x": 1000,
-      "y": 520,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -13,
-        "y": -14,
-        "width": 27,
-        "height": 14
+        "u": -0.08666666666666667,
+        "v": -0.11666666666666667,
+        "width": 0.18,
+        "height": 0.11666666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 6.666666666666667,
+        "v": 3
+      }
     },
     {
       "id": "decor_desk_west",
       "type": "prop",
       "texture": "tex_office_desk",
-      "x": 330,
-      "y": 690,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -75,
-        "y": -70,
-        "width": 150,
-        "height": 70
+        "u": -0.5,
+        "v": -0.5833333333333334,
+        "width": 1,
+        "height": 0.5833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.45
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.45,
+      "position": {
+        "u": 2.2,
+        "v": 4.416666666666667
+      }
     },
     {
       "id": "decor_chair_desk_west",
       "type": "prop",
       "texture": "tex_office_chair",
-      "x": 380,
-      "y": 755,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -13,
-        "y": -14,
-        "width": 27,
-        "height": 14
+        "u": -0.08666666666666667,
+        "v": -0.11666666666666667,
+        "width": 0.18,
+        "height": 0.11666666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "position": {
+        "u": 2.533333333333333,
+        "v": 4.958333333333333
+      }
     },
     {
       "id": "decor_desk_invest",
       "type": "prop",
       "texture": "tex_office_desk",
-      "x": 760,
-      "y": 690,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -75,
-        "y": -70,
-        "width": 150,
-        "height": 70
+        "u": -0.5,
+        "v": -0.5833333333333334,
+        "width": 1,
+        "height": 0.5833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.45
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.45,
+      "position": {
+        "u": 5.066666666666666,
+        "v": 4.416666666666667
+      }
     },
     {
       "id": "decor_chair_desk_invest",
       "type": "prop",
       "texture": "tex_office_chair",
-      "x": 810,
-      "y": 755,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -13,
-        "y": -14,
-        "width": 27,
-        "height": 14
+        "u": -0.08666666666666667,
+        "v": -0.11666666666666667,
+        "width": 0.18,
+        "height": 0.11666666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "position": {
+        "u": 5.4,
+        "v": 4.958333333333333
+      }
     },
     {
       "id": "decor_plant_meeting_corner",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 50,
-      "y": 975,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -19,
-        "y": -20,
-        "width": 39,
-        "height": 20
+        "u": -0.12666666666666668,
+        "v": -0.16666666666666666,
+        "width": 0.26,
+        "height": 0.16666666666666666
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 0.3333333333333333,
+        "v": 6.791666666666667
+      }
     },
     {
       "id": "decor_credenza_meeting",
       "type": "prop",
       "texture": "tex_credenza",
-      "x": 200,
-      "y": 975,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -47,
-        "y": -34,
-        "width": 94,
-        "height": 34
+        "u": -0.31333333333333335,
+        "v": -0.2833333333333333,
+        "width": 0.6266666666666667,
+        "height": 0.2833333333333333
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 1.3333333333333333,
+        "v": 6.791666666666667
+      }
     },
     {
       "id": "decor_meeting_table",
       "type": "prop",
       "texture": "tex_meeting_table",
-      "x": 860,
-      "y": 1290,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -104,
-        "y": -130,
-        "width": 208,
-        "height": 130
+        "u": -0.6933333333333334,
+        "v": -1.0833333333333333,
+        "width": 1.3866666666666667,
+        "height": 1.0833333333333333
       },
-      "origin": [0.5, 1],
-      "scale": 0.62
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.62,
+      "position": {
+        "u": 5.733333333333333,
+        "v": 9.416666666666666
+      }
     },
     {
       "id": "decor_plant_front_left",
       "type": "prop",
       "texture": "tex_office_plant",
-      "x": 70,
-      "y": 1560,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -21,
-        "y": -24,
-        "width": 43,
-        "height": 24
+        "u": -0.14,
+        "v": -0.2,
+        "width": 0.2866666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 0.4666666666666667,
+        "v": 11.666666666666666
+      }
     },
     {
       "id": "decor_plant_meeting_wall",
       "type": "prop",
       "texture": "tex_office_plant",
-      "x": 330,
-      "y": 975,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -21,
-        "y": -24,
-        "width": 43,
-        "height": 24
+        "u": -0.14,
+        "v": -0.2,
+        "width": 0.2866666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 2.2,
+        "v": 6.791666666666667
+      }
     },
     {
       "id": "decor_cabinet_meeting_1",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 60,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 0.4,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_cabinet_meeting_2",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 60,
-      "y": 1380,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 0.4,
+        "v": 10.166666666666666
+      }
     },
     {
       "id": "decor_plant_meeting",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 1010,
-      "y": 1560,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -18,
-        "y": -19,
-        "width": 37,
-        "height": 19
+        "u": -0.12,
+        "v": -0.15833333333333333,
+        "width": 0.24666666666666667,
+        "height": 0.15833333333333333
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 6.733333333333333,
+        "v": 11.666666666666666
+      }
     },
     {
       "id": "decor_plant_tall_hall",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 1140,
-      "y": 480,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -19,
-        "y": -20,
-        "width": 39,
-        "height": 20
+        "u": -0.12666666666666668,
+        "v": -0.16666666666666666,
+        "width": 0.26,
+        "height": 0.16666666666666666
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 7.6,
+        "v": 2.6666666666666665
+      }
     },
     {
       "id": "decor_cabinet_back_3",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 1560,
-      "y": 449,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 10.4,
+        "v": 2.408333333333333
+      }
     },
     {
       "id": "decor_plant_back_mid",
       "type": "prop",
       "texture": "tex_office_plant",
-      "x": 1650,
-      "y": 444,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -21,
-        "y": -24,
-        "width": 43,
-        "height": 24
+        "u": -0.14,
+        "v": -0.2,
+        "width": 0.2866666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 11,
+        "v": 2.3666666666666667
+      }
     },
     {
       "id": "decor_water_cooler",
       "type": "prop",
       "texture": "tex_water_cooler",
-      "x": 1810,
-      "y": 470,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -17,
-        "y": -19,
-        "width": 34,
-        "height": 19
+        "u": -0.11333333333333333,
+        "v": -0.15833333333333333,
+        "width": 0.22666666666666666,
+        "height": 0.15833333333333333
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 12.066666666666666,
+        "v": 2.5833333333333335
+      }
     },
     {
       "id": "decor_chair_player_desk",
       "type": "prop",
       "texture": "tex_office_chair",
-      "x": 1250,
-      "y": 880,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -13,
-        "y": -14,
-        "width": 27,
-        "height": 14
+        "u": -0.08666666666666667,
+        "v": -0.11666666666666667,
+        "width": 0.18,
+        "height": 0.11666666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "position": {
+        "u": 8.333333333333334,
+        "v": 6
+      }
     },
     {
       "id": "decor_file_boxes_hall",
       "type": "prop",
       "texture": "tex_file_boxes",
-      "x": 1400,
-      "y": 760,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -33,
-        "y": -31,
-        "width": 67,
-        "height": 31
+        "u": -0.22,
+        "v": -0.25833333333333336,
+        "width": 0.44666666666666666,
+        "height": 0.25833333333333336
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 9.333333333333334,
+        "v": 5
+      }
     },
     {
       "id": "decor_coat_rack_hall",
       "type": "prop",
       "texture": "tex_coat_rack",
-      "x": 2250,
-      "y": 770,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -13,
-        "y": -14,
-        "width": 27,
-        "height": 14
+        "u": -0.08666666666666667,
+        "v": -0.11666666666666667,
+        "width": 0.18,
+        "height": 0.11666666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 15,
+        "v": 5.083333333333333
+      }
     },
     {
       "id": "decor_plant_back_right",
       "type": "prop",
       "texture": "tex_office_plant",
-      "x": 2340,
-      "y": 444,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -21,
-        "y": -24,
-        "width": 43,
-        "height": 24
+        "u": -0.14,
+        "v": -0.2,
+        "width": 0.2866666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 15.6,
+        "v": 2.3666666666666667
+      }
     },
     {
       "id": "decor_cabinet_east_1",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 2340,
-      "y": 1000,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 15.6,
+        "v": 7
+      }
     },
     {
       "id": "decor_cabinet_east_2",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 2340,
-      "y": 1090,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 15.6,
+        "v": 7.75
+      }
     },
     {
       "id": "decor_desk_east",
       "type": "prop",
       "texture": "tex_office_desk",
-      "x": 2020,
-      "y": 1400,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -75,
-        "y": -70,
-        "width": 150,
-        "height": 70
+        "u": -0.5,
+        "v": -0.5833333333333334,
+        "width": 1,
+        "height": 0.5833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.45
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.45,
+      "position": {
+        "u": 13.466666666666667,
+        "v": 10.333333333333334
+      }
     },
     {
       "id": "decor_chair_desk_east",
       "type": "prop",
       "texture": "tex_office_chair",
-      "x": 2060,
-      "y": 1470,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -13,
-        "y": -14,
-        "width": 27,
-        "height": 14
+        "u": -0.08666666666666667,
+        "v": -0.11666666666666667,
+        "width": 0.18,
+        "height": 0.11666666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "position": {
+        "u": 13.733333333333333,
+        "v": 10.916666666666666
+      }
     },
     {
       "id": "decor_file_boxes_east",
       "type": "prop",
       "texture": "tex_file_boxes",
-      "x": 2270,
-      "y": 1420,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -33,
-        "width": 72,
-        "height": 33
+        "u": -0.24,
+        "v": -0.275,
+        "width": 0.48,
+        "height": 0.275
       },
-      "origin": [0.5, 1],
-      "scale": 0.75
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.75,
+      "position": {
+        "u": 15.133333333333333,
+        "v": 10.5
+      }
     },
     {
       "id": "decor_plant_front_right",
       "type": "prop",
       "texture": "tex_office_plant",
-      "x": 2340,
-      "y": 1560,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -21,
-        "y": -24,
-        "width": 43,
-        "height": 24
+        "u": -0.14,
+        "v": -0.2,
+        "width": 0.2866666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 15.6,
+        "v": 11.666666666666666
+      }
     },
     {
       "id": "decor_plant_tall_east",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 1780,
-      "y": 1560,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -19,
-        "y": -20,
-        "width": 39,
-        "height": 20
+        "u": -0.12666666666666668,
+        "v": -0.16666666666666666,
+        "width": 0.26,
+        "height": 0.16666666666666666
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 11.866666666666667,
+        "v": 11.666666666666666
+      }
     },
     {
       "id": "decor_whiteboard_meeting",
       "type": "prop",
       "texture": "tex_whiteboard",
-      "x": 470,
-      "y": 902,
       "depthBias": 0,
-      "origin": [0.5, 1],
-      "scale": 1
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 1,
+      "position": {
+        "u": 3.1333333333333333,
+        "v": 6.183333333333334
+      }
     },
     {
       "id": "decor_bulletin_east",
       "type": "prop",
       "texture": "tex_bulletin_board",
-      "x": 2170,
-      "y": 1252,
       "depthBias": 0,
-      "origin": [0.5, 1],
-      "scale": 1
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 1,
+      "position": {
+        "u": 14.466666666666667,
+        "v": 9.1
+      }
+    },
+    {
+      "id": "west_wall_upper",
+      "type": "wall",
+      "texture": "tex_partition_office_hall_w",
+      "position": {
+        "u": 0,
+        "v": 0
+      },
+      "collision": {
+        "type": "rect",
+        "u": -0.2,
+        "v": 0,
+        "width": 0.4,
+        "height": 3.75
+      },
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "angle": 63.435,
+      "depthBias": 0
+    },
+    {
+      "id": "west_wall_lower",
+      "type": "wall",
+      "texture": "tex_partition_office_hall_w",
+      "position": {
+        "u": 0,
+        "v": 5.55
+      },
+      "collision": {
+        "type": "rect",
+        "u": -0.2,
+        "v": 0,
+        "width": 0.4,
+        "height": 6.45
+      },
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "angle": 63.435,
+      "depthBias": 0
+    },
+    {
+      "id": "east_outer_wall",
+      "type": "wall",
+      "texture": "tex_office_wall",
+      "position": {
+        "u": 16,
+        "v": 6
+      },
+      "collision": {
+        "type": "rect",
+        "u": -0.2,
+        "v": -6,
+        "width": 0.4,
+        "height": 12
+      },
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.36,
+      "angle": 153.435,
+      "depthBias": 0
     }
   ],
   "labels": [
     {
       "id": "label_investigation_room",
       "text": "PHÒNG ĐIỀU TRA",
-      "x": 912,
-      "y": 300
+      "u": 6.08,
+      "v": 1.1666666666666667
     },
     {
       "id": "label_meeting_room",
       "text": "PHÒNG HỌP",
-      "x": 760,
-      "y": 760
+      "u": 5.066666666666666,
+      "v": 5
     },
     {
       "id": "label_hallway",
       "text": "HÀNH LANG",
-      "x": 2270,
-      "y": 545
+      "u": 15.133333333333333,
+      "v": 3.2083333333333335
     }
   ]
 }

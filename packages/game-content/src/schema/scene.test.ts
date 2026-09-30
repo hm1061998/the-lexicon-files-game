@@ -55,6 +55,34 @@ describe('parseSceneDefinition', () => {
     expect(() => parseSceneDefinition(raw, 'main_office.json')).not.toThrow();
   });
 
+  it('accepts a scene whose bounds, spawns, labels and assets use only logical coordinates', () => {
+    const raw = structuredClone(mainOffice) as {
+      projection?: unknown;
+      worldBounds?: unknown;
+      spawnPoints?: unknown;
+      labels?: unknown;
+      assets: Array<Record<string, unknown>>;
+    };
+    raw.projection = { type: 'dimetric-2:1', originX: 640, originY: 360, tileWidth: 128, tileHeight: 64 };
+    raw.worldBounds = { u: -5, v: -4, width: 10, height: 8 };
+    raw.spawnPoints = { default: { u: 0, v: 0 }, from_archive: { u: 4, v: 2 } };
+    raw.labels = [{ id: 'office', text: 'OFFICE', u: 0, v: 1 }];
+    const scene = parseSceneDefinition(raw, 'logical-scene.json');
+    expect(scene.worldBounds).toEqual({ u: -5, v: -4, width: 10, height: 8 });
+    expect(scene.spawnPoints.default).toEqual({ u: 0, v: 0 });
+  });
+
+  it('rejects a legacy asset or collision in a logical-bounds scene', () => {
+    const raw = structuredClone(mainOffice) as { assets: Array<Record<string, unknown>> };
+    raw.assets[1] = {
+      ...raw.assets[1],
+      x: 1,
+      y: 1,
+      collision: { type: 'rect', x: 0, y: 0, width: 1, height: 1 },
+    };
+    expect(() => parseSceneDefinition(raw, 'mixed-scene.json')).toThrow(ContentValidationError);
+  });
+
   it('rejects an isometric surface child without a complete finite surface offset', () => {
     const raw = structuredClone(mainOffice) as {
       assets: Array<Record<string, unknown>>;
@@ -91,8 +119,8 @@ describe('parseSceneDefinition', () => {
     };
     delete raw.spawn;
     raw.spawnPoints = {
-      default: { x: 1200, y: 1100 },
-      from_archive: { x: 2050, y: 720 },
+      default: { u: 8.1, v: 7 },
+      from_archive: { u: 0.45, v: 4.65 },
     };
     const door = raw.assets.find(({ id }) => id === 'hallway_door')!;
     door.interaction = {
@@ -106,8 +134,8 @@ describe('parseSceneDefinition', () => {
     const scene = parseSceneDefinition(raw, 'main_office.json');
 
     expect(scene.spawnPoints).toEqual({
-      default: { x: 1200, y: 1100 },
-      from_archive: { x: 2050, y: 720 },
+      default: { u: 8.1, v: 7 },
+      from_archive: { u: 0.45, v: 4.65 },
     });
     expect(scene.assets.find(({ id }) => id === 'hallway_door')?.interaction?.transition).toEqual({
       targetSceneId: 'archive',
@@ -121,7 +149,7 @@ describe('parseSceneDefinition', () => {
       spawnPoints?: unknown;
     };
     delete raw.spawn;
-    raw.spawnPoints = { from_archive: { x: 2050, y: 720 } };
+    raw.spawnPoints = { from_archive: { u: 0.45, v: 4.65 } };
 
     expect(() => parseSceneDefinition(raw, 'main_office.json')).toThrow(ContentValidationError);
   });
@@ -164,7 +192,7 @@ describe('parseSceneDefinition', () => {
       ...(mainOffice as Record<string, unknown>),
       spawnPoints: {
         ...(mainOffice as { spawnPoints: Record<string, unknown> }).spawnPoints,
-        default: { x: -50, y: -50 },
+        default: { u: -50, v: -50 },
       },
     };
     try {
@@ -336,7 +364,7 @@ function raw0Key(): string {
 }
 
 describe('scene labels', () => {
-  type RawLabel = { id: string; text: string; x: number; y: number; angle?: number };
+  type RawLabel = { id: string; text: string; u: number; v: number; angle?: number };
   const withLabels = (labels: RawLabel[]): unknown => ({
     ...(structuredClone(mainOffice) as Record<string, unknown>),
     labels,
@@ -354,14 +382,14 @@ describe('scene labels', () => {
   it('accepts room labels with an optional angle', () => {
     const scene = parseSceneDefinition(
       withLabels([
-        { id: 'room_a', text: 'PHÒNG A', x: 400, y: 800 },
-        { id: 'room_b', text: 'PHÒNG B', x: 1400, y: 900, angle: -4 },
+        { id: 'room_a', text: 'PHÒNG A', u: 4, v: 4 },
+        { id: 'room_b', text: 'PHÒNG B', u: 10, v: 7, angle: -4 },
       ]),
       'main_office.json',
     );
     expect(scene.labels).toEqual([
-      { id: 'room_a', text: 'PHÒNG A', x: 400, y: 800 },
-      { id: 'room_b', text: 'PHÒNG B', x: 1400, y: 900, angle: -4 },
+      { id: 'room_a', text: 'PHÒNG A', u: 4, v: 4 },
+      { id: 'room_b', text: 'PHÒNG B', u: 10, v: 7, angle: -4 },
     ]);
   });
 
@@ -373,7 +401,7 @@ describe('scene labels', () => {
 
   it('rejects an empty or blank label text', () => {
     for (const text of ['', '   ']) {
-      const issues = issuesOf(withLabels([{ id: 'room_a', text, x: 400, y: 800 }]));
+      const issues = issuesOf(withLabels([{ id: 'room_a', text, u: 4, v: 4 }]));
       expect(issues.some((issue) => issue.includes('labels'))).toBe(true);
     }
   });
@@ -381,8 +409,8 @@ describe('scene labels', () => {
   it('rejects duplicate label ids', () => {
     const issues = issuesOf(
       withLabels([
-        { id: 'room_a', text: 'A', x: 400, y: 800 },
-        { id: 'room_a', text: 'B', x: 500, y: 800 },
+        { id: 'room_a', text: 'A', u: 4, v: 4 },
+        { id: 'room_a', text: 'B', u: 5, v: 4 },
       ]),
     );
     expect(
@@ -391,7 +419,7 @@ describe('scene labels', () => {
   });
 
   it('rejects a label outside worldBounds', () => {
-    const issues = issuesOf(withLabels([{ id: 'room_a', text: 'A', x: 400, y: 20 }]));
+    const issues = issuesOf(withLabels([{ id: 'room_a', text: 'A', u: 4, v: -2 }]));
     expect(issues.some((issue) => issue.includes('labels') && issue.includes('worldBounds'))).toBe(
       true,
     );

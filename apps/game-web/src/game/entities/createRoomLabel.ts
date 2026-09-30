@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import type { SceneLabelDefinition } from '@lexicon/shared-types';
 import { LABEL_FONT_FAMILY, PALETTE } from '../constants';
 
 /** Room sign text size in world pixels (about 16 CSS px at the usual camera zoom). */
@@ -15,7 +14,7 @@ const PIN_R = 2.5;
  */
 export function createRoomLabel(
   scene: Phaser.Scene,
-  label: SceneLabelDefinition,
+  label: { id: string; text: string; x: number; y: number; angle?: number | undefined },
   depth: number,
 ): Phaser.GameObjects.Container {
   const text = scene.add.text(0, 0, label.text, {

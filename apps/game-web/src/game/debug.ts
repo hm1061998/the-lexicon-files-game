@@ -1,5 +1,6 @@
 export type LexiconDebug = {
   player(): { x: number; y: number; depth: number };
+  logicalPlayer(): { u: number; v: number } | null;
   playerTexture(): string;
   /** Walk animation on the player: key and 0-based frame while playing, nulls when idle. */
   playerAnim(): { key: string | null; frame: number | null; playing: boolean };
@@ -14,6 +15,7 @@ export type LexiconDebug = {
   nearbyEvents(): number;
   triggeredEvents(): number;
   teleport(x: number, y: number): void;
+  teleportLogical(u: number, v: number): void;
   markerY(): number | null;
   /** World-space rectangle of the red target outline, or null while it is hidden. */
   highlightBounds(): { x: number; y: number; width: number; height: number } | null;

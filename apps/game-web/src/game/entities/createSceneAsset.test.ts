@@ -16,6 +16,7 @@ function fakeScene() {
   const sprite = {
     setOrigin: vi.fn(),
     setScale: vi.fn(),
+    setAngle: vi.fn(),
     setDepth: vi.fn(),
   };
   const scene = {
@@ -30,6 +31,16 @@ function fakeScene() {
 }
 
 describe('createSceneAsset', () => {
+  it('rotates an asset along its projected logical wall direction', () => {
+    const resolved = resolveSceneAssets([{
+      id: 'wall', type: 'wall', texture: 'wall', position: { u: 2, v: 0 },
+      origin: [0.5, 1], scale: 0.5, depthBias: 0, angle: 26.565,
+    }])[0]!;
+    const { scene, sprite } = fakeScene();
+    createSceneAsset(scene, resolved, projection);
+    expect(sprite.setAngle).toHaveBeenCalledWith(26.565);
+  });
+
   it('renders an elevated logical asset at its projected visual anchor and floor depth', () => {
     const resolved = resolveSceneAssets([
       {

@@ -81,10 +81,9 @@ export interface SceneTransitionDefinition {
   readonly targetSpawnId: string;
 }
 
-export interface SpawnPointDefinition {
-  readonly x: number;
-  readonly y: number;
-}
+export type SpawnPointDefinition =
+  | { readonly x: number; readonly y: number }
+  | LogicalPoint;
 
 interface SceneAssetCommon {
   readonly id: string;
@@ -94,6 +93,7 @@ interface SceneAssetCommon {
   /** Uniform display scale of the texture; collision/interaction stay in world pixels. */
   readonly scale: number;
   readonly depth?: number | undefined;
+  readonly angle?: number | undefined;
   readonly depthBias: number;
   readonly elevationPx?: number | undefined;
   readonly collision?: RectCollision | LogicalRectCollision | undefined;
@@ -134,27 +134,23 @@ export type SceneAssetDefinition =
  * A room sign drawn in the world (e.g. on a partition wall). Text comes from content; the label
  * is decoration only: not interactive and without game logic.
  */
-export interface SceneLabelDefinition {
+interface SceneLabelCommon {
   readonly id: string;
   readonly text: string;
-  /** Centre of the sign in world pixels. */
-  readonly x: number;
-  readonly y: number;
   /** Rotation in degrees, clockwise. */
   readonly angle?: number | undefined;
 }
+export type SceneLabelDefinition = SceneLabelCommon &
+  ({ readonly x: number; readonly y: number } | LogicalPoint);
 
 export interface SceneDefinition {
   readonly id: string;
   /** Optional during migration; legacy scenes continue to use world pixel coordinates. */
   readonly projection?: IsoProjection | undefined;
   readonly size: { readonly width: number; readonly height: number };
-  readonly worldBounds: {
-    readonly x: number;
-    readonly y: number;
-    readonly width: number;
-    readonly height: number;
-  };
+  readonly worldBounds:
+    | { readonly x: number; readonly y: number; readonly width: number; readonly height: number }
+    | { readonly u: number; readonly v: number; readonly width: number; readonly height: number };
   readonly spawnPoints: Readonly<Record<string, SpawnPointDefinition>>;
   /** Textures this scene's assets use; loaded when the scene is entered. `ph_*` are generated. */
   readonly textures: readonly TextureEntry[];

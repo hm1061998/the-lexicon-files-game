@@ -129,6 +129,17 @@ describe('buildMinimapModel', () => {
     ]);
   });
 
+  it('projects a logical floor to a diamond and uses the projected bounds for its viewBox', () => {
+    const s: SceneDefinition = {
+      ...scene([]),
+      projection: { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 },
+      worldBounds: { u: -1, v: -1, width: 2, height: 2 },
+    };
+    const model = buildMinimapModel(s, null);
+    expect(model.viewBox).toBe('-128 -64 256 128');
+    expect(model.floorPoints).toEqual('0,-64 128,0 0,64 -128,0');
+  });
+
   it('projects logical asset markers and player events through the same dimetric origin', () => {
     const s: SceneDefinition = {
       ...scene([

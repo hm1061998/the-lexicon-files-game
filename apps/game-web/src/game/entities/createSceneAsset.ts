@@ -22,6 +22,7 @@ export function createSceneAsset(
   const sprite = scene.add.image(visualPoint.x, visualPoint.y, texture);
   sprite.setOrigin(asset.origin[0], asset.origin[1]);
   sprite.setScale(asset.scale);
+  sprite.setAngle(asset.angle ?? 0);
   const depth = 'u' in floorAnchor && projection
     ? computeIsoDepth(floorAnchor, projection, asset.depthBias)
     : computeDepth(floorPoint.y, asset.depthBias);

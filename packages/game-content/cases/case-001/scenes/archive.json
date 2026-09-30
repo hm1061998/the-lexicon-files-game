@@ -2,36 +2,32 @@
   "id": "archive",
   "projection": {
     "type": "dimetric-2:1",
-    "originX": 0,
-    "originY": 0,
+    "originX": 832,
+    "originY": 180,
     "tileWidth": 128,
     "tileHeight": 64
   },
   "size": {
-    "width": 2400,
-    "height": 1600
+    "width": 1920,
+    "height": 1080
   },
   "worldBounds": {
-    "x": 0,
-    "y": 160,
-    "width": 2400,
-    "height": 1440
+    "u": 0,
+    "v": 0,
+    "width": 16,
+    "height": 12
   },
   "spawnPoints": {
     "default": {
-      "x": 1200,
-      "y": 1100
+      "u": 9,
+      "v": 8
     },
     "from_office": {
-      "x": 420,
-      "y": 760
+      "u": 0.45,
+      "v": 4.65
     }
   },
   "textures": [
-    {
-      "key": "tex_archive_floor",
-      "url": "/assets/environment/archive/scene_archive_floor.png"
-    },
     {
       "key": "tex_security_terminal",
       "url": "/assets/environment/props/prop_security_terminal_01.png"
@@ -111,137 +107,194 @@
     {
       "key": "tex_bulletin_board",
       "url": "/assets/environment/props/prop_bulletin_board_01.png"
+    },
+    {
+      "key": "tex_dimetric_floor",
+      "url": "/assets/environment/common/scene_diamond_floor.png"
     }
   ],
   "assets": [
     {
       "id": "PLACEHOLDER_archive_floor",
       "type": "background",
-      "texture": "tex_archive_floor",
-      "x": 1200,
-      "y": 800,
-      "origin": [0.5, 0.5],
-      "depth": -1000,
-      "depthBias": 0
+      "texture": "tex_dimetric_floor",
+      "origin": [
+        0.5,
+        0.5
+      ],
+      "depth": -10000,
+      "depthBias": 0,
+      "position": {
+        "u": 8,
+        "v": 6
+      },
+      "scale": 1
     },
     {
       "id": "PLACEHOLDER_archive_wall",
       "type": "wall",
       "texture": "tex_archive_wall",
-      "x": 1200,
-      "y": 420,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -1200,
-        "y": -40,
-        "width": 2400,
-        "height": 40
+        "u": -8,
+        "v": -0.3333333333333333,
+        "width": 16,
+        "height": 0.3333333333333333
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        0.9
+      ],
+      "position": {
+        "u": 8,
+        "v": 0.33
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "partition_archive_hall_n",
       "type": "wall",
       "texture": "tex_partition_archive_hall_n",
-      "x": 356,
-      "y": 670,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -356,
-        "y": -24,
-        "width": 712,
-        "height": 24
+        "u": -2.3733333333333335,
+        "v": -0.2,
+        "width": 4.746666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 2.3733333333333335,
+        "v": 4.25
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "partition_archive_hall_e",
       "type": "wall",
       "texture": "tex_partition_archive_hall_e",
-      "x": 700,
-      "y": 646,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -12,
-        "y": -226,
-        "width": 24,
-        "height": 226
+        "u": -0.08,
+        "v": -1.8833333333333333,
+        "width": 0.16,
+        "height": 1.8833333333333333
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 4.666666666666667,
+        "v": 4.05
+      },
+      "angle": 63.435,
+      "scale": 0.6
     },
     {
       "id": "partition_archive_store_n_w",
       "type": "wall",
       "texture": "tex_partition_archive_store_n_w",
-      "x": 280,
-      "y": 960,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -280,
-        "y": -24,
-        "width": 560,
-        "height": 24
+        "u": -1.8666666666666667,
+        "v": -0.2,
+        "width": 3.7333333333333334,
+        "height": 0.2
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 1.8666666666666667,
+        "v": 6.666666666666667
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "partition_archive_store_n_e",
       "type": "wall",
       "texture": "tex_partition_archive_store_n_e",
-      "x": 922,
-      "y": 960,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -222,
-        "y": -24,
-        "width": 444,
-        "height": 24
+        "u": -1.48,
+        "v": -0.2,
+        "width": 2.96,
+        "height": 0.2
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 6.1466666666666665,
+        "v": 6.666666666666667
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "partition_archive_store_e",
       "type": "wall",
       "texture": "tex_partition_archive_store_e",
-      "x": 1132,
-      "y": 1600,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -12,
-        "y": -640,
-        "width": 24,
-        "height": 640
+        "u": -0.08,
+        "v": -5.333333333333333,
+        "width": 0.16,
+        "height": 5.333333333333333
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 7.546666666666667,
+        "v": 12
+      },
+      "angle": 63.435,
+      "scale": 0.6
     },
     {
       "id": "partition_archive_security_s",
       "type": "wall",
       "texture": "tex_partition_archive_security_s",
-      "x": 1900,
-      "y": 1290,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -500,
-        "y": -24,
-        "width": 1000,
-        "height": 24
+        "u": -3.3333333333333335,
+        "v": -0.2,
+        "width": 6.666666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1]
+      "origin": [
+        0.5,
+        1
+      ],
+      "position": {
+        "u": 12.666666666666666,
+        "v": 9.416666666666666
+      },
+      "angle": 26.565,
+      "scale": 0.48
     },
     {
       "id": "PLACEHOLDER_security_terminal",
       "type": "interactable",
       "texture": "tex_security_terminal",
-      "x": 1500,
-      "y": 1000,
       "depthBias": 0,
       "interaction": {
         "x": 0,
@@ -259,26 +312,31 @@
           }
         ]
       },
-      "origin": [0.5, 1],
+      "origin": [
+        0.5,
+        1
+      ],
       "scale": 0.6,
       "collision": {
         "type": "rect",
-        "x": -34,
-        "y": -44,
-        "width": 68,
-        "height": 26
+        "u": -0.22666666666666666,
+        "v": -0.36666666666666664,
+        "width": 0.4533333333333333,
+        "height": 0.21666666666666667
+      },
+      "position": {
+        "u": 10,
+        "v": 6.5
       }
     },
     {
       "id": "PLACEHOLDER_archive_door",
       "type": "interactable",
       "texture": "tex_door_hallway",
-      "x": 420,
-      "y": 700,
       "depthBias": 0,
       "interaction": {
         "x": 0,
-        "y": 20,
+        "y": 0.16666666666666666,
         "radius": 80,
         "prompt": "Quay lại Main Office",
         "transition": {
@@ -286,610 +344,861 @@
           "targetSpawnId": "from_archive"
         }
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "position": {
+        "u": 0.4,
+        "v": 4.65
+      }
     },
     {
       "id": "decor_cabinet_wall_1",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 180,
-      "y": 449,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 1.2,
+        "v": 2.408333333333333
+      }
     },
     {
       "id": "decor_cabinet_wall_2",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 256,
-      "y": 449,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 1.7066666666666668,
+        "v": 2.408333333333333
+      }
     },
     {
       "id": "decor_plant_corridor",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 1080,
-      "y": 700,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -19,
-        "y": -20,
-        "width": 39,
-        "height": 20
+        "u": -0.12666666666666668,
+        "v": -0.16666666666666666,
+        "width": 0.26,
+        "height": 0.16666666666666666
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 7.2,
+        "v": 4.5
+      }
     },
     {
       "id": "decor_shelf_r1_1",
       "type": "prop",
       "texture": "tex_archive_shelf_a",
-      "x": 85,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 0.5666666666666667,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r1_2",
       "type": "prop",
       "texture": "tex_archive_shelf_b",
-      "x": 165,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 1.1,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r1_3",
       "type": "prop",
       "texture": "tex_archive_shelf_a",
-      "x": 245,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 1.6333333333333333,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r1_4",
       "type": "prop",
       "texture": "tex_archive_shelf_b",
-      "x": 325,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 2.1666666666666665,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r1_5",
       "type": "prop",
       "texture": "tex_archive_shelf_b",
-      "x": 815,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 5.433333333333334,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r1_6",
       "type": "prop",
       "texture": "tex_archive_shelf_a",
-      "x": 895,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 5.966666666666667,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r1_7",
       "type": "prop",
       "texture": "tex_archive_shelf_b",
-      "x": 975,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 6.5,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r1_8",
       "type": "prop",
       "texture": "tex_archive_shelf_a",
-      "x": 1055,
-      "y": 1040,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 7.033333333333333,
+        "v": 7.333333333333333
+      }
     },
     {
       "id": "decor_shelf_r2_1",
       "type": "prop",
       "texture": "tex_archive_shelf_b",
-      "x": 85,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 0.5666666666666667,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_shelf_r2_2",
       "type": "prop",
       "texture": "tex_archive_shelf_a",
-      "x": 165,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 1.1,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_cabinet_left_1",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 250,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 1.6666666666666667,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_cabinet_left_2",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 320,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 2.1333333333333333,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_file_boxes_store",
       "type": "prop",
       "texture": "tex_file_boxes",
-      "x": 830,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -33,
-        "width": 72,
-        "height": 33
+        "u": -0.24,
+        "v": -0.275,
+        "width": 0.48,
+        "height": 0.275
       },
-      "origin": [0.5, 1],
-      "scale": 0.75
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.75,
+      "position": {
+        "u": 5.533333333333333,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_shelf_r2_3",
       "type": "prop",
       "texture": "tex_archive_shelf_a",
-      "x": 975,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 6.5,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_shelf_r2_4",
       "type": "prop",
       "texture": "tex_archive_shelf_b",
-      "x": 1055,
-      "y": 1300,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -25,
-        "width": 73,
-        "height": 25
+        "u": -0.24,
+        "v": -0.20833333333333334,
+        "width": 0.4866666666666667,
+        "height": 0.20833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 7.033333333333333,
+        "v": 9.5
+      }
     },
     {
       "id": "decor_cabinet_row_1",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 220,
-      "y": 1560,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 1.4666666666666666,
+        "v": 11.666666666666666
+      }
     },
     {
       "id": "decor_cabinet_row_2",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 880,
-      "y": 1560,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 5.866666666666666,
+        "v": 11.666666666666666
+      }
     },
     {
       "id": "decor_chair_terminal",
       "type": "prop",
       "texture": "tex_office_chair",
-      "x": 1600,
-      "y": 1030,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -13,
-        "y": -14,
-        "width": 27,
-        "height": 14
+        "u": -0.08666666666666667,
+        "v": -0.11666666666666667,
+        "width": 0.18,
+        "height": 0.11666666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.5
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.5,
+      "position": {
+        "u": 10.666666666666666,
+        "v": 7.25
+      }
     },
     {
       "id": "decor_credenza_security",
       "type": "prop",
       "texture": "tex_credenza",
-      "x": 1320,
-      "y": 480,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -47,
-        "y": -34,
-        "width": 94,
-        "height": 34
+        "u": -0.31333333333333335,
+        "v": -0.2833333333333333,
+        "width": 0.6266666666666667,
+        "height": 0.2833333333333333
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 8.8,
+        "v": 2.6666666666666665
+      }
     },
     {
       "id": "decor_file_boxes_security",
       "type": "prop",
       "texture": "tex_file_boxes",
-      "x": 1470,
-      "y": 480,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -33,
-        "y": -31,
-        "width": 67,
-        "height": 31
+        "u": -0.22,
+        "v": -0.25833333333333336,
+        "width": 0.44666666666666666,
+        "height": 0.25833333333333336
       },
-      "origin": [0.5, 1],
-      "scale": 0.7
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.7,
+      "position": {
+        "u": 9.8,
+        "v": 2.6666666666666665
+      }
     },
     {
       "id": "decor_cabinet_mid_1",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 1860,
-      "y": 760,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 12.4,
+        "v": 5
+      }
     },
     {
       "id": "decor_cabinet_mid_2",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 1940,
-      "y": 760,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 12.933333333333334,
+        "v": 5
+      }
     },
     {
       "id": "decor_cabinet_mid_3",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 2020,
-      "y": 760,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 13.466666666666667,
+        "v": 5
+      }
     },
     {
       "id": "decor_desk_security",
       "type": "prop",
       "texture": "tex_office_desk",
-      "x": 2150,
-      "y": 1030,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -75,
-        "y": -70,
-        "width": 150,
-        "height": 70
+        "u": -0.5,
+        "v": -0.5833333333333334,
+        "width": 1,
+        "height": 0.5833333333333334
       },
-      "origin": [0.5, 1],
-      "scale": 0.45
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.45,
+      "position": {
+        "u": 14.333333333333334,
+        "v": 7.25
+      }
     },
     {
       "id": "decor_plant_corner",
       "type": "prop",
       "texture": "tex_office_plant",
-      "x": 2340,
-      "y": 444,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -21,
-        "y": -24,
-        "width": 43,
-        "height": 24
+        "u": -0.14,
+        "v": -0.2,
+        "width": 0.2866666666666667,
+        "height": 0.2
       },
-      "origin": [0.5, 1],
-      "scale": 0.8
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.8,
+      "position": {
+        "u": 15.6,
+        "v": 2.3666666666666667
+      }
     },
     {
       "id": "decor_plant_tall_security",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 2350,
-      "y": 1230,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -19,
-        "y": -20,
-        "width": 39,
-        "height": 20
+        "u": -0.12666666666666668,
+        "v": -0.16666666666666666,
+        "width": 0.26,
+        "height": 0.16666666666666666
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 15.666666666666666,
+        "v": 8.916666666666666
+      }
     },
     {
       "id": "decor_reading_table",
       "type": "prop",
       "texture": "tex_meeting_table",
-      "x": 1750,
-      "y": 1510,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -104,
-        "y": -130,
-        "width": 208,
-        "height": 130
+        "u": -0.6933333333333334,
+        "v": -1.0833333333333333,
+        "width": 1.3866666666666667,
+        "height": 1.0833333333333333
       },
-      "origin": [0.5, 1],
-      "scale": 0.62
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.62,
+      "position": {
+        "u": 11.666666666666666,
+        "v": 11.25
+      }
     },
     {
       "id": "decor_cabinet_row_4",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 2240,
-      "y": 1390,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 14.933333333333334,
+        "v": 10.25
+      }
     },
     {
       "id": "decor_cabinet_row_5",
       "type": "prop",
       "texture": "tex_filing_cabinet",
-      "x": 2310,
-      "y": 1390,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -29,
-        "y": -29,
-        "width": 58,
-        "height": 29
+        "u": -0.19333333333333333,
+        "v": -0.24166666666666667,
+        "width": 0.38666666666666666,
+        "height": 0.24166666666666667
       },
-      "origin": [0.5, 1],
-      "scale": 0.6
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.6,
+      "position": {
+        "u": 15.4,
+        "v": 10.25
+      }
     },
     {
       "id": "decor_file_boxes_reading",
       "type": "prop",
       "texture": "tex_file_boxes",
-      "x": 1300,
-      "y": 1560,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -36,
-        "y": -33,
-        "width": 72,
-        "height": 33
+        "u": -0.24,
+        "v": -0.275,
+        "width": 0.48,
+        "height": 0.275
       },
-      "origin": [0.5, 1],
-      "scale": 0.75
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.75,
+      "position": {
+        "u": 8.666666666666666,
+        "v": 11.666666666666666
+      }
     },
     {
       "id": "decor_plant_reading",
       "type": "prop",
       "texture": "tex_plant_tall",
-      "x": 2350,
-      "y": 1570,
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "x": -19,
-        "y": -20,
-        "width": 39,
-        "height": 20
+        "u": -0.12666666666666668,
+        "v": -0.16666666666666666,
+        "width": 0.26,
+        "height": 0.16666666666666666
       },
-      "origin": [0.5, 1],
-      "scale": 0.85
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.85,
+      "position": {
+        "u": 15.666666666666666,
+        "v": 11.75
+      }
     },
     {
       "id": "decor_bulletin_reading",
       "type": "prop",
       "texture": "tex_bulletin_board",
-      "x": 1600,
-      "y": 1292,
       "depthBias": 0,
-      "origin": [0.5, 1],
-      "scale": 1
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 1,
+      "position": {
+        "u": 10.666666666666666,
+        "v": 9.433333333333334
+      }
+    },
+    {
+      "id": "archive_west_wall_upper",
+      "type": "wall",
+      "texture": "tex_archive_wall",
+      "position": {
+        "u": 0,
+        "v": 1.875
+      },
+      "collision": {
+        "type": "rect",
+        "u": -0.2,
+        "v": -1.875,
+        "width": 0.4,
+        "height": 3.75
+      },
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.12,
+      "angle": 153.435,
+      "depthBias": 0
+    },
+    {
+      "id": "archive_west_wall_lower",
+      "type": "wall",
+      "texture": "tex_archive_wall",
+      "position": {
+        "u": 0,
+        "v": 8.775
+      },
+      "collision": {
+        "type": "rect",
+        "u": -0.2,
+        "v": -3.225,
+        "width": 0.4,
+        "height": 6.45
+      },
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.12,
+      "angle": 153.435,
+      "depthBias": 0
+    },
+    {
+      "id": "archive_east_outer_wall",
+      "type": "wall",
+      "texture": "tex_archive_wall",
+      "position": {
+        "u": 16,
+        "v": 6
+      },
+      "collision": {
+        "type": "rect",
+        "u": -0.2,
+        "v": -6,
+        "width": 0.4,
+        "height": 12
+      },
+      "origin": [
+        0.5,
+        1
+      ],
+      "scale": 0.36,
+      "angle": 153.435,
+      "depthBias": 0
     }
   ],
   "labels": [
     {
       "id": "label_archive_storage",
       "text": "KHO LƯU TRỮ",
-      "x": 300,
-      "y": 815
+      "u": 2,
+      "v": 5.458333333333333
     },
     {
       "id": "label_hallway",
       "text": "HÀNH LANG",
-      "x": 580,
-      "y": 545
+      "u": 3.8666666666666667,
+      "v": 3.2083333333333335
     }
   ]
 }

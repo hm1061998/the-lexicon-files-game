@@ -322,7 +322,7 @@ describe('parseCaseDefinition', () => {
     const archive = structuredClone(source);
     archive.id = 'archive';
     archive.assets = [];
-    archive.spawnPoints = { default: { x: 1200, y: 1100 } };
+    archive.spawnPoints = { default: { u: 8, v: 8 } };
     expectValidationIssue(
       {
         caseRaw: { ...caseRaw, sceneIds: ['main_office', 'archive'] },

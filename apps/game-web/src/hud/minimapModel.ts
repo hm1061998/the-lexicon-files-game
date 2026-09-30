@@ -12,6 +12,7 @@ export type MinimapMarker = {
 export type MinimapLabel = { id: string; text: string; x: number; y: number };
 export type MinimapModel = {
   viewBox: string;
+  floorPoints: string;
   markerRadius: number;
   playerRadius: number;
   solids: MinimapRect[];
@@ -32,6 +33,26 @@ export function buildMinimapModel(
   playerPosition: PlayerPosition | null,
 ): MinimapModel {
   const b = scene.worldBounds;
+  let projectedBounds: MinimapRect;
+  let floorCorners: Array<{ x: number; y: number }>;
+  if ('u' in b) {
+    if (!scene.projection) throw new Error(`Scene "${scene.id}" has logical bounds without projection metadata`);
+    projectedBounds = projectWorldBounds(b, scene.projection);
+    floorCorners = [
+        projectScenePoint(scene, { u: b.u, v: b.v }),
+        projectScenePoint(scene, { u: b.u + b.width, v: b.v }),
+        projectScenePoint(scene, { u: b.u + b.width, v: b.v + b.height }),
+        projectScenePoint(scene, { u: b.u, v: b.v + b.height }),
+    ];
+  } else {
+    projectedBounds = b;
+    floorCorners = [
+        { x: b.x, y: b.y },
+        { x: b.x + b.width, y: b.y },
+        { x: b.x + b.width, y: b.y + b.height },
+        { x: b.x, y: b.y + b.height },
+    ];
+  }
   const solids: MinimapRect[] = [];
   const partitions: MinimapRect[] = [];
   const markers: MinimapMarker[] = [];
@@ -77,7 +98,12 @@ export function buildMinimapModel(
       ? projectScenePoint(scene, { u: playerPosition.x, v: playerPosition.y })
       : { x: playerPosition.x, y: playerPosition.y }
     : null;
-  const labels = (scene.labels ?? []).map(({ id, text, x, y }) => ({ id, text, x, y }));
+  const labels = (scene.labels ?? []).map((label) => {
+    const point = 'u' in label
+      ? projectScenePoint(scene, { u: label.u, v: label.v })
+      : { x: label.x, y: label.y };
+    return { id: label.id, text: label.text, ...point };
+  });
   const currentRoom = player
     ? labels.reduce<{ text: string; distance: number } | null>((nearest, label) => {
         const distance = Math.hypot(player.x - label.x, player.y - label.y);
@@ -85,7 +111,8 @@ export function buildMinimapModel(
       }, null)
     : null;
   return {
-    viewBox: `${b.x} ${b.y} ${b.width} ${b.height}`,
+    viewBox: `${projectedBounds.x} ${projectedBounds.y} ${projectedBounds.width} ${projectedBounds.height}`,
+    floorPoints: floorCorners.map(({ x, y }) => `${x},${y}`).join(' '),
     markerRadius: (b.width * 88) / 2400,
     playerRadius: (b.width * 84) / 2400,
     solids,

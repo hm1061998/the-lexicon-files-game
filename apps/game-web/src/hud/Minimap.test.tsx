@@ -46,13 +46,22 @@ describe('Minimap', () => {
     for (const label of scene.labels ?? []) expect(html).not.toContain(label.text);
   });
 
+  it('uses a diamond floor polygon for dimetric scenes', () => {
+    const html = render({});
+    expect(html).toContain('<polygon class="minimap-floor"');
+    expect(html).not.toContain('<rect class="minimap-floor"');
+  });
+
   it('draws the player once a position is published', () => {
     expect(render({ playerPosition: { x: 400, y: 500 } })).toContain('minimap-player');
   });
 
   it('announces the room nearest to the player in the map accessible name', () => {
     const label = caseDefinition.scenes[0]!.labels![0]!;
-    const html = render({ playerPosition: { x: label.x, y: label.y } });
+    expect('u' in label).toBe(true);
+    const html = render({
+      playerPosition: { x: 'u' in label ? label.u : 0, y: 'v' in label ? label.v : 0, coordinateSpace: 'logical' },
+    });
     expect(html).toContain(`aria-label="${strings.minimapTitle} — ${label.text}"`);
   });
 

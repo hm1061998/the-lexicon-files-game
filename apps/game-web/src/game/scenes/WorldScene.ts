@@ -16,10 +16,10 @@ import {
   type PlayerSprite,
 } from '../entities/Player';
 import { createShadow, syncShadow } from '../entities/shadow';
-import { CHARACTER_FIGURE_HEIGHT, INTERACTION_RED, SCENE_FADE_MS } from '../constants';
+import { CHARACTER_FIGURE_HEIGHT, INTERACTION_RED, PLAYER_SPEED, SCENE_FADE_MS } from '../constants';
 import { installDebugHook, paperOverlayAlpha } from '../debug';
 import { shouldEmitAnchor, worldToScreen, type IdAnchor } from '../systems/anchorScreen';
-import { computePlayerDepth } from '../systems/depth';
+import { computeIsoDepth, computePlayerDepth, PLAYER_DEPTH_EPSILON } from '../systems/depth';
 import type { Facing } from '../systems/direction';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
@@ -29,7 +29,10 @@ import { isOccluder, occluderAlpha } from '../systems/occlusion';
 import { shouldEmitPlayerMoved } from '../systems/playerMoved';
 import { markerBaseY, markerPositionY } from '../systems/markerFloat';
 import { resolveSceneAssets } from '../systems/sceneAssetResolver';
-import { projectScenePoint, projectVisualAnchor } from '../systems/sceneProjection';
+import { projectScenePoint, projectVisualAnchor, projectWorldBounds } from '../systems/sceneProjection';
+import { moveWithCollisions, type LogicalRect } from '../systems/logicalCollision';
+import { resolveIsoInput, screenSpeedVector } from '../systems/isoInput';
+import { unprojectIso, type LogicalPoint } from '../systems/isometricProjection';
 
 export type InputLockSource = { isInputLocked(): boolean };
 
@@ -116,6 +119,9 @@ export class WorldScene extends Phaser.Scene {
   private unsubscribeNearby: (() => void) | null = null;
   private unsubscribeTransition: (() => void) | null = null;
   private uninstallDebug: (() => void) | null = null;
+  private logicalPosition: LogicalPoint | null = null;
+  private logicalBounds: LogicalRect | null = null;
+  private logicalSolids: LogicalRect[] = [];
 
   constructor() {
     super(WorldScene.KEY);
@@ -151,7 +157,18 @@ export class WorldScene extends Phaser.Scene {
     }
 
     const b = def.worldBounds;
-    this.physics.world.setBounds(b.x, b.y, b.width, b.height);
+    const logicalMode = Boolean(def.projection && 'u' in b && 'u' in spawn);
+    this.logicalPosition = logicalMode && 'u' in spawn ? { u: spawn.u, v: spawn.v } : null;
+    this.logicalBounds = logicalMode && 'u' in b ? { u: b.u, v: b.v, width: b.width, height: b.height } : null;
+    this.logicalSolids = [];
+    let screenBounds: Bounds;
+    if ('u' in b) {
+      if (!def.projection) throw new Error(`Scene "${def.id}" has logical bounds without projection metadata`);
+      screenBounds = projectWorldBounds(b, def.projection);
+    } else {
+      screenBounds = b;
+    }
+    this.physics.world.setBounds(screenBounds.x, screenBounds.y, screenBounds.width, screenBounds.height);
 
     const colliders = this.physics.add.staticGroup();
     const resolvedAssets = resolveSceneAssets(def.assets);
@@ -164,6 +181,14 @@ export class WorldScene extends Phaser.Scene {
       this.assetTextures.set(asset.id, sprite.texture.key);
       if (asset.type === 'npc') createShadow(this, { x: floorPoint.x, y: floorPoint.y, depth: sprite.depth });
       if (body) colliders.add(body);
+      if (logicalMode && resolved.collision && 'u' in resolved.collision && 'u' in resolved.floorAnchor) {
+        this.logicalSolids.push({
+          u: resolved.floorAnchor.u + resolved.collision.u,
+          v: resolved.floorAnchor.v + resolved.collision.v,
+          width: resolved.collision.width,
+          height: resolved.collision.height,
+        });
+      }
       if (isOccluder(asset, b.width)) {
         // Static sprites: bounds are measured once, not every frame.
         const { x, y, width, height } = sprite.getBounds();
@@ -207,15 +232,29 @@ export class WorldScene extends Phaser.Scene {
 
     this.roomLabels = (def.labels ?? []).map((label) => ({
       text: label.text,
-      sign: createRoomLabel(this, label, LABEL_DEPTH),
+      sign: createRoomLabel(
+        this,
+        !('x' in label)
+          ? { id: label.id, text: label.text, ...projectScenePoint(def, { u: label.u, v: label.v }), angle: label.angle }
+          : label,
+        LABEL_DEPTH,
+      ),
     }));
 
+    const spawnPoint = 'u' in spawn
+      ? def.projection ? projectScenePoint(def, spawn) : { x: 0, y: 0 }
+      : { x: spawn.x, y: spawn.y };
     this.player = createPlayer(
       this,
-      spawn.x,
-      spawn.y,
+      spawnPoint.x,
+      spawnPoint.y,
       options.caseDefinition.characterSheets.player,
     );
+    if (logicalMode) {
+      this.player.body.enable = false;
+      this.player.setCollideWorldBounds(false);
+      this.player.setDepth(computeIsoDepth(this.logicalPosition!, def.projection!) + PLAYER_DEPTH_EPSILON);
+    }
     this.playerFacing = PLAYER_INITIAL_FACING;
     this.playerShadow = createShadow(this, this.player);
     // Publish the start position once so the HUD minimap has a dot before the first move.
@@ -223,10 +262,10 @@ export class WorldScene extends Phaser.Scene {
     this.publishPlayerPosition(0);
     // After the physics step has moved the sprite, so the shadow never trails a frame behind.
     this.events.on(Phaser.Scenes.Events.PRE_RENDER, this.syncPlayerShadow, this);
-    this.physics.add.collider(this.player, colliders);
+    if (!logicalMode) this.physics.add.collider(this.player, colliders);
 
     const camera = this.cameras.main;
-    camera.setBounds(b.x, b.y, b.width, b.height);
+    camera.setBounds(screenBounds.x, screenBounds.y, screenBounds.width, screenBounds.height);
     camera.startFollow(this.player, true);
     // Fade in only when arriving through a transition; the initial boot stays instant so
     // first-frame input latency is unaffected.
@@ -259,6 +298,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.uninstallDebug = installDebugHook({
       player: () => ({ x: this.player.x, y: this.player.y, depth: this.player.depth }),
+      logicalPlayer: () => this.logicalPosition ? { ...this.logicalPosition } : null,
       playerTexture: () => this.player.texture.key,
       playerAnim: () => {
         const walk = currentWalk(this.player);
@@ -280,8 +320,21 @@ export class WorldScene extends Phaser.Scene {
       },
       storeSceneId: () => this.options.transitions.activeSceneId(),
       teleport: (x, y) => {
-        this.player.body.reset(x, y);
-        this.player.setDepth(computePlayerDepth(y));
+        if (logicalMode && def.projection && this.logicalPosition) {
+          this.logicalPosition = unprojectIso({ x, y }, def.projection);
+          this.player.setPosition(x, y);
+          this.player.setDepth(computeIsoDepth(this.logicalPosition, def.projection) + PLAYER_DEPTH_EPSILON);
+        } else {
+          this.player.body.reset(x, y);
+          this.player.setDepth(computePlayerDepth(y));
+        }
+      },
+      teleportLogical: (u, v) => {
+        if (!def.projection || !this.logicalBounds) return;
+        this.logicalPosition = { u, v };
+        const screen = projectScenePoint(def, this.logicalPosition);
+        this.player.setPosition(screen.x, screen.y);
+        this.player.setDepth(computeIsoDepth(this.logicalPosition, def.projection) + PLAYER_DEPTH_EPSILON);
       },
     });
 
@@ -325,6 +378,12 @@ export class WorldScene extends Phaser.Scene {
       },
       typing,
     );
+    if (this.logicalPosition && this.logicalBounds && this.options.scene.projection) {
+      this.updateLogicalMovement(typing, delta);
+      this.updateNearby();
+      this.updateInteract(typing);
+      return;
+    }
     this.playerFacing = movePlayer(
       this.player,
       direction,
@@ -352,16 +411,63 @@ export class WorldScene extends Phaser.Scene {
     if (this.interactKey) Phaser.Input.Keyboard.JustDown(this.interactKey);
   }
 
+  /** Logical collision and projection path used by migrated dimetric scenes. */
+  private updateLogicalMovement(typing: boolean, deltaMs: number): void {
+    const position = this.logicalPosition;
+    const bounds = this.logicalBounds;
+    const projection = this.options.scene.projection;
+    const keys = this.keys;
+    if (!position || !bounds || !projection || !keys) return;
+    const input = resolveIsoInput(
+      {
+        up: keys.W.isDown,
+        down: keys.S.isDown,
+        left: keys.A.isDown,
+        right: keys.D.isDown,
+      },
+      typing,
+    );
+    const velocity = screenSpeedVector(input, projection, PLAYER_SPEED);
+    const dt = Math.min(Math.max(deltaMs, 0), 50) / 1000;
+    const result = moveWithCollisions(
+      position,
+      { u: velocity.u * dt, v: velocity.v * dt },
+      { u: -0.18, v: -0.18, width: 0.36, height: 0.36 },
+      this.logicalSolids,
+      bounds,
+    );
+    this.logicalPosition = result.position;
+    const screen = projectScenePoint(this.options.scene, result.position);
+    this.player.setPosition(screen.x, screen.y);
+    this.player.setDepth(computeIsoDepth(result.position, projection) + PLAYER_DEPTH_EPSILON);
+    const screenDirection = {
+      x: input.u - input.v,
+      y: input.u + input.v,
+    };
+    this.playerFacing = movePlayer(
+      this.player,
+      screenDirection,
+      this.playerFacing,
+      this.options.caseDefinition.characterSheets.player,
+      result.position.u !== position.u || result.position.v !== position.v,
+    );
+  }
+
   /** Publishes the player position for the HUD (a view; Phaser stays the source). */
   private publishPlayerPosition(deltaMs: number): void {
     // A leaving scene must not publish a stale position for the destination's minimap.
     if (this.transitioning) return;
     this.sinceLastPublishMs += deltaMs;
-    const next = { x: this.player.x, y: this.player.y };
+    const next = this.logicalPosition
+      ? { x: this.logicalPosition.u, y: this.logicalPosition.v }
+      : { x: this.player.x, y: this.player.y };
     if (!shouldEmitPlayerMoved(this.lastPublished, next, this.sinceLastPublishMs)) return;
     this.lastPublished = next;
     this.sinceLastPublishMs = 0;
-    this.bus.emit('player:moved', { ...next, coordinateSpace: 'screen' });
+    this.bus.emit('player:moved', {
+      ...next,
+      coordinateSpace: this.logicalPosition ? 'logical' : 'screen',
+    });
   }
 
   /** Red outline around the nearby target and its published screen anchor (view only). */

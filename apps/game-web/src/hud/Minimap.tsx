@@ -37,8 +37,6 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
     [scene, playerPosition],
   );
   if (!visible || !model || !scene) return null;
-  const b = scene.worldBounds;
-
   return (
     <PaperPanel className="hud-minimap">
       <svg
@@ -51,7 +49,7 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
             : strings.minimapTitle
         }
       >
-        <rect className="minimap-floor" x={b.x} y={b.y} width={b.width} height={b.height} />
+        <polygon className="minimap-floor" points={model.floorPoints} />
         {model.solids.map((r, index) => (
           <rect
             key={index}

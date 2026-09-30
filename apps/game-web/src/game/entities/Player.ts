@@ -70,13 +70,14 @@ export function movePlayer(
   direction: { x: number; y: number },
   facing: Facing,
   sheet: CharacterSheet,
+  actuallyMoved?: boolean,
 ): Facing {
   player.setVelocity(direction.x * PLAYER_SPEED, direction.y * PLAYER_SPEED);
   player.setDepth(computePlayerDepth(player.y));
   const next = nextFacing(facing, direction.x, direction.y);
   const plan = planWalk({
     name: PLAYER_NAME,
-    moving: (direction.x !== 0 || direction.y !== 0) && isWalking(displacement(player)),
+    moving: (direction.x !== 0 || direction.y !== 0) && (actuallyMoved ?? isWalking(displacement(player))),
     hasWalk: sheet.walk !== null && player.scene.anims.exists(walkAnimKey(PLAYER_NAME, next)),
     facing: next,
     current: currentWalk(player),
