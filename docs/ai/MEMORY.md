@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T03:48:50+07:00
+updated_at: 2026-10-01T04:06:42+07:00
 phase: phase-11e
 status: in_progress
-result_commit: 37a8949
+result_commit: 7915810
 active_spec: docs/superpowers/specs/2026-09-30-phase-11e-feedback-polish-design.md
 active_plan: docs/superpowers/plans/2026-09-30-phase-11e-feedback-polish.md
 ---
@@ -35,11 +35,12 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-feedback-polish.md
 - Phase 11E Tasks 1–2: `1520cab`, `50fc6d0`.
 - Phase 11E Tasks 3–10 code, content, assets, tests, screenshots and verification: `bfa934f`.
 - Plan checkbox/execution-state update: `37a8949`.
+- 3× stability rerun, corrected order-sensitive HUD assertion and updated verification: `7915810`.
 - Phase 11E plan approval recorded in prior commits; user selected Native inline workflow.
 
 ## In Progress
 
-- Task 11: full gates and one full Playwright run passed; feedback/HUD/layout focused runs passed. The requested 3× regression repeat has not been completed. External review is partial; no final independent verdict. User visual/audio audition is pending.
+- Task 11: full gates, 108-test Playwright suite and 3× world/HUD/layout/minimap/audio stability reruns passed. One order-sensitive HUD assertion was corrected; affected scenario then passed 3/3. External review is partial; no final independent verdict. User visual/audio audition is pending.
 - Update plan/verification after remaining gates and user acceptance. Memory must be committed separately after the implementation/result commit per `docs/ai/README.md`.
 - Camera follow/zoom, NPC nameplate redesign, background music, more natural footstep samples, and dialogue/notebook controls are outside the approved original plan; review draft spec before implementation.
 
@@ -58,21 +59,21 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-feedback-polish.md
 
 ## Next Actions
 
-1. Complete Task 11's planned stability reruns and final review, then append exact outputs to verification/review files.
-2. Show the screenshots and short NPC/footstep samples to the user; incorporate visual/audio feedback before calling Phase 11E accepted.
+1. Close the final review verdict if possible; the previous independent reviewer stopped at its usage limit after returning actionable findings.
+2. Show screenshots and short NPC/footstep samples to the user; incorporate visual/audio feedback before calling Phase 11E accepted.
 3. Ask the user to approve or revise the separate camera/audio/UI addendum before planning its implementation.
 4. After approval, write a Vietnamese implementation plan and implement only that addendum; audition CC0 music/footstep candidates before choosing.
 
 ## Verification
 
 - Latest result commit `bfa934f`: `npm run lint`, `npm run test` (game-web 468 Vitest; memory validator 30), `npm run build`, `npm run typecheck`, `npm run format:check`, and `npm run memory:check` passed. Build emits existing large-chunk advisory (1,934.35 kB minified, 470.31 kB gzip).
-- Full Playwright 108/108 passed; feedback/viewport/HUD/layout/cues/audio/evidence set 58/58 passed; evidence + HUD 28/28 passed. Full output summary in `docs/ai/2026-10-01-phase-11e-feedback-polish-verification.md`.
+- Full Playwright 108/108 passed; feedback/viewport/HUD/layout/cues/audio/evidence set 58/58 passed; evidence + HUD 28/28 passed. 236 selected stability cases passed on all three rounds; the corrected one-case rerun passed 3/3. Full output summary in `docs/ai/2026-10-01-phase-11e-feedback-polish-verification.md`.
 - Art Python 44/44, audio asset Python 5/5 and `validate_assets.py` pass. Backend unchanged; no dotnet command run.
-- The E2E group has not yet been run 3× after final review fixes; do not claim that gate.
+- Independent final review verdict and human visual/audio acceptance remain open; do not claim phase acceptance.
 
 ## Latest Handoff
 
-- Latest result/docs commit: `37a8949`; implementation commit: `bfa934f`. This memory change must be a separate following commit; run `npm run memory:check` before it.
+- Latest result/docs commit: `7915810`; implementation commit: `bfa934f`. This memory change must be a separate following commit; run `npm run memory:check` before it.
 - Current working directory: `D:\Works\the-lexicon-files-game`, branch `dev`. Check `git status` before continuing; user-owned `apps/game-web/debug.log` was deliberately not committed.
 - Required reading: `AGENTS.md`, `apps/game-web/AGENTS.md`, this memory/README, `docs/ai/2026-10-01-phase-11e-feedback-polish-verification.md`, `docs/ai/2026-10-01-phase-11e-feedback-polish-final-review.md`, active approved Phase 11E spec/plan, and the camera/audio/UI addendum before asking for its approval.
 
