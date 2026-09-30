@@ -58,6 +58,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cl
 ## Next Actions
 
 - Hoàn tất Task 4 (commit, review), rồi Task 5 (vệ sinh: Ctrl/Alt/Meta cho WASD/E, aria minimap, paper texture nhỏ, bỏ sheet NPC không dùng, khung đi bộ có vung tay, triage minor Phase 10 cũ) và Task 6 (verification + đối chiếu concept + memory).
+- **Sau Phase 11C:** làm Phase 11D theo `docs/ai/2026-09-30-phase-11d-user-feedback-backlog.md` (phòng quá rộng/đồ thưa, vật chứng trên bàn, cửa ra hành lang, tên NPC trên đầu, NPC xoay hướng khi đối thoại, nhịp thở); Task 4 `wip` đã commit nhưng người dùng chưa hài lòng — xem lại bố cục.
 - Đọc plan Phase 11C và ledger SDD `.superpowers/sdd/2026-09-30-phase-11c-concept-fidelity-and-cleanup/progress.md` (git-ignored) nếu còn; nếu mất, dựa vào `git log` từ `5908b15`.
 - Tạo walk sheet thật (8x4) theo `docs/art/07` §Walk sheet, chạy `slice_walk_sheet.py`, thay file cùng tên (tùy chọn).
 - Người dùng review/merge `dev`; chờ yêu cầu Phase 12 (không tự bắt đầu).
