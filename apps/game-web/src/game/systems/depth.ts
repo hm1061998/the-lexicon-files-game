@@ -25,5 +25,3 @@ export function computeIsoDepth(
 export function computePlayerDepth(feetY: number): number {
   return computeDepth(feetY, PLAYER_DEPTH_EPSILON);
 }
-
-

@@ -105,5 +105,3 @@ export function shouldEmitAnchor(prev: IdAnchor | null, next: IdAnchor, dtMs: nu
   if (dtMs < ANCHOR_EMIT_INTERVAL_MS) return false;
   return Math.hypot(next.x - prev.x, next.y - prev.y) >= ANCHOR_MIN_DISTANCE;
 }
-
-
