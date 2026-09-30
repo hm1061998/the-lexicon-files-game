@@ -1,24 +1,24 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T16:30:00+07:00
+updated_at: 2026-09-30T18:00:00+07:00
 phase: phase-11e
 status: in_progress
-result_commit: bcab0e5
-active_spec: docs/superpowers/specs/2026-09-30-phase-11e-controls-visual-ux-design.md
-active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
+result_commit: b7767b6
+active_spec: docs/superpowers/specs/2026-09-30-phase-11e-office-archive-static-world-redesign-design.md
+active_plan: docs/superpowers/plans/2026-09-30-phase-11e-office-archive-static-world-redesign.md
 ---
 
 ## Metadata
 
-- Phase 11D Tasks 1–8 completed on local `dev` in `94ce745`; memory handoff `a54c32d`. Phase 11E plan is approved; the user chose Native execution. Implementation is underway locally; do not push unless requested.
+- Phase 11E Task 2 cũ (composition Office/Archive, `bcab0e5`) không đạt: nhân vật không đi được từ spawn tới cửa. Spec + plan redesign static world đã duyệt và push (`b7767b6`), chọn Native; chưa bắt đầu thực thi.
 
 ## Current Phase
 
-- Phase 11D is complete. Phase 11E spec and plan were approved; plan is committed locally in `676e6fb` + refinement `05a8485`. User chose Native execution. Task 1 completed in `b3fa09d`; Task 2 completed in `bcab0e5`. Tasks 3–6 remain. Phase 12 remains Testing & Performance in the roadmap and has not started.
+- Phase 11E: spec/plan `controls-visual-ux` (Task 1 `b3fa09d` xong; Task 2 `bcab0e5` bị thay) vẫn là plan cha; Tasks 3–6 của nó chờ. Plan redesign (8 task) phải xong trước Task 3 cha. Phase 12 chưa bắt đầu.
 
 ## Active Goal
 
-- Implement approved Phase 11E plan task-by-task using Native. Last completed goal: migrate Case #001 to 2D dimetric 2:1, improve office/archive and NPC presentation, add full walk sheets, reconcile docs and verify.
+- Thực thi plan redesign Office/Archive (Native) từ Task 1: model footprint + wall segments/openings, art dimetric 2:1 theo module, traversal WASD hai chiều.
 
 ## Current Status
 
@@ -35,14 +35,14 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## In Progress
 
-- Phase 11E Tasks 3–6 remain; Tasks 1–2 are complete.
+- Chưa có task nào của plan redesign được thực thi. `apps/game-web/e2e/scene-layout.spec.ts` có thay đổi repro chưa commit (thuộc Task 1).
 
 ## Active Decisions
 
 - Phase 11D projector: `x=originX+(u-v)×64`, `y=originY+(u+v)×32−elevationPx`; `u+=SE`, `v+=SW`; W=NW, D=NE, S=SE, A=SW. Game is 2D dimetric 2:1, not a 3D world.
 - User chose native inline implementation for Phase 11D. User owns merging `dev` into `main`; do not merge or push unless explicitly requested for the current work.
 - Phase 11E controls use screen-relative W/A/S/D with the same dimetric projector; cardinal sprite-row ties resolve consistently.
-- Phase 11E visual direction preserves the current paper/sepia art style. Scope is targeted scene and UI polish, not a full restyle. WASD moves relative to screen while the world stays dimetric. Breathing will be slow/soft for idle player/NPC, with feet/collision/world state unaffected.
+- Phase 11E giữ art giấy/sepia; breathing chậm/mềm. Redesign: tường là segment+opening (`walls`), `footprint` tách khỏi `collision`/visual pivot; module môi trường dùng camera 30° (2:1 đúng); validator hình học là cổng (body 0.36, clearance 0.96).
 - Specs and implementation plans under `docs/superpowers/` must be in Vietnamese.
 - Product truth remains docs/01–03 and `docs/architecture/ARCHITECTURE.md`; if requirements conflict, clarify before changing behavior.
 - Monorepo uses npm + Nx; no pnpm/yarn/bun. `game-core`/`learning-engine` remain framework-free; Case #001 content stays in `packages/game-content`; Phaser/React communicate through typed event bus/store; scene listeners clean up at shutdown.
@@ -52,12 +52,12 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## Blockers
 
-- None. Native implementation of Phase 11E is underway.
+- Không. `npm` vắng trong PATH (dùng runner trực tiếp); `apps/game-web/debug.log` untracked, bỏ qua.
 
 ## Next Actions
 
-- Start Task 3: keep the evidence modal header visible while its content scrolls internally.
-- Continue Tasks 4–6 in plan order. Keep Phase 12 Testing & Performance separate.
+- Bắt đầu Task 1 plan redesign: khóa baseline, tìm vật cản thật ở lỗi dừng tại `u≈5.75, v≈4.16`, thêm test traversal `fixme`.
+- Sau plan redesign: quay lại Tasks 3–6 của plan `controls-visual-ux`. Giữ Phase 12 riêng.
 
 ## Verification
 
@@ -67,7 +67,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## Latest Handoff
 
-- Phase 11D complete locally at `94ce745`; no push. Phase 11E spec `ca89b59` and plan latest version approved; Native selected. Task 1 commit `b3fa09d`, Task 2 commit `bcab0e5`, both local on `dev`; Task 3 is next. Do not push unless explicitly requested. Phase 11D ledger: `docs/ai/2026-09-30-phase-11d-verification.md`.
+- Spec + plan redesign static world push lên `origin/dev` ở `b7767b6` (user duyệt, chọn Native, chưa thực thi). Bằng chứng repro: E2E đi từ spawn tới `hallway_door` dừng tại `u≈5.75, v≈4.16`. Ledger 11D: `docs/ai/2026-09-30-phase-11d-verification.md`.
 
 ## Required Reading
 
