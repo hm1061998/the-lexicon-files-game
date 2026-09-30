@@ -1,15 +1,5 @@
+import { scenePoint } from './sceneTestData';
 import { expect, test, type Page } from '@playwright/test';
-import { readFileSync } from 'node:fs';
-
-const scene = JSON.parse(
-  readFileSync(
-    new URL(
-      '../../../packages/game-content/cases/case-001/scenes/main_office.json',
-      import.meta.url,
-    ),
-    'utf8',
-  ),
-) as { assets: Array<{ id: string; x: number; y: number }> };
 
 async function open(page: Page): Promise<void> {
   await page.goto('/');
@@ -78,7 +68,7 @@ async function openInMode(page: Page, mode: 'Beginner' | 'Learning' | 'Immersion
   await expect(pause).toBeVisible();
   await pause.getByLabel('Chế độ dịch').selectOption(mode);
   await pause.getByRole('button', { name: 'Tiếp tục' }).click();
-  const hotspot = scene.assets.find((asset) => asset.id === 'phone_recording')!;
+  const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });
@@ -96,7 +86,7 @@ test('phone recording resolves the fact and persists playback telemetry after re
   });
 
   await open(page);
-  const hotspot = scene.assets.find((asset) => asset.id === 'phone_recording')!;
+  const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });
@@ -189,7 +179,7 @@ test('audio failure can retry and closing playback unmounts the evidence session
   });
   await page.route('**/audio/case-001/leo-phone-recording.wav', (route) => route.abort());
   await openInMode(page, 'Learning');
-  let dialog = page.getByRole('dialog');
+  const dialog = page.getByRole('dialog');
   await dialog.getByRole('button', { name: 'Phát bản ghi' }).click();
   await expect(dialog).toContainText('Không thể phát bản ghi. Bạn có thể thử lại.');
   await page.unroute('**/audio/case-001/leo-phone-recording.wav');
@@ -211,7 +201,7 @@ test('a collected recording can be reopened from the notebook to answer later', 
   page,
 }) => {
   await open(page);
-  const hotspot = scene.assets.find((asset) => asset.id === 'phone_recording')!;
+  const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });

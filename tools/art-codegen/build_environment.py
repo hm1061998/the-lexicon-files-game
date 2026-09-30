@@ -2,7 +2,7 @@
 import json, math
 from pathlib import Path
 import numpy as np
-from iso import Cam
+from iso import Cam, Scene, M, C
 import props
 from world_modules import floor_diamond, wall_module, door_frame, WALL_HEIGHT_PX
 
@@ -12,7 +12,20 @@ CATALOG = ROOT/'packages/game-content/cases/case-001/environment-models.json'
 
 def export_props():
     models = {}
-    for name, builder in props.BUILDERS.items():
+    def board(white=False):
+        s=Scene('dimetric')
+        s.box(0,0,0,1.7,.08,.85,M['wood'])
+        s.box(.05,.081,.05,1.6,.012,.75,M['paper'] if white else C['olive'])
+        if white:
+            for y in (.25,.4,.55):
+                s.stroke([[.15,.098,y],[1.25,.098,y]],w=.5,alpha=.45)
+        else:
+            for x,z in [(.15,.15),(.55,.18),(1.0,.13),(.23,.48),(.85,.49),(1.25,.48)]:
+                s.box(x,.099,z,.25,.008,.24,M['paper'])
+                s.stroke([[x+.03,.11,z+.08],[x+.22,.11,z+.08]],w=.5,alpha=.5)
+        return s
+    builders={**props.BUILDERS,'prop_whiteboard_01':lambda:board(True),'prop_bulletin_board_01':lambda:board(False)}
+    for name, builder in builders.items():
         if name in ('prop_note_01', 'prop_audio_recorder_01', 'prop_door_hallway_01'):
             continue
         scene = builder(); scene.cam = Cam('dimetric')

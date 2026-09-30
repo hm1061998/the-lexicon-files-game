@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { scenePoint } from './sceneTestData';
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
@@ -51,7 +52,9 @@ async function hold(page: Page, key: string, ms: number): Promise<void> {
 
 /** Walk right until the note is in range; fixed hold times are too fragile on slow renderers. */
 async function walkToNote(page: Page): Promise<void> {
-  await page.keyboard.down('d');
+  const start = scenePoint('main_office', 'player_desk', { u: 1.5, v: 0 });
+  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), start);
+  await page.keyboard.down('a');
   await expect
     .poll(() =>
       page.evaluate(() =>
@@ -59,14 +62,14 @@ async function walkToNote(page: Page): Promise<void> {
       ),
     )
     .toBe('objective_note');
-  await page.keyboard.up('d');
+  await page.keyboard.up('a');
 }
 
 test('prompt appears near the note and disappears when leaving', async ({ page }) => {
   await openWorld(page);
   await walkToNote(page);
   await expect(page.getByText('Đọc ghi chú')).toBeVisible();
-  await hold(page, 'a', 1500);
+  await hold(page, 'd', 1500);
   await expect(page.getByText('Đọc ghi chú')).toHaveCount(0);
 });
 
@@ -86,7 +89,7 @@ test('canvas is not remounted by HUD updates', async ({ page }) => {
     );
     await walkToNote(page);
     await expect(page.getByText('Đọc ghi chú')).toBeVisible();
-    await hold(page, 'a', 1500);
+    await hold(page, 'd', 1500);
     await expect(page.getByText('Đọc ghi chú')).toHaveCount(0);
   }
   await expect(page.locator('canvas')).toHaveCount(1);
@@ -158,7 +161,10 @@ test('Esc typed in a page input does not pause', async ({ page }) => {
 });
 
 async function collectMeetingMinutes(page: Page): Promise<void> {
-  await page.evaluate(() => window.__lexiconDebug!.teleport(1000, 1100));
+  await page.evaluate(
+    ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
+    scenePoint('main_office', 'meeting_minutes'),
+  );
   await expect(page.getByText('Đọc biên bản cuộc họp')).toBeVisible();
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog')).toBeVisible();
@@ -381,7 +387,7 @@ test('minimap is hidden on narrow viewports', async ({ page }) => {
   await expect(page.locator('.hud-minimap')).toBeHidden();
 });
 
-test('HUD chrome follows the concept: red objective heading, clip, case badge, 4-key bar', async ({
+test('HUD chrome follows the concept: red objective heading, clip, case badge, movement and action key bar', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
@@ -403,7 +409,7 @@ test('HUD chrome follows the concept: red objective heading, clip, case badge, 4
   await expect(badge.locator('svg')).toHaveCount(1);
 
   const keys = await page.locator('.hud-key-hints .keycap').allTextContents();
-  expect(keys).toEqual(['E', 'J', 'M', 'Esc']);
+  expect(keys).toEqual(['WASD', 'E', 'J', 'M', 'Esc']);
   await expect(page.locator('.hud-key-hints')).not.toContainText('Space');
 });
 

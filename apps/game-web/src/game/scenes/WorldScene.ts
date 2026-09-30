@@ -38,6 +38,7 @@ import { resolveSceneAssets } from '../systems/sceneAssetResolver';
 import {
   projectScenePoint,
   projectVisualAnchor,
+  projectInteractionAnchor,
   projectWorldBounds,
 } from '../systems/sceneProjection';
 import { moveWithCollisions, type LogicalRect } from '../systems/logicalCollision';
@@ -212,7 +213,10 @@ export class WorldScene extends Phaser.Scene {
     );
 
     const colliders = this.physics.add.staticGroup();
-    const resolvedAssets = resolveSceneAssets([...def.assets, ...expandWalls(def.walls ?? []).assets]);
+    const resolvedAssets = resolveSceneAssets([
+      ...def.assets,
+      ...expandWalls(def.walls ?? []).assets,
+    ]);
     for (const resolved of resolvedAssets) {
       const { asset } = resolved;
       const floorPoint = projectScenePoint(def, resolved.floorAnchor);
@@ -302,8 +306,7 @@ export class WorldScene extends Phaser.Scene {
         });
         this.areas.push({
           id: asset.id,
-          x: interactionPoint.x,
-          y: interactionPoint.y,
+          ...projectInteractionAnchor(def, resolved.interactionAnchor),
           radius: asset.interaction.radius,
           prompt: asset.interaction.prompt,
         });

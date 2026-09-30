@@ -44,3 +44,11 @@ export function projectVisualAnchor(
   const point = projectScenePoint(scene, anchor);
   return { x: point.x, y: point.y - anchor.elevationPx };
 }
+
+/** Interaction reach uses the floor point; artwork height affects markers only. */
+export function projectInteractionAnchor(
+  scene: Pick<SceneDefinition, 'projection'>,
+  anchor: VisualAnchor,
+): ScreenPoint {
+  return projectScenePoint(scene, anchor);
+}

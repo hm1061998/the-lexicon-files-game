@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SceneDefinition } from '@lexicon/shared-types';
-import { projectScenePoint, projectWorldBounds } from './sceneProjection';
+import { projectScenePoint, projectWorldBounds, projectInteractionAnchor } from './sceneProjection';
 
 const projection = {
   type: 'dimetric-2:1' as const,
@@ -11,6 +11,16 @@ const projection = {
 };
 
 describe('scene projection adapter', () => {
+  it('keeps interaction range on the floor when artwork elevation changes', () => {
+    expect(projectInteractionAnchor({ projection }, { u: 2, v: 3, elevationPx: 0 })).toEqual({
+      x: 36,
+      y: 210,
+    });
+    expect(projectInteractionAnchor({ projection }, { u: 2, v: 3, elevationPx: 52 })).toEqual({
+      x: 36,
+      y: 210,
+    });
+  });
   it('keeps legacy screen points unchanged', () => {
     expect(projectScenePoint({ projection }, { x: 12, y: 34 })).toEqual({ x: 12, y: 34 });
   });

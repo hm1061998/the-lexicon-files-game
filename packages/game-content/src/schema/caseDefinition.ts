@@ -13,6 +13,7 @@ import type {
   TimelineDefinition,
 } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
+import { validateSceneGeometry } from '../geometry/sceneGeometry';
 import { npcSchema, dialogueTreeSchema } from './dialogue';
 import { validateDialogueReferences } from '../validation/dialogueReferences';
 import { conditionSchema, effectSchema } from './caseEngine';
@@ -394,6 +395,8 @@ export function parseCaseDefinition(
       (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] })
         .data as unknown as SceneDefinition,
   );
+  for (const scene of scenes)
+    for (const error of validateSceneGeometry(scene)) issues.push(`scene "${scene.id}": ${error}`);
 
   const collections: ReadonlyArray<{ label: string; ids: readonly string[] }> = [
     { label: 'sceneIds', ids: caseData.sceneIds },

@@ -19,18 +19,18 @@
   },
   "spawnPoints": {
     "default": {
-      "u": 8.1,
-      "v": 7
+      "u": 8,
+      "v": 4.8
     },
     "from_archive": {
-      "u": 0.45,
-      "v": 4.65
+      "u": 0.9,
+      "v": 5
     }
   },
   "textures": [
     {
       "key": "tex_office_desk",
-      "url": "/assets/environment/props/prop_office_desk_01.png"
+      "url": "/assets/environment/props/dimetric/prop_office_desk_01.png"
     },
     {
       "key": "tex_note",
@@ -46,7 +46,7 @@
     },
     {
       "key": "tex_door_hallway",
-      "url": "/assets/environment/props/prop_door_hallway_01.png"
+      "url": "/assets/environment/office/door_frame_v.png"
     },
     {
       "key": "tex_leo_se",
@@ -57,259 +57,91 @@
       "url": "/assets/characters/david/chr_david_idle_se.png"
     },
     {
-      "key": "tex_office_wall",
-      "url": "/assets/environment/office/scene_office_wall_back.png"
-    },
-    {
       "key": "tex_office_plant",
-      "url": "/assets/environment/props/prop_office_plant_01.png"
+      "url": "/assets/environment/props/dimetric/prop_office_plant_01.png"
     },
     {
       "key": "tex_filing_cabinet",
-      "url": "/assets/environment/props/prop_filing_cabinet_01.png"
+      "url": "/assets/environment/props/dimetric/prop_filing_cabinet_01.png"
     },
     {
       "key": "tex_office_chair",
-      "url": "/assets/environment/props/prop_office_chair_01.png"
+      "url": "/assets/environment/props/dimetric/prop_office_chair_01.png"
     },
     {
       "key": "tex_meeting_table",
-      "url": "/assets/environment/props/prop_meeting_table_01.png"
-    },
-    {
-      "key": "tex_partition_office_meeting_n",
-      "url": "/assets/environment/office/partition_office_meeting_n.png"
-    },
-    {
-      "key": "tex_partition_office_meeting_e_n",
-      "url": "/assets/environment/office/partition_office_meeting_e_n.png"
-    },
-    {
-      "key": "tex_partition_office_meeting_e_s",
-      "url": "/assets/environment/office/partition_office_meeting_e_s.png"
-    },
-    {
-      "key": "tex_partition_office_invest_e",
-      "url": "/assets/environment/office/partition_office_invest_e.png"
-    },
-    {
-      "key": "tex_partition_office_hall_w",
-      "url": "/assets/environment/office/partition_office_hall_w.png"
-    },
-    {
-      "key": "tex_partition_office_hall_n",
-      "url": "/assets/environment/office/partition_office_hall_n.png"
-    },
-    {
-      "key": "tex_partition_office_east_n",
-      "url": "/assets/environment/office/partition_office_east_n.png"
+      "url": "/assets/environment/props/dimetric/prop_meeting_table_01.png"
     },
     {
       "key": "tex_coat_rack",
-      "url": "/assets/environment/props/prop_coat_rack_01.png"
+      "url": "/assets/environment/props/dimetric/prop_coat_rack_01.png"
     },
     {
       "key": "tex_water_cooler",
-      "url": "/assets/environment/props/prop_water_cooler_01.png"
+      "url": "/assets/environment/props/dimetric/prop_water_cooler_01.png"
     },
     {
       "key": "tex_file_boxes",
-      "url": "/assets/environment/props/prop_file_boxes_01.png"
+      "url": "/assets/environment/props/dimetric/prop_file_boxes_01.png"
     },
     {
       "key": "tex_plant_tall",
-      "url": "/assets/environment/props/prop_plant_tall_01.png"
+      "url": "/assets/environment/props/dimetric/prop_plant_tall_01.png"
     },
     {
       "key": "tex_credenza",
-      "url": "/assets/environment/props/prop_credenza_01.png"
+      "url": "/assets/environment/props/dimetric/prop_credenza_01.png"
     },
     {
       "key": "tex_whiteboard",
-      "url": "/assets/environment/props/prop_whiteboard_01.png"
+      "url": "/assets/environment/props/dimetric/prop_whiteboard_01.png"
     },
     {
       "key": "tex_bulletin_board",
-      "url": "/assets/environment/props/prop_bulletin_board_01.png"
+      "url": "/assets/environment/props/dimetric/prop_bulletin_board_01.png"
     },
     {
-      "key": "tex_dimetric_floor",
-      "url": "/assets/environment/common/scene_diamond_floor.png"
+      "key": "tex_floor_office",
+      "url": "/assets/environment/common/tex_floor_office.png"
+    },
+    {
+      "key": "tex_wall_office_u",
+      "url": "/assets/environment/office/wall_u.png"
+    },
+    {
+      "key": "tex_wall_office_u_cap_start",
+      "url": "/assets/environment/office/wall_u_cap_start.png"
+    },
+    {
+      "key": "tex_wall_office_u_cap_end",
+      "url": "/assets/environment/office/wall_u_cap_end.png"
+    },
+    {
+      "key": "tex_wall_office_v",
+      "url": "/assets/environment/office/wall_v.png"
+    },
+    {
+      "key": "tex_wall_office_v_cap_start",
+      "url": "/assets/environment/office/wall_v_cap_start.png"
+    },
+    {
+      "key": "tex_wall_office_v_cap_end",
+      "url": "/assets/environment/office/wall_v_cap_end.png"
     }
   ],
   "assets": [
     {
       "id": "floor",
       "type": "background",
-      "texture": "tex_dimetric_floor",
-      "origin": [0.5, 0.5],
-      "depth": -10000,
+      "texture": "tex_floor_office",
+      "origin": [0.42857142857142855, 0],
+      "depth": 0,
       "depthBias": 0,
       "position": {
-        "u": 8,
-        "v": 6
+        "u": 0,
+        "v": 0
       },
       "scale": 1
-    },
-    {
-      "id": "wall_back",
-      "type": "wall",
-      "texture": "tex_office_wall",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -8,
-        "v": -0.3333333333333333,
-        "width": 16,
-        "height": 0.3333333333333333
-      },
-      "origin": [0.5, 0.9],
-      "position": {
-        "u": 8,
-        "v": 0.33
-      },
-      "angle": 26.565,
-      "scale": 0.48
-    },
-    {
-      "id": "partition_office_meeting_n",
-      "type": "wall",
-      "texture": "tex_partition_office_meeting_n",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -3.6133333333333333,
-        "v": -0.2,
-        "width": 7.226666666666667,
-        "height": 0.2
-      },
-      "origin": [0.5, 1],
-      "position": {
-        "u": 3.6133333333333333,
-        "v": 6.166666666666667
-      },
-      "angle": 26.565,
-      "scale": 0.48
-    },
-    {
-      "id": "partition_office_meeting_e_n",
-      "type": "wall",
-      "texture": "tex_partition_office_meeting_e_n",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -0.08,
-        "v": -1.0833333333333333,
-        "width": 0.16,
-        "height": 1.0833333333333333
-      },
-      "origin": [0.5, 1],
-      "position": {
-        "u": 7.1466666666666665,
-        "v": 7.25
-      },
-      "angle": 63.435,
-      "scale": 0.26
-    },
-    {
-      "id": "partition_office_meeting_e_s",
-      "type": "wall",
-      "texture": "tex_partition_office_meeting_e_s",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -0.08,
-        "v": -3,
-        "width": 0.16,
-        "height": 3
-      },
-      "origin": [0.5, 1],
-      "position": {
-        "u": 7.1466666666666665,
-        "v": 12
-      },
-      "angle": 63.435,
-      "scale": 0.41
-    },
-    {
-      "id": "partition_office_invest_e",
-      "type": "wall",
-      "texture": "tex_partition_office_invest_e",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -0.08,
-        "v": -1.8333333333333333,
-        "width": 0.16,
-        "height": 1.8333333333333333
-      },
-      "origin": [0.5, 1],
-      "position": {
-        "u": 7.1466666666666665,
-        "v": 4
-      },
-      "angle": 63.435,
-      "scale": 0.34
-    },
-    {
-      "id": "partition_office_hall_w",
-      "type": "wall",
-      "texture": "tex_partition_office_hall_w",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -0.08,
-        "v": -1.8833333333333333,
-        "width": 0.16,
-        "height": 1.8833333333333333
-      },
-      "origin": [0.5, 1],
-      "position": {
-        "u": 12.666666666666666,
-        "v": 4.05
-      },
-      "angle": 63.435,
-      "scale": 0.34
-    },
-    {
-      "id": "partition_office_hall_n",
-      "type": "wall",
-      "texture": "tex_partition_office_hall_n",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -1.7066666666666668,
-        "v": -0.2,
-        "width": 3.4133333333333336,
-        "height": 0.2
-      },
-      "origin": [0.5, 1],
-      "position": {
-        "u": 14.293333333333333,
-        "v": 4.25
-      },
-      "angle": 26.565,
-      "scale": 0.48
-    },
-    {
-      "id": "partition_office_east_n",
-      "type": "wall",
-      "texture": "tex_partition_office_east_n",
-      "depthBias": 0,
-      "collision": {
-        "type": "rect",
-        "u": -2.066666666666667,
-        "v": -0.2,
-        "width": 4.133333333333334,
-        "height": 0.2
-      },
-      "origin": [0.5, 1],
-      "position": {
-        "u": 13.933333333333334,
-        "v": 9.083333333333334
-      },
-      "angle": 26.565,
-      "scale": 0.48
     },
     {
       "id": "player_desk",
@@ -318,16 +150,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.5,
-        "v": -0.5833333333333334,
-        "width": 1,
-        "height": 0.5833333333333334
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       },
-      "origin": [0.5, 1],
-      "scale": 0.45,
+      "origin": [0.5096296296296297, 0.7555253454340887],
+      "scale": 1,
       "position": {
-        "u": 8,
-        "v": 5.5
+        "u": 3.4,
+        "v": 2
+      },
+      "footprint": {
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       }
     },
     {
@@ -429,8 +267,14 @@
       },
       "origin": [0.5, 0.88],
       "position": {
-        "u": 5.333333333333333,
-        "v": 7
+        "u": 8.4,
+        "v": 6.8
+      },
+      "footprint": {
+        "u": -0.18,
+        "v": -0.18,
+        "width": 0.36,
+        "height": 0.36
       }
     },
     {
@@ -439,8 +283,8 @@
       "texture": "tex_door_hallway",
       "depthBias": 0,
       "interaction": {
-        "x": 0,
-        "y": 0.16666666666666666,
+        "x": 0.575,
+        "y": 0,
         "radius": 80,
         "prompt": "Ra hành lang",
         "transition": {
@@ -448,11 +292,17 @@
           "targetSpawnId": "from_office"
         }
       },
-      "origin": [0.5, 1],
-      "scale": 0.5,
+      "origin": [0.5, 0.7922077922077922],
+      "scale": 1,
       "position": {
-        "u": 0.4,
-        "v": 4.65
+        "u": 0.125,
+        "v": 5
+      },
+      "footprint": {
+        "u": -0.125,
+        "v": -1,
+        "width": 0.25,
+        "height": 2
       }
     },
     {
@@ -476,8 +326,14 @@
       },
       "origin": [0.5, 0.88],
       "position": {
-        "u": 10.666666666666666,
-        "v": 7.833333333333333
+        "u": 10.4,
+        "v": 7.8
+      },
+      "footprint": {
+        "u": -0.18,
+        "v": -0.18,
+        "width": 0.36,
+        "height": 0.36
       }
     },
     {
@@ -501,8 +357,14 @@
       },
       "origin": [0.5, 0.88],
       "position": {
-        "u": 12.333333333333334,
-        "v": 6.166666666666667
+        "u": 11.5,
+        "v": 6.5
+      },
+      "footprint": {
+        "u": -0.18,
+        "v": -0.18,
+        "width": 0.36,
+        "height": 0.36
       }
     },
     {
@@ -512,16 +374,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.14,
-        "v": -0.2,
-        "width": 0.2866666666666667,
-        "height": 0.2
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5177641765058312, 0.8628205389282106],
+      "scale": 1,
       "position": {
-        "u": 0.4666666666666667,
-        "v": 2.3666666666666667
+        "u": 0.9,
+        "v": 2
+      },
+      "footprint": {
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       }
     },
     {
@@ -531,16 +399,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.19333333333333333,
-        "v": -0.24166666666666667,
-        "width": 0.38666666666666666,
-        "height": 0.24166666666666667
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
+      "origin": [0.48, 0.7906691280174184],
+      "scale": 1,
       "position": {
         "u": 1.2,
-        "v": 2.408333333333333
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       }
     },
     {
@@ -550,16 +424,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.19333333333333333,
-        "v": -0.24166666666666667,
-        "width": 0.38666666666666666,
-        "height": 0.24166666666666667
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
+      "origin": [0.48, 0.7906691280174184],
+      "scale": 1,
       "position": {
-        "u": 1.7066666666666668,
-        "v": 2.408333333333333
+        "u": 2,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       }
     },
     {
@@ -569,16 +449,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.12666666666666668,
-        "v": -0.16666666666666666,
-        "width": 0.26,
-        "height": 0.16666666666666666
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       },
-      "origin": [0.5, 1],
-      "scale": 0.85,
+      "origin": [0.5039071003772349, 0.9156713691052603],
+      "scale": 1,
       "position": {
-        "u": 2.6666666666666665,
-        "v": 2.5833333333333335
+        "u": 5.2,
+        "v": 1.1
+      },
+      "footprint": {
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       }
     },
     {
@@ -588,16 +474,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.25333333333333335,
-        "v": -0.2916666666666667,
-        "width": 0.5133333333333333,
-        "height": 0.2916666666666667
+        "u": -0.515131384283114,
+        "v": -0.41100716022193096,
+        "width": 1.030262768566228,
+        "height": 0.8220143204438619
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.47511313800537425, 0.7989482907576921],
+      "scale": 1,
       "position": {
-        "u": 5.466666666666667,
-        "v": 2.5833333333333335
+        "u": 4.1,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.515131384283114,
+        "v": -0.41100716022193096,
+        "width": 1.030262768566228,
+        "height": 0.8220143204438619
       }
     },
     {
@@ -607,16 +499,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.08666666666666667,
-        "v": -0.11666666666666667,
-        "width": 0.18,
-        "height": 0.11666666666666667
+        "u": -0.2,
+        "v": -0.21821246353534923,
+        "width": 0.4,
+        "height": 0.43642492707069847
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5518982242497754, 0.899058386753948],
+      "scale": 1,
       "position": {
-        "u": 6.666666666666667,
-        "v": 3
+        "u": 5.1,
+        "v": 2.7
+      },
+      "footprint": {
+        "u": -0.2,
+        "v": -0.21821246353534923,
+        "width": 0.4,
+        "height": 0.43642492707069847
       }
     },
     {
@@ -626,16 +524,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.5,
-        "v": -0.5833333333333334,
-        "width": 1,
-        "height": 0.5833333333333334
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       },
-      "origin": [0.5, 1],
-      "scale": 0.45,
+      "origin": [0.5096296296296297, 0.7555253454340887],
+      "scale": 1,
       "position": {
-        "u": 2.2,
-        "v": 4.416666666666667
+        "u": 1.8,
+        "v": 3.6
+      },
+      "footprint": {
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       }
     },
     {
@@ -645,16 +549,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.08666666666666667,
-        "v": -0.11666666666666667,
-        "width": 0.18,
-        "height": 0.11666666666666667
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       },
-      "origin": [0.5, 1],
-      "scale": 0.5,
+      "origin": [0.5271923706342759, 0.8428547320560139],
+      "scale": 1,
       "position": {
-        "u": 2.533333333333333,
-        "v": 4.958333333333333
+        "u": 1.8,
+        "v": 4.5
+      },
+      "footprint": {
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       }
     },
     {
@@ -664,16 +574,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.5,
-        "v": -0.5833333333333334,
-        "width": 1,
-        "height": 0.5833333333333334
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       },
-      "origin": [0.5, 1],
-      "scale": 0.45,
+      "origin": [0.5096296296296297, 0.7555253454340887],
+      "scale": 1,
       "position": {
-        "u": 5.066666666666666,
-        "v": 4.416666666666667
+        "u": 4.5,
+        "v": 3.6
+      },
+      "footprint": {
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       }
     },
     {
@@ -683,16 +599,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.08666666666666667,
-        "v": -0.11666666666666667,
-        "width": 0.18,
-        "height": 0.11666666666666667
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       },
-      "origin": [0.5, 1],
-      "scale": 0.5,
+      "origin": [0.5271923706342759, 0.8428547320560139],
+      "scale": 1,
       "position": {
-        "u": 5.4,
-        "v": 4.958333333333333
+        "u": 4.5,
+        "v": 4.5
+      },
+      "footprint": {
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       }
     },
     {
@@ -702,16 +624,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.12666666666666668,
-        "v": -0.16666666666666666,
-        "width": 0.26,
-        "height": 0.16666666666666666
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       },
-      "origin": [0.5, 1],
-      "scale": 0.85,
+      "origin": [0.5039071003772349, 0.9156713691052603],
+      "scale": 1,
       "position": {
-        "u": 0.3333333333333333,
-        "v": 6.791666666666667
+        "u": 0.9,
+        "v": 7.9
+      },
+      "footprint": {
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       }
     },
     {
@@ -721,16 +649,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.31333333333333335,
-        "v": -0.2833333333333333,
-        "width": 0.6266666666666667,
-        "height": 0.2833333333333333
+        "u": -0.65,
+        "v": -0.23700000000000002,
+        "width": 1.3,
+        "height": 0.47400000000000003
       },
-      "origin": [0.5, 1],
-      "scale": 0.85,
+      "origin": [0.4936, 0.7685791620762259],
+      "scale": 1,
       "position": {
-        "u": 1.3333333333333333,
-        "v": 6.791666666666667
+        "u": 2.6,
+        "v": 7.9
+      },
+      "footprint": {
+        "u": -0.65,
+        "v": -0.23700000000000002,
+        "width": 1.3,
+        "height": 0.47400000000000003
       }
     },
     {
@@ -740,16 +674,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.6933333333333334,
-        "v": -1.0833333333333333,
-        "width": 1.3866666666666667,
-        "height": 1.0833333333333333
+        "u": -1.105,
+        "v": -0.8330000000000002,
+        "width": 2.21,
+        "height": 1.6660000000000001
       },
-      "origin": [0.5, 1],
-      "scale": 0.62,
+      "origin": [0.4992248062015504, 0.6927448410002952],
+      "scale": 0.85,
       "position": {
-        "u": 5.733333333333333,
-        "v": 9.416666666666666
+        "u": 3.5,
+        "v": 9.5
+      },
+      "footprint": {
+        "u": -1.105,
+        "v": -0.8330000000000002,
+        "width": 2.21,
+        "height": 1.6660000000000001
       }
     },
     {
@@ -759,16 +699,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.14,
-        "v": -0.2,
-        "width": 0.2866666666666667,
-        "height": 0.2
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5177641765058312, 0.8628205389282106],
+      "scale": 1,
       "position": {
-        "u": 0.4666666666666667,
-        "v": 11.666666666666666
+        "u": 0.9,
+        "v": 11.3
+      },
+      "footprint": {
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       }
     },
     {
@@ -778,16 +724,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.14,
-        "v": -0.2,
-        "width": 0.2866666666666667,
-        "height": 0.2
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5177641765058312, 0.8628205389282106],
+      "scale": 1,
       "position": {
-        "u": 2.2,
-        "v": 6.791666666666667
+        "u": 4.1,
+        "v": 7.85
+      },
+      "footprint": {
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       }
     },
     {
@@ -797,16 +749,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.19333333333333333,
-        "v": -0.24166666666666667,
-        "width": 0.38666666666666666,
-        "height": 0.24166666666666667
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
+      "origin": [0.48, 0.7906691280174184],
+      "scale": 1,
       "position": {
-        "u": 0.4,
-        "v": 9.5
+        "u": 0.9,
+        "v": 8.9
+      },
+      "footprint": {
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       }
     },
     {
@@ -816,16 +774,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.19333333333333333,
-        "v": -0.24166666666666667,
-        "width": 0.38666666666666666,
-        "height": 0.24166666666666667
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
+      "origin": [0.48, 0.7906691280174184],
+      "scale": 1,
       "position": {
-        "u": 0.4,
-        "v": 10.166666666666666
+        "u": 0.9,
+        "v": 10
+      },
+      "footprint": {
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       }
     },
     {
@@ -835,16 +799,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.12,
-        "v": -0.15833333333333333,
-        "width": 0.24666666666666667,
-        "height": 0.15833333333333333
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5039071003772349, 0.9156713691052603],
+      "scale": 1,
       "position": {
-        "u": 6.733333333333333,
-        "v": 11.666666666666666
+        "u": 5.4,
+        "v": 11.1
+      },
+      "footprint": {
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       }
     },
     {
@@ -854,16 +824,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.12666666666666668,
-        "v": -0.16666666666666666,
-        "width": 0.26,
-        "height": 0.16666666666666666
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       },
-      "origin": [0.5, 1],
-      "scale": 0.85,
+      "origin": [0.5039071003772349, 0.9156713691052603],
+      "scale": 1,
       "position": {
-        "u": 7.6,
-        "v": 2.6666666666666665
+        "u": 7,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       }
     },
     {
@@ -873,16 +849,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.19333333333333333,
-        "v": -0.24166666666666667,
-        "width": 0.38666666666666666,
-        "height": 0.24166666666666667
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
+      "origin": [0.48, 0.7906691280174184],
+      "scale": 1,
       "position": {
-        "u": 10.4,
-        "v": 2.408333333333333
+        "u": 8.3,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       }
     },
     {
@@ -892,16 +874,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.14,
-        "v": -0.2,
-        "width": 0.2866666666666667,
-        "height": 0.2
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5177641765058312, 0.8628205389282106],
+      "scale": 1,
       "position": {
-        "u": 11,
-        "v": 2.3666666666666667
+        "u": 9.2,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       }
     },
     {
@@ -911,16 +899,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.11333333333333333,
-        "v": -0.15833333333333333,
-        "width": 0.22666666666666666,
-        "height": 0.15833333333333333
+        "u": -0.21,
+        "v": -0.199,
+        "width": 0.42,
+        "height": 0.398
       },
-      "origin": [0.5, 1],
-      "scale": 0.85,
+      "origin": [0.5089230769230769, 0.9029467723557135],
+      "scale": 1,
       "position": {
-        "u": 12.066666666666666,
-        "v": 2.5833333333333335
+        "u": 10.5,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.21,
+        "v": -0.199,
+        "width": 0.42,
+        "height": 0.398
       }
     },
     {
@@ -930,16 +924,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.08666666666666667,
-        "v": -0.11666666666666667,
-        "width": 0.18,
-        "height": 0.11666666666666667
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       },
-      "origin": [0.5, 1],
-      "scale": 0.5,
+      "origin": [0.5271923706342759, 0.8428547320560139],
+      "scale": 1,
       "position": {
-        "u": 8.333333333333334,
-        "v": 6
+        "u": 3.1,
+        "v": 2.9
+      },
+      "footprint": {
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       }
     },
     {
@@ -949,16 +949,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.22,
-        "v": -0.25833333333333336,
-        "width": 0.44666666666666666,
-        "height": 0.25833333333333336
+        "u": -0.515131384283114,
+        "v": -0.41100716022193096,
+        "width": 1.030262768566228,
+        "height": 0.8220143204438619
       },
-      "origin": [0.5, 1],
-      "scale": 0.7,
+      "origin": [0.47511313800537425, 0.7989482907576921],
+      "scale": 1,
       "position": {
-        "u": 9.333333333333334,
-        "v": 5
+        "u": 9.3,
+        "v": 3.5
+      },
+      "footprint": {
+        "u": -0.515131384283114,
+        "v": -0.41100716022193096,
+        "width": 1.030262768566228,
+        "height": 0.8220143204438619
       }
     },
     {
@@ -968,16 +974,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.08666666666666667,
-        "v": -0.11666666666666667,
-        "width": 0.18,
-        "height": 0.11666666666666667
+        "u": -0.2,
+        "v": -0.21821246353534923,
+        "width": 0.4,
+        "height": 0.43642492707069847
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5518982242497754, 0.899058386753948],
+      "scale": 1,
       "position": {
-        "u": 15,
-        "v": 5.083333333333333
+        "u": 13,
+        "v": 5.8
+      },
+      "footprint": {
+        "u": -0.2,
+        "v": -0.21821246353534923,
+        "width": 0.4,
+        "height": 0.43642492707069847
       }
     },
     {
@@ -987,16 +999,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.14,
-        "v": -0.2,
-        "width": 0.2866666666666667,
-        "height": 0.2
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5177641765058312, 0.8628205389282106],
+      "scale": 1,
       "position": {
-        "u": 15.6,
-        "v": 2.3666666666666667
+        "u": 15,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       }
     },
     {
@@ -1006,16 +1024,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.19333333333333333,
-        "v": -0.24166666666666667,
-        "width": 0.38666666666666666,
-        "height": 0.24166666666666667
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
+      "origin": [0.48, 0.7906691280174184],
+      "scale": 1,
       "position": {
-        "u": 15.6,
-        "v": 7
+        "u": 15,
+        "v": 6.2
+      },
+      "footprint": {
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       }
     },
     {
@@ -1025,16 +1049,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.19333333333333333,
-        "v": -0.24166666666666667,
-        "width": 0.38666666666666666,
-        "height": 0.24166666666666667
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
+      "origin": [0.48, 0.7906691280174184],
+      "scale": 1,
       "position": {
-        "u": 15.6,
-        "v": 7.75
+        "u": 15,
+        "v": 7.3
+      },
+      "footprint": {
+        "u": -0.23,
+        "v": -0.3275,
+        "width": 0.46,
+        "height": 0.655
       }
     },
     {
@@ -1044,16 +1074,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.5,
-        "v": -0.5833333333333334,
-        "width": 1,
-        "height": 0.5833333333333334
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       },
-      "origin": [0.5, 1],
-      "scale": 0.45,
+      "origin": [0.5096296296296297, 0.7555253454340887],
+      "scale": 1,
       "position": {
-        "u": 13.466666666666667,
-        "v": 10.333333333333334
+        "u": 14,
+        "v": 10.3
+      },
+      "footprint": {
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
       }
     },
     {
@@ -1063,16 +1099,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.08666666666666667,
-        "v": -0.11666666666666667,
-        "width": 0.18,
-        "height": 0.11666666666666667
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       },
-      "origin": [0.5, 1],
-      "scale": 0.5,
+      "origin": [0.5271923706342759, 0.8428547320560139],
+      "scale": 1,
       "position": {
-        "u": 13.733333333333333,
-        "v": 10.916666666666666
+        "u": 14,
+        "v": 11.2
+      },
+      "footprint": {
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
       }
     },
     {
@@ -1082,16 +1124,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.24,
-        "v": -0.275,
-        "width": 0.48,
-        "height": 0.275
+        "u": -0.515131384283114,
+        "v": -0.41100716022193096,
+        "width": 1.030262768566228,
+        "height": 0.8220143204438619
       },
-      "origin": [0.5, 1],
-      "scale": 0.75,
+      "origin": [0.47511313800537425, 0.7989482907576921],
+      "scale": 1,
       "position": {
-        "u": 15.133333333333333,
+        "u": 12,
         "v": 10.5
+      },
+      "footprint": {
+        "u": -0.515131384283114,
+        "v": -0.41100716022193096,
+        "width": 1.030262768566228,
+        "height": 0.8220143204438619
       }
     },
     {
@@ -1101,16 +1149,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.14,
-        "v": -0.2,
-        "width": 0.2866666666666667,
-        "height": 0.2
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       },
-      "origin": [0.5, 1],
-      "scale": 0.8,
+      "origin": [0.5177641765058312, 0.8628205389282106],
+      "scale": 1,
       "position": {
-        "u": 15.6,
-        "v": 11.666666666666666
+        "u": 15.2,
+        "v": 11.3
+      },
+      "footprint": {
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
       }
     },
     {
@@ -1120,16 +1174,22 @@
       "depthBias": 0,
       "collision": {
         "type": "rect",
-        "u": -0.12666666666666668,
-        "v": -0.16666666666666666,
-        "width": 0.26,
-        "height": 0.16666666666666666
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       },
-      "origin": [0.5, 1],
-      "scale": 0.85,
+      "origin": [0.5039071003772349, 0.9156713691052603],
+      "scale": 1,
       "position": {
-        "u": 11.866666666666667,
-        "v": 11.666666666666666
+        "u": 10.8,
+        "v": 11.2
+      },
+      "footprint": {
+        "u": -0.3395595927419506,
+        "v": -0.33572208597039527,
+        "width": 0.6791191854839012,
+        "height": 0.6714441719407905
       }
     },
     {
@@ -1137,104 +1197,201 @@
       "type": "prop",
       "texture": "tex_whiteboard",
       "depthBias": 0,
-      "origin": [0.5, 1],
+      "origin": [0.4962622950819672, 0.7523797045735033],
       "scale": 1,
       "position": {
-        "u": 3.1333333333333333,
-        "v": 6.183333333333334
-      }
+        "u": 3,
+        "v": 7.3
+      },
+      "footprint": {
+        "u": -0.85,
+        "v": -0.0465,
+        "width": 1.7,
+        "height": 0.093
+      },
+      "elevationPx": 22
     },
     {
       "id": "decor_bulletin_east",
       "type": "prop",
       "texture": "tex_bulletin_board",
       "depthBias": 0,
-      "origin": [0.5, 1],
+      "origin": [0.4925901639344261, 0.7540766742704731],
       "scale": 1,
       "position": {
-        "u": 14.466666666666667,
-        "v": 9.1
-      }
-    },
-    {
-      "id": "west_wall_upper",
-      "type": "wall",
-      "texture": "tex_partition_office_hall_w",
-      "position": {
-        "u": 0,
-        "v": 0
+        "u": 14.6,
+        "v": 9.25
       },
-      "collision": {
-        "type": "rect",
-        "u": -0.2,
-        "v": 0,
-        "width": 0.4,
-        "height": 3.75
+      "footprint": {
+        "u": -0.85,
+        "v": -0.053500000000000006,
+        "width": 1.7,
+        "height": 0.10700000000000001
       },
-      "origin": [0.5, 1],
-      "scale": 0.6,
-      "angle": 63.435,
-      "depthBias": 0
-    },
-    {
-      "id": "west_wall_lower",
-      "type": "wall",
-      "texture": "tex_partition_office_hall_w",
-      "position": {
-        "u": 0,
-        "v": 5.55
-      },
-      "collision": {
-        "type": "rect",
-        "u": -0.2,
-        "v": 0,
-        "width": 0.4,
-        "height": 6.45
-      },
-      "origin": [0.5, 1],
-      "scale": 1.18,
-      "angle": 63.435,
-      "depthBias": 0
-    },
-    {
-      "id": "east_outer_wall",
-      "type": "wall",
-      "texture": "tex_office_wall",
-      "position": {
-        "u": 16,
-        "v": 6
-      },
-      "collision": {
-        "type": "rect",
-        "u": -0.2,
-        "v": -6,
-        "width": 0.4,
-        "height": 12
-      },
-      "origin": [0.5, 1],
-      "scale": 0.36,
-      "angle": 153.435,
-      "depthBias": 0
+      "elevationPx": 22
     }
   ],
   "labels": [
     {
       "id": "label_investigation_room",
       "text": "PHÒNG ĐIỀU TRA",
-      "u": 6.08,
-      "v": 1.1666666666666667
+      "u": 3.2,
+      "v": 0.9
     },
     {
       "id": "label_meeting_room",
       "text": "PHÒNG HỌP",
-      "u": 5.066666666666666,
-      "v": 5
+      "u": 3.1,
+      "v": 7.5
     },
     {
       "id": "label_hallway",
       "text": "HÀNH LANG",
-      "u": 15.133333333333333,
-      "v": 3.2083333333333335
+      "u": 7.5,
+      "v": 5.4
+    }
+  ],
+  "walls": [
+    {
+      "id": "wall_back",
+      "kind": "office",
+      "axis": "u",
+      "line": 0,
+      "start": 0,
+      "end": 16,
+      "openings": []
+    },
+    {
+      "id": "west_wall_upper",
+      "kind": "office",
+      "axis": "v",
+      "line": 0,
+      "start": 0,
+      "end": 6,
+      "openings": [
+        {
+          "id": "hallway",
+          "start": 4,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "id": "west_wall_lower",
+      "kind": "office",
+      "axis": "v",
+      "line": 0,
+      "start": 6,
+      "end": 12,
+      "openings": []
+    },
+    {
+      "id": "partition_office_meeting_n",
+      "kind": "office",
+      "axis": "u",
+      "line": 7,
+      "start": 0,
+      "end": 6,
+      "openings": [
+        {
+          "id": "meeting_north",
+          "start": 4,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "id": "partition_office_meeting_e_n",
+      "kind": "office",
+      "axis": "v",
+      "line": 6,
+      "start": 7,
+      "end": 9,
+      "openings": [
+        {
+          "id": "meeting_entry",
+          "start": 7,
+          "end": 9
+        }
+      ]
+    },
+    {
+      "id": "partition_office_meeting_e_s",
+      "kind": "office",
+      "axis": "v",
+      "line": 6,
+      "start": 9,
+      "end": 12,
+      "openings": []
+    },
+    {
+      "id": "partition_office_invest_e",
+      "kind": "office",
+      "axis": "v",
+      "line": 6,
+      "start": 0,
+      "end": 4,
+      "openings": [
+        {
+          "id": "invest_entry",
+          "start": 2,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "id": "partition_office_hall_w",
+      "kind": "office",
+      "axis": "v",
+      "line": 12,
+      "start": 0,
+      "end": 4,
+      "openings": [
+        {
+          "id": "east_entry",
+          "start": 2,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "id": "partition_office_hall_n",
+      "kind": "office",
+      "axis": "u",
+      "line": 4,
+      "start": 12,
+      "end": 16,
+      "openings": [
+        {
+          "id": "east_hall_entry",
+          "start": 12,
+          "end": 14
+        }
+      ]
+    },
+    {
+      "id": "partition_office_east_n",
+      "kind": "office",
+      "axis": "u",
+      "line": 9,
+      "start": 11,
+      "end": 16,
+      "openings": [
+        {
+          "id": "east_lower_entry",
+          "start": 11,
+          "end": 13
+        }
+      ]
+    },
+    {
+      "id": "east_outer_wall",
+      "kind": "office",
+      "axis": "v",
+      "line": 15.75,
+      "start": 0,
+      "end": 12,
+      "openings": []
     }
   ]
 }

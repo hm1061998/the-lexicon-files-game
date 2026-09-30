@@ -174,6 +174,14 @@ function expectValidationIssue(changes: Partial<RawInput>, expected: string): vo
 }
 
 describe('parseCaseDefinition', () => {
+  it('rejects blocked spawn geometry during case loading', () => {
+    const scene = sceneWithEffects([]) as {
+      spawnPoints: Record<string, unknown>;
+      assets: Array<{ id: string; position?: unknown }>;
+    };
+    scene.spawnPoints.default = scene.assets.find((a) => a.id === 'player_desk')!.position;
+    expectValidationIssue({ sceneRaws: [scene] }, 'spawn "default"');
+  });
   it('assembles the minimal case definition and scene', () => {
     const definition = parse();
     expect(definition).toMatchObject({

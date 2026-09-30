@@ -1,3 +1,4 @@
+import { scenePoint } from './sceneTestData';
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import type { CaseDefinition } from '@lexicon/shared-types';
@@ -95,7 +96,10 @@ async function seed(page: Page, record: SaveFixture) {
 }
 async function talk(page: Page, npc: string) {
   const asset = definition.scenes[0]!.assets.find((a) => a.id === npc)!;
-  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x + 50, y + 30), asset);
+  await page.evaluate(
+    ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
+    scenePoint('main_office', npc, { u: 0.3, v: 0.6 }),
+  );
   await expect(page.getByText(asset.interaction!.prompt, { exact: true })).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });
   await page.keyboard.press('e');

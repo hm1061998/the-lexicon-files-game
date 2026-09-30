@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
-import { REGISTERED_CASE_IDS, loadCaseDefinition } from '@lexicon/game-content';
+import { REGISTERED_CASE_IDS, loadCaseDefinition, expandWalls } from '@lexicon/game-content';
 import type { TextureEntry } from '@lexicon/shared-types';
 import { facingTextureKey, loadSceneTextures, resolveTextureKey } from './assetManifest';
 
@@ -66,7 +66,9 @@ describe('content texture manifests', () => {
   it('declare per scene only textures that the scene assets use', () => {
     for (const definition of cases) {
       for (const scene of definition.scenes) {
-        const used = new Set(scene.assets.map(({ texture }) => texture));
+        const used = new Set(
+          [...scene.assets, ...expandWalls(scene.walls ?? []).assets].map(({ texture }) => texture),
+        );
         for (const { key } of scene.textures)
           expect(used.has(key), `${scene.id}:${key}`).toBe(true);
       }

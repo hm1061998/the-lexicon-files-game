@@ -36,7 +36,8 @@ describe('static model schema', () => {
     expect(sceneDefinitionSchema.safeParse(model()).success).toBe(true);
   });
   it.each(['wall', 'prop', 'interactable'])('rejects a migrated %s without footprint', (type) => {
-    const { footprint: _footprint, ...bare } = prop;
+    const bare = { ...prop };
+    delete bare.footprint;
     const parsed = sceneDefinitionSchema.safeParse(model([{ ...bare, type }]));
     expect(parsed.success).toBe(false);
     if (!parsed.success)
@@ -105,7 +106,7 @@ describe('parseSceneDefinition', () => {
   });
 
   it('accepts a logical asset position and a tabletop attachment', () => {
-    const raw = structuredClone(mainOffice) as {
+    const raw = structuredClone({ ...mainOffice, walls: undefined }) as {
       assets: Array<Record<string, unknown>>;
     };
     const texture = raw.assets[0]!.texture;
@@ -133,7 +134,7 @@ describe('parseSceneDefinition', () => {
   });
 
   it('accepts a scene whose bounds, spawns, labels and assets use only logical coordinates', () => {
-    const raw = structuredClone(mainOffice) as {
+    const raw = structuredClone({ ...mainOffice, walls: undefined }) as {
       projection?: unknown;
       worldBounds?: unknown;
       spawnPoints?: unknown;
@@ -201,7 +202,7 @@ describe('parseSceneDefinition', () => {
   });
 
   it('accepts named spawn points and an interaction scene transition', () => {
-    const raw = structuredClone(mainOffice) as {
+    const raw = structuredClone({ ...mainOffice, walls: undefined }) as {
       spawn?: unknown;
       spawnPoints?: unknown;
       assets: Array<{ id: string; interaction?: Record<string, unknown> }>;

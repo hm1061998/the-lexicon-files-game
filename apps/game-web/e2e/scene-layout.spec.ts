@@ -1,5 +1,7 @@
 import { mkdirSync, readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+import { expandWalls } from '../../../packages/game-content/src/geometry/wallSegments';
+import type { WallSegmentDefinition } from '../../../packages/shared-types/src/scene';
 
 type Point = { u: number; v: number };
 type Rect = Point & { width: number; height: number; id?: string };
@@ -9,6 +11,7 @@ type SceneAsset = {
   texture?: string;
   scale?: number;
   angle?: number;
+  origin?: [number, number];
   position?: Point;
   restsOn?: string;
   surfaceOffset?: Point & { elevationPx: number };
@@ -27,6 +30,7 @@ type SceneJson = {
   worldBounds: Point & { width: number; height: number };
   spawnPoints: Record<string, Point>;
   assets: SceneAsset[];
+  walls?: WallSegmentDefinition[];
   labels?: Array<{ id: string; text: string; u: number; v: number }>;
 };
 type Area = Point & { id: string; radius: number };
@@ -185,7 +189,7 @@ function anchor(scene: SceneJson, asset: SceneAsset, visiting = new Set<string>(
   return { u: base.u + asset.surfaceOffset.u, v: base.v + asset.surfaceOffset.v };
 }
 function rects(scene: SceneJson): Array<Rect & { id: string }> {
-  return scene.assets.flatMap((asset) =>
+  return [...scene.assets, ...expandWalls(scene.walls ?? []).assets].flatMap((asset) =>
     asset.collision
       ? [
           {
@@ -333,8 +337,8 @@ async function drive(page: Page, route: readonly Point[], targetId: string): Pro
         max === 0
           ? []
           : [
-              ...(Math.abs(screenX) / max >= 0.414 ? [screenX < 0 ? 'a' : 'd'] : []),
-              ...(Math.abs(screenY) / max >= 0.414 ? [screenY < 0 ? 'w' : 's'] : []),
+              ...(Math.abs(screenX) / max >= 0.5 ? [screenX < 0 ? 'a' : 'd'] : []),
+              ...(Math.abs(screenY) / max >= 0.5 ? [screenY < 0 ? 'w' : 's'] : []),
             ];
       for (const key of held.filter((key) => !next.includes(key))) await page.keyboard.up(key);
       for (const key of next.filter((key) => !held.includes(key))) await page.keyboard.down(key);
@@ -360,7 +364,9 @@ async function drive(page: Page, route: readonly Point[], targetId: string): Pro
 
 for (const scene of scenes) {
   test(`${scene.id}: public scene and interactable IDs are preserved`, () => {
-    expect(scene.assets.map(({ id }) => id).sort()).toEqual(expectedAssetIds[scene.id]!.sort());
+    expect([...scene.assets, ...(scene.walls ?? [])].map(({ id }) => id).sort()).toEqual(
+      expectedAssetIds[scene.id]!.sort(),
+    );
     expect(
       scene.assets
         .filter(({ interaction }) => interaction)
@@ -369,24 +375,22 @@ for (const scene of scenes) {
     ).toEqual(expectedInteractableIds[scene.id]!.sort());
   });
 
-  test.fixme(`${scene.id}: wall art length matches its logical footprint`, () => {
-    const screenPixelsPerLogicalUnit = Math.hypot(64, 32);
-    const mismatchedWalls = scene.assets.flatMap((asset) => {
-      if (asset.type !== 'wall' || !asset.texture || !asset.collision) return [];
-      const { width, height } = textureSize(scene, asset.texture);
-      const artLength = Math.max(width, height) * (asset.scale ?? 1);
-      const footprintLength =
-        Math.max(asset.collision.width, asset.collision.height) * screenPixelsPerLogicalUnit;
-      const ratio = artLength / footprintLength;
-      if (height > width && Math.abs((asset.angle ?? 0) - 63.435) < 1) {
-        expect(
-          asset.collision.v + asset.collision.height,
-          `${asset.id} artwork direction`,
-        ).toBeCloseTo(0, 5);
-      }
-      return ratio < 0.8 || ratio > 1.25 ? [{ id: asset.id, ratio }] : [];
-    });
-    expect(mismatchedWalls).toEqual([]);
+  test(`${scene.id}: floor diamond corners match projected worldBounds`, () => {
+    const floor = scene.assets.find((a) => a.type === 'background')!;
+    expect(floor.texture).toBe(`tex_floor_${scene.id === 'main_office' ? 'office' : 'archive'}`);
+    const { width, height } = textureSize(scene, floor.texture!);
+    expect(width).toBe((scene.worldBounds.width + scene.worldBounds.height) * 64);
+    expect(height).toBe((scene.worldBounds.width + scene.worldBounds.height) * 32);
+    expect(floor.position).toEqual({ u: 0, v: 0 });
+    expect(floor.origin).toEqual([
+      scene.worldBounds.height / (scene.worldBounds.width + scene.worldBounds.height),
+      0,
+    ]);
+  });
+  test(`${scene.id}: door opening has no collider`, () => {
+    const door = areas(scene).find((a) => a.id.includes('door'))!;
+    expect(blocked(scene, door)).toBe(false);
+    expect(scene.walls?.some((w) => w.openings.length > 0)).toBe(true);
   });
 
   test(`${scene.id}: assets, spawns, bounds and labels use logical dimetric coordinates`, () => {
@@ -492,7 +496,7 @@ test('office/archive doorway transitions are two-way and the doorway footprint s
 });
 
 // Bỏ fixme ở Task 6/7 khi model và layout mới được migrate.
-test.fixme('the player can walk to the office exit and transition by interacting', async ({ page }) => {
+test('the player can walk to the office exit and transition by interacting', async ({ page }) => {
   const office = sceneById.get('main_office')!;
   const door = areas(office).find(({ id }) => id === 'hallway_door')!;
   await open(page);
@@ -506,14 +510,20 @@ test.fixme('the player can walk to the office exit and transition by interacting
     .toBe('archive');
 });
 
-test.fixme('the player can walk from the archive arrival spawn to the archive exit and transition back', async ({ page }) => {
+test('the player can walk from the archive arrival spawn to the archive exit and transition back', async ({
+  page,
+}) => {
   await open(page);
   const office = sceneById.get('main_office')!;
   const exit = areas(office).find(({ id }) => id === 'hallway_door')!;
   const start = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!);
   await drive(page, path(office, start, exit)!, exit.id);
+  const officeDebug = await page.evaluateHandle(() => window.__lexiconDebug);
   await page.keyboard.press('e');
-  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.storeSceneId())).toBe('archive');
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.storeSceneId()))
+    .toBe('archive');
+  await page.waitForFunction((old) => window.__lexiconDebug !== old, officeDebug);
   const archive = sceneById.get('archive')!;
   const door = areas(archive).find(({ id }) => id === 'PLACEHOLDER_archive_door')!;
   const arrival = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!);
@@ -521,11 +531,13 @@ test.fixme('the player can walk from the archive arrival spawn to the archive ex
   expect(route).not.toBeNull();
   await drive(page, route!, door.id);
   await page.keyboard.press('e');
-  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.storeSceneId())).toBe('main_office');
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.storeSceneId()))
+    .toBe('main_office');
 });
 
 test('scene review captures office and archive at desktop viewport', async ({ page }) => {
-  const output = '../../.superpowers/sdd/2026-09-30-phase-11e-controls-visual-ux';
+  const output = '../../.superpowers/sdd/2026-09-30-phase-11e-office-archive-static-world-redesign';
   mkdirSync(output, { recursive: true });
   await page.setViewportSize({ width: 1280, height: 720 });
   await open(page);

@@ -1,5 +1,5 @@
+import { scenePoint } from './sceneTestData';
 import { expect, test, type Page } from '@playwright/test';
-import { readFileSync } from 'node:fs';
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
@@ -11,16 +11,6 @@ declare global {
     __lexiconDebug?: DebugApi;
   }
 }
-
-const scene = JSON.parse(
-  readFileSync(
-    new URL(
-      '../../../packages/game-content/cases/case-001/scenes/main_office.json',
-      import.meta.url,
-    ),
-    'utf8',
-  ),
-) as { assets: Array<{ id: string; x: number; y: number }> };
 
 function trackErrors(page: Page): string[] {
   const errors: string[] = [];
@@ -125,7 +115,7 @@ test('settings and progress survive reload', async ({ page }) => {
       reducedMotion: true,
     });
 
-  const hotspot = scene.assets.find((asset) => asset.id === 'phone_recording')!;
+  const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });
@@ -134,7 +124,10 @@ test('settings and progress survive reload', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
 
-  await page.evaluate(() => window.__lexiconDebug!.teleport(2100, 700));
+  await page.evaluate(
+    ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
+    scenePoint('main_office', 'hallway_door'),
+  );
   await expect(page.getByText('Ra hành lang', { exact: true })).toBeVisible();
   await page.keyboard.press('e');
   await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
@@ -226,7 +219,10 @@ test('corrupt settings recover to defaults', async ({ page }) => {
   const pause = await openPause(page);
   await expect(pause.getByRole('slider', { name: 'Âm lượng' })).toHaveValue('80');
   await pause.getByRole('button', { name: 'Tiếp tục' }).click();
-  await page.evaluate(() => window.__lexiconDebug!.teleport(2100, 700));
+  await page.evaluate(
+    ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
+    scenePoint('main_office', 'hallway_door'),
+  );
   await expect(page.getByText('Ra hành lang', { exact: true })).toBeVisible();
   await expect(page.locator('canvas')).toHaveCount(1);
   expect(errors).toEqual([]);

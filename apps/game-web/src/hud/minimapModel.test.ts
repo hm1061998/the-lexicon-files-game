@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadCaseDefinition } from '@lexicon/game-content';
+import { loadCaseDefinition, expandWalls } from '@lexicon/game-content';
 import type { SceneAssetDefinition, SceneDefinition } from '@lexicon/shared-types';
 import { buildMinimapModel } from './minimapModel';
 
@@ -170,7 +170,7 @@ describe('buildMinimapModel', () => {
       const model = buildMinimapModel(real, null);
       expect(model.markers).toHaveLength(real.assets.filter((a) => a.interaction).length);
       expect(model.solids.length + model.partitions.length).toBe(
-        real.assets.filter((a) => a.collision).length,
+        [...real.assets, ...expandWalls(real.walls ?? []).assets].filter((a) => a.collision).length,
       );
       expect(model.partitions.length, real.id).toBeGreaterThan(0);
     }

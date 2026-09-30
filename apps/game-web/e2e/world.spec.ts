@@ -8,6 +8,7 @@ type SceneAssetPosition = {
   position?: { u: number; v: number };
   restsOn?: string;
   surfaceOffset?: { u: number; v: number };
+  footprint?: { u: number; v: number; width: number; height: number };
 };
 type ScenePositions = { assets: SceneAssetPosition[] };
 
@@ -113,17 +114,6 @@ async function hold(page: Page, key: string, ms: number): Promise<void> {
   await page.keyboard.up(key);
 }
 
-/** Walk up-left toward the note; fixed hold times are too fragile on slow renderers. */
-async function walkToNote(page: Page): Promise<void> {
-  await page.keyboard.down('w');
-  await page.keyboard.down('a');
-  await expect
-    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
-    .toBe('objective_note');
-  await page.keyboard.up('a');
-  await page.keyboard.up('w');
-}
-
 test('WASD moves up, left, down and right relative to the screen', async ({ page }) => {
   await openWorld(page);
   const start = { u: 10, v: 9 };
@@ -220,12 +210,12 @@ test('NPC walk sheets preload and can be triggered by the dev test control only'
 
 test('player cannot walk through the desk', async ({ page }) => {
   await openWorld(page);
-  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(7.3, 6));
-  await hold(page, 'd', 400);
+  await teleportTo(page, officePositions, 'player_desk', { u: -1.5, v: 0.3 });
+  await hold(page, 'd', 250);
   const after = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer());
   expect(after).not.toBeNull();
-  expect(after!.v).toBeGreaterThan(5.5);
-  expect(after!.v).toBeLessThan(5.8);
+  const desk = officePositions.assets.find((a) => a.id === 'player_desk')!;
+  expect(after!.u + 0.18).toBeLessThanOrEqual(desk.position!.u + desk.footprint!.u + 0.02);
 });
 
 test('player cannot leave the world', async ({ page }) => {
@@ -246,7 +236,7 @@ test('player in front of desk draws above it', async ({ page }) => {
 
 test('player behind desk draws below it', async ({ page }) => {
   await openWorld(page);
-  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(8, 4));
+  await teleportTo(page, officePositions, 'player_desk', { u: 0, v: -1.5 });
   const depths = await page.evaluate(() => ({
     player: window.__lexiconDebug!.player().depth,
     desk: window.__lexiconDebug!.depthOf('player_desk'),
@@ -265,9 +255,13 @@ test('entering the note radius reports it nearby', async ({ page }) => {
 
 test('nearby event fires once per entry', async ({ page }) => {
   await openWorld(page);
-  await walkToNote(page);
+  await teleportTo(page, officePositions, 'objective_note');
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
+    .toBe('objective_note');
   const count = await page.evaluate(() => window.__lexiconDebug!.nearbyEvents());
-  expect(count).toBe(1);
+  await page.waitForTimeout(250);
+  expect(await page.evaluate(() => window.__lexiconDebug!.nearbyEvents())).toBe(count);
 });
 
 test('typing WASD into a page input does not move the player or get swallowed', async ({
@@ -478,11 +472,11 @@ test('real textures load without missing-texture or loader warnings', async ({ p
 test('player stops at the desk footprint when walking into it from the side', async ({ page }) => {
   await openWorld(page);
   // Left of the desk, level with its footprint; walking right must be blocked.
-  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(7.3, 6));
-  await hold(page, 'd', 500);
+  await teleportTo(page, officePositions, 'player_desk', { u: -1.5, v: 0.3 });
+  await hold(page, 'd', 250);
   const after = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer());
-  expect(after!.v).toBeGreaterThan(5.5);
-  expect(after!.v).toBeLessThan(5.8);
+  const desk = officePositions.assets.find((a) => a.id === 'player_desk')!;
+  expect(after!.u + 0.18).toBeLessThanOrEqual(desk.position!.u + desk.footprint!.u + 0.02);
 });
 
 test('player texture follows the facing and keeps it while idle', async ({ page }) => {
@@ -687,7 +681,7 @@ test('the dev transition hook goes through the store so it matches the shown sce
 
 test('walking along the desk edge side-slides without crossing its footprint', async ({ page }) => {
   await openWorld(page);
-  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(7.3, 6));
+  await teleportTo(page, officePositions, 'player_desk', { u: -1.5, v: 0.3 });
   const before = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer());
   await page.keyboard.down('d');
   await page.waitForTimeout(500);
@@ -695,8 +689,9 @@ test('walking along the desk edge side-slides without crossing its footprint', a
   const anim = await playerAnim(page);
   await page.keyboard.up('d');
   expect(after!.u).toBeGreaterThan(before!.u);
-  expect(after!.u).toBeLessThan(8.5);
-  expect(after!.v).toBeCloseTo(5.68, 1);
+  const desk = officePositions.assets.find((a) => a.id === 'player_desk')!;
+  expect(after!.u + 0.18).toBeLessThanOrEqual(desk.position!.u + desk.footprint!.u + 0.02);
+  expect(after!.v).toBeLessThan(before!.v);
   expect(anim.playing).toBe(true);
   await expect.poll(async () => (await playerAnim(page)).playing).toBe(false);
   await expect

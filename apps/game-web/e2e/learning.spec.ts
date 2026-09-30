@@ -1,14 +1,5 @@
+import { scenePoint } from './sceneTestData';
 import { expect, test, type Page } from '@playwright/test';
-import { readFileSync } from 'node:fs';
-const scene = JSON.parse(
-  readFileSync(
-    new URL(
-      '../../../packages/game-content/cases/case-001/scenes/main_office.json',
-      import.meta.url,
-    ),
-    'utf8',
-  ),
-) as { assets: Array<{ id: string; x: number; y: number }> };
 
 async function open(page: Page) {
   await page.goto('/');
@@ -85,8 +76,8 @@ test('visible dialogue records only annotated contexts and persists mode/progres
   page,
 }) => {
   await open(page);
-  const anna = scene.assets.find((asset) => asset.id === 'anna')!;
-  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x + 50, y + 30), anna);
+  const anna = scenePoint('main_office', 'anna', { u: 0.3, v: 0.6 });
+  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), anna);
   await expect(page.getByText('Nói chuyện với Anna', { exact: true })).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });
   await page.keyboard.press('e');
@@ -144,7 +135,7 @@ test('confirmed learning reset preserves case evidence and keeps one canvas', as
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
   await open(page);
-  const note = scene.assets.find((asset) => asset.id === 'meeting_minutes')!;
+  const note = scenePoint('main_office', 'meeting_minutes');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), note);
   await expect(page.getByText('Đọc biên bản cuộc họp')).toBeVisible();
   await page.keyboard.press('e');
