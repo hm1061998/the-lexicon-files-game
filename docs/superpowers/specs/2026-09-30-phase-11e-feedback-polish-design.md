@@ -1,6 +1,6 @@
 # Phase 11E — Hoàn thiện cảnh, HUD và âm thanh theo feedback
 
-Ngày: 2026-09-30. Trạng thái: đề xuất, chờ người dùng duyệt spec trước khi viết implementation plan. Bố cục nền Office/Archive ở `40c9911` được người dùng đánh giá tạm ổn; không xem feedback mới là nghiệm thu toàn bộ Phase 11E.
+Ngày: 2026-09-30. Trạng thái: người dùng đã duyệt spec bằng phản hồi “duyệt spec”; implementation plan cần được review trước khi thực thi. Bố cục nền Office/Archive ở `40c9911` được người dùng đánh giá tạm ổn; không xem feedback mới là nghiệm thu toàn bộ Phase 11E.
 
 ## Mục tiêu và phạm vi đã được người dùng xác nhận
 
@@ -15,18 +15,18 @@ Tất cả thuộc Phase 11E. Giữ scene/interactable/evidence/dialogue/objecti
 
 ## Đối chiếu 10 feedback
 
-| Feedback | Thiết kế đề xuất |
-| --- | --- |
-| Nhãn phòng đang nổi trên cảnh | Nhãn phòng gắn vào mặt tường; nhãn hành lang nằm trên mặt sàn, cùng phối cảnh 2:1 |
-| Cửa/arrival không tương ứng | Đặt cặp cửa ở hai đầu đối ứng, đi qua cùng một hướng không bị quay về cùng cạnh của cả hai phòng |
-| Hai thanh scroll toàn trang | Sửa kích thước shell và margin gốc; body không scroll, modal dài vẫn cuộn nội bộ |
-| Viền trắng hai bên | Nền html/body/root và vùng letterbox cùng màu nền canvas |
-| Thiếu âm thanh | Footsteps khi di chuyển thật, SFX thao tác/cửa/giấy và voice tiếng Anh theo node |
-| Thiếu marker vật chứng/cổng | Cue cho vật chứng và cửa đã hiện trong case, nhìn thấy trước khi vào interaction radius; outline khi tới gần |
-| Ghế quay ra ngoài | Sinh biến thể ghế theo hướng, đặt mặt ngồi hướng về bàn liên quan |
-| Prompt E thô/che tầm nhìn | Prompt một hàng gọn, viền nhẹ, đặt tránh nhân vật/vật chứng/HUD; màn hình nhỏ dùng vùng cạnh dưới |
-| Minimap không theo di chuyển | Sửa ngưỡng phát sự kiện theo đúng đơn vị, giữ một lần projection và nguồn vị trí từ Phaser |
-| HUD nhỏ che cảnh | Mục tiêu và minimap có nút thu/mở; màn hình hẹp mặc định thu gọn, launcher luôn truy cập được |
+| Feedback                      | Thiết kế đề xuất                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Nhãn phòng đang nổi trên cảnh | Nhãn phòng gắn vào mặt tường; nhãn hành lang nằm trên mặt sàn, cùng phối cảnh 2:1                            |
+| Cửa/arrival không tương ứng   | Đặt cặp cửa ở hai đầu đối ứng, đi qua cùng một hướng không bị quay về cùng cạnh của cả hai phòng             |
+| Hai thanh scroll toàn trang   | Sửa kích thước shell và margin gốc; body không scroll, modal dài vẫn cuộn nội bộ                             |
+| Viền trắng hai bên            | Nền html/body/root và vùng letterbox cùng màu nền canvas                                                     |
+| Thiếu âm thanh                | Footsteps khi di chuyển thật, SFX thao tác/cửa/giấy và voice tiếng Anh theo node                             |
+| Thiếu marker vật chứng/cổng   | Cue cho vật chứng và cửa đã hiện trong case, nhìn thấy trước khi vào interaction radius; outline khi tới gần |
+| Ghế quay ra ngoài             | Sinh biến thể ghế theo hướng, đặt mặt ngồi hướng về bàn liên quan                                            |
+| Prompt E thô/che tầm nhìn     | Prompt một hàng gọn, viền nhẹ, đặt tránh nhân vật/vật chứng/HUD; màn hình nhỏ dùng vùng cạnh dưới            |
+| Minimap không theo di chuyển  | Sửa ngưỡng phát sự kiện theo đúng đơn vị, giữ một lần projection và nguồn vị trí từ Phaser                   |
+| HUD nhỏ che cảnh              | Mục tiêu và minimap có nút thu/mở; màn hình hẹp mặc định thu gọn, launcher luôn truy cập được                |
 
 ## Bằng chứng baseline
 
@@ -149,4 +149,4 @@ TDD cho logic movement threshold, door pairing/spawn, marker eligibility, HUD to
 
 Không Phase 12, scene thứ ba, AI NPC, voice recognition/microphone, cloud TTS lúc chơi, multiplayer, nhạc/ambient dài hoặc đổi nội dung vụ án. Task modal/header và breathing của plan cha vẫn ghi nhận là backlog riêng; chỉ chỉnh modal layout tối thiểu nếu shell viewport mới làm lộ lỗi cản đóng/đọc.
 
-Spec không tuyên bố đã sửa code hoặc đã tạo audio. Bước kế tiếp sau user review là implementation plan tiếng Việt cho phạm vi này, tiếp tục Native đã được chọn trong session.
+Spec không tuyên bố đã sửa code hoặc đã tạo audio. Bước kế tiếp là review implementation plan tiếng Việt cho phạm vi này, tiếp tục Native đã được chọn trong session.
