@@ -50,6 +50,14 @@ Giữ nguyên gameplay và nội dung vụ án, các ID interactable/evidence/NP
 - Chuyển động chỉ tác động phần hiển thị: điểm chân, vị trí world, collision, shadow, interaction anchor, marker và outline không dịch quá 2 px. Không làm thay đổi footprint vật lý.
 - Dùng hàm thuần nhận thời gian, phase offset và cờ reduced-motion; cùng một nguồn thời gian trong `WorldScene.update`, không tạo timer toàn cục.
 
+### 7. Walk sheet hoàn chỉnh cho player và NPC
+
+- Thay walk sheet thủ tục hiện tại của player bằng ảnh walk sheet hoàn chỉnh mới; tạo walk sheet mới cho Anna, Leo và David để NPC có chuyển động ngoài idle.
+- Mỗi actor có chu kỳ đi bộ đủ bốn hướng NE/SE/SW/NW, lưới 8 cột × 4 hàng theo đúng thứ tự, 8 frame mỗi hướng, 10 fps; dùng chung chuẩn ô 160×160 px, sheet 1280×640 RGBA trong suốt, nhân vật cao khoảng 100 px và chân đặt theo chuẩn 88% của `docs/art/07`.
+- Ảnh phải giữ nhận diện/outfit, tỷ lệ, nét vẽ, ánh sáng và bảng màu của idle turnaround tương ứng; bước chân lặp liền, tay chân chuyển động rõ nhưng tiết chế, không sinh mảnh rời/viền magenta. Walk sheet là asset hình ảnh hoàn chỉnh, không biến dạng thủ tục từ idle.
+- Tích hợp đủ bốn sheet trong `characterSheets`/`sharedTextures` content; player giữ hoạt ảnh khi di chuyển hiện tại, NPC chỉ cần hỗ trợ walk khi được yêu cầu bởi engine/animation API (không thêm AI hay tự đi trong scene). Chuyển hướng lúc dialogue vẫn dùng idle bốn hướng và không bị walk state ghi đè.
+- Ghi provenance từng file. Kiểm tra contact sheet trực quan, chân/scale căn chỉnh giữa các frame và hướng, alpha sạch, loop 8→1 mượt; xóa không dùng asset thủ tục player cũ sau khi thay thế.
+
 ## Cách tiếp cận
 
 Chỉnh lại scene JSON và asset/texture hiện có trước; chỉ bổ sung asset cửa hoặc màn hình nếu asset hiện tại không biểu đạt được đúng thiết kế. Mở rộng schema scene bằng metadata khai báo quan hệ bề mặt thay vì hardcode ID của Case #001 trong scene class. Tái sử dụng `npcs.json.name` và bốn idle texture mỗi NPC. Dữ liệu dialogue tiếp tục do store/case engine quản lý; bus chỉ báo chuyển trạng thái cho renderer Phaser.
@@ -63,14 +71,14 @@ Chỉnh lại scene JSON và asset/texture hiện có trước; chỉ bổ sung 
 5. Tên ba NPC khớp `npcs.json`, luôn nằm trên đầu và không chồng prompt ở kích thước viewport hỗ trợ.
 6. Bắt đầu đối thoại từ các hướng khác nhau làm NPC và player quay đúng hướng; đóng hội thoại giữ hướng. Kiểm tra giảm chuyển động bỏ tween.
 7. Unit test cho đặt vật trên mặt đỡ, tính hướng, và nhịp thở. E2E xác nhận nhịp scale lúc đứng yên, scale bằng 1 khi đi hoặc reduced-motion, dialog dừng nhịp thở, vị trí chân/collider/anchor không trôi quá 2 px.
-8. Có ảnh chụp office/archive và kiểm tra trực quan cạnh concept. Báo cáo ghi đúng khác biệt phối cảnh: game vẫn 2D trục thẳng, concept là isometric cắt lớp.
-9. Qua gate dự án: `npm run lint`, `npm run test`, `npm run build`; `npm run typecheck`, `npm run format:check`, `npm run memory:check`, Python unittest nếu đổi art-codegen, và Playwright E2E hai lần nếu đụng scene/CSS/Phaser. Không đổi backend.
+8. Player và ba NPC dùng ảnh walk sheet hoàn chỉnh 8×4 mới; validator/content test xác nhận manifest, lưới, số frame và ánh xạ bốn hướng; animation runtime có test player walk tiếp tục đúng và NPC walk sheet preload được. Visual QA xác nhận cả 4 sheet và loop 8→1.
+9. Có ảnh chụp office/archive và kiểm tra trực quan cạnh concept. Báo cáo ghi đúng khác biệt phối cảnh: game vẫn 2D trục thẳng, concept là isometric cắt lớp.
+10. Qua gate dự án: `npm run lint`, `npm run test`, `npm run build`; `npm run typecheck`, `npm run format:check`, `npm run memory:check`, Python unittest nếu đổi art-codegen, và Playwright E2E hai lần nếu đụng scene/CSS/Phaser. Không đổi backend.
 
 ## Ngoài phạm vi
 
 - Chuyển game sang isometric hoặc dựng lại pipeline asset toàn bộ.
 - Thêm tính năng gameplay, đổi logic vụ án/evidence/dialogue, hoặc đổi API/state persistence.
-- Sinh ảnh walk sheet hoàn chỉnh mới hay tạo NPC animation mới ngoài hướng idle; sheet đi bộ thật vẫn là tác vụ asset riêng.
 - Thay đổi các scene ngoài Case #001.
 
 ## Quyết định thiết kế đã chốt
@@ -79,4 +87,5 @@ Chỉnh lại scene JSON và asset/texture hiện có trước; chỉ bổ sung 
 - Thẻ tên NPC luôn hiện; lấy tên từ content sẵn có.
 - Cả NPC lẫn player quay về phía nhau khi dialogue bắt đầu thành công và giữ hướng sau khi đóng.
 - Nhịp thở chỉ là scale hiển thị, không chạm body vật lý; dừng khi đi, đối thoại hoặc reduced-motion.
+- Thay walk sheet tạm bằng sheet hoàn chỉnh mới cho player; tạo walk animation bốn hướng cho cả ba NPC theo hợp đồng 8×4 của `docs/art/07`.
 

@@ -115,7 +115,9 @@ Mô tả nhân vật gắn thêm vào prompt: dùng dòng của nhân vật ở 
 3. Kiểm tra hợp đồng: `python -m unittest test_make_walk_frames` trong `tools/art-codegen` (kích thước, chân 88%, khung khác nhau, vòng lặp liền mạch, không viền magenta).
 4. Ghi dòng mới vào `assets/PROVENANCE.md`, thay dòng "code-derived" của file đó.
 
-Chỉ player đang được nối vào game (`characterSheets.player.walk` trong `case.json`). NPC đứng yên nên dùng ảnh idle. Không lưu walk sheet NPC chưa dùng vào `public/`; khi cần tạo thử, chạy `python tools/art-codegen/make_walk_frames.py <tên>` trong venv art-codegen để tái sinh từ 4 ảnh idle.
+Phase 11D cập nhật yêu cầu sử dụng: tạo walk sheet hoàn chỉnh mới cho **player, Anna, Leo và David**, khai báo texture walk của cả bốn trong `characterSheets` ở `case.json`. Mỗi nhân vật giữ sheet riêng, tạo từ đúng bốn ảnh idle cùng nhân vật làm reference và dùng mô tả nhận diện trong mục 4.3. Không dùng `make_walk_frames.py` để biến dạng idle thành asset phát hành; script chỉ giữ lại cho kiểm thử/prototype. Không lưu sheet NPC chưa dùng: cả ba walk sheet NPC phải được khai báo và kiểm tra preload/runtime trong phase này.
+
+Với mọi sheet: kiểm tra đủ 32 frame, đúng 8×4 grid và hướng NE/SE/SW/NW, cùng figure height/feet line, alpha sạch và khác biệt pose dễ nhận ra. Xem toàn bộ contact sheet ở kích thước gốc và preview loop 10 fps trước khi đưa vào `public/`. Ghi từng file mới/thay thế vào `assets/PROVENANCE.md`; ghi rõ công cụ tạo ảnh, ngày và nguồn reference theo quy tắc provenance trong file đó.
 
 ## 5. Tiêu chí tôi dùng để nhận/loại ảnh
 

@@ -44,10 +44,17 @@
 - **Tiêu chí chấp nhận:** hàm thuần `breathing({ timeMs, phaseOffset, reduced })` → `{ scaleX, scaleY }` (đề xuất `scaleY = 1 + 0.008·sin(2π·t/2400)`, `scaleX = 1`), áp lên sprite quanh điểm chân (origin 0.5, 0.88) không đổi `x/y` và không ảnh hưởng body vật lý; NPC lệch pha theo hash của id; dừng khi người chơi đi (anim đi bộ đã có) và khi hội thoại (tùy chọn); **tắt hoàn toàn khi bật "Giảm chuyển động"** (đây là hiệu ứng trang trí, khác hoạt ảnh đi bộ); không làm sai `getBounds()` cho viền đỏ/marker/prompt (kiểm tra sai lệch < 2 px); test thuần + E2E (scale dao động khi đứng yên, bằng 1 khi giảm chuyển động).
 - **Gợi ý kỹ thuật:** cập nhật trong `WorldScene.update`, dùng chung với bóng dưới chân (không scale bóng); thêm debug hook dev-only đọc scale.
 
+## 7. Thay walk sheet tạm và thêm hoạt ảnh đi bộ cho NPC
+
+- **Yêu cầu bổ sung của người dùng:** sinh walk sheet hoàn chỉnh mới và tạo NPC animation ngoài idle.
+- **Tiêu chí:** thay sheet thủ tục player; thêm sheet walk NE/SE/SW/NW cho Anna, Leo, David. Tuân theo `docs/art/07` §4.4: lưới 8×4, 8 frame/hướng, 160×160 mỗi frame, 10 fps, chân tại chuẩn 88%, figure cao khoảng 100 px, nền alpha sạch, vòng lặp liên tục, giữ nhận diện từng nhân vật. Dùng ảnh hoàn chỉnh, không deform ảnh idle bằng code.
+- **Tích hợp:** khai báo `walk` cho cả 4 actor qua `characterSheets`; player tiếp tục dùng walk khi di chuyển, NPC chỉ có asset/runtime animation capability khi được yêu cầu, không thêm tự di chuyển hay AI. Ghi provenance và xóa asset thủ tục player sau khi thay thế; không giữ thêm sheet chưa dùng.
+- **Visual QA:** xem contact sheet đủ bốn hướng của cả 4 nhân vật, kiểm tra chân/scale đồng nhất, silhouette sạch, loop 8→1 mượt và xác nhận runtime player vẫn dùng đúng animation.
+
 ## Thứ tự đề xuất
 
 1. Bố cục phòng (mục 1) + vật chứng trên bàn (mục 2) + cửa ra hành lang (mục 3) — cùng động vào scene JSON/art, làm chung một phase để thiết kế nhất quán.
-2. NPC: tên trên đầu (mục 4), quay hướng khi đối thoại (mục 5), nhịp thở (mục 6).
+2. NPC: tên trên đầu (mục 4), quay hướng khi đối thoại (mục 5), nhịp thở (mục 6), walk sheet bốn hướng (mục 7).
 3. Sau mỗi nhóm: chụp ảnh, **xem** cạnh concept, ghi verification trong ledger mới; không tuyên bố giống concept khi chưa xem.
 
 ## Ghi chú về Phase 11C đang chạy
