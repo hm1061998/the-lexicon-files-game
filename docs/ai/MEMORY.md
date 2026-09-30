@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T16:00:00+07:00
+updated_at: 2026-09-30T16:30:00+07:00
 phase: phase-11e
 status: in_progress
-result_commit: b3fa09d
+result_commit: bcab0e5
 active_spec: docs/superpowers/specs/2026-09-30-phase-11e-controls-visual-ux-design.md
 active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 ---
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## Current Phase
 
-- Phase 11D is complete. Phase 11E spec and plan were approved; plan is committed locally in `676e6fb` + refinement `05a8485`. User chose Native execution. Task 1 completed locally in `b3fa09d`; Task 2 is next. Phase 12 remains Testing & Performance in the roadmap and has not started.
+- Phase 11D is complete. Phase 11E spec and plan were approved; plan is committed locally in `676e6fb` + refinement `05a8485`. User chose Native execution. Task 1 completed in `b3fa09d`; Task 2 completed in `bcab0e5`. Tasks 3–6 remain. Phase 12 remains Testing & Performance in the roadmap and has not started.
 
 ## Active Goal
 
@@ -24,7 +24,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 - Phase 11D Tasks 1–5 migrated projection/runtime/content/scene; Task 6 added dialogue-facing NPC/player, names and initial breathing; Task 7 added real 8×4 walk sheets for player, Anna, Leo and David; Task 8 reconciled docs and completed visual review/full direct-runner verification.
 - Verification details, screenshot verdicts and limitations: `docs/ai/2026-09-30-phase-11d-verification.md`. Screenshots are in ignored `.superpowers/sdd/2026-09-30-phase-11d-isometric-dimetric/`.
-- Phase 11E spec: `docs/superpowers/specs/2026-09-30-phase-11e-controls-visual-ux-design.md`; user approved each design section. Plan: `docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md` (latest commit `05a8485`), user approved and chose Native. Task 1 screen-relative WASD/facing is committed in `b3fa09d`. Scope retains dimetric 2:1, modularizes office/archive composition, improves evidence-modal internal scrolling/UI consistency, and smooths idle breathing for player and NPCs.
+- Phase 11E spec: `docs/superpowers/specs/2026-09-30-phase-11e-controls-visual-ux-design.md`; user approved each design section. Plan: `docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md` (latest refinement `bcab0e5`), user approved and chose Native. Task 1 screen-relative WASD/facing is committed in `b3fa09d`; Task 2 office/archive wall composition is committed in `bcab0e5`. The plan also improves evidence-modal internal scrolling/UI consistency and smooths idle breathing for player and NPCs.
 - Remaining observations included in Phase 11E scope: office/archive density and wall/floor seams; evidence modal usability at 1280×720 and 760×600; current breathing feels jerky and runtime only applies it to NPCs although the old spec requested player and NPC.
 - Root `npm` executable is unavailable in this environment; Nx npm-script targets cannot launch. Equivalent installed Vitest, TypeScript, ESLint, Vite, Prettier, Python, Playwright and memory runners passed. Vite reports the existing ~1.9 MB JS chunk warning.
 
@@ -35,7 +35,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## In Progress
 
-- Phase 11E Tasks 2–6 remain; Task 1 is complete.
+- Phase 11E Tasks 3–6 remain; Tasks 1–2 are complete.
 
 ## Active Decisions
 
@@ -56,18 +56,18 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md
 
 ## Next Actions
 
-- Complete Task 2 office/archive composition.
-- Continue Tasks 3–6 in plan order. Keep Phase 12 Testing & Performance separate.
+- Start Task 3: keep the evidence modal header visible while its content scrolls internally.
+- Continue Tasks 4–6 in plan order. Keep Phase 12 Testing & Performance separate.
 
 ## Verification
 
 - Phase 11D commit `94ce745`: game-web 432/432, game-content 128/128, game-core 49/49, learning-engine 12/12, shared-types 1/1, UI 18/18; TypeScript, ESLint, Prettier, Vite build and Python 35/35 pass.
 - E2E: world 29/29 twice; scene-layout 24/24 twice with `--repeat-each=2`; temporary screenshot test passed and was removed. Nx/npm entry points remain unverified because `npm` is absent from PATH.
-- Phase 11E baseline direct Vitest: 85 files, 640 tests passed. Root npm executable is absent from PATH; Nx/npm entry points remain unverified and direct local runners are used. Task 1: focused unit tests 37/37, `tsc -b` pass, scoped ESLint/Prettier pass, world E2E 29/29, scene-layout E2E 12/12 on final run (one earlier transient failure was rerun successfully). Backend unchanged.
+- Phase 11E baseline direct Vitest: 85 files, 640 tests passed. Root npm executable is absent from PATH; Nx/npm entry points remain unverified and direct local runners are used. Task 1: focused unit tests 37/37, `tsc -b` pass, scoped ESLint/Prettier pass, world E2E 29/29, scene-layout E2E 12/12 on final run (one earlier transient failure was rerun successfully). Task 2: game-content Vitest 128/128; scene-layout E2E 16/16. Repeated scene-layout run was 31/32 because the existing office waypoint driver intermittently timed out at `objective_note`; isolated rerun passed 2/2. Scoped ESLint, Prettier and `git diff --check` passed. Screenshots reviewed at 1280×720 in ignored `.superpowers/sdd/2026-09-30-phase-11e-controls-visual-ux/`. Backend unchanged.
 
 ## Latest Handoff
 
-- Phase 11D complete locally at `94ce745`; no push. Phase 11E spec `ca89b59` and plan latest commit `05a8485` approved; Native selected. Task 1 commit `b3fa09d` is local; Task 2 is next. Do not push unless explicitly requested. Phase 11D ledger: `docs/ai/2026-09-30-phase-11d-verification.md`.
+- Phase 11D complete locally at `94ce745`; no push. Phase 11E spec `ca89b59` and plan latest version approved; Native selected. Task 1 commit `b3fa09d`, Task 2 commit `bcab0e5`, both local on `dev`; Task 3 is next. Do not push unless explicitly requested. Phase 11D ledger: `docs/ai/2026-09-30-phase-11d-verification.md`.
 
 ## Required Reading
 
