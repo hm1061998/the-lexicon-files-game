@@ -206,7 +206,7 @@
   pointer-events: none;
   opacity: 0.14;
   background-image: url('/assets/textures/paper_texture.png');
-  background-size: 1024px 1024px;
+  background-size: 512px 512px;
   background-repeat: repeat;
 }
 

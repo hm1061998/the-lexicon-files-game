@@ -23,6 +23,7 @@ import {
 } from './scene';
 import { vocabularyCatalogueSchema, vocabularySpanSchema } from './learning';
 import { validateVocabularyReferences } from '../validation/vocabularyReferences';
+import { assetPathSchema } from './assetPath';
 
 const caseRawSchema = z
   .object({
@@ -144,12 +145,7 @@ const evidenceSchema = z
     relatedFactIds: z.array(z.string().min(1)),
     relatedNpcIds: z.array(z.string().min(1)).optional(),
     vocabularyIds: z.array(z.string().min(1)).optional(),
-    imageAsset: z.string().min(1).optional(),
-    image: z
-      .string()
-      .startsWith('/assets/', 'must start with "/assets/"')
-      .refine((url) => !url.includes('..'), 'must not contain ".."')
-      .optional(),
+    image: assetPathSchema.optional(),
   })
   .strict();
 

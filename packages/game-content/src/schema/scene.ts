@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { SceneDefinition } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
 import { effectSchema } from './caseEngine';
+import { assetPathSchema } from './assetPath';
 
 const rectCollisionSchema = z
   .object({
@@ -43,10 +44,7 @@ export const PLACEHOLDER_TEXTURE_PREFIX = 'ph_';
 export const textureEntrySchema = z
   .object({
     key: z.string().min(1),
-    url: z
-      .string()
-      .startsWith('/assets/', 'must start with "/assets/"')
-      .refine((url) => !url.includes('..'), 'must not contain ".."'),
+    url: assetPathSchema,
     frameWidth: z.number().int().positive().optional(),
     frameHeight: z.number().int().positive().optional(),
   })

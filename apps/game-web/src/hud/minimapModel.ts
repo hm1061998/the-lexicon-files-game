@@ -7,14 +7,17 @@ export type MinimapMarker = {
   y: number;
   kind: 'interactable' | 'door' | 'npc';
 };
-export type MinimapLabel = { id: string; x: number; y: number };
+export type MinimapLabel = { id: string; text: string; x: number; y: number };
 export type MinimapModel = {
   viewBox: string;
+  markerRadius: number;
+  playerRadius: number;
   solids: MinimapRect[];
   /** Inner room walls (`wall` assets narrower than the world), drawn with a heavier stroke. */
   partitions: MinimapRect[];
   /** Room label positions; the map shows a dot, not the text. */
   labels: MinimapLabel[];
+  currentRoomName: string | null;
   markers: MinimapMarker[];
   player: { x: number; y: number } | null;
 };
@@ -51,11 +54,20 @@ export function buildMinimapModel(
       });
     }
   }
+  const currentRoom = playerPosition
+    ? (scene.labels ?? []).reduce<{ text: string; distance: number } | null>((nearest, label) => {
+        const distance = Math.hypot(playerPosition.x - label.x, playerPosition.y - label.y);
+        return !nearest || distance < nearest.distance ? { text: label.text, distance } : nearest;
+      }, null)
+    : null;
   return {
     viewBox: `${b.x} ${b.y} ${b.width} ${b.height}`,
+    markerRadius: (b.width * 88) / 2400,
+    playerRadius: (b.width * 84) / 2400,
     solids,
     partitions,
-    labels: (scene.labels ?? []).map(({ id, x, y }) => ({ id, x, y })),
+    labels: (scene.labels ?? []).map(({ id, text, x, y }) => ({ id, text, x, y })),
+    currentRoomName: currentRoom?.text ?? null,
     markers,
     player: playerPosition ? { x: playerPosition.x, y: playerPosition.y } : null,
   };

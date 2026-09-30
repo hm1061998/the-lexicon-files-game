@@ -13,6 +13,17 @@ type ListeningEvent = Extract<LearningAction, { type: 'recordListeningEvent' }>[
 const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
+export function nextImageFailureState(event: 'error', image: string | undefined): string | null {
+  return event === 'error' ? (image ?? null) : null;
+}
+
+export function shouldShowEvidenceImage(
+  image: string | undefined,
+  failedImage: string | null,
+): boolean {
+  return image !== undefined && failedImage !== image;
+}
+
 export function EvidenceModal({
   evidence,
   strings,
@@ -51,7 +62,7 @@ export function EvidenceModal({
   const headingId = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const [failedImage, setFailedImage] = useState<string | null>(null);
-  const showImage = evidence.image !== undefined && failedImage !== evidence.image;
+  const showImage = shouldShowEvidenceImage(evidence.image, failedImage);
 
   useEffect(() => {
     const previousFocus =
@@ -96,7 +107,7 @@ export function EvidenceModal({
               className="evidence-art"
               src={evidence.image}
               alt=""
-              onError={() => setFailedImage(evidence.image ?? null)}
+              onError={() => setFailedImage(nextImageFailureState('error', evidence.image))}
             />
           )}
           <p className="evidence-category">{strings.evidence}</p>

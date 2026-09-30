@@ -52,6 +52,12 @@ describe('content texture manifests', () => {
     }
   });
 
+  it('does not ship unused NPC walk sheets', () => {
+    for (const name of ['anna', 'leo', 'david']) {
+      expect(existsSync(`${publicDir}/assets/characters/${name}/chr_${name}_walk.png`)).toBe(false);
+    }
+  });
+
   it('declare per scene only textures that the scene assets use', () => {
     for (const definition of cases) {
       for (const scene of definition.scenes) {
@@ -92,8 +98,9 @@ describe('facingTextureKey', () => {
 
 type Listener = (file: { key: string }) => void;
 
-function fakeScene(existing: string[], failing: string[] = []) {
+function fakeScene(existing: string[], failing: string[] = [], autoComplete = true) {
   const listeners = new Map<string, Listener[]>();
+  const sceneListeners = new Map<string, Array<() => void>>();
   const queued: TextureEntry[] = [];
   const on = (event: string, fn: Listener) => {
     listeners.set(event, [...(listeners.get(event) ?? []), fn]);
@@ -106,6 +113,27 @@ function fakeScene(existing: string[], failing: string[] = []) {
   };
   const emit = (event: string, file: { key: string }) => {
     for (const fn of listeners.get(event) ?? []) fn(file);
+  };
+  const emitScene = (event: string) => {
+    for (const fn of [...(sceneListeners.get(event) ?? [])]) fn();
+  };
+  const sceneEvents = {
+    on: vi.fn((event: string, fn: () => void) => {
+      sceneListeners.set(event, [...(sceneListeners.get(event) ?? []), fn]);
+    }),
+    once: vi.fn((event: string, fn: () => void) => {
+      const wrapped = () => {
+        sceneEvents.off(event, wrapped);
+        fn();
+      };
+      sceneListeners.set(event, [...(sceneListeners.get(event) ?? []), wrapped]);
+    }),
+    off: vi.fn((event: string, fn: () => void) => {
+      sceneListeners.set(
+        event,
+        (sceneListeners.get(event) ?? []).filter((candidate) => candidate !== fn),
+      );
+    }),
   };
   const load = {
     image: vi.fn((key: string, url: string) => queued.push({ key, url })),
@@ -120,6 +148,7 @@ function fakeScene(existing: string[], failing: string[] = []) {
       on(event, wrapped);
     }),
     start: vi.fn(() => {
+      if (!autoComplete) return;
       // Simulate the async loader: report failures, add the rest, then complete.
       queueMicrotask(() => {
         for (const entry of queued.splice(0)) {
@@ -130,8 +159,12 @@ function fakeScene(existing: string[], failing: string[] = []) {
       });
     }),
   };
-  const scene = { load, textures: { exists: (key: string) => existing.includes(key) } };
-  return { scene: scene as never, load, listeners };
+  const scene = {
+    load,
+    events: sceneEvents,
+    textures: { exists: (key: string) => existing.includes(key) },
+  };
+  return { scene: scene as never, load, listeners, sceneListeners, emitScene };
 }
 
 describe('loadSceneTextures', () => {
@@ -174,6 +207,17 @@ describe('loadSceneTextures', () => {
     expect(warn).toHaveBeenCalledWith('[Assets] failed to load tex_b');
     expect(listeners.get('loaderror') ?? []).toHaveLength(0);
     warn.mockRestore();
+  });
+
+  it.each(['shutdown', 'destroy'])('settles and cleans listeners on scene %s', async (event) => {
+    const { scene, load, listeners, sceneListeners, emitScene } = fakeScene([], [], false);
+    const pending = loadSceneTextures(scene, entries);
+    emitScene(event);
+    await expect(pending).resolves.toBeUndefined();
+    expect(listeners.get('loaderror') ?? []).toHaveLength(0);
+    expect(sceneListeners.get('shutdown') ?? []).toHaveLength(0);
+    expect(sceneListeners.get('destroy') ?? []).toHaveLength(0);
+    expect(load.off).toHaveBeenCalledTimes(2);
   });
 });
 

@@ -747,4 +747,11 @@ describe('case conclusion contract', () => {
     expectValidationIssue({ evidencesRaw: withImage('evidence/x.png') }, 'image');
     expectValidationIssue({ evidencesRaw: withImage('/assets/../x.png') }, 'image');
   });
+
+  it('rejects the unused legacy imageAsset evidence field', () => {
+    expectValidationIssue(
+      { evidencesRaw: { evidences: [{ ...evidence, imageAsset: '/assets/evidence/x.png' }] } },
+      'imageAsset',
+    );
+  });
 });

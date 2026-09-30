@@ -6,6 +6,8 @@ import type { Facing } from './systems/direction';
 // Phaser runtime so it can be unit tested without a canvas.
 const FILE_LOAD_ERROR = 'loaderror';
 const LOAD_COMPLETE = 'complete';
+const SCENE_SHUTDOWN = 'shutdown';
+const SCENE_DESTROY = 'destroy';
 
 /** Texture key for a facing, as declared by content (`CharacterSheet.idle`). */
 export function facingTextureKey(textures: FacingTextureMap, facing: Facing): string {
@@ -48,11 +50,26 @@ export function loadSceneTextures(
   return new Promise((resolve) => {
     // A dedicated handler so `off` never removes another caller's listener.
     const onError = (file: { key: string }) => warnFailedTexture(file);
-    loader.on(FILE_LOAD_ERROR, onError);
-    loader.once(LOAD_COMPLETE, () => {
+    let settled = false;
+    const cleanup = () => {
       loader.off(FILE_LOAD_ERROR, onError);
+      loader.off(LOAD_COMPLETE, onComplete);
+      scene.events.off(SCENE_SHUTDOWN, onShutdown);
+      scene.events.off(SCENE_DESTROY, onDestroy);
+    };
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
       resolve();
-    });
+    };
+    const onComplete = () => settle();
+    const onShutdown = () => settle();
+    const onDestroy = () => settle();
+    loader.on(FILE_LOAD_ERROR, onError);
+    loader.on(LOAD_COMPLETE, onComplete);
+    scene.events.on(SCENE_SHUTDOWN, onShutdown);
+    scene.events.on(SCENE_DESTROY, onDestroy);
     loader.start();
   });
 }

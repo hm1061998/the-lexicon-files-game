@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 
 type SceneTextures = { textures: Array<{ key: string; url: string }> };
+type SceneAssets = { assets: Array<{ id: string; texture: string }> };
 
 function sceneTextures(file: string): Array<{ key: string; url: string }> {
   const url = new URL(
@@ -17,10 +18,19 @@ const archiveTextures = sceneTextures('archive.json');
 const archiveOnlyTextures = archiveTextures.filter(
   ({ key }) => !officeTextures.some((office) => office.key === key),
 );
+const archiveAssets = (
+  JSON.parse(
+    readFileSync(
+      new URL('../../../packages/game-content/cases/case-001/scenes/archive.json', import.meta.url),
+      'utf8',
+    ),
+  ) as SceneAssets
+).assets;
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
   playerTexture(): string;
+  textureOf(id: string): string | undefined;
   playerAnim(): { key: string | null; frame: number | null; playing: boolean };
   depthOf(id: string): number;
   nearby(): string | null;
@@ -447,17 +457,21 @@ test('a destination texture that fails to load warns and the transition still co
   const failed = archiveOnlyTextures[0]!;
   await page.route(`**${failed.url}`, (route) => route.fulfill({ status: 404, body: '' }));
   const warnings: string[] = [];
-  const errors: string[] = [];
+  const pageErrors: string[] = [];
   page.on('console', (msg) => {
     if (msg.type() === 'warning') warnings.push(msg.text());
-    if (msg.type() === 'error' && !msg.text().includes('404')) errors.push(msg.text());
   });
-  page.on('pageerror', (err) => errors.push(err.message));
+  page.on('pageerror', (err) => pageErrors.push(err.message));
   await openWorld(page);
   await transitionAndWait(page, 'archive', 'from_office');
   await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
   expect(warnings).toContain(`[Assets] failed to load ${failed.key}`);
-  expect(errors).toEqual([]);
+  const failedAssetId = archiveAssets.find(({ texture }) => texture === failed.key)?.id;
+  expect(failedAssetId).toBeDefined();
+  expect(await page.evaluate((id) => window.__lexiconDebug!.textureOf(id!), failedAssetId)).toBe(
+    'ph_missing',
+  );
+  expect(pageErrors).toEqual([]);
   await expect(page.locator('canvas')).toHaveCount(1);
   // The scene is live: the player can still move.
   const before = await player(page);

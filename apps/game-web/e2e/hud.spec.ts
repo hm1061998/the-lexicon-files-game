@@ -349,20 +349,29 @@ test('minimap M is ignored while typing and while paused', async ({ page }) => {
 });
 
 test('minimap does not overlap the other HUD elements', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 720 });
+  const viewports = [
+    { width: 760, height: 600 },
+    { width: 1280, height: 720 },
+  ];
+  await page.setViewportSize(viewports[0]!);
   await openWorld(page);
   await walkToNote(page);
   await expect(page.getByText('Đọc ghi chú')).toBeVisible();
-  const minimap = (await page.locator('.hud-minimap').boundingBox())!;
-  for (const selector of [
-    '.hud-objective-panel',
-    '.hud-case-progress',
-    '.hud-interaction-prompt',
-    '.hud-key-hints',
-  ]) {
-    const box = await page.locator(selector).boundingBox();
-    expect(box, selector).not.toBeNull();
-    expect(overlaps(minimap, box!), selector).toBe(false);
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    const minimap = (await page.locator('.hud-minimap').boundingBox())!;
+    for (const selector of [
+      '.hud-objective-panel',
+      '.hud-case-progress',
+      '.hud-interaction-prompt',
+      '.hud-key-hints',
+    ]) {
+      const box = await page.locator(selector).boundingBox();
+      expect(box, `${viewport.width}x${viewport.height} ${selector}`).not.toBeNull();
+      expect(overlaps(minimap, box!), `${viewport.width}x${viewport.height} ${selector}`).toBe(
+        false,
+      );
+    }
   }
 });
 

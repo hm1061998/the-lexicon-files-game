@@ -4,6 +4,8 @@ export type LexiconDebug = {
   /** Walk animation on the player: key and 0-based frame while playing, nulls when idle. */
   playerAnim(): { key: string | null; frame: number | null; playing: boolean };
   depthOf(id: string): number;
+  /** Texture key currently rendered for a scene asset (including `ph_missing` fallbacks). */
+  textureOf(id: string): string | undefined;
   /** Texts of the room labels drawn in the current scene, in content order. */
   labels(): string[];
   /** Current alpha of an occluding wall/board (NaN for any other id). */

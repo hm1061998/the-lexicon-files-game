@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+import { PLAYER_SPEED } from '../src/game/constants';
 
 /** Scene layout read from content at test time: no Case ids or coordinates hardcoded here. */
 type Rect = { x: number; y: number; width: number; height: number };
@@ -183,14 +184,17 @@ const state = (page: Page) =>
  * Steers with WASD along the axis-aligned BFS legs: holds a key while far and taps it when
  * close. Frames can be coarse on a software renderer, so the tap length adapts: halved after an
  * overshoot, doubled after a tap that did not move the player. The walk ends as soon as the
- * target is nearby. Fails when the distance to the next waypoint stops shrinking for 2 s
- * (blocked by art); no fixed per-leg deadline because slow renderers walk slower.
+ * target is nearby. Allows five seconds without progress and caps each leg at its estimated
+ * travel time at three times the configured player speed, with the former 30 s cap retained.
  */
 async function walk(page: Page, waypoints: readonly Point[], targetId: string): Promise<void> {
   for (const wp of waypoints.slice(1)) {
     let best = Infinity;
     let lastProgress = Date.now();
     const legStart = Date.now();
+    const legStartPosition = await playerPos(page);
+    const legDistance = Math.hypot(wp.x - legStartPosition.x, wp.y - legStartPosition.y);
+    const legDeadlineMs = Math.min(30_000, Math.max(5_000, (legDistance / PLAYER_SPEED) * 3_000));
     let held: string | null = null;
     let tapMs = 80;
     let lastTap: { key: string; d: number; at: Point } | null = null;
@@ -208,7 +212,7 @@ async function walk(page: Page, waypoints: readonly Point[], targetId: string): 
         best = dist;
         lastProgress = Date.now();
       }
-      if (Date.now() - lastProgress > 3000 || Date.now() - legStart > 30000) {
+      if (Date.now() - lastProgress > 5000 || Date.now() - legStart > legDeadlineMs) {
         if (held) await page.keyboard.up(held);
         throw new Error(
           `${targetId}: stuck at ${Math.round(p.x)},${Math.round(p.y)} heading to ${wp.x},${wp.y} (nearby ${p.nearby})`,
@@ -259,6 +263,26 @@ async function open(page: Page, scene: SceneJson, spawnId: string): Promise<void
     (previous) => window.__lexiconDebug !== undefined && window.__lexiconDebug !== previous,
     before,
   );
+}
+
+async function walkUntilStopped(page: Page, key: string): Promise<void> {
+  const startedAt = Date.now();
+  let previous = await playerPos(page);
+  let hasMoved = false;
+  let stationarySince = startedAt;
+  await page.keyboard.down(key);
+  while (Date.now() - startedAt < 5_000) {
+    await page.waitForTimeout(50);
+    const current = await playerPos(page);
+    if (Math.hypot(current.x - previous.x, current.y - previous.y) > 0.5) {
+      hasMoved = true;
+      previous = current;
+      stationarySince = Date.now();
+    } else if (hasMoved && Date.now() - stationarySince >= 200) {
+      break;
+    }
+  }
+  await page.keyboard.up(key);
 }
 
 // The spawn each scene is entered from during play.
@@ -391,9 +415,7 @@ for (const { file, spawn } of CASES) {
       expect(side, `${r.id}: no free side to test from`).toBeDefined();
       const { start, key } = side!;
       await page.evaluate(([x, y]) => window.__lexiconDebug!.teleport(x!, y!), [start.x, start.y]);
-      await page.keyboard.down(key);
-      await page.waitForTimeout(700);
-      await page.keyboard.up(key);
+      await walkUntilStopped(page, key);
       const p = await playerPos(page);
       if (key === 'w') expect(p.y - BODY_H, r.id).toBeGreaterThanOrEqual(r.y + r.height - 2);
       else if (key === 's') expect(p.y, r.id).toBeLessThanOrEqual(r.y + 2);

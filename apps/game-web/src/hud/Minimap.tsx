@@ -5,27 +5,24 @@ import { useGameStore } from '../state/GameStoreContext';
 import { buildMinimapModel, type MinimapMarker } from './minimapModel';
 import './minimap.css';
 
-// Marker sizes are in world units: the map is ~2400 units wide drawn at ~200 px.
-const MARKER_R = 88;
-const PLAYER_R = 84;
 const ROOM_DOT_R = 34;
 
-function Marker({ marker }: { marker: MinimapMarker }): JSX.Element {
+function Marker({ marker, radius }: { marker: MinimapMarker; radius: number }): JSX.Element {
   const { x, y, kind } = marker;
   const className = `minimap-marker minimap-marker-${kind}`;
   if (kind === 'door') {
     return (
       <rect
         className={className}
-        x={x - MARKER_R * 0.75}
-        y={y - MARKER_R * 0.75}
-        width={MARKER_R * 1.5}
-        height={MARKER_R * 1.5}
+        x={x - radius * 0.75}
+        y={y - radius * 0.75}
+        width={radius * 1.5}
+        height={radius * 1.5}
       />
     );
   }
-  if (kind === 'npc') return <circle className={className} cx={x} cy={y} r={MARKER_R * 0.7} />;
-  const points = `${x},${y - MARKER_R} ${x + MARKER_R},${y} ${x},${y + MARKER_R} ${x - MARKER_R},${y}`;
+  if (kind === 'npc') return <circle className={className} cx={x} cy={y} r={radius * 0.7} />;
+  const points = `${x},${y - radius} ${x + radius},${y} ${x},${y + radius} ${x - radius},${y}`;
   return <polygon className={className} points={points} />;
 }
 
@@ -48,7 +45,11 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
         className="minimap-svg"
         viewBox={model.viewBox}
         role="img"
-        aria-label={strings.minimapTitle}
+        aria-label={
+          model.currentRoomName
+            ? `${strings.minimapTitle} — ${model.currentRoomName}`
+            : strings.minimapTitle
+        }
       >
         <rect className="minimap-floor" x={b.x} y={b.y} width={b.width} height={b.height} />
         {model.solids.map((r, index) => (
@@ -81,10 +82,15 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
           />
         ))}
         {model.markers.map((marker) => (
-          <Marker key={marker.id} marker={marker} />
+          <Marker key={marker.id} marker={marker} radius={model.markerRadius} />
         ))}
         {model.player && (
-          <circle className="minimap-player" cx={model.player.x} cy={model.player.y} r={PLAYER_R} />
+          <circle
+            className="minimap-player"
+            cx={model.player.x}
+            cy={model.player.y}
+            r={model.playerRadius}
+          />
         )}
       </svg>
       <p className="minimap-label">{strings.minimapTitle}</p>

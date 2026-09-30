@@ -102,7 +102,7 @@ Row 1: walking towards the upper-right (back three-quarter view, NE). Row 2: wal
 Row 3: walking towards the lower-left (front three-quarter view, SW). Row 4: walking towards the upper-left (back three-quarter view, NW).
 Each row is one looping step cycle: frame 1 contact with feet together like the idle pose, frames 2-4 right leg steps forward, frame 5 passing, frames 6-8 left leg steps forward, then back to frame 1.
 Subtle body bob (a few pixels), arms swing slightly, no running, no jumping.
-Every cell: the whole figure fits with margin, the character is centred horizontally, the soles of the lowest foot sit on the same horizontal line in every cell (about 88% of the cell height from the top), same figure height in every cell.
+Every cell: the whole figure fits with margin and is about 100 pixels tall inside each 160x160 cell, the character is centred horizontally, the soles of the lowest foot sit on the same horizontal line in every cell (about 88% of the cell height from the top), same figure height in every cell.
 Flat solid pure magenta #FF00FF background everywhere, no floor, no shadow on the ground.
 ```
 
@@ -115,7 +115,7 @@ Mô tả nhân vật gắn thêm vào prompt: dùng dòng của nhân vật ở 
 3. Kiểm tra hợp đồng: `python -m unittest test_make_walk_frames` trong `tools/art-codegen` (kích thước, chân 88%, khung khác nhau, vòng lặp liền mạch, không viền magenta).
 4. Ghi dòng mới vào `assets/PROVENANCE.md`, thay dòng "code-derived" của file đó.
 
-Chỉ player đang được nối vào game (`characterSheets.player.walk` trong `case.json`). NPC đứng yên nên dùng ảnh idle; sheet NPC chỉ để xem trước.
+Chỉ player đang được nối vào game (`characterSheets.player.walk` trong `case.json`). NPC đứng yên nên dùng ảnh idle. Không lưu walk sheet NPC chưa dùng vào `public/`; khi cần tạo thử, chạy `python tools/art-codegen/make_walk_frames.py <tên>` trong venv art-codegen để tái sinh từ 4 ảnh idle.
 
 ## 5. Tiêu chí tôi dùng để nhận/loại ảnh
 

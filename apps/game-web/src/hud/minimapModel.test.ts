@@ -129,7 +129,29 @@ describe('buildMinimapModel', () => {
       { ...scene([]), labels: [{ id: 'room', text: 'PHÒNG', x: 300, y: 700 }] },
       null,
     );
-    expect(model.labels).toEqual([{ id: 'room', x: 300, y: 700 }]);
+    expect(model.labels).toEqual([{ id: 'room', text: 'PHÒNG', x: 300, y: 700 }]);
     expect(buildMinimapModel(scene([]), null).labels).toEqual([]);
+  });
+
+  it('scales marker radii in proportion to world width', () => {
+    const narrow = buildMinimapModel(
+      { ...scene([]), worldBounds: { x: 0, y: 0, width: 1200, height: 800 } },
+      null,
+    );
+    const wide = buildMinimapModel(scene([]), null);
+    expect(narrow.markerRadius).toBe(wide.markerRadius / 2);
+    expect(narrow.playerRadius).toBe(wide.playerRadius / 2);
+  });
+
+  it('reports the nearest room label for the current player position', () => {
+    const labeled = {
+      ...scene([]),
+      labels: [
+        { id: 'meeting', text: 'PHÒNG HỌP', x: 300, y: 300 },
+        { id: 'archive', text: 'KHO LƯU TRỮ', x: 900, y: 500 },
+      ],
+    };
+    expect(buildMinimapModel(labeled, { x: 400, y: 300 }).currentRoomName).toBe('PHÒNG HỌP');
+    expect(buildMinimapModel(labeled, null).currentRoomName).toBeNull();
   });
 });

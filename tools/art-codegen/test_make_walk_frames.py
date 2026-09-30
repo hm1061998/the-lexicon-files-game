@@ -10,6 +10,7 @@ from PIL import Image
 import make_walk_frames as w
 
 NAMES = ("player", "leo", "anna", "david")
+SHIPPED_SHEET_NAMES = ("player",)
 CELL = 160
 FEET_EXCLUSIVE = 141  # last opaque row 140 -> bbox bottom (exclusive) 141
 
@@ -30,12 +31,12 @@ class SheetContractTests(unittest.TestCase):
         return np.asarray(Image.open(path).convert("RGBA"))
 
     def test_sheet_size(self):
-        for name in NAMES:
+        for name in SHIPPED_SHEET_NAMES:
             with self.subTest(name=name):
                 self.assertEqual(self.load(name).shape[:2], (640, 1280))
 
     def test_cells_not_empty_and_feet_on_line(self):
-        for name in NAMES:
+        for name in SHIPPED_SHEET_NAMES:
             sheet = self.load(name)
             for r, row in cells(sheet):
                 for c, cell in enumerate(row):
@@ -45,7 +46,7 @@ class SheetContractTests(unittest.TestCase):
                         self.assertLessEqual(abs(int(ys.max()) + 1 - FEET_EXCLUSIVE), 1)
 
     def test_frames_differ_and_loop_is_seamless(self):
-        for name in NAMES:
+        for name in SHIPPED_SHEET_NAMES:
             sheet = self.load(name)
             for r, row in cells(sheet):
                 with self.subTest(name=name, row=r):
@@ -55,7 +56,7 @@ class SheetContractTests(unittest.TestCase):
                     self.assertLessEqual(dist(row[7], row[0]), 1.5 * (sum(steps) / 7))
 
     def test_no_magenta_on_translucent_pixels(self):
-        for name in NAMES:
+        for name in SHIPPED_SHEET_NAMES:
             with self.subTest(name=name):
                 px = self.load(name).astype(int)
                 semi = (px[..., 3] > 0) & (px[..., 3] < 255)

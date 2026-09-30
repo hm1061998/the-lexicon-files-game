@@ -80,6 +80,7 @@ export class WorldScene extends Phaser.Scene {
   private unsubscribeTriggered: (() => void) | null = null;
   private areas: InteractableArea[] = [];
   private depths = new Map<string, number>();
+  private assetTextures = new Map<string, string>();
   private markerAnchors = new Map<string, number>();
   private targetBounds = new Map<string, () => Bounds>();
   private outline: Phaser.GameObjects.Graphics | null = null;
@@ -129,6 +130,7 @@ export class WorldScene extends Phaser.Scene {
     this.transitioning = false;
     this.areas = [];
     this.depths.clear();
+    this.assetTextures.clear();
     this.occluders = [];
     this.markerAnchors.clear();
     this.targetBounds.clear();
@@ -153,6 +155,7 @@ export class WorldScene extends Phaser.Scene {
     for (const asset of def.assets) {
       const { sprite, body } = createSceneAsset(this, asset);
       this.depths.set(asset.id, sprite.depth);
+      this.assetTextures.set(asset.id, sprite.texture.key);
       if (asset.type === 'npc') createShadow(this, { x: asset.x, y: asset.y, depth: sprite.depth });
       if (body) colliders.add(body);
       if (isOccluder(asset, b.width)) {
@@ -252,6 +255,7 @@ export class WorldScene extends Phaser.Scene {
         return { key: walk?.key ?? null, frame: walk?.frame ?? null, playing: walk !== null };
       },
       depthOf: (id) => this.depths.get(id) ?? Number.NaN,
+      textureOf: (id) => this.assetTextures.get(id),
       labels: () => this.roomLabels.map(({ text }) => text),
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
       nearby: () => this.interactionTracker.current,

@@ -50,6 +50,12 @@ describe('Minimap', () => {
     expect(render({ playerPosition: { x: 400, y: 500 } })).toContain('minimap-player');
   });
 
+  it('announces the room nearest to the player in the map accessible name', () => {
+    const label = caseDefinition.scenes[0]!.labels![0]!;
+    const html = render({ playerPosition: { x: label.x, y: label.y } });
+    expect(html).toContain(`aria-label="${strings.minimapTitle} — ${label.text}"`);
+  });
+
   it('renders nothing while hidden', () => {
     expect(render({ minimapVisible: false })).toBe('');
   });
