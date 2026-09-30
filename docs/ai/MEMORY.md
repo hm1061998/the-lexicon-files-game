@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T03:44:23+07:00
+updated_at: 2026-10-01T03:48:50+07:00
 phase: phase-11e
 status: in_progress
-result_commit: bfa934f
+result_commit: 37a8949
 active_spec: docs/superpowers/specs/2026-09-30-phase-11e-feedback-polish-design.md
 active_plan: docs/superpowers/plans/2026-09-30-phase-11e-feedback-polish.md
 ---
@@ -34,6 +34,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-feedback-polish.md
 - Phase 0A–11D documented in previous memory history and verification files.
 - Phase 11E Tasks 1–2: `1520cab`, `50fc6d0`.
 - Phase 11E Tasks 3–10 code, content, assets, tests, screenshots and verification: `bfa934f`.
+- Plan checkbox/execution-state update: `37a8949`.
 - Phase 11E plan approval recorded in prior commits; user selected Native inline workflow.
 
 ## In Progress
@@ -71,7 +72,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11e-feedback-polish.md
 
 ## Latest Handoff
 
-- Code/result commit: `bfa934f`. Memory update is the next separate commit; run `npm run memory:check` before it.
+- Latest result/docs commit: `37a8949`; implementation commit: `bfa934f`. This memory change must be a separate following commit; run `npm run memory:check` before it.
 - Current working directory: `D:\Works\the-lexicon-files-game`, branch `dev`. Check `git status` before continuing; user-owned `apps/game-web/debug.log` was deliberately not committed.
 - Required reading: `AGENTS.md`, `apps/game-web/AGENTS.md`, this memory/README, `docs/ai/2026-10-01-phase-11e-feedback-polish-verification.md`, `docs/ai/2026-10-01-phase-11e-feedback-polish-final-review.md`, active approved Phase 11E spec/plan, and the camera/audio/UI addendum before asking for its approval.
 
