@@ -4,6 +4,12 @@
 **Trạng thái:** ghi nhận, **chưa thực hiện**. Làm **sau khi Phase 11 (11C) hoàn tất**. Cần brainstorming/spec ngắn rồi plan trước khi code (AGENTS.md §2), viết bằng tiếng Việt.
 **Liên quan:** `docs/superpowers/plans/2026-09-30-phase-11c-concept-fidelity-and-cleanup.md` (Task 4 là nơi phát sinh phản hồi), `docs/concept/ingame_main_office_hud.webp`, `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md` (mô tả phòng và vị trí vật chứng), `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`.
 
+## Quyết định kiến trúc bổ sung
+
+- Người dùng yêu cầu chuyển game sang isometric và duyệt hướng **dimetric 2:1** (2026-09-30).
+- Vì vậy Phase 11D bao gồm chuyển mọi scene đang chơi của Case #001 từ tọa độ hiển thị trục thẳng sang logical plane + projection 2D thống nhất; controls, collision, depth, camera, interaction anchors và minimap cũng chuyển theo. Giữ Phaser/React architecture và case logic.
+- Quyết định này thay thế giả định trong feedback ban đầu rằng giữ hệ 2D trục thẳng. Chi tiết hợp đồng nằm tại `docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md`.
+
 ## 1. Phòng quá rộng, đồ vật thưa, sắp xếp chưa hợp lý
 
 - **Hiện trạng:** scene 2400×1440 (`worldBounds` y=160) quá lớn so với lượng nội thất; nhiều khoảng sàn trống; đồ đạc rải rác, không thành cụm chức năng.
