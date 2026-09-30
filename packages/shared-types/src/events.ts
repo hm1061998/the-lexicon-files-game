@@ -1,8 +1,18 @@
+import type { AudioCue } from './audio';
+
 export type GameEventMap = {
+  'audio:cue': { cue: AudioCue };
   'interaction:nearby': { interactableId: string; prompt: string };
   'interaction:cleared': Record<string, never>;
   /** Screen anchor (CSS px relative to the canvas) for the interaction bubble; null id clears it. */
-  'interaction:anchor': { interactableId: string; x: number; y: number } | { interactableId: null };
+  'interaction:anchor':
+    | {
+        interactableId: string;
+        x: number;
+        y: number;
+        avoidRects?: readonly { left: number; top: number; right: number; bottom: number }[];
+      }
+    | { interactableId: null };
   'interaction:triggered': { interactableId: string };
   'dialogue:started': { npcId: string };
   'dialogue:ended': { npcId: string };

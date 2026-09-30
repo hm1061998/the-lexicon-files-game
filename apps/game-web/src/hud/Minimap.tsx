@@ -28,6 +28,7 @@ function Marker({ marker, radius }: { marker: MinimapMarker; radius: number }): 
 
 export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null {
   const visible = useGameStore((state) => state.minimapVisible);
+  const toggle = useGameStore((state) => state.toggleMinimap);
   const scene = useGameStore((state) =>
     state.caseDefinition.scenes.find(({ id }) => id === state.activeSceneId),
   );
@@ -36,9 +37,31 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
     () => (scene ? buildMinimapModel(scene, playerPosition) : null),
     [scene, playerPosition],
   );
-  if (!visible || !model || !scene) return null;
+  if (!visible) {
+    return (
+      <button
+        className="hud-panel-launcher hud-map-launcher"
+        type="button"
+        aria-expanded={false}
+        aria-label={strings.expandMap}
+        onClick={toggle}
+      >
+        <span aria-hidden="true">▦</span>
+      </button>
+    );
+  }
+  if (!model || !scene) return null;
   return (
     <PaperPanel className="hud-minimap">
+      <button
+        className="hud-panel-collapse"
+        type="button"
+        aria-expanded={true}
+        aria-label={strings.collapseMap}
+        onClick={toggle}
+      >
+        −
+      </button>
       <svg
         className="minimap-svg"
         viewBox={model.viewBox}

@@ -47,16 +47,18 @@ function input() {
         assets: office.assets
           .filter((asset) => asset.id !== 'phone_recording')
           .filter((a) => a.type !== 'npc' || a.id === 'anna')
-          .map((a) =>
-            a.id === 'anna'
+          .map((asset) => {
+            const { cue: _ignoredCue, ...a } = asset;
+            void _ignoredCue;
+            return a.id === 'anna'
               ? {
                   ...a,
                   interaction: { ...a.interaction, npcId: 'anna' },
                 }
               : a.id === 'hallway_door'
                 ? { ...a, interaction: { ...a.interaction, transition: undefined } }
-                : a,
-          ),
+                : a;
+          }),
       },
     ],
     npcsRaw: {

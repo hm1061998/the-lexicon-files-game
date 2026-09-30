@@ -28,11 +28,17 @@ export type GameStoreState = {
   activeSceneId: string;
   nearby: { id: string; prompt: string } | null;
   /** Screen anchor (canvas-relative CSS px) of the nearby target, published by Phaser. */
-  interactionAnchor: { x: number; y: number } | null;
+  interactionAnchor: {
+    x: number;
+    y: number;
+    avoidRects?: readonly { left: number; top: number; right: number; bottom: number }[];
+  } | null;
   /** Published view of the Phaser player position (Phaser stays the source); null until known. */
   playerPosition: { x: number; y: number; coordinateSpace?: 'screen' | 'logical' } | null;
   /** HUD-only visibility of the minimap; deliberately not saved or in settings. */
   minimapVisible: boolean;
+  /** HUD-only visibility of the active objective; deliberately not saved. */
+  objectiveVisible: boolean;
   paused: boolean;
   activeEvidenceId: string | null;
   notebookOpen: boolean;
@@ -46,6 +52,7 @@ export type GameStoreState = {
   setPlayerPosition(position: { x: number; y: number } | null): void;
   /** Toggles the minimap; no-op while input is locked (pause, modal, closed case). */
   toggleMinimap(): void;
+  toggleObjective(): void;
   togglePause(): void;
   setPaused(p: boolean): void;
   openEvidence(id: string): void;
@@ -89,6 +96,7 @@ export function createGameStore(init: {
   initialState?: CaseState;
   initialPersistenceError?: string;
   initialSceneId?: string;
+  initialHudVisibility?: { minimapVisible: boolean; objectiveVisible: boolean };
 }): GameStore {
   const initialSceneId = init.initialSceneId ?? init.caseDefinition.scenes[0]?.id;
   const initialScene = init.caseDefinition.scenes.find(({ id }) => id === initialSceneId);
@@ -104,7 +112,8 @@ export function createGameStore(init: {
     nearby: null,
     interactionAnchor: null,
     playerPosition: null,
-    minimapVisible: true,
+    minimapVisible: init.initialHudVisibility?.minimapVisible ?? true,
+    objectiveVisible: init.initialHudVisibility?.objectiveVisible ?? true,
     paused: false,
     activeEvidenceId: null,
     notebookOpen: false,
@@ -125,6 +134,9 @@ export function createGameStore(init: {
     },
     toggleMinimap() {
       set((s) => (s.inputLocked ? s : { minimapVisible: !s.minimapVisible }));
+    },
+    toggleObjective() {
+      set((s) => (s.inputLocked ? s : { objectiveVisible: !s.objectiveVisible }));
     },
     togglePause() {
       get().setPaused(!get().paused);

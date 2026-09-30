@@ -10,28 +10,76 @@
   },
   "sceneIds": ["main_office", "archive"],
   "sharedTextures": [
-    { "key": "tex_player_ne", "url": "/assets/characters/player/chr_player_idle_ne.png" },
-    { "key": "tex_player_se", "url": "/assets/characters/player/chr_player_idle_se.png" },
-    { "key": "tex_player_sw", "url": "/assets/characters/player/chr_player_idle_sw.png" },
-    { "key": "tex_player_nw", "url": "/assets/characters/player/chr_player_idle_nw.png" },
+    {
+      "key": "tex_player_ne",
+      "url": "/assets/characters/player/chr_player_idle_ne.png"
+    },
+    {
+      "key": "tex_player_se",
+      "url": "/assets/characters/player/chr_player_idle_se.png"
+    },
+    {
+      "key": "tex_player_sw",
+      "url": "/assets/characters/player/chr_player_idle_sw.png"
+    },
+    {
+      "key": "tex_player_nw",
+      "url": "/assets/characters/player/chr_player_idle_nw.png"
+    },
     {
       "key": "sheet_player_walk",
       "url": "/assets/characters/player/chr_player_walk.png",
       "frameWidth": 160,
       "frameHeight": 160
     },
-    { "key": "tex_anna_ne", "url": "/assets/characters/anna/chr_anna_idle_ne.png" },
-    { "key": "tex_anna_se", "url": "/assets/characters/anna/chr_anna_idle_se.png" },
-    { "key": "tex_anna_sw", "url": "/assets/characters/anna/chr_anna_idle_sw.png" },
-    { "key": "tex_anna_nw", "url": "/assets/characters/anna/chr_anna_idle_nw.png" },
-    { "key": "tex_leo_ne", "url": "/assets/characters/leo/chr_leo_idle_ne.png" },
-    { "key": "tex_leo_se", "url": "/assets/characters/leo/chr_leo_idle_se.png" },
-    { "key": "tex_leo_sw", "url": "/assets/characters/leo/chr_leo_idle_sw.png" },
-    { "key": "tex_leo_nw", "url": "/assets/characters/leo/chr_leo_idle_nw.png" },
-    { "key": "tex_david_ne", "url": "/assets/characters/david/chr_david_idle_ne.png" },
-    { "key": "tex_david_se", "url": "/assets/characters/david/chr_david_idle_se.png" },
-    { "key": "tex_david_sw", "url": "/assets/characters/david/chr_david_idle_sw.png" },
-    { "key": "tex_david_nw", "url": "/assets/characters/david/chr_david_idle_nw.png" },
+    {
+      "key": "tex_anna_ne",
+      "url": "/assets/characters/anna/chr_anna_idle_ne.png"
+    },
+    {
+      "key": "tex_anna_se",
+      "url": "/assets/characters/anna/chr_anna_idle_se.png"
+    },
+    {
+      "key": "tex_anna_sw",
+      "url": "/assets/characters/anna/chr_anna_idle_sw.png"
+    },
+    {
+      "key": "tex_anna_nw",
+      "url": "/assets/characters/anna/chr_anna_idle_nw.png"
+    },
+    {
+      "key": "tex_leo_ne",
+      "url": "/assets/characters/leo/chr_leo_idle_ne.png"
+    },
+    {
+      "key": "tex_leo_se",
+      "url": "/assets/characters/leo/chr_leo_idle_se.png"
+    },
+    {
+      "key": "tex_leo_sw",
+      "url": "/assets/characters/leo/chr_leo_idle_sw.png"
+    },
+    {
+      "key": "tex_leo_nw",
+      "url": "/assets/characters/leo/chr_leo_idle_nw.png"
+    },
+    {
+      "key": "tex_david_ne",
+      "url": "/assets/characters/david/chr_david_idle_ne.png"
+    },
+    {
+      "key": "tex_david_se",
+      "url": "/assets/characters/david/chr_david_idle_se.png"
+    },
+    {
+      "key": "tex_david_sw",
+      "url": "/assets/characters/david/chr_david_idle_sw.png"
+    },
+    {
+      "key": "tex_david_nw",
+      "url": "/assets/characters/david/chr_david_idle_nw.png"
+    },
     {
       "key": "sheet_anna_walk",
       "url": "/assets/characters/anna/chr_anna_walk.png",
@@ -71,7 +119,12 @@
       "walk": "sheet_anna_walk"
     },
     "leo": {
-      "idle": { "NE": "tex_leo_ne", "SE": "tex_leo_se", "SW": "tex_leo_sw", "NW": "tex_leo_nw" },
+      "idle": {
+        "NE": "tex_leo_ne",
+        "SE": "tex_leo_se",
+        "SW": "tex_leo_sw",
+        "NW": "tex_leo_nw"
+      },
       "walk": "sheet_leo_walk"
     },
     "david": {
@@ -86,15 +139,42 @@
   },
   "timeline": {
     "slots": [
-      { "id": "20_00", "time": "20:00" },
-      { "id": "20_18", "time": "20:18" },
-      { "id": "20_27", "time": "20:27" },
-      { "id": "20_29", "time": "20:29" },
-      { "id": "20_32", "time": "20:32" },
-      { "id": "20_36", "time": "20:36" },
-      { "id": "20_40", "time": "20:40" },
-      { "id": "20_45", "time": "20:45" },
-      { "id": "21_05", "time": "21:05" }
+      {
+        "id": "20_00",
+        "time": "20:00"
+      },
+      {
+        "id": "20_18",
+        "time": "20:18"
+      },
+      {
+        "id": "20_27",
+        "time": "20:27"
+      },
+      {
+        "id": "20_29",
+        "time": "20:29"
+      },
+      {
+        "id": "20_32",
+        "time": "20:32"
+      },
+      {
+        "id": "20_36",
+        "time": "20:36"
+      },
+      {
+        "id": "20_40",
+        "time": "20:40"
+      },
+      {
+        "id": "20_45",
+        "time": "20:45"
+      },
+      {
+        "id": "21_05",
+        "time": "21:05"
+      }
     ],
     "events": [
       {
@@ -105,7 +185,10 @@
         "personIds": [],
         "source": "Meeting Minutes",
         "confidence": "Recorded in the meeting minutes.",
-        "availability": { "type": "requiresFacts", "factIds": ["meeting_started"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["meeting_started"]
+        }
       },
       {
         "id": "anna_exit_20_18",
@@ -115,7 +198,10 @@
         "personIds": ["anna"],
         "source": "Security Access Log",
         "confidence": "Recorded directly in the access log.",
-        "availability": { "type": "requiresFacts", "factIds": ["anna_exit_20_18"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["anna_exit_20_18"]
+        }
       },
       {
         "id": "leo_exit_20_27",
@@ -125,7 +211,10 @@
         "personIds": ["leo"],
         "source": "Security Access Log",
         "confidence": "Recorded directly in the access log.",
-        "availability": { "type": "requiresFacts", "factIds": ["leo_exit_20_27"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["leo_exit_20_27"]
+        }
       },
       {
         "id": "leo_outside_at_2029",
@@ -135,7 +224,10 @@
         "personIds": ["leo"],
         "source": "Leo's phone recording",
         "confidence": "Heard in the recording.",
-        "availability": { "type": "requiresFacts", "factIds": ["leo_outside_at_2029"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["leo_outside_at_2029"]
+        }
       },
       {
         "id": "david_entry_20_32",
@@ -145,7 +237,10 @@
         "personIds": ["david"],
         "source": "Security Access Log",
         "confidence": "Recorded directly in the access log.",
-        "availability": { "type": "requiresFacts", "factIds": ["david_entry_20_32"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["david_entry_20_32"]
+        }
       },
       {
         "id": "david_exit_20_36",
@@ -155,7 +250,10 @@
         "personIds": ["david"],
         "source": "Security Access Log",
         "confidence": "Recorded directly in the access log.",
-        "availability": { "type": "requiresFacts", "factIds": ["david_exit_20_36"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["david_exit_20_36"]
+        }
       },
       {
         "id": "leo_entry_20_40",
@@ -165,7 +263,10 @@
         "personIds": ["leo"],
         "source": "Security Access Log",
         "confidence": "Recorded directly in the access log.",
-        "availability": { "type": "requiresFacts", "factIds": ["leo_entry_20_40"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["leo_entry_20_40"]
+        }
       },
       {
         "id": "meeting_ended_20_45",
@@ -175,7 +276,10 @@
         "personIds": [],
         "source": "Meeting Minutes",
         "confidence": "Recorded in the meeting minutes.",
-        "availability": { "type": "requiresFacts", "factIds": ["meeting_ended_20_45"] }
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["meeting_ended_20_45"]
+        }
       },
       {
         "id": "report_missing_21_05",
@@ -185,8 +289,20 @@
         "personIds": [],
         "source": "Case introduction",
         "confidence": "Established in the case introduction.",
-        "availability": { "type": "availableFromStart" }
+        "availability": {
+          "type": "availableFromStart"
+        }
       }
     ]
+  },
+  "audio": {
+    "sfx": {
+      "footstep": ["/audio/case-001/sfx/step-1.wav", "/audio/case-001/sfx/step-2.wav"],
+      "paper": ["/audio/case-001/sfx/paper.wav"],
+      "ui": ["/audio/case-001/sfx/ui.wav"],
+      "evidence": ["/audio/case-001/sfx/evidence.wav"],
+      "door": ["/audio/case-001/sfx/door.wav"],
+      "dialogue": ["/audio/case-001/sfx/dialogue.wav"]
+    }
   }
 }

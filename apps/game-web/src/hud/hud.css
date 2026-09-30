@@ -37,6 +37,47 @@
   );
 }
 
+.hud-panel-launcher,
+.hud-panel-collapse {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 2px;
+  background: var(--lexicon-paper);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.hud-panel-launcher {
+  position: absolute;
+  top: 16px;
+  z-index: 2;
+  font-size: 24px;
+}
+
+.hud-objective-launcher {
+  left: 16px;
+}
+.hud-map-launcher {
+  right: 16px;
+  top: 84px;
+}
+
+.hud-panel-collapse {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 44px;
+  min-height: 44px;
+  z-index: 2;
+  font-size: 22px;
+  line-height: 1;
+}
+
 .hud-objective-clip {
   position: absolute;
   top: -6px;
@@ -122,7 +163,10 @@
 }
 
 .hud-interaction-paper {
-  padding: 8px 16px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgb(34 27 21 / 18%);
+  background: rgb(242 232 213 / 94%);
 }
 
 .hud-interaction-paper [role='status'] {
@@ -217,5 +261,50 @@
 
   .hud-key-hint {
     padding: 0 14px;
+  }
+}
+
+@media (max-width: 959px), (max-height: 639px) {
+  .hud-objective-panel {
+    max-width: min(340px, calc(100vw - 80px));
+    padding: 10px 44px 10px 32px;
+  }
+  .hud-objective-heading {
+    font-size: 15px;
+  }
+  .hud-objective-text {
+    font-size: 14px;
+  }
+  .hud-minimap {
+    top: 104px;
+    right: 8px;
+    width: min(184px, 38vw);
+  }
+  .hud-objective-launcher,
+  .hud-map-launcher {
+    top: 8px;
+  }
+  .hud-objective-launcher {
+    left: 8px;
+  }
+  .hud-map-launcher {
+    right: 8px;
+  }
+  .hud-case-progress {
+    top: 60px;
+    right: 8px;
+    width: auto;
+    min-width: 112px;
+    padding: 4px 8px;
+  }
+  .hud-key-hints {
+    display: none;
+  }
+  .hud-interaction-prompt {
+    bottom: 20px;
+  }
+  .hud-interaction-paper {
+    padding: 5px 9px;
+    font-size: 14px;
   }
 }

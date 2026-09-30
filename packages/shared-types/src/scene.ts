@@ -1,4 +1,4 @@
-import type { Effect } from './case-engine';
+import type { Condition, Effect } from './case-engine';
 
 /** A texture key and the public URL it is loaded from (always under `/assets/`). */
 export interface TextureEntry {
@@ -115,6 +115,14 @@ interface SceneAssetCommon {
   readonly elevationPx?: number | undefined;
   readonly collision?: RectCollision | LogicalRectCollision | undefined;
   readonly interaction?: InteractionArea | undefined;
+  readonly cue?:
+    | {
+        readonly kind: 'evidence';
+        readonly evidenceId: string;
+        readonly visibleWhen?: Condition | undefined;
+      }
+    | { readonly kind: 'door'; readonly visibleWhen?: Condition | undefined }
+    | undefined;
 }
 
 export type LegacySceneAssetDefinition = SceneAssetCommon & {
@@ -152,6 +160,10 @@ export type SceneAssetDefinition =
 interface SceneLabelCommon {
   readonly id: string;
   readonly text: string;
+  readonly mount?:
+    | { readonly kind: 'floor' }
+    | { readonly kind: 'wall'; readonly wallId: string; readonly elevationPx: number }
+    | undefined;
   /** Rotation in degrees, clockwise. */
   readonly angle?: number | undefined;
 }

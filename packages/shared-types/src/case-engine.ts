@@ -126,6 +126,7 @@ export interface CaseDefinition {
   readonly vocabularyContexts: readonly VocabularyContextDefinition[];
   readonly listeningTasks: readonly ListeningTaskDefinition[];
   readonly timeline: TimelineDefinition;
+  readonly audio?: import('./audio').CaseAudioDefinition | undefined;
   readonly contradictions: readonly ContradictionDefinition[];
   readonly conclusion?: CaseConclusionDefinition | undefined;
   /** Textures used by every scene (player facings and walk sheet, paper overlay); loaded once at boot. */

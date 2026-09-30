@@ -4,7 +4,7 @@ import { createAudioController, type AudioController } from './audioController';
 const noOp = () => undefined;
 const subscribeToNothing = () => () => undefined;
 
-export function useAudioPlayback(src: string) {
+export function useAudioPlayback(src: string, onPlayingChange?: (playing: boolean) => void) {
   const [controller, setController] = useState<AudioController | null>(null);
 
   useEffect(() => {
@@ -18,6 +18,11 @@ export function useAudioPlayback(src: string) {
     controller?.getSnapshot ?? (() => 'idle' as const),
     () => 'idle' as const,
   );
+
+  useEffect(() => {
+    onPlayingChange?.(state === 'playing');
+    return () => onPlayingChange?.(false);
+  }, [onPlayingChange, state]);
 
   return {
     state,

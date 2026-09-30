@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { SceneDefinition } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
-import { effectSchema } from './caseEngine';
+import { conditionSchema, effectSchema } from './caseEngine';
 import { assetPathSchema } from './assetPath';
 import { validateSceneGeometry } from '../geometry/sceneGeometry';
 
@@ -140,6 +140,18 @@ const sceneAssetDefinitionSchema = z
     collision: z.union([rectCollisionSchema, logicalCollisionSchema]).optional(),
     footprint: footprintSchema.optional(),
     interaction: interactionAreaSchema.optional(),
+    cue: z
+      .discriminatedUnion('kind', [
+        z
+          .object({
+            kind: z.literal('evidence'),
+            evidenceId: z.string().min(1),
+            visibleWhen: conditionSchema.optional(),
+          })
+          .strict(),
+        z.object({ kind: z.literal('door'), visibleWhen: conditionSchema.optional() }).strict(),
+      ])
+      .optional(),
   })
   .strict()
   .superRefine((asset, ctx) => {
@@ -167,6 +179,18 @@ const sceneLabelSchema = z
   .object({
     id: z.string().min(1),
     text: z.string().trim().min(1, 'label text must not be empty'),
+    mount: z
+      .discriminatedUnion('kind', [
+        z.object({ kind: z.literal('floor') }).strict(),
+        z
+          .object({
+            kind: z.literal('wall'),
+            wallId: z.string().min(1),
+            elevationPx: z.number().finite().nonnegative(),
+          })
+          .strict(),
+      ])
+      .optional(),
     x: z.number().finite().optional(),
     y: z.number().finite().optional(),
     u: z.number().finite().optional(),
@@ -233,6 +257,34 @@ export const sceneDefinitionSchema = z
   })
   .strict()
   .superRefine((scene, ctx) => {
+    scene.labels?.forEach((label, index) => {
+      if (!label.mount) return;
+      if (!scene.projection || label.u === undefined || label.v === undefined) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['labels', index],
+          message: 'mounted label requires logical dimetric coordinates',
+        });
+        return;
+      }
+      if (label.mount.kind !== 'wall') return;
+      const wallId = label.mount.wallId;
+      const wall = scene.walls?.find((wall) => wall.id === wallId);
+      const along = wall?.axis === 'u' ? label.u : label.v;
+      const across = wall?.axis === 'u' ? label.v : label.u;
+      if (
+        !wall ||
+        Math.abs(across - wall.line) > 1e-6 ||
+        along < wall.start ||
+        along > wall.end ||
+        wall.openings.some((o) => along >= o.start && along <= o.end)
+      )
+        ctx.addIssue({
+          code: 'custom',
+          path: ['labels', index, 'mount'],
+          message: 'mounted label anchor must be on an existing solid wall segment',
+        });
+    });
     if (scene.walls !== undefined) {
       if (!scene.projection || !('u' in scene.worldBounds))
         ctx.addIssue({

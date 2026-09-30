@@ -20,7 +20,13 @@ async function openWorld(page: Page): Promise<void> {
   await page.waitForFunction(
     () => (window as unknown as { __lexiconDebug?: DebugApi }).__lexiconDebug !== undefined,
   );
-  await expect(page.locator('.hud-key-hints')).toBeVisible();
+  const viewport = page.viewportSize();
+  const keyHints = page.locator('.hud-key-hints');
+  if (viewport && (viewport.width < 960 || viewport.height < 640)) {
+    await expect(keyHints).toBeHidden();
+  } else {
+    await expect(keyHints).toBeVisible();
+  }
 }
 
 /** Retry Esc until the pause dialog shows; the key can be lost before shortcuts are wired. */
@@ -211,7 +217,8 @@ test('collecting evidence opens modal, locks movement, and adds it to the notebo
   await expect(page.getByText('Meeting Minutes')).toBeVisible();
   await page.keyboard.press('Escape');
   await page.keyboard.press('e');
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toContainText("Leo's Phone Recording");
+  await page.getByRole('button', { name: 'Đóng' }).click();
   await expect(page.locator('canvas')).toHaveCount(1);
 });
 
@@ -343,6 +350,11 @@ test('minimap shows the player, follows movement and toggles with M', async ({ p
 
   await page.keyboard.press('m');
   await expect(minimap).toHaveCount(0);
+  const launcher = page.locator('.hud-map-launcher');
+  await expect(launcher).toBeVisible();
+  const launcherBox = (await launcher.boundingBox())!;
+  const badgeBox = (await page.locator('.hud-case-progress').boundingBox())!;
+  expect(overlaps(launcherBox, badgeBox)).toBe(false);
   await page.keyboard.press('m');
   await expect(minimap).toBeVisible();
 });
@@ -367,8 +379,8 @@ test('minimap M is ignored while typing and while paused', async ({ page }) => {
 
 test('minimap does not overlap the other HUD elements', async ({ page }) => {
   const viewports = [
-    { width: 760, height: 600 },
     { width: 1280, height: 720 },
+    { width: 760, height: 600 },
   ];
   await page.setViewportSize(viewports[0]!);
   await openWorld(page);
@@ -384,6 +396,7 @@ test('minimap does not overlap the other HUD elements', async ({ page }) => {
       '.hud-key-hints',
     ]) {
       const box = await page.locator(selector).boundingBox();
+      if (box === null && (viewport.width < 960 || viewport.height < 640)) continue;
       expect(box, `${viewport.width}x${viewport.height} ${selector}`).not.toBeNull();
       expect(overlaps(minimap, box!), `${viewport.width}x${viewport.height} ${selector}`).toBe(
         false,
@@ -396,6 +409,8 @@ test('minimap is hidden on narrow viewports', async ({ page }) => {
   await page.setViewportSize({ width: 700, height: 720 });
   await openWorld(page);
   await expect(page.locator('.hud-minimap')).toBeHidden();
+  await expect(page.locator('.hud-map-launcher')).toBeVisible();
+  await expect(page.locator('.hud-objective-launcher')).toBeVisible();
 });
 
 test('HUD chrome follows the concept: red objective heading, clip, case badge, movement and action key bar', async ({
@@ -476,13 +491,10 @@ test('notebook buttons keep a >=3px focus ring and hover skips disabled buttons'
   expect(outline.o).toBeGreaterThanOrEqual(3);
 });
 
-test('key bar wraps instead of overflowing at 760px', async ({ page }) => {
+test('compact viewports hide the key bar to preserve game space', async ({ page }) => {
   await page.setViewportSize({ width: 760, height: 720 });
   await openWorld(page);
-  const overflow = await page
-    .locator('.hud-key-hints')
-    .evaluate((el) => el.scrollWidth > el.clientWidth);
-  expect(overflow).toBe(false);
+  await expect(page.locator('.hud-key-hints')).toBeHidden();
 });
 
 type Rect = { left: number; top: number; right: number; bottom: number };
@@ -514,6 +526,7 @@ test('interaction bubble sits by the note, inside the viewport and clear of the 
   await expect(bubble).toBeVisible();
   await expect(bubble).toContainText('Đọc ghi chú');
   await expect(bubble).toHaveAttribute('data-anchor-x', /.+/);
+  await expect(bubble).toHaveAttribute('data-avoid-rect-count', '2');
   const box = (await rectOf(page, '.hud-interaction-bubble'))!;
   const viewport = { left: 0, top: 0, right: 1280, bottom: 720 };
   expect(box.left).toBeGreaterThanOrEqual(viewport.left);

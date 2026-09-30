@@ -50,7 +50,7 @@ class WorldModuleTests(unittest.TestCase):
         from PIL import Image
         root = Path(__file__).resolve().parents[2]
         catalog = json.loads((root/'packages/game-content/cases/case-001/environment-models.json').read_text())
-        self.assertEqual(len(catalog), 15)
+        self.assertEqual(len(catalog), 19)
         for name, model in catalog.items():
             with self.subTest(name=name):
                 self.assertEqual(model['camera'], 'dimetric-2:1')

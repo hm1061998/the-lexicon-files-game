@@ -504,9 +504,15 @@ test('the player can walk to the office exit and transition by interacting', asy
   const route = path(office, start, door);
   expect(route, 'default spawn -> hallway_door').not.toBeNull();
   await drive(page, route!, 'hallway_door');
-  await page.keyboard.press('e');
   await expect
-    .poll(() => page.evaluate(() => window.__lexiconDebug!.storeSceneId()), { timeout: 10_000 })
+    .poll(
+      async () => {
+        const current = await page.evaluate(() => window.__lexiconDebug!.storeSceneId());
+        if (current !== 'archive') await page.keyboard.press('e');
+        return current;
+      },
+      { timeout: 10_000 },
+    )
     .toBe('archive');
 });
 
@@ -519,25 +525,39 @@ test('the player can walk from the archive arrival spawn to the archive exit and
   const start = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!);
   await drive(page, path(office, start, exit)!, exit.id);
   const officeDebug = await page.evaluateHandle(() => window.__lexiconDebug);
-  await page.keyboard.press('e');
   await expect
-    .poll(() => page.evaluate(() => window.__lexiconDebug!.storeSceneId()))
+    .poll(async () => {
+      const current = await page.evaluate(() => window.__lexiconDebug!.storeSceneId());
+      if (current !== 'archive') await page.keyboard.press('e');
+      return current;
+    })
     .toBe('archive');
   await page.waitForFunction((old) => window.__lexiconDebug !== old, officeDebug);
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.logicalPlayer()))
+    .toEqual({ u: 14.85, v: 5 });
   const archive = sceneById.get('archive')!;
   const door = areas(archive).find(({ id }) => id === 'PLACEHOLDER_archive_door')!;
   const arrival = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!);
   const route = path(archive, arrival, door);
   expect(route).not.toBeNull();
   await drive(page, route!, door.id);
-  await page.keyboard.press('e');
+  const archiveDebug = await page.evaluateHandle(() => window.__lexiconDebug);
   await expect
-    .poll(() => page.evaluate(() => window.__lexiconDebug!.storeSceneId()))
+    .poll(async () => {
+      const current = await page.evaluate(() => window.__lexiconDebug!.storeSceneId());
+      if (current !== 'main_office') await page.keyboard.press('e');
+      return current;
+    })
     .toBe('main_office');
+  await page.waitForFunction((old) => window.__lexiconDebug !== old, archiveDebug);
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.logicalPlayer()))
+    .toEqual({ u: 0.9, v: 5 });
 });
 
 test('scene review captures office and archive at desktop viewport', async ({ page }) => {
-  const output = '../../.superpowers/sdd/2026-09-30-phase-11e-office-archive-static-world-redesign';
+  const output = '../../.superpowers/sdd/2026-09-30-phase-11e-feedback-polish';
   mkdirSync(output, { recursive: true });
   await page.setViewportSize({ width: 1280, height: 720 });
   await open(page);

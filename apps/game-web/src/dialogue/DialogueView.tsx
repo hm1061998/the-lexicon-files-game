@@ -10,6 +10,7 @@ import type {
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './dialogue.css';
 import { VocabularyText } from '../vocabulary/VocabularyText';
+import { DialogueVoiceControls } from './DialogueVoiceControls';
 const FOCUSABLE =
   'button:not(:disabled), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 export type DialogueViewProps = {
@@ -111,6 +112,7 @@ export function DialogueView({
               onTutorialSeen={onVocabularyTutorialSeen}
             />
           </p>
+          <DialogueVoiceControls audio={node.audio} strings={strings} />
           {error && (
             <p role="alert">
               {strings.dialogueError} {error}

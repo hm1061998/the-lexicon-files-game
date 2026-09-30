@@ -12,6 +12,7 @@ test-results
 *.tsbuildinfo
 .pytest_cache
 .venv-art-codegen
+.venv-audio-codegen
 
 # Keep the manually aligned provenance table readable.
 assets/PROVENANCE.md

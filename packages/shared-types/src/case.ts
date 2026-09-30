@@ -68,6 +68,14 @@ export interface UiStrings {
   readonly openNotebook: string;
   readonly minimapTitle: string;
   readonly toggleMap: string;
+  readonly collapseObjective: string;
+  readonly expandObjective: string;
+  readonly collapseMap: string;
+  readonly expandMap: string;
+  readonly voiceReplay: string;
+  readonly voiceLoading: string;
+  readonly voiceBlocked: string;
+  readonly voiceError: string;
   readonly vocabularyMode: string;
   readonly vocabularyModeBeginner: string;
   readonly vocabularyModeLearning: string;

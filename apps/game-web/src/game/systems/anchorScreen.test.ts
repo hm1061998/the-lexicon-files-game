@@ -116,9 +116,10 @@ describe('placeBubble', () => {
 });
 
 describe('canAnchorBubble', () => {
-  it('falls back to the fixed prompt below 720 px', () => {
-    expect(canAnchorBubble(719)).toBe(false);
-    expect(canAnchorBubble(720)).toBe(true);
+  it('uses the compact HUD cutoffs for bottom-safe-zone prompts', () => {
+    expect(canAnchorBubble(959, 720)).toBe(false);
+    expect(canAnchorBubble(960, 640)).toBe(true);
+    expect(canAnchorBubble(1280, 639)).toBe(false);
   });
 });
 
@@ -136,6 +137,29 @@ describe('shouldEmitAnchor', () => {
   it('ignores movement under 2 px', () => {
     expect(shouldEmitAnchor(a, { id: 'a', x: 1, y: 1 }, ANCHOR_EMIT_INTERVAL_MS)).toBe(false);
     expect(shouldEmitAnchor(a, { id: 'a', x: 2, y: 0 }, ANCHOR_EMIT_INTERVAL_MS)).toBe(true);
+  });
+
+  it('publishes a changed player avoidance rectangle after the normal throttle', () => {
+    const previous = {
+      id: 'a',
+      x: 10,
+      y: 12,
+      avoidRects: [{ left: 1, top: 2, right: 21, bottom: 42 }],
+    };
+    expect(
+      shouldEmitAnchor(
+        previous,
+        { ...previous, avoidRects: [{ left: 3, top: 2, right: 23, bottom: 42 }] },
+        ANCHOR_EMIT_INTERVAL_MS - 1,
+      ),
+    ).toBe(false);
+    expect(
+      shouldEmitAnchor(
+        previous,
+        { ...previous, avoidRects: [{ left: 3, top: 2, right: 23, bottom: 42 }] },
+        ANCHOR_EMIT_INTERVAL_MS,
+      ),
+    ).toBe(true);
   });
 
   it('emits at once when the target id changes, even within 50 ms and under 2 px', () => {

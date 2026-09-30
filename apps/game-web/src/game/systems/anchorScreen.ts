@@ -48,8 +48,8 @@ export function projectInteractionAnchor(
 /** Below this HUD width the bubble falls back to the fixed bottom-centre prompt. */
 export const MIN_ANCHORED_WIDTH = 720;
 
-export function canAnchorBubble(hudWidth: number): boolean {
-  return hudWidth >= MIN_ANCHORED_WIDTH;
+export function canAnchorBubble(hudWidth: number, hudHeight: number): boolean {
+  return hudWidth >= 960 && hudHeight >= 640;
 }
 
 /** Keeps a bubble of `size` inside the viewport with `margin` on every edge. */
@@ -94,7 +94,22 @@ export function placeBubble(
   return null;
 }
 
-export type IdAnchor = Point & { id: string };
+export type IdAnchor = Point & { id: string; avoidRects?: readonly Rect[] };
+
+function avoidRectsMoved(previous: IdAnchor, next: IdAnchor): boolean {
+  const a = previous.avoidRects ?? [];
+  const b = next.avoidRects ?? [];
+  if (a.length !== b.length) return true;
+  return a.some((rect, index) => {
+    const other = b[index]!;
+    return (
+      Math.abs(rect.left - other.left) >= ANCHOR_MIN_DISTANCE ||
+      Math.abs(rect.top - other.top) >= ANCHOR_MIN_DISTANCE ||
+      Math.abs(rect.right - other.right) >= ANCHOR_MIN_DISTANCE ||
+      Math.abs(rect.bottom - other.bottom) >= ANCHOR_MIN_DISTANCE
+    );
+  });
+}
 
 /**
  * Throttle for `interaction:anchor`: the first anchor and any change of target go out at once;
@@ -103,5 +118,8 @@ export type IdAnchor = Point & { id: string };
 export function shouldEmitAnchor(prev: IdAnchor | null, next: IdAnchor, dtMs: number): boolean {
   if (prev === null || prev.id !== next.id) return true;
   if (dtMs < ANCHOR_EMIT_INTERVAL_MS) return false;
-  return Math.hypot(next.x - prev.x, next.y - prev.y) >= ANCHOR_MIN_DISTANCE;
+  return (
+    Math.hypot(next.x - prev.x, next.y - prev.y) >= ANCHOR_MIN_DISTANCE ||
+    avoidRectsMoved(prev, next)
+  );
 }

@@ -83,3 +83,23 @@
     max-height: calc(100vh - 88px);
   }
 }
+.dialogue-voice-controls {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  color: var(--lexicon-ink);
+  font-size: 14px;
+}
+
+.dialogue-voice-controls button {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--lexicon-border);
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  font-size: 22px;
+  cursor: pointer;
+}

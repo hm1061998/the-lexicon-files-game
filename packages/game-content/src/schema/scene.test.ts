@@ -4,6 +4,40 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 import mainOffice from '../../cases/case-001/scenes/main_office.json';
 import archive from '../../cases/case-001/scenes/archive.json';
 
+describe('mounted label contract', () => {
+  const rawWith = (mount: unknown, point = { u: 3.2, v: 0 }) => ({
+    ...mainOffice,
+    labels: [{ id: 'sign', text: 'Room', ...point, mount }],
+  });
+  it('accepts a wall-mounted label without changing scene colliders', () => {
+    const parsed = sceneDefinitionSchema.parse(
+      rawWith({ kind: 'wall', wallId: 'wall_back', elevationPx: 48 }),
+    );
+    expect(parsed.assets).toHaveLength(mainOffice.assets.length);
+  });
+  it('accepts a floor-mounted label', () => {
+    expect(
+      sceneDefinitionSchema.safeParse(rawWith({ kind: 'floor' }, { u: 7.5, v: 5.4 })).success,
+    ).toBe(true);
+  });
+  it('rejects a missing wall reference, off-plane anchor and doorway anchor', () => {
+    expect(
+      sceneDefinitionSchema.safeParse(rawWith({ kind: 'wall', wallId: 'missing', elevationPx: 48 }))
+        .success,
+    ).toBe(false);
+    expect(
+      sceneDefinitionSchema.safeParse(
+        rawWith({ kind: 'wall', wallId: 'wall_back', elevationPx: 48 }, { u: 3.2, v: 1 }),
+      ).success,
+    ).toBe(false);
+    expect(
+      sceneDefinitionSchema.safeParse(
+        rawWith({ kind: 'wall', wallId: 'west_wall_upper', elevationPx: 48 }, { u: 0, v: 5 }),
+      ).success,
+    ).toBe(false);
+  });
+});
+
 it('rejects a declared asset ID that collides with an expanded wall module', () => {
   const raw = structuredClone(mainOffice) as { assets: unknown[] };
   raw.assets.push({
@@ -120,7 +154,7 @@ describe('parseSceneDefinition', () => {
   });
 
   it('accepts a logical asset position and a tabletop attachment', () => {
-    const raw = structuredClone({ ...mainOffice, walls: undefined }) as {
+    const raw = structuredClone({ ...mainOffice, walls: undefined, labels: undefined }) as {
       assets: Array<Record<string, unknown>>;
     };
     const texture = raw.assets[0]!.texture;
@@ -148,7 +182,7 @@ describe('parseSceneDefinition', () => {
   });
 
   it('accepts a scene whose bounds, spawns, labels and assets use only logical coordinates', () => {
-    const raw = structuredClone({ ...mainOffice, walls: undefined }) as {
+    const raw = structuredClone({ ...mainOffice, walls: undefined, labels: undefined }) as {
       projection?: unknown;
       worldBounds?: unknown;
       spawnPoints?: unknown;
@@ -216,7 +250,7 @@ describe('parseSceneDefinition', () => {
   });
 
   it('accepts named spawn points and an interaction scene transition', () => {
-    const raw = structuredClone({ ...mainOffice, walls: undefined }) as {
+    const raw = structuredClone({ ...mainOffice, walls: undefined, labels: undefined }) as {
       spawn?: unknown;
       spawnPoints?: unknown;
       assets: Array<{ id: string; interaction?: Record<string, unknown> }>;

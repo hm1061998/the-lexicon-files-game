@@ -119,6 +119,20 @@ def office_chair(rot=0.0):
     return s
 
 
+CHAIR_DIRECTION_ANGLES = {"ne": math.pi, "nw": math.pi / 2, "se": -math.pi / 2, "sw": 0.0}
+
+
+def chair_forward(rot):
+    """Facing direction in the chair's logical floor plane (the backrest is opposite)."""
+    return np.array([-math.sin(rot), math.cos(rot)])
+
+
+def office_chair_direction(direction):
+    if direction not in CHAIR_DIRECTION_ANGLES:
+        raise ValueError(f"unknown office chair direction: {direction}")
+    return office_chair(CHAIR_DIRECTION_ANGLES[direction])
+
+
 def chair_into(s, x, y, rot):
     c = office_chair(rot)
     for f in c.faces:
@@ -473,6 +487,10 @@ def credenza():
 BUILDERS = dict(
     prop_office_desk_01=office_desk,
     prop_office_chair_01=lambda: office_chair(math.radians(-20)),
+    prop_office_chair_01_ne=lambda: office_chair_direction("ne"),
+    prop_office_chair_01_nw=lambda: office_chair_direction("nw"),
+    prop_office_chair_01_se=lambda: office_chair_direction("se"),
+    prop_office_chair_01_sw=lambda: office_chair_direction("sw"),
     prop_meeting_table_01=meeting_table,
     prop_filing_cabinet_01=filing_cabinet,
     prop_office_plant_01=plant,

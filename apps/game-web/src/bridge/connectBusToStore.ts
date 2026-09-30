@@ -11,9 +11,15 @@ export function connectBusToStore(bus: EventBus<GameEventMap>, store: GameStore)
     store.getState().setInteractionAnchor(null);
   });
   const offAnchor = bus.on('interaction:anchor', (anchor) => {
-    store
-      .getState()
-      .setInteractionAnchor(anchor.interactableId === null ? null : { x: anchor.x, y: anchor.y });
+    store.getState().setInteractionAnchor(
+      anchor.interactableId === null
+        ? null
+        : {
+            x: anchor.x,
+            y: anchor.y,
+            ...(anchor.avoidRects ? { avoidRects: anchor.avoidRects } : {}),
+          },
+    );
   });
   const offMoved = bus.on('player:moved', (position) => {
     store.getState().setPlayerPosition(position);

@@ -27,6 +27,12 @@ import { useMinimapShortcut } from '../hud/useMinimapShortcut';
 import { EvidenceModal } from '../evidence/EvidenceModal';
 import { NotebookPanel } from '../notebook/NotebookPanel';
 import { createGameStore, type GameStore } from '../state/gameStore';
+import { getInitialHudVisibility } from '../hud/initialHudVisibility';
+import { createWorldCueSource } from '../bridge/worldCueSource';
+import { createInteractionEligibilitySource } from '../bridge/interactionEligibility';
+import { createPresentationAudio } from '../audio/presentationAudio';
+import { PresentationAudioProvider } from '../audio/PresentationAudioContext';
+import { connectPresentationAudio } from '../bridge/connectPresentationAudio';
 import { GameStoreProvider, useGameStore } from '../state/GameStoreContext';
 import { createGame } from './createGame';
 import {
@@ -154,7 +160,7 @@ export function GameCanvas({
   if (!result.ok) {
     const issues = result.error instanceof ContentValidationError ? result.error.issues : [];
     return (
-      <pre role="alert" style={{ padding: 16, whiteSpace: 'pre-wrap' }}>
+      <pre role="alert" className="game-load-error">
         {result.error.message}
         {issues.length > 0 ? `\n\nIssues:\n${issues.map((i) => `- ${i}`).join('\n')}` : ''}
       </pre>
@@ -257,7 +263,7 @@ function SaveRecoveryScreen({
   onCancel(): void;
 }): JSX.Element {
   return (
-    <main role="alert" style={{ padding: 24 }}>
+    <main role="alert" className="save-recovery-screen">
       <h1>{strings.saveRecoveryTitle}</h1>
       <p>{strings.saveRecoveryBody}</p>
       <p>{reason}</p>
@@ -318,6 +324,10 @@ function GameRoot({
         caseDefinition,
         initialState,
         initialSceneId,
+        initialHudVisibility: getInitialHudVisibility(
+          typeof window === 'undefined' ? 1024 : window.innerWidth,
+          typeof window === 'undefined' ? 768 : window.innerHeight,
+        ),
         ...(persistenceWarning ? { initialPersistenceError: persistenceWarning } : {}),
       }),
       bus: createEventBus<GameEventMap>(),
@@ -335,12 +345,25 @@ function GameRoot({
     [caseDefinition, learningRecord, bus],
   );
   const settings = useMemo(() => createSettingsStore(settingsLoad.settings), [settingsLoad]);
+  const presentationAudio = useMemo(
+    () => createPresentationAudio(caseDefinition),
+    [caseDefinition],
+  );
+  const worldCueSource = useMemo(
+    () => createWorldCueSource(store, caseDefinition),
+    [store, caseDefinition],
+  );
+  const interactionEligibility = useMemo(
+    () => createInteractionEligibilitySource(store, caseDefinition),
+    [store, caseDefinition],
+  );
   const reducedMotion = useSyncExternalStore(
     settings.subscribe,
     () => settings.getState().settings.reducedMotion,
     () => false,
   );
   const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
+  useEffect(() => () => presentationAudio.dispose(), [presentationAudio]);
   usePauseShortcut(store);
   useNotebookShortcut(store);
   useMinimapShortcut(store);
@@ -354,6 +377,13 @@ function GameRoot({
     if (!container) return;
     const disconnect = connectBusToStore(bus, store);
     const disconnectCaseEngine = connectCaseEngine(bus, store, caseDefinition);
+    presentationAudio.activate();
+    const disconnectPresentationAudio = connectPresentationAudio(
+      bus,
+      store,
+      caseDefinition,
+      presentationAudio,
+    );
     const disconnectAutosave = autosaveEnabled
       ? connectAutosave(
           store,
@@ -375,14 +405,29 @@ function GameRoot({
         activeSceneId: () => store.getState().activeSceneId,
       },
       motion: { reducedMotion: () => settings.getState().settings.reducedMotion },
+      worldCueIds: () => worldCueSource.visibleIds(store.getState().activeSceneId),
+      interactionAvailable: interactionEligibility.isAvailable,
     });
     return () => {
       game.destroy(true);
       disconnect();
       disconnectCaseEngine();
+      disconnectPresentationAudio();
       disconnectAutosave?.();
     };
-  }, [scene, bus, store, settings, caseDefinition, autosaveEnabled, repository, strings]);
+  }, [
+    scene,
+    bus,
+    store,
+    settings,
+    caseDefinition,
+    autosaveEnabled,
+    repository,
+    strings,
+    worldCueSource,
+    interactionEligibility,
+    presentationAudio,
+  ]);
 
   useEffect(() => {
     if (!learningPersistenceEnabled) return;
@@ -425,58 +470,62 @@ function GameRoot({
       />
       {showPaperOverlay && <div className="game-paper-overlay" aria-hidden="true" />}
       <GameStoreProvider store={store}>
-        <LearningStoreProvider store={learning}>
-          <SettingsStoreProvider store={settings}>
-            <SettingsEffects />
-            {settingsNotice && (
-              <aside role="status" className="learning-recovery-notice">
-                {settingsNotice}
-              </aside>
-            )}
-            {showLearningRecovery && learningRecoveryRequired && (
-              <aside role="alert" className="learning-recovery-notice">
-                <p>
-                  {strings.vocabularyLearningError} {learningRecoveryRequired}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    void learningRepository
-                      .createFreshLearningAfterConfirmation()
-                      .then(() => {
-                        setLearningPersistenceEnabled(true);
-                        setShowLearningRecovery(false);
-                        setLearningWriteError(null);
-                      })
-                      .catch((error: unknown) => {
-                        setLearningWriteError(
-                          error instanceof Error ? error.message : strings.vocabularyLearningError,
-                        );
-                      });
-                  }}
-                >
-                  {strings.vocabularyResetTitle}
-                </button>
-                <button type="button" onClick={() => setShowLearningRecovery(false)}>
-                  {strings.cancel}
-                </button>
-              </aside>
-            )}
-            {(learningPersistenceError || learningWriteError) && (
-              <aside role="status" className="learning-recovery-notice">
-                {learningWriteError ??
-                  `${strings.vocabularyLearningError} ${learningPersistenceError}`}
-              </aside>
-            )}
-            <Hud strings={strings} />
-            <PersistenceNotice strings={strings} />
-            <DialogueLayer strings={strings} returnFocusRef={containerRef} />
-            <PauseLayer strings={strings} store={store} />
-            <EvidenceLayer strings={strings} />
-            <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
-            <CaseSummaryLayer strings={strings} />
-          </SettingsStoreProvider>
-        </LearningStoreProvider>
+        <PresentationAudioProvider audio={presentationAudio}>
+          <LearningStoreProvider store={learning}>
+            <SettingsStoreProvider store={settings}>
+              <SettingsEffects />
+              {settingsNotice && (
+                <aside role="status" className="learning-recovery-notice">
+                  {settingsNotice}
+                </aside>
+              )}
+              {showLearningRecovery && learningRecoveryRequired && (
+                <aside role="alert" className="learning-recovery-notice">
+                  <p>
+                    {strings.vocabularyLearningError} {learningRecoveryRequired}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void learningRepository
+                        .createFreshLearningAfterConfirmation()
+                        .then(() => {
+                          setLearningPersistenceEnabled(true);
+                          setShowLearningRecovery(false);
+                          setLearningWriteError(null);
+                        })
+                        .catch((error: unknown) => {
+                          setLearningWriteError(
+                            error instanceof Error
+                              ? error.message
+                              : strings.vocabularyLearningError,
+                          );
+                        });
+                    }}
+                  >
+                    {strings.vocabularyResetTitle}
+                  </button>
+                  <button type="button" onClick={() => setShowLearningRecovery(false)}>
+                    {strings.cancel}
+                  </button>
+                </aside>
+              )}
+              {(learningPersistenceError || learningWriteError) && (
+                <aside role="status" className="learning-recovery-notice">
+                  {learningWriteError ??
+                    `${strings.vocabularyLearningError} ${learningPersistenceError}`}
+                </aside>
+              )}
+              <Hud strings={strings} />
+              <PersistenceNotice strings={strings} />
+              <DialogueLayer strings={strings} returnFocusRef={containerRef} />
+              <PauseLayer strings={strings} store={store} />
+              <EvidenceLayer strings={strings} />
+              <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
+              <CaseSummaryLayer strings={strings} />
+            </SettingsStoreProvider>
+          </LearningStoreProvider>
+        </PresentationAudioProvider>
       </GameStoreProvider>
     </div>
   );

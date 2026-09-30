@@ -34,6 +34,7 @@ export type {
   CharacterSheets,
 } from './scene';
 export type { UiStrings } from './case';
+export type { AudioCue, DialogueAudio, CaseAudioDefinition } from './audio';
 export type {
   EvidenceCategory,
   ObjectiveDefinition,

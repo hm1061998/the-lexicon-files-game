@@ -12,6 +12,7 @@ const AVOID_SELECTORS = [
   '.hud-objective-panel',
   '.hud-case-progress',
   '.hud-key-hints',
+  '.hud-panel-launcher',
 ];
 
 type Placement = { pos: Point; anchor: Point };
@@ -58,7 +59,7 @@ export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Elem
     const canvas = hud?.parentElement?.querySelector('canvas');
     if (!bubble || !hud || !canvas || !anchor) return null;
     const origin = hud.getBoundingClientRect();
-    if (!canAnchorBubble(origin.width)) return null;
+    if (!canAnchorBubble(origin.width, origin.height)) return null;
     const canvasRect = canvas.getBoundingClientRect();
     // The anchor is canvas-relative CSS px; the canvas can be letterboxed inside the HUD.
     const point = {
@@ -66,9 +67,18 @@ export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Elem
       y: canvasRect.top - origin.top + anchor.y,
     };
     const size = { width: bubble.offsetWidth, height: bubble.offsetHeight };
-    const avoid = AVOID_SELECTORS.flatMap((selector) =>
-      Array.from(hud.querySelectorAll(selector), (el) => relativeRect(el, origin)),
-    );
+    const canvasObstacles = (anchor.avoidRects ?? []).map((rect) => ({
+      left: canvasRect.left - origin.left + rect.left,
+      top: canvasRect.top - origin.top + rect.top,
+      right: canvasRect.left - origin.left + rect.right,
+      bottom: canvasRect.top - origin.top + rect.bottom,
+    }));
+    const avoid = [
+      ...canvasObstacles,
+      ...AVOID_SELECTORS.flatMap((selector) =>
+        Array.from(hud.querySelectorAll(selector), (el) => relativeRect(el, origin)),
+      ),
+    ];
     const pos = placeBubble(
       point,
       size,
@@ -93,7 +103,11 @@ export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Elem
     return null;
   }
   // Wide screens wait for the first anchor so the prompt never flashes at the fallback spot.
-  if (!anchor && typeof window !== 'undefined' && canAnchorBubble(window.innerWidth)) {
+  if (
+    !anchor &&
+    typeof window !== 'undefined' &&
+    canAnchorBubble(window.innerWidth, window.innerHeight)
+  ) {
     return null;
   }
 
@@ -107,6 +121,7 @@ export function InteractionPrompt({ strings }: { strings: UiStrings }): JSX.Elem
       style={anchored ? { left: placement.pos.x, top: placement.pos.y } : undefined}
       data-anchor-x={anchored ? Math.round(placement.anchor.x) : undefined}
       data-anchor-y={anchored ? Math.round(placement.anchor.y) : undefined}
+      data-avoid-rect-count={anchor?.avoidRects?.length ?? 0}
     >
       <PaperPanel as="div" className="hud-interaction-paper">
         <div role="status" aria-live="polite">

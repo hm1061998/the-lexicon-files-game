@@ -10,7 +10,7 @@
 
 **Spec:** [Spec đã duyệt](../specs/2026-09-30-phase-11e-feedback-polish-design.md).
 
-**Trạng thái:** Người dùng đã duyệt plan bằng “duyệt plan” ngày 2026-09-30 và hỏi so sánh subagent/Native. Khuyến nghị giữ Native đã chọn, với một reviewer độc lập cuối; chưa triển khai feedback. Checkout `dev` hiện tại, chỉ commit local.
+**Trạng thái:** Người dùng đã duyệt plan bằng “duyệt plan” ngày 2026-09-30 và chọn tiếp tục Native inline. Tasks 1–10 đã được triển khai và technical gates đạt; Task 11 còn chờ vòng lặp E2E 3 lần như kế hoạch, verdict review đầy đủ và người dùng nghe/xem nghiệm thu. Checkout `dev`, chỉ commit local.
 
 ## Ràng buộc chung
 

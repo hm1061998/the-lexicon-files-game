@@ -352,4 +352,24 @@ describe('minimap state', () => {
     store.getState().toggleMinimap();
     expect(store.getState().minimapVisible).toBe(true);
   });
+
+  it('initializes and toggles HUD panels without changing case progress', () => {
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({
+      caseDefinition: definition,
+      initialHudVisibility: { minimapVisible: false, objectiveVisible: false },
+    });
+    const before = store.getState().caseState;
+    expect(store.getState().objectiveVisible).toBe(false);
+    store.getState().toggleObjective();
+    expect(store.getState().objectiveVisible).toBe(true);
+    store.getState().toggleObjective();
+    const other = definition.scenes.find(({ id }) => id !== store.getState().activeSceneId)!;
+    store.getState().transitionScene(other.id, Object.keys(other.spawnPoints)[0]!);
+    expect(store.getState().objectiveVisible).toBe(false);
+    expect(store.getState().caseState).toBe(before);
+    store.getState().togglePause();
+    store.getState().toggleObjective();
+    expect(store.getState().objectiveVisible).toBe(false);
+  });
 });

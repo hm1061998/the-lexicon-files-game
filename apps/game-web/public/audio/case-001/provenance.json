@@ -1,0 +1,241 @@
+{
+  "generator": "Kokoro KPipeline",
+  "generatorVersion": "0.9.4",
+  "pythonVersion": "3.12.14",
+  "torchVersion": "2.14.0+cpu",
+  "model": "hexgrad/Kokoro-82M",
+  "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987",
+  "modelSha256": "496dba118d1a58f5f3db2efc88dbdc216e0483fc89fe6e47ee1f2c53f18ad1e4",
+  "language": "American English (a)",
+  "sampleRate": 24000,
+  "channels": 1,
+  "subtype": "PCM_16",
+  "voices": {
+    "anna": "af_heart",
+    "leo": "am_michael",
+    "david": "am_fenrir"
+  },
+  "voiceSha256": {
+    "af_heart": "0ab5709b8ffab19bfd849cd11d98f75b60af7733253ad0d67b12382a102cb4ff",
+    "am_michael": "9a443b79a4b22489a5b0ab7c651a0bcd1a30bef675c28333f06971abbd47bd37",
+    "am_fenrir": "98e507eca1db08230ae3b6232d59c10aec9630022d19accac4f5d12fcec3c37a"
+  },
+  "clips": {
+    "anna_initial/entry": {
+      "speakerId": "anna",
+      "voiceId": "af_heart",
+      "text": "I left the meeting early. I had a call with a client.",
+      "textSha256": "1f51da8b0a6316e71017325a7ea55e27c392ae6356ec02442f81b2a4e72ff47d",
+      "wavSha256": "63008c26937d6242754e9445b36401c3d7255d67fbda84bbc1d3dd16be8e3169",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 3.525
+    },
+    "anna_initial/answer1": {
+      "speakerId": "anna",
+      "voiceId": "af_heart",
+      "text": "A little after eight fifteen.",
+      "textSha256": "62ee9f954a6ae9477b2aa5eeb760619c03edc2d0bfe7ef5177ff55570c548390",
+      "wavSha256": "df37d8a2c17f54280d6b631ede5eaa0ca3988851a3555a0367092cb8cbaca062",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.175
+    },
+    "anna_initial/answer2": {
+      "speakerId": "anna",
+      "voiceId": "af_heart",
+      "text": "No. I went directly to my desk.",
+      "textSha256": "c4eaeb5adba9a1219c34520613e3bc479a20af7f2f0bbb24e24b1fe2f33d1163",
+      "wavSha256": "a31b94ed785d465971aa034837ecd15bae7ba28b9ea489d5ba90247e56a20e23",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.675
+    },
+    "anna_initial/answer3": {
+      "speakerId": "anna",
+      "voiceId": "af_heart",
+      "text": "Leo and the team were still there.",
+      "textSha256": "506e834be9114e44d641d7966342d73202e8fd5812eb96194b5aaaf065eef58b",
+      "wavSha256": "8ddaa8fc9ef33d215f9abdd8efc685bdde59a6feeab8bc4267ec99fe8a0be938",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.4
+    },
+    "leo_initial/entry": {
+      "speakerId": "leo",
+      "voiceId": "am_michael",
+      "text": "I stepped outside to take a phone call.",
+      "textSha256": "716b7aa3ca402ebac9333b58ff7867b6e9c5903284ca82a41ae8a62f03459135",
+      "wavSha256": "8b4c6724632352ff53f36d09a2db28dd2299a9cc2256e5bc445462055285148c",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 3.1
+    },
+    "leo_initial/answer1": {
+      "speakerId": "leo",
+      "voiceId": "am_michael",
+      "text": "Around eight twenty-five.",
+      "textSha256": "216d7f9949d551696afad419971eb42066038e3233624d45d0a5ff072184ab30",
+      "wavSha256": "69c5d38d3d28d6e015ce2696fe2c9b7d7ddc56840562eb2b50193036f38786f4",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.35
+    },
+    "leo_initial/answer2": {
+      "speakerId": "leo",
+      "voiceId": "am_michael",
+      "text": "Around eight forty.",
+      "textSha256": "009a168973b7dc12b99f80242c2b0e221c038760ced2e8cce7984b1486267fe3",
+      "wavSha256": "1c85c00f5009182ab9745f94e1fca0a70635e9d830d71973db16f89d0ed9336a",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.025
+    },
+    "leo_initial/answer3": {
+      "speakerId": "leo",
+      "voiceId": "am_michael",
+      "text": "I saw him in the hallway before I went outside.",
+      "textSha256": "1aa0fc561cc44b651bab4c874fc41537daf8055192aa68caf11f46e41bd5c1e9",
+      "wavSha256": "6926e983b8cbe36a7b67ce30e47ba6ddc2b74b84059581533b353195f0651833",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 3.6
+    },
+    "david_initial/entry": {
+      "speakerId": "david",
+      "voiceId": "am_fenrir",
+      "text": "I didn't enter the meeting room after eight.",
+      "textSha256": "4d5de8cf0e95bcefc1cdc213a9ce1fce534b5703d986153b99993cfd083b0010",
+      "wavSha256": "4e8548717d5a951ae144fcaba7d348023b71fa55e7d92bd02202296fa14348f1",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.575
+    },
+    "david_initial/answer1": {
+      "speakerId": "david",
+      "voiceId": "am_fenrir",
+      "text": "I was working at my desk.",
+      "textSha256": "2261e18dc750c20ec5864617a3d5b37849660296445b68d4d12b1be305cef837",
+      "wavSha256": "61d8e40c35880e906259c5d167aa7114d96b1b676aa955017119c0b3309ff52b",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 1.85
+    },
+    "david_initial/answer2": {
+      "speakerId": "david",
+      "voiceId": "am_fenrir",
+      "text": "I saw it during the meeting, but not afterward.",
+      "textSha256": "3506f39d0384fd8063e963ba59b178bcbe980f147b0fe59f5916f423c9ef247f",
+      "wavSha256": "51a0159e7453d438ec8e847be932246074ac2f6deb09b56bfb764d1febdcadf9",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.85
+    },
+    "david_initial/answer3": {
+      "speakerId": "david",
+      "voiceId": "am_fenrir",
+      "text": "Yes. I'm certain.",
+      "textSha256": "9ccb9cd564b05398d8ba82cf2da4cab676a1cade109762b580ea80af10a74f7b",
+      "wavSha256": "e77debf44c30ea5203d8577cfc25be17025485d81086003809badb48cdbe66a4",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 1.6
+    },
+    "david_initial/answer3_unlocked": {
+      "speakerId": "david",
+      "voiceId": "am_fenrir",
+      "text": "...I may have gone in for a moment.",
+      "textSha256": "1939b3c20c82dee9180030609decc675f5117aa35c77c6aee25b2bb1190735e3",
+      "wavSha256": "c37be26d471ec76a07b726717695a7211a75acc3db415adafd7500e89bb39d5f",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 1.975
+    },
+    "david_initial/collect_folder": {
+      "speakerId": "david",
+      "voiceId": "am_fenrir",
+      "text": "I only went in to collect a folder.",
+      "textSha256": "a142ac91021d4d1cb0adf7a41aaa32b82579a29e0d672afc176fc82a081f6c20",
+      "wavSha256": "8ea7a7726ed3585354bc0c6aff2f5ff338118c67c5d836ea89c5d8df2a547633",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 2.475
+    },
+    "david_initial/confession": {
+      "speakerId": "david",
+      "voiceId": "am_fenrir",
+      "text": "The Quarterly Risk Report. I found an error I had missed and panicked. I took it to correct it before anyone noticed.",
+      "textSha256": "07fbf4dc517f8fddda8ea802c2de982d49a284b0999aded3183a4ccf721bec84",
+      "wavSha256": "e646b1daeae9043415b8a69689fb9a592cf79448cea1e257ed934c637cbb9e55",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "durationSeconds": 7.75
+    }
+  },
+  "sfx": {
+    "footstep/step-1": {
+      "url": "/audio/case-001/sfx/step-1.wav",
+      "wavSha256": "0253bc611d9932138d174dd53cfdfb8fab75afce1dcd88968dd114ff22838880",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16
+    },
+    "footstep/step-2": {
+      "url": "/audio/case-001/sfx/step-2.wav",
+      "wavSha256": "77906e91571af9af8fbd385d83c7bc196bd5366288a33a8ad76d4cb4936cb5db",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16
+    },
+    "paper/paper": {
+      "url": "/audio/case-001/sfx/paper.wav",
+      "wavSha256": "075f146c9b3473ef8994b00777125d31694c38b7959e9c50fd59658a4e6b2580",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16
+    },
+    "ui/ui": {
+      "url": "/audio/case-001/sfx/ui.wav",
+      "wavSha256": "d258080dbf86063a4f9e17449b88396d648359445007e747247ff23f9ca5d367",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16
+    },
+    "evidence/evidence": {
+      "url": "/audio/case-001/sfx/evidence.wav",
+      "wavSha256": "de202c552ef315d03c91560628cb42533f0e9ef5e320a584e6e21fd5ac4982a4",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16
+    },
+    "door/door": {
+      "url": "/audio/case-001/sfx/door.wav",
+      "wavSha256": "1fa01b8d88f5f577f964038d9615bfabb8836753383d1f219a38c5d356b9f0a7",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16
+    },
+    "dialogue/dialogue": {
+      "url": "/audio/case-001/sfx/dialogue.wav",
+      "wavSha256": "a6673ebc8e58a77f98a4745675453e32d544d2a8d64461ca3571a0e00d072d16",
+      "sampleRate": 24000,
+      "channels": 1,
+      "bitsPerSample": 16
+    }
+  }
+}

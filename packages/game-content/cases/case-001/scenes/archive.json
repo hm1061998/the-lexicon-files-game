@@ -23,7 +23,7 @@
       "v": 5
     },
     "from_office": {
-      "u": 0.9,
+      "u": 14.85,
       "v": 5
     }
   },
@@ -39,10 +39,6 @@
     {
       "key": "tex_filing_cabinet",
       "url": "/assets/environment/props/dimetric/prop_filing_cabinet_01.png"
-    },
-    {
-      "key": "tex_office_chair",
-      "url": "/assets/environment/props/dimetric/prop_office_chair_01.png"
     },
     {
       "key": "tex_meeting_table",
@@ -107,6 +103,10 @@
     {
       "key": "tex_wall_archive_v_cap_end",
       "url": "/assets/environment/archive/wall_v_cap_end.png"
+    },
+    {
+      "key": "tex_office_chair_se",
+      "url": "/assets/environment/props/dimetric/prop_office_chair_01_se.png"
     }
   ],
   "assets": [
@@ -162,6 +162,10 @@
         "v": -0.41,
         "width": 0.7,
         "height": 0.82
+      },
+      "cue": {
+        "kind": "evidence",
+        "evidenceId": "security_access_log"
       }
     },
     {
@@ -170,7 +174,7 @@
       "texture": "tex_door_hallway",
       "depthBias": 0,
       "interaction": {
-        "x": 0.575,
+        "x": -0.575,
         "y": 0,
         "radius": 80,
         "prompt": "Quay lại Main Office",
@@ -182,7 +186,7 @@
       "origin": [0.5, 0.7922077922077922],
       "scale": 1,
       "position": {
-        "u": 0.125,
+        "u": 15.875,
         "v": 5
       },
       "footprint": {
@@ -190,6 +194,9 @@
         "v": -1,
         "width": 0.25,
         "height": 2
+      },
+      "cue": {
+        "kind": "door"
       }
     },
     {
@@ -695,7 +702,7 @@
     {
       "id": "decor_chair_terminal",
       "type": "prop",
-      "texture": "tex_office_chair",
+      "texture": "tex_office_chair_se",
       "depthBias": 0,
       "collision": {
         "type": "rect",
@@ -704,7 +711,7 @@
         "width": 0.6403975747948947,
         "height": 0.6749758939249384
       },
-      "origin": [0.5271923706342759, 0.8428547320560139],
+      "origin": [0.5358200498831367, 0.8511896381395547],
       "scale": 1,
       "position": {
         "u": 11,
@@ -1066,14 +1073,22 @@
     {
       "id": "label_archive_storage",
       "text": "KHO LƯU TRỮ",
-      "u": 3.5,
-      "v": 6.6
+      "u": 0,
+      "v": 8.5,
+      "mount": {
+        "kind": "wall",
+        "wallId": "archive_west_wall_lower",
+        "elevationPx": 48
+      }
     },
     {
       "id": "label_hallway",
       "text": "HÀNH LANG",
-      "u": 11,
-      "v": 4.5
+      "u": 11.5,
+      "v": 3.7,
+      "mount": {
+        "kind": "floor"
+      }
     }
   ],
   "walls": [
@@ -1093,13 +1108,7 @@
       "line": 0,
       "start": 0,
       "end": 6,
-      "openings": [
-        {
-          "id": "archive_hallway",
-          "start": 4,
-          "end": 6
-        }
-      ]
+      "openings": []
     },
     {
       "id": "archive_west_wall_lower",
@@ -1117,7 +1126,13 @@
       "line": 15.75,
       "start": 0,
       "end": 12,
-      "openings": []
+      "openings": [
+        {
+          "id": "archive_hallway_return",
+          "start": 4,
+          "end": 6
+        }
+      ]
     },
     {
       "id": "partition_archive_hall_n",

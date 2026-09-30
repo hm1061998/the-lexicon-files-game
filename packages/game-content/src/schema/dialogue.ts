@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { conditionSchema, effectSchema } from './caseEngine';
 import { vocabularySpanSchema } from './learning';
+import { dialogueAudioSchema } from './audio';
 const id = z.string().min(1);
 export const npcSchema = z.object({ id, name: id, role: id, dialogueTreeId: id }).strict();
 const choiceSchema = z
@@ -18,6 +19,7 @@ const nodeSchema = z
     id,
     speakerId: id,
     text: id,
+    audio: dialogueAudioSchema.optional(),
     translationVi: id.optional(),
     vocabularySpans: z.array(vocabularySpanSchema).optional(),
     terminal: z.boolean(),

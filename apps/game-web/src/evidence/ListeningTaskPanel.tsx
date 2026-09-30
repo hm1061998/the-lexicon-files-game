@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type {
   ListeningAnswerResult,
   ListeningTaskDefinition,
@@ -7,6 +7,7 @@ import type {
 } from '@lexicon/shared-types';
 import type { LearningAction } from '@lexicon/shared-types';
 import { useAudioPlayback } from '../audio/useAudioPlayback';
+import { useOptionalPresentationAudio } from '../audio/PresentationAudioContext';
 import type { SubtitlePreference } from '../persistence/settingsSchema';
 import { resolveTranscriptBlock, resolveTranscriptVisibility } from './transcriptVisibility';
 
@@ -29,7 +30,12 @@ export function ListeningTaskPanel({
   onTelemetry(event: ListeningEvent, elapsedMs?: number): void;
   strings: UiStrings;
 }): JSX.Element {
-  const playback = useAudioPlayback(task.audioAsset);
+  const presentationAudio = useOptionalPresentationAudio();
+  const onPlayingChange = useCallback(
+    (playing: boolean) => presentationAudio?.setListeningActive(playing),
+    [presentationAudio],
+  );
+  const playback = useAudioPlayback(task.audioAsset, onPlayingChange);
   const visibility = resolveTranscriptVisibility(mode, subtitles);
   const [transcriptOpen, setTranscriptOpen] = useState(false);
   const block = resolveTranscriptBlock(visibility, transcriptOpen);

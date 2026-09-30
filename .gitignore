@@ -22,5 +22,6 @@ obj/
 __pycache__/
 .pytest_cache/
 .venv-art-codegen/
+.venv-audio-codegen/
 assets/_incoming/*
 !assets/_incoming/.gitkeep

@@ -1,4 +1,6 @@
+import { mkdirSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
+import { scenePoint } from './sceneTestData';
 
 for (const size of [
   { width: 760, height: 600 },
@@ -9,7 +11,9 @@ for (const size of [
   test(`shell fits ${size.width}x${size.height} including letterbox`, async ({ page }) => {
     await page.setViewportSize(size);
     await page.goto('/');
-    await expect(page.locator('.hud-key-hints')).toBeVisible();
+    if (size.width < 960 || size.height < 640)
+      await expect(page.locator('.hud-key-hints')).toBeHidden();
+    else await expect(page.locator('.hud-key-hints')).toBeVisible();
     const check = async () => {
       const bounds = await page.evaluate(() => {
         const root = document.querySelector('.game-root')!;
@@ -59,3 +63,44 @@ for (const size of [
     await expect(notebook).toHaveCount(0);
   });
 }
+
+test('compact HUD panels keep 44px launchers and preserve manual visibility through resize', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 760, height: 600 });
+  await page.goto('/');
+  const objective = page.getByRole('button', { name: 'Mở mục tiêu' });
+  const map = page.getByRole('button', { name: 'Mở bản đồ' });
+  await expect(objective).toBeVisible();
+  await expect(map).toBeVisible();
+  for (const launcher of [objective, map]) {
+    const bounds = await launcher.boundingBox();
+    expect(bounds?.width).toBeGreaterThanOrEqual(44);
+    expect(bounds?.height).toBeGreaterThanOrEqual(44);
+  }
+  await objective.click();
+  await map.click();
+  await expect(page.getByRole('button', { name: 'Thu gọn mục tiêu' })).toHaveAttribute(
+    'aria-expanded',
+    'true',
+  );
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await expect(page.locator('.hud-objective-panel')).toBeVisible();
+  await expect(page.locator('.hud-minimap')).toBeVisible();
+});
+
+test('captures compact gameplay and a close interaction prompt for review', async ({ page }) => {
+  const output = '../../.superpowers/sdd/2026-09-30-phase-11e-feedback-polish';
+  mkdirSync(output, { recursive: true });
+  await page.setViewportSize({ width: 760, height: 600 });
+  await page.goto('/');
+  await page.waitForFunction(() => window.__lexiconDebug !== undefined);
+  await page.screenshot({ path: `${output}/compact-760x600.png` });
+
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const note = scenePoint('main_office', 'objective_note');
+  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), note);
+  const prompt = page.locator('.hud-interaction-prompt');
+  await expect(prompt).toBeVisible();
+  await prompt.screenshot({ path: `${output}/interaction-prompt.png` });
+});

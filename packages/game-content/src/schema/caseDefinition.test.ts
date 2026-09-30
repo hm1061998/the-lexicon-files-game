@@ -93,7 +93,7 @@ type RawInput = {
 
 function sceneWithEffects(effects: readonly unknown[]): unknown {
   const scene = structuredClone(mainOffice) as {
-    assets: Array<{ id: string; interaction?: Record<string, unknown> }>;
+    assets: Array<{ id: string; cue?: unknown; interaction?: Record<string, unknown> }>;
     [key: string]: unknown;
   };
   return {
@@ -106,16 +106,15 @@ function sceneWithEffects(effects: readonly unknown[]): unknown {
           asset.id !== 'david' &&
           asset.id !== 'phone_recording',
       )
-      .map((asset) =>
-        asset.id === 'objective_note'
-          ? { ...asset, interaction: { ...asset.interaction, effects } }
+      .map((asset) => {
+        const { cue: _ignoredCue, ...withoutCue } = asset;
+        void _ignoredCue;
+        return asset.id === 'objective_note'
+          ? { ...withoutCue, interaction: { ...asset.interaction, effects } }
           : asset.id === 'hallway_door'
-            ? {
-                ...asset,
-                interaction: { ...asset.interaction, transition: undefined },
-              }
-            : asset,
-      ),
+            ? { ...withoutCue, interaction: { ...asset.interaction, transition: undefined } }
+            : withoutCue;
+      }),
   };
 }
 

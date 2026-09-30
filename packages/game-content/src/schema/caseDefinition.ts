@@ -26,11 +26,13 @@ import {
 import { vocabularyCatalogueSchema, vocabularySpanSchema } from './learning';
 import { validateVocabularyReferences } from '../validation/vocabularyReferences';
 import { assetPathSchema } from './assetPath';
+import { caseAudioDefinitionSchema } from './audio';
 
 const caseRawSchema = z
   .object({
     id: z.string().min(1),
     title: z.string().min(1),
+    audio: caseAudioDefinitionSchema.optional(),
     evidenceTotal: z.number().int().min(0),
     initialObjectiveId: z.string().min(1),
     conclusion: z
@@ -620,6 +622,23 @@ export function parseCaseDefinition(
 
   scenes.forEach((scene, sceneIndex) => {
     scene.assets.forEach((asset, assetIndex) => {
+      const cuePath = `scenes.${sceneIndex}.assets.${assetIndex}.cue`;
+      if (asset.cue?.kind === 'evidence' && !evidenceIds.has(asset.cue.evidenceId)) {
+        issues.push(`${cuePath}.evidenceId: unknown evidence id "${asset.cue.evidenceId}"`);
+      }
+      if (asset.cue?.visibleWhen) {
+        validateConditionReferences(
+          asset.cue.visibleWhen,
+          evidenceIds,
+          factIds,
+          objectiveIds,
+          `${cuePath}.visibleWhen`,
+          issues,
+        );
+      }
+      if (asset.cue?.kind === 'door' && !asset.interaction?.transition) {
+        issues.push(`${cuePath}: door cue requires a scene transition`);
+      }
       asset.interaction?.effects?.forEach((effect, effectIndex) => {
         validateEffectReferences(
           effect,
@@ -665,6 +684,18 @@ export function parseCaseDefinition(
   if (issues.length > 0) throw new ContentValidationError(source, issues);
 
   const scenesInCaseOrder = caseData.sceneIds.map((id) => sceneById.get(id)!);
+  if (caseData.audio) {
+    const npcIds = new Set(npcsResult.data.npcs.map(({ id }) => id));
+    dialoguesResult.data.dialogues.forEach((tree, treeIndex) =>
+      tree.nodes.forEach((node, nodeIndex) => {
+        if (npcIds.has(node.speakerId) && !node.audio)
+          issues.push(
+            `dialogues.${treeIndex}.nodes.${nodeIndex}.audio: required when case audio is declared`,
+          );
+      }),
+    );
+    if (issues.length > 0) throw new ContentValidationError(source, issues);
+  }
   return {
     id: caseData.id,
     title: caseData.title,
@@ -680,6 +711,7 @@ export function parseCaseDefinition(
     vocabularyContexts,
     listeningTasks,
     timeline: caseData.timeline as TimelineDefinition,
+    ...(caseData.audio ? { audio: caseData.audio } : {}),
     contradictions,
     ...(conclusion ? { conclusion } : {}),
     sharedTextures: caseData.sharedTextures,

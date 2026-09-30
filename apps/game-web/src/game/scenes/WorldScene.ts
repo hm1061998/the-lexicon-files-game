@@ -8,6 +8,8 @@ import type {
 } from '@lexicon/shared-types';
 import { loadSceneTextures } from '../assetManifest';
 import { createRoomLabel } from '../entities/createRoomLabel';
+import { WorldCueLayer, type CueAnchor } from '../entities/WorldCueLayer';
+import { resolveLabelPlane } from '../systems/labelPlane';
 import { createSceneAsset } from '../entities/createSceneAsset';
 import {
   PLAYER_INITIAL_FACING,
@@ -24,7 +26,7 @@ import {
   SCENE_FADE_MS,
 } from '../constants';
 import { installDebugHook, paperOverlayAlpha } from '../debug';
-import { shouldEmitAnchor, worldToScreen, type IdAnchor } from '../systems/anchorScreen';
+import { shouldEmitAnchor, worldToScreen, type IdAnchor, type Rect } from '../systems/anchorScreen';
 import { computeIsoDepth, computePlayerDepth, PLAYER_DEPTH_EPSILON } from '../systems/depth';
 import type { Facing } from '../systems/direction';
 import { isTypingTarget, resolveInputVector } from '../systems/input';
@@ -33,6 +35,7 @@ import { InteractionTracker } from '../systems/InteractionTracker';
 import { markerMotion } from '../systems/markerMotion';
 import { isOccluder, occluderAlpha } from '../systems/occlusion';
 import { shouldEmitPlayerMoved } from '../systems/playerMoved';
+import { advanceFootstep, type FootstepState } from '../systems/footstepCadence';
 import { markerBaseY, markerPositionY } from '../systems/markerFloat';
 import { resolveSceneAssets } from '../systems/sceneAssetResolver';
 import {
@@ -68,6 +71,8 @@ export type WorldOptions = {
   input: InputLockSource;
   transitions: TransitionSource;
   motion: MotionSource;
+  worldCueIds?: () => ReadonlySet<string>;
+  interactionAvailable?: (sceneId: string, interactableId: string) => boolean;
 };
 
 type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
@@ -106,6 +111,7 @@ export class WorldScene extends Phaser.Scene {
   private targetBounds = new Map<string, () => Bounds>();
   private outline: Phaser.GameObjects.Graphics | null = null;
   private roomLabels: Array<{ text: string; sign: Phaser.GameObjects.Container }> = [];
+  private cueLayer: WorldCueLayer | null = null;
   /** Inner walls and wall-hung boards that fade while the player stands behind them. */
   private occluders: Array<{
     id: string;
@@ -129,6 +135,8 @@ export class WorldScene extends Phaser.Scene {
   private transitioning = false;
   private lastPublished: { x: number; y: number } | null = null;
   private sinceLastPublishMs = 0;
+  private footstepState: FootstepState = { distancePx: 0 };
+  private lastFootstepPoint: { x: number; y: number } | null = null;
   private fadeInPending = false;
   private fadeOutHandler: (() => void) | null = null;
   private pendingTransition: { loaded: boolean; faded: boolean } | null = null;
@@ -217,11 +225,19 @@ export class WorldScene extends Phaser.Scene {
       ...def.assets,
       ...expandWalls(def.walls ?? []).assets,
     ]);
+    const cueAnchors = new Map<string, CueAnchor>();
     for (const resolved of resolvedAssets) {
       const { asset } = resolved;
       const floorPoint = projectScenePoint(def, resolved.floorAnchor);
       const visualPoint = projectVisualAnchor(def, resolved.visualAnchor);
       const { sprite, body } = createSceneAsset(this, resolved, def.projection);
+      if (asset.cue) {
+        cueAnchors.set(asset.id, {
+          x: sprite.x,
+          y: sprite.getTopCenter().y - 12,
+          depth: sprite.depth + 2,
+        });
+      }
       this.depths.set(asset.id, sprite.depth);
       this.assetTextures.set(asset.id, sprite.texture.key);
       if (asset.type === 'npc') {
@@ -312,6 +328,8 @@ export class WorldScene extends Phaser.Scene {
         });
       }
     }
+    this.cueLayer = new WorldCueLayer(this, cueAnchors);
+    this.cueLayer.sync(options.worldCueIds?.() ?? new Set(), null, options.motion.reducedMotion());
 
     this.roomLabels = (def.labels ?? []).map((label) => ({
       text: label.text,
@@ -323,6 +341,7 @@ export class WorldScene extends Phaser.Scene {
               text: label.text,
               ...projectScenePoint(def, { u: label.u, v: label.v }),
               angle: label.angle,
+              plane: label.mount ? resolveLabelPlane(label, def) : undefined,
             }
           : label,
         LABEL_DEPTH,
@@ -417,6 +436,9 @@ export class WorldScene extends Phaser.Scene {
       },
       setNpcWalking: (id, walking) => this.setNpcWalking(id, walking),
       labels: () => this.roomLabels.map(({ text }) => text),
+      labelTextureCount: () =>
+        Object.keys(this.textures.list).filter((key) => key.startsWith('label-')).length,
+      worldCueCount: () => this.cueLayer?.activeCount ?? 0,
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
@@ -491,11 +513,18 @@ export class WorldScene extends Phaser.Scene {
   }
 
   override update(_time: number, delta: number): void {
+    this.updateFootstepCadence();
     this.syncNpcPresentation(_time);
     this.syncMarkerMotion();
     this.applyMarkerPosition();
     this.publishPlayerPosition(delta);
     this.syncTargetVisuals(delta);
+    this.clearUnavailableInteraction();
+    this.cueLayer?.sync(
+      this.options.worldCueIds?.() ?? new Set(),
+      this.interactionTracker.current,
+      this.options.motion.reducedMotion(),
+    );
     this.syncOccluders();
     if (!this.keys) return;
     if (this.transitioning || this.pendingTransition) {
@@ -537,6 +566,19 @@ export class WorldScene extends Phaser.Scene {
     );
     this.updateNearby();
     this.updateInteract(typing);
+  }
+
+  private updateFootstepCadence(): void {
+    const point = { x: this.player.x, y: this.player.y };
+    const distance = this.lastFootstepPoint
+      ? Math.hypot(point.x - this.lastFootstepPoint.x, point.y - this.lastFootstepPoint.y)
+      : 0;
+    this.lastFootstepPoint = point;
+    const locked =
+      this.transitioning || Boolean(this.pendingTransition) || this.inputLock.isInputLocked();
+    const result = advanceFootstep(this.footstepState, distance, locked);
+    this.footstepState = result.state;
+    if (result.emit) this.bus.emit('audio:cue', { cue: 'footstep' });
   }
 
   private syncNpcPresentation(timeMs: number): void {
@@ -717,11 +759,59 @@ export class WorldScene extends Phaser.Scene {
       },
       this.canvasSize,
     );
-    const next = { id: id!, x: anchor.x, y: anchor.y };
+    const cameraView = {
+      scrollX: camera.scrollX,
+      scrollY: camera.scrollY,
+      zoom: camera.zoom,
+      width: camera.width,
+      height: camera.height,
+    };
+    const figureWidth = CHARACTER_FIGURE_HEIGHT * NPC_FIGURE_ASPECT;
+    const playerBounds = {
+      x: this.player.x - figureWidth / 2,
+      y: this.player.y - CHARACTER_FIGURE_HEIGHT,
+      width: figureWidth,
+      height: CHARACTER_FIGURE_HEIGHT,
+    };
+    const avoidRects = [
+      this.boundsToCanvasRect(box, cameraView, 6),
+      this.boundsToCanvasRect(playerBounds, cameraView, 4),
+    ];
+    const next = { id: id!, x: anchor.x, y: anchor.y, avoidRects };
     if (!shouldEmitAnchor(this.lastAnchor, next, this.sinceAnchorMs)) return;
     this.lastAnchor = next;
     this.sinceAnchorMs = 0;
-    this.bus.emit('interaction:anchor', { interactableId: id!, x: anchor.x, y: anchor.y });
+    this.bus.emit('interaction:anchor', {
+      interactableId: id!,
+      x: anchor.x,
+      y: anchor.y,
+      avoidRects,
+    });
+  }
+
+  private boundsToCanvasRect(
+    bounds: Bounds,
+    camera: {
+      scrollX: number;
+      scrollY: number;
+      zoom: number;
+      width: number;
+      height: number;
+    },
+    padding: number,
+  ): Rect {
+    const topLeft = worldToScreen({ x: bounds.x, y: bounds.y }, camera, this.canvasSize);
+    const bottomRight = worldToScreen(
+      { x: bounds.x + bounds.width, y: bounds.y + bounds.height },
+      camera,
+      this.canvasSize,
+    );
+    return {
+      left: Math.min(topLeft.x, bottomRight.x) - padding,
+      top: Math.min(topLeft.y, bottomRight.y) - padding,
+      right: Math.max(topLeft.x, bottomRight.x) + padding,
+      bottom: Math.max(topLeft.y, bottomRight.y) + padding,
+    };
   }
 
   /** Walls the player is behind drop to 45% so the player never disappears (art/06 §29). */
@@ -812,7 +902,12 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private updateNearby(): void {
-    const id = this.interactionTracker.update(this.player, this.areas);
+    const availableAreas = this.options.interactionAvailable
+      ? this.areas.filter((area) =>
+          this.options.interactionAvailable!(this.options.scene.id, area.id),
+        )
+      : this.areas;
+    const id = this.interactionTracker.update(this.player, availableAreas);
     const area = id ? this.areas.find((candidate) => candidate.id === id) : undefined;
     if (area) {
       this.markerBaseX = area.x;
@@ -821,6 +916,18 @@ export class WorldScene extends Phaser.Scene {
       this.marker.setVisible(true);
     } else {
       this.marker.setVisible(false);
+    }
+  }
+
+  /** Evidence can become unavailable while a modal locks input, before updateNearby can run. */
+  private clearUnavailableInteraction(): void {
+    const id = this.interactionTracker.current;
+    if (
+      id &&
+      this.options.interactionAvailable &&
+      !this.options.interactionAvailable(this.options.scene.id, id)
+    ) {
+      this.interactionTracker.clear();
     }
   }
 
@@ -866,10 +973,14 @@ export class WorldScene extends Phaser.Scene {
       this.fadeOutHandler = null;
     }
     this.interactionTracker?.clear();
+    this.footstepState = { distancePx: 0 };
+    this.lastFootstepPoint = null;
     this.clearAnchor();
     this.scale.off(Phaser.Scale.Events.RESIZE, this.refreshCanvasSize, this);
     this.outline?.destroy();
     this.outline = null;
+    this.cueLayer?.destroy();
+    this.cueLayer = null;
     for (const { sign } of this.roomLabels) sign.destroy();
     this.roomLabels = [];
     this.occluders = [];

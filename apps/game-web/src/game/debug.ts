@@ -14,6 +14,10 @@ export type LexiconDebug = {
   setNpcWalking(id: string, walking: boolean): void;
   /** Texts of the room labels drawn in the current scene, in content order. */
   labels(): string[];
+  /** Generated room-sign textures currently owned by the renderer. */
+  labelTextureCount(): number;
+  /** Visible world cue markers currently owned by the active scene. */
+  worldCueCount(): number;
   /** Current alpha of an occluding wall/board (NaN for any other id). */
   alphaOf(id: string): number;
   nearby(): string | null;

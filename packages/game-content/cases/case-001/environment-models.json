@@ -23,6 +23,54 @@
     "scale": 1,
     "camera": "dimetric-2:1"
   },
+  "prop_office_chair_01_ne": {
+    "url": "/assets/environment/props/dimetric/prop_office_chair_01_ne.png",
+    "origin": [0.5334865525907276, 0.8060806928046413],
+    "footprint": {
+      "u": -0.3132883545107017,
+      "v": -0.31898496389154885,
+      "width": 0.6265767090214034,
+      "height": 0.6379699277830977
+    },
+    "scale": 1,
+    "camera": "dimetric-2:1"
+  },
+  "prop_office_chair_01_nw": {
+    "url": "/assets/environment/props/dimetric/prop_office_chair_01_nw.png",
+    "origin": [0.4641799501168632, 0.8069124344138169],
+    "footprint": {
+      "u": -0.31898496389154885,
+      "v": -0.31328835451070164,
+      "width": 0.6379699277830977,
+      "height": 0.6265767090214033
+    },
+    "scale": 1,
+    "camera": "dimetric-2:1"
+  },
+  "prop_office_chair_01_se": {
+    "url": "/assets/environment/props/dimetric/prop_office_chair_01_se.png",
+    "origin": [0.5358200498831367, 0.8511896381395547],
+    "footprint": {
+      "u": -0.31898496389154885,
+      "v": -0.3132883545107017,
+      "width": 0.6379699277830977,
+      "height": 0.6265767090214034
+    },
+    "scale": 1,
+    "camera": "dimetric-2:1"
+  },
+  "prop_office_chair_01_sw": {
+    "url": "/assets/environment/props/dimetric/prop_office_chair_01_sw.png",
+    "origin": [0.46651344740927225, 0.8519076373064498],
+    "footprint": {
+      "u": -0.31328835451070164,
+      "v": -0.31898496389154885,
+      "width": 0.6265767090214033,
+      "height": 0.6379699277830977
+    },
+    "scale": 1,
+    "camera": "dimetric-2:1"
+  },
   "prop_meeting_table_01": {
     "url": "/assets/environment/props/dimetric/prop_meeting_table_01.png",
     "origin": [0.4992248062015504, 0.6927448410002952],

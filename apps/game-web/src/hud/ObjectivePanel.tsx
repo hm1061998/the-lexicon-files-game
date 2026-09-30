@@ -26,6 +26,8 @@ function PaperClip(): JSX.Element {
 }
 
 export function ObjectivePanel({ strings }: { strings: UiStrings }): JSX.Element {
+  const visible = useGameStore((state) => state.objectiveVisible);
+  const toggle = useGameStore((state) => state.toggleObjective);
   const objective = useGameStore((state) => {
     return (
       state.caseDefinition.objectives.find(
@@ -34,8 +36,31 @@ export function ObjectivePanel({ strings }: { strings: UiStrings }): JSX.Element
     );
   });
 
+  if (!visible) {
+    return (
+      <button
+        className="hud-panel-launcher hud-objective-launcher"
+        type="button"
+        aria-expanded={false}
+        aria-label={strings.expandObjective}
+        onClick={toggle}
+      >
+        <span aria-hidden="true">◎</span>
+      </button>
+    );
+  }
+
   return (
     <PaperPanel className="hud-objective-panel">
+      <button
+        className="hud-panel-collapse"
+        type="button"
+        aria-expanded={true}
+        aria-label={strings.collapseObjective}
+        onClick={toggle}
+      >
+        −
+      </button>
       <PaperClip />
       <h2 className="hud-objective-heading">{strings.objectiveHeading}</h2>
       {objective ? (

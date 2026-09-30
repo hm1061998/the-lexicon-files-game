@@ -65,10 +65,6 @@
       "url": "/assets/environment/props/dimetric/prop_filing_cabinet_01.png"
     },
     {
-      "key": "tex_office_chair",
-      "url": "/assets/environment/props/dimetric/prop_office_chair_01.png"
-    },
-    {
       "key": "tex_meeting_table",
       "url": "/assets/environment/props/dimetric/prop_meeting_table_01.png"
     },
@@ -127,6 +123,10 @@
     {
       "key": "tex_wall_office_v_cap_end",
       "url": "/assets/environment/office/wall_v_cap_end.png"
+    },
+    {
+      "key": "tex_office_chair_ne",
+      "url": "/assets/environment/props/dimetric/prop_office_chair_01_ne.png"
     }
   ],
   "assets": [
@@ -218,6 +218,10 @@
         "u": -0.35,
         "v": 0.1,
         "elevationPx": 55
+      },
+      "cue": {
+        "kind": "evidence",
+        "evidenceId": "meeting_minutes"
       }
     },
     {
@@ -244,6 +248,10 @@
         "u": 0.4,
         "v": 0.2,
         "elevationPx": 55
+      },
+      "cue": {
+        "kind": "evidence",
+        "evidenceId": "leo_phone_recording"
       }
     },
     {
@@ -303,6 +311,9 @@
         "v": -1,
         "width": 0.25,
         "height": 2
+      },
+      "cue": {
+        "kind": "door"
       }
     },
     {
@@ -545,7 +556,7 @@
     {
       "id": "decor_chair_desk_west",
       "type": "prop",
-      "texture": "tex_office_chair",
+      "texture": "tex_office_chair_ne",
       "depthBias": 0,
       "collision": {
         "type": "rect",
@@ -554,7 +565,7 @@
         "width": 0.6403975747948947,
         "height": 0.6749758939249384
       },
-      "origin": [0.5271923706342759, 0.8428547320560139],
+      "origin": [0.5334865525907276, 0.8060806928046413],
       "scale": 1,
       "position": {
         "u": 1.8,
@@ -595,7 +606,7 @@
     {
       "id": "decor_chair_desk_invest",
       "type": "prop",
-      "texture": "tex_office_chair",
+      "texture": "tex_office_chair_ne",
       "depthBias": 0,
       "collision": {
         "type": "rect",
@@ -604,7 +615,7 @@
         "width": 0.6403975747948947,
         "height": 0.6749758939249384
       },
-      "origin": [0.5271923706342759, 0.8428547320560139],
+      "origin": [0.5334865525907276, 0.8060806928046413],
       "scale": 1,
       "position": {
         "u": 4.5,
@@ -920,7 +931,7 @@
     {
       "id": "decor_chair_player_desk",
       "type": "prop",
-      "texture": "tex_office_chair",
+      "texture": "tex_office_chair_ne",
       "depthBias": 0,
       "collision": {
         "type": "rect",
@@ -929,7 +940,7 @@
         "width": 0.6403975747948947,
         "height": 0.6749758939249384
       },
-      "origin": [0.5271923706342759, 0.8428547320560139],
+      "origin": [0.5334865525907276, 0.8060806928046413],
       "scale": 1,
       "position": {
         "u": 3.1,
@@ -1095,7 +1106,7 @@
     {
       "id": "decor_chair_desk_east",
       "type": "prop",
-      "texture": "tex_office_chair",
+      "texture": "tex_office_chair_ne",
       "depthBias": 0,
       "collision": {
         "type": "rect",
@@ -1104,7 +1115,7 @@
         "width": 0.6403975747948947,
         "height": 0.6749758939249384
       },
-      "origin": [0.5271923706342759, 0.8428547320560139],
+      "origin": [0.5334865525907276, 0.8060806928046413],
       "scale": 1,
       "position": {
         "u": 14,
@@ -1235,20 +1246,33 @@
     {
       "id": "label_investigation_room",
       "text": "PHÒNG ĐIỀU TRA",
-      "u": 3.2,
-      "v": 0.9
+      "u": 7.5,
+      "v": 0,
+      "mount": {
+        "kind": "wall",
+        "wallId": "wall_back",
+        "elevationPx": 48
+      }
     },
     {
       "id": "label_meeting_room",
       "text": "PHÒNG HỌP",
-      "u": 3.1,
-      "v": 7.5
+      "u": 2,
+      "v": 7,
+      "mount": {
+        "kind": "wall",
+        "wallId": "partition_office_meeting_n",
+        "elevationPx": 48
+      }
     },
     {
       "id": "label_hallway",
       "text": "HÀNH LANG",
-      "u": 7.5,
-      "v": 5.4
+      "u": 11.5,
+      "v": 3.7,
+      "mount": {
+        "kind": "floor"
+      }
     }
   ],
   "walls": [

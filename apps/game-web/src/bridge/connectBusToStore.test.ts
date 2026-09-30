@@ -76,8 +76,17 @@ describe('connectBusToStore', () => {
     const store = createGameStore({ caseDefinition });
     connectBusToStore(bus, store);
 
-    bus.emit('interaction:anchor', { interactableId: 'note', x: 10, y: 20 });
-    expect(store.getState().interactionAnchor).toEqual({ x: 10, y: 20 });
+    bus.emit('interaction:anchor', {
+      interactableId: 'note',
+      x: 10,
+      y: 20,
+      avoidRects: [{ left: 1, top: 2, right: 11, bottom: 12 }],
+    });
+    expect(store.getState().interactionAnchor).toEqual({
+      x: 10,
+      y: 20,
+      avoidRects: [{ left: 1, top: 2, right: 11, bottom: 12 }],
+    });
 
     bus.emit('interaction:anchor', { interactableId: null });
     expect(store.getState().interactionAnchor).toBeNull();

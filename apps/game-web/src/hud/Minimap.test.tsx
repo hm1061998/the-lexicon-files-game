@@ -69,8 +69,10 @@ describe('Minimap', () => {
     expect(html).toContain(`aria-label="${strings.minimapTitle} — ${label.text}"`);
   });
 
-  it('renders nothing while hidden', () => {
-    expect(render({ minimapVisible: false })).toBe('');
+  it('keeps a compact launcher available while hidden', () => {
+    const html = render({ minimapVisible: false });
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain('hud-map-launcher');
   });
 });
 
