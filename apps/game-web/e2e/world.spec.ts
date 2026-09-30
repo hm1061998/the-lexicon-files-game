@@ -3,7 +3,12 @@ import { expect, test, type Page } from '@playwright/test';
 
 type SceneTextures = { textures: Array<{ key: string; url: string }> };
 type SceneAssets = { assets: Array<{ id: string; texture: string }> };
-type SceneAssetPosition = { id: string; position?: { u: number; v: number }; restsOn?: string; surfaceOffset?: { u: number; v: number } };
+type SceneAssetPosition = {
+  id: string;
+  position?: { u: number; v: number };
+  restsOn?: string;
+  surfaceOffset?: { u: number; v: number };
+};
 type ScenePositions = { assets: SceneAssetPosition[] };
 
 function sceneTextures(file: string): Array<{ key: string; url: string }> {
@@ -29,7 +34,12 @@ const archiveAssets = (
   ) as SceneAssets
 ).assets;
 function readPositions(file: string): ScenePositions {
-  return JSON.parse(readFileSync(new URL(`../../../packages/game-content/cases/case-001/scenes/${file}`, import.meta.url), 'utf8')) as ScenePositions;
+  return JSON.parse(
+    readFileSync(
+      new URL(`../../../packages/game-content/cases/case-001/scenes/${file}`, import.meta.url),
+      'utf8',
+    ),
+  ) as ScenePositions;
 }
 const officePositions = readPositions('main_office.json');
 const archivePositions = readPositions('archive.json');
@@ -37,7 +47,8 @@ function logicalPosition(scene: ScenePositions, id: string): { u: number; v: num
   const asset = scene.assets.find((candidate) => candidate.id === id);
   if (!asset) throw new Error(`Missing scene asset ${id}`);
   if (asset.position) return asset.position;
-  if (!asset.restsOn || !asset.surfaceOffset) throw new Error(`Asset ${id} has no logical position`);
+  if (!asset.restsOn || !asset.surfaceOffset)
+    throw new Error(`Asset ${id} has no logical position`);
   const parent = logicalPosition(scene, asset.restsOn);
   return { u: parent.u + asset.surfaceOffset.u, v: parent.v + asset.surfaceOffset.v };
 }
@@ -50,6 +61,8 @@ type DebugApi = {
   npcTexture(id: string): string | undefined;
   npcScaleY(id: string): number | undefined;
   npcName(id: string): string | undefined;
+  npcAnim(id: string): { key: string | null; frame: number | null; playing: boolean } | undefined;
+  setNpcWalking(id: string, walking: boolean): void;
   playerAnim(): { key: string | null; frame: number | null; playing: boolean };
   depthOf(id: string): number;
   nearby(): string | null;
@@ -81,9 +94,17 @@ async function player(page: Page): Promise<{ x: number; y: number; depth: number
   return page.evaluate(() => window.__lexiconDebug!.player());
 }
 
-async function teleportTo(page: Page, scene: ScenePositions, id: string, offset = { u: 0, v: 0 }): Promise<void> {
+async function teleportTo(
+  page: Page,
+  scene: ScenePositions,
+  id: string,
+  offset = { u: 0, v: 0 },
+): Promise<void> {
   const position = logicalPosition(scene, id);
-  await page.evaluate(([u, v]) => window.__lexiconDebug!.teleportLogical(u!, v!), [position.u + offset.u, position.v + offset.v]);
+  await page.evaluate(
+    ([u, v]) => window.__lexiconDebug!.teleportLogical(u!, v!),
+    [position.u + offset.u, position.v + offset.v],
+  );
 }
 
 async function hold(page: Page, key: string, ms: number): Promise<void> {
@@ -110,15 +131,22 @@ test('D moves northeast along the selected dimetric projection', async ({ page }
   expect(before.y - after.y).toBeGreaterThanOrEqual(15);
 });
 
-test('NPC name comes from case content and dialogue faces player and NPC toward each other', async ({ page }) => {
+test('NPC name comes from case content and dialogue faces player and NPC toward each other', async ({
+  page,
+}) => {
   await openWorld(page);
   const anna = logicalPosition(officePositions, 'anna');
-  await page.evaluate(([u, v]) => window.__lexiconDebug!.teleportLogical(u! + 0.3, v! + 0.6), [anna.u, anna.v]);
+  await page.evaluate(
+    ([u, v]) => window.__lexiconDebug!.teleportLogical(u! + 0.3, v! + 0.6),
+    [anna.u, anna.v],
+  );
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBe('anna');
   expect(await page.evaluate(() => window.__lexiconDebug!.npcName('anna'))).toBe('Anna Reed');
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_ne');
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.playerTexture()))
+    .toBe('tex_player_ne');
   expect(await page.evaluate(() => window.__lexiconDebug!.npcTexture('anna'))).toBe('tex_anna_sw');
   await page.getByRole('button', { name: 'Đóng' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -132,11 +160,46 @@ test('NPC breathing stays visual-only and stops during dialogue', async ({ page 
   expect(before).toBeGreaterThanOrEqual(0.992);
   expect(before).toBeLessThanOrEqual(1.008);
   const anna = logicalPosition(officePositions, 'anna');
-  await page.evaluate(([u, v]) => window.__lexiconDebug!.teleportLogical(u! + 0.3, v! + 0.6), [anna.u, anna.v]);
+  await page.evaluate(
+    ([u, v]) => window.__lexiconDebug!.teleportLogical(u! + 0.3, v! + 0.6),
+    [anna.u, anna.v],
+  );
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBe('anna');
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.npcScaleY('anna'))).toBe(1);
+});
+
+test('NPC walk sheets preload and can be triggered by the dev test control only', async ({
+  page,
+}) => {
+  await openWorld(page);
+  const before = await player(page);
+  for (const id of ['anna', 'leo', 'david']) {
+    const initial = await page.evaluate((npcId) => window.__lexiconDebug!.npcAnim(npcId), id);
+    expect(initial).toMatchObject({ key: null, playing: false });
+    await page.evaluate((npcId) => window.__lexiconDebug!.setNpcWalking(npcId, true), id);
+    await expect
+      .poll(() => page.evaluate((npcId) => window.__lexiconDebug!.npcAnim(npcId), id))
+      .toMatchObject({ key: `${id}_walk_se`, playing: true });
+    const firstFrame = (await page.evaluate(
+      (npcId) => window.__lexiconDebug!.npcAnim(npcId)?.frame,
+      id,
+    ))!;
+    await page.waitForTimeout(250);
+    const nextFrame = (await page.evaluate(
+      (npcId) => window.__lexiconDebug!.npcAnim(npcId)?.frame,
+      id,
+    ))!;
+    expect(nextFrame).not.toBe(firstFrame);
+    await page.evaluate((npcId) => window.__lexiconDebug!.setNpcWalking(npcId, false), id);
+    expect(await page.evaluate((npcId) => window.__lexiconDebug!.npcAnim(npcId), id)).toMatchObject(
+      { key: null, playing: false },
+    );
+  }
+  const after = await player(page);
+  expect(after.x).toBeCloseTo(before.x, 0);
+  expect(after.y).toBeCloseTo(before.y, 0);
 });
 
 test('player cannot walk through the desk', async ({ page }) => {

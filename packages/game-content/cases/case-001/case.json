@@ -31,7 +31,25 @@
     { "key": "tex_david_ne", "url": "/assets/characters/david/chr_david_idle_ne.png" },
     { "key": "tex_david_se", "url": "/assets/characters/david/chr_david_idle_se.png" },
     { "key": "tex_david_sw", "url": "/assets/characters/david/chr_david_idle_sw.png" },
-    { "key": "tex_david_nw", "url": "/assets/characters/david/chr_david_idle_nw.png" }
+    { "key": "tex_david_nw", "url": "/assets/characters/david/chr_david_idle_nw.png" },
+    {
+      "key": "sheet_anna_walk",
+      "url": "/assets/characters/anna/chr_anna_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    },
+    {
+      "key": "sheet_leo_walk",
+      "url": "/assets/characters/leo/chr_leo_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    },
+    {
+      "key": "sheet_david_walk",
+      "url": "/assets/characters/david/chr_david_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    }
   ],
   "characterSheets": {
     "player": {
@@ -44,16 +62,26 @@
       "walk": "sheet_player_walk"
     },
     "anna": {
-      "idle": { "NE": "tex_anna_ne", "SE": "tex_anna_se", "SW": "tex_anna_sw", "NW": "tex_anna_nw" },
-      "walk": null
+      "idle": {
+        "NE": "tex_anna_ne",
+        "SE": "tex_anna_se",
+        "SW": "tex_anna_sw",
+        "NW": "tex_anna_nw"
+      },
+      "walk": "sheet_anna_walk"
     },
     "leo": {
       "idle": { "NE": "tex_leo_ne", "SE": "tex_leo_se", "SW": "tex_leo_sw", "NW": "tex_leo_nw" },
-      "walk": null
+      "walk": "sheet_leo_walk"
     },
     "david": {
-      "idle": { "NE": "tex_david_ne", "SE": "tex_david_se", "SW": "tex_david_sw", "NW": "tex_david_nw" },
-      "walk": null
+      "idle": {
+        "NE": "tex_david_ne",
+        "SE": "tex_david_se",
+        "SW": "tex_david_sw",
+        "NW": "tex_david_nw"
+      },
+      "walk": "sheet_david_walk"
     }
   },
   "timeline": {

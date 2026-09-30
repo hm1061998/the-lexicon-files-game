@@ -52,9 +52,14 @@ describe('content texture manifests', () => {
     }
   });
 
-  it('does not ship unused NPC walk sheets', () => {
+  it('declares and ships a walk sheet for each NPC actor', () => {
     for (const name of ['anna', 'leo', 'david']) {
-      expect(existsSync(`${publicDir}/assets/characters/${name}/chr_${name}_walk.png`)).toBe(false);
+      const definition = cases[0]!;
+      const sheet = definition.characterSheets[name];
+      expect(sheet?.walk).toBe(`sheet_${name}_walk`);
+      const entry = definition.sharedTextures.find(({ key }) => key === sheet?.walk);
+      expect(entry?.url).toBe(`/assets/characters/${name}/chr_${name}_walk.png`);
+      expect(existsSync(`${publicDir}${entry?.url}`)).toBe(true);
     }
   });
 

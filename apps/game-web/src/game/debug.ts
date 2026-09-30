@@ -10,6 +10,8 @@ export type LexiconDebug = {
   npcTexture(id: string): string | undefined;
   npcScaleY(id: string): number | undefined;
   npcName(id: string): string | undefined;
+  npcAnim(id: string): { key: string | null; frame: number | null; playing: boolean } | undefined;
+  setNpcWalking(id: string, walking: boolean): void;
   /** Texts of the room labels drawn in the current scene, in content order. */
   labels(): string[];
   /** Current alpha of an occluding wall/board (NaN for any other id). */

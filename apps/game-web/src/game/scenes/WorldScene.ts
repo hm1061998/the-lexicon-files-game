@@ -16,7 +16,12 @@ import {
   type PlayerSprite,
 } from '../entities/Player';
 import { createShadow, syncShadow } from '../entities/shadow';
-import { CHARACTER_FIGURE_HEIGHT, INTERACTION_RED, PLAYER_SPEED, SCENE_FADE_MS } from '../constants';
+import {
+  CHARACTER_FIGURE_HEIGHT,
+  INTERACTION_RED,
+  PLAYER_SPEED,
+  SCENE_FADE_MS,
+} from '../constants';
 import { installDebugHook, paperOverlayAlpha } from '../debug';
 import { shouldEmitAnchor, worldToScreen, type IdAnchor } from '../systems/anchorScreen';
 import { computeIsoDepth, computePlayerDepth, PLAYER_DEPTH_EPSILON } from '../systems/depth';
@@ -29,7 +34,11 @@ import { isOccluder, occluderAlpha } from '../systems/occlusion';
 import { shouldEmitPlayerMoved } from '../systems/playerMoved';
 import { markerBaseY, markerPositionY } from '../systems/markerFloat';
 import { resolveSceneAssets } from '../systems/sceneAssetResolver';
-import { projectScenePoint, projectVisualAnchor, projectWorldBounds } from '../systems/sceneProjection';
+import {
+  projectScenePoint,
+  projectVisualAnchor,
+  projectWorldBounds,
+} from '../systems/sceneProjection';
 import { moveWithCollisions, type LogicalRect } from '../systems/logicalCollision';
 import { resolveIsoInput, screenSpeedVector } from '../systems/isoInput';
 import { unprojectIso, type LogicalPoint } from '../systems/isometricProjection';
@@ -37,6 +46,7 @@ import { facingToward } from '../systems/facingToward';
 import { breathing } from '../systems/breathing';
 import { nameTagPosition } from '../systems/nameTagLayout';
 import { facingTextureKey } from '../assetManifest';
+import { registerCharacterAnimations, walkAnimKey } from '../entities/characterAnimations';
 
 export type InputLockSource = { isInputLocked(): boolean };
 
@@ -126,7 +136,19 @@ export class WorldScene extends Phaser.Scene {
   private logicalPosition: LogicalPoint | null = null;
   private logicalBounds: LogicalRect | null = null;
   private logicalSolids: LogicalRect[] = [];
-  private npcVisuals = new Map<string, { sprite: Phaser.GameObjects.Image; point: LogicalPoint; tag: Phaser.GameObjects.Text; tagWidth: number; tagHeight: number; phase: number }>();
+  private npcVisuals = new Map<
+    string,
+    {
+      sprite: Phaser.GameObjects.Sprite;
+      point: LogicalPoint;
+      tag: Phaser.GameObjects.Text;
+      tagWidth: number;
+      tagHeight: number;
+      phase: number;
+      facing: Facing;
+      walking: boolean;
+    }
+  >();
   private unsubscribeDialogueStarted: (() => void) | null = null;
   private unsubscribeDialogueEnded: (() => void) | null = null;
   private dialogueNpcId: string | null = null;
@@ -170,16 +192,23 @@ export class WorldScene extends Phaser.Scene {
     const b = def.worldBounds;
     const logicalMode = Boolean(def.projection && 'u' in b && 'u' in spawn);
     this.logicalPosition = logicalMode && 'u' in spawn ? { u: spawn.u, v: spawn.v } : null;
-    this.logicalBounds = logicalMode && 'u' in b ? { u: b.u, v: b.v, width: b.width, height: b.height } : null;
+    this.logicalBounds =
+      logicalMode && 'u' in b ? { u: b.u, v: b.v, width: b.width, height: b.height } : null;
     this.logicalSolids = [];
     let screenBounds: Bounds;
     if ('u' in b) {
-      if (!def.projection) throw new Error(`Scene "${def.id}" has logical bounds without projection metadata`);
+      if (!def.projection)
+        throw new Error(`Scene "${def.id}" has logical bounds without projection metadata`);
       screenBounds = projectWorldBounds(b, def.projection);
     } else {
       screenBounds = b;
     }
-    this.physics.world.setBounds(screenBounds.x, screenBounds.y, screenBounds.width, screenBounds.height);
+    this.physics.world.setBounds(
+      screenBounds.x,
+      screenBounds.y,
+      screenBounds.width,
+      screenBounds.height,
+    );
 
     const colliders = this.physics.add.staticGroup();
     const resolvedAssets = resolveSceneAssets(def.assets);
@@ -191,22 +220,45 @@ export class WorldScene extends Phaser.Scene {
       this.depths.set(asset.id, sprite.depth);
       this.assetTextures.set(asset.id, sprite.texture.key);
       if (asset.type === 'npc') {
+        if (!(sprite instanceof Phaser.GameObjects.Sprite)) {
+          throw new Error(`NPC asset "${asset.id}" must be an animation-capable sprite`);
+        }
         createShadow(this, { x: floorPoint.x, y: floorPoint.y, depth: sprite.depth });
+        const sheet = options.caseDefinition.characterSheets[asset.id];
+        if (sheet?.walk && this.textures.exists(sheet.walk)) {
+          registerCharacterAnimations(this, asset.id, sheet.walk);
+        }
         const npc = options.caseDefinition.npcs.find(({ id }) => id === asset.id);
         if (npc && 'u' in resolved.floorAnchor) {
-          const tag = this.add.text(0, 0, npc.name, {
-            fontFamily: 'Cambria, "Times New Roman", Georgia, serif', fontSize: '18px',
-            color: '#332820', backgroundColor: '#F2E8D5', padding: { x: 8, y: 4 },
-          }).setOrigin(0.5, 0.5).setDepth(sprite.depth + 1);
+          const tag = this.add
+            .text(0, 0, npc.name, {
+              fontFamily: 'Cambria, "Times New Roman", Georgia, serif',
+              fontSize: '18px',
+              color: '#332820',
+              backgroundColor: '#F2E8D5',
+              padding: { x: 8, y: 4 },
+            })
+            .setOrigin(0.5, 0.5)
+            .setDepth(sprite.depth + 1);
           this.npcVisuals.set(asset.id, {
-            sprite, point: resolved.floorAnchor,
-            tag, tagWidth: tag.width, tagHeight: tag.height,
+            sprite,
+            point: resolved.floorAnchor,
+            tag,
+            tagWidth: tag.width,
+            tagHeight: tag.height,
             phase: Array.from(asset.id).reduce((n, c) => n + c.charCodeAt(0), 0) * 0.37,
+            facing: 'SE',
+            walking: false,
           });
         }
       }
       if (body) colliders.add(body);
-      if (logicalMode && resolved.collision && 'u' in resolved.collision && 'u' in resolved.floorAnchor) {
+      if (
+        logicalMode &&
+        resolved.collision &&
+        'u' in resolved.collision &&
+        'u' in resolved.floorAnchor
+      ) {
         this.logicalSolids.push({
           u: resolved.floorAnchor.u + resolved.collision.u,
           v: resolved.floorAnchor.v + resolved.collision.v,
@@ -217,7 +269,12 @@ export class WorldScene extends Phaser.Scene {
       if (isOccluder(asset, b.width)) {
         // Static sprites: bounds are measured once, not every frame.
         const { x, y, width, height } = sprite.getBounds();
-        this.occluders.push({ id: asset.id, sprite, feetY: floorPoint.y, box: { x, y, width, height } });
+        this.occluders.push({
+          id: asset.id,
+          sprite,
+          feetY: floorPoint.y,
+          box: { x, y, width, height },
+        });
       }
       if (asset.interaction && resolved.interactionAnchor) {
         const interactionPoint = projectVisualAnchor(def, resolved.interactionAnchor);
@@ -228,10 +285,7 @@ export class WorldScene extends Phaser.Scene {
           asset.collision && 'y' in asset.collision && 'y' in resolved.floorAnchor
             ? resolved.floorAnchor.y + asset.collision.y
             : undefined;
-        this.markerAnchors.set(
-          asset.id,
-          markerBaseY(interactionPoint.y, visualTop, blockedTop),
-        );
+        this.markerAnchors.set(asset.id, markerBaseY(interactionPoint.y, visualTop, blockedTop));
         this.targetBounds.set(asset.id, () => {
           const box = sprite.getBounds();
           if (asset.type !== 'npc')
@@ -260,15 +314,23 @@ export class WorldScene extends Phaser.Scene {
       sign: createRoomLabel(
         this,
         !('x' in label)
-          ? { id: label.id, text: label.text, ...projectScenePoint(def, { u: label.u, v: label.v }), angle: label.angle }
+          ? {
+              id: label.id,
+              text: label.text,
+              ...projectScenePoint(def, { u: label.u, v: label.v }),
+              angle: label.angle,
+            }
           : label,
         LABEL_DEPTH,
       ),
     }));
 
-    const spawnPoint = 'u' in spawn
-      ? def.projection ? projectScenePoint(def, spawn) : { x: 0, y: 0 }
-      : { x: spawn.x, y: spawn.y };
+    const spawnPoint =
+      'u' in spawn
+        ? def.projection
+          ? projectScenePoint(def, spawn)
+          : { x: 0, y: 0 }
+        : { x: spawn.x, y: spawn.y };
     this.player = createPlayer(
       this,
       spawnPoint.x,
@@ -278,7 +340,9 @@ export class WorldScene extends Phaser.Scene {
     if (logicalMode) {
       this.player.body.enable = false;
       this.player.setCollideWorldBounds(false);
-      this.player.setDepth(computeIsoDepth(this.logicalPosition!, def.projection!) + PLAYER_DEPTH_EPSILON);
+      this.player.setDepth(
+        computeIsoDepth(this.logicalPosition!, def.projection!) + PLAYER_DEPTH_EPSILON,
+      );
     }
     this.playerFacing = PLAYER_INITIAL_FACING;
     this.playerShadow = createShadow(this, this.player);
@@ -323,7 +387,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.uninstallDebug = installDebugHook({
       player: () => ({ x: this.player.x, y: this.player.y, depth: this.player.depth }),
-      logicalPlayer: () => this.logicalPosition ? { ...this.logicalPosition } : null,
+      logicalPlayer: () => (this.logicalPosition ? { ...this.logicalPosition } : null),
       playerTexture: () => this.player.texture.key,
       playerAnim: () => {
         const walk = currentWalk(this.player);
@@ -334,6 +398,20 @@ export class WorldScene extends Phaser.Scene {
       npcTexture: (id) => this.npcVisuals.get(id)?.sprite.texture.key,
       npcScaleY: (id) => this.npcVisuals.get(id)?.sprite.scaleY,
       npcName: (id) => this.npcVisuals.get(id)?.tag.text,
+      npcAnim: (id) => {
+        const sprite = this.npcVisuals.get(id)?.sprite;
+        return sprite
+          ? {
+              key: sprite.anims.isPlaying ? (sprite.anims.currentAnim?.key ?? null) : null,
+              frame:
+                sprite.anims.isPlaying && sprite.anims.currentFrame
+                  ? sprite.anims.currentFrame.index - 1
+                  : null,
+              playing: sprite.anims.isPlaying,
+            }
+          : undefined;
+      },
+      setNpcWalking: (id, walking) => this.setNpcWalking(id, walking),
       labels: () => this.roomLabels.map(({ text }) => text),
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
@@ -351,7 +429,9 @@ export class WorldScene extends Phaser.Scene {
         if (logicalMode && def.projection && this.logicalPosition) {
           this.logicalPosition = unprojectIso({ x, y }, def.projection);
           this.player.setPosition(x, y);
-          this.player.setDepth(computeIsoDepth(this.logicalPosition, def.projection) + PLAYER_DEPTH_EPSILON);
+          this.player.setDepth(
+            computeIsoDepth(this.logicalPosition, def.projection) + PLAYER_DEPTH_EPSILON,
+          );
         } else {
           this.player.body.reset(x, y);
           this.player.setDepth(computePlayerDepth(y));
@@ -362,7 +442,9 @@ export class WorldScene extends Phaser.Scene {
         this.logicalPosition = { u, v };
         const screen = projectScenePoint(def, this.logicalPosition);
         this.player.setPosition(screen.x, screen.y);
-        this.player.setDepth(computeIsoDepth(this.logicalPosition, def.projection) + PLAYER_DEPTH_EPSILON);
+        this.player.setDepth(
+          computeIsoDepth(this.logicalPosition, def.projection) + PLAYER_DEPTH_EPSILON,
+        );
       },
     });
 
@@ -375,11 +457,21 @@ export class WorldScene extends Phaser.Scene {
       if (!visual || !this.logicalPosition) return;
       const du = visual.point.u - this.logicalPosition.u;
       const dv = visual.point.v - this.logicalPosition.v;
-      this.playerFacing = movePlayer(this.player, { x: du - dv, y: du + dv }, this.playerFacing,
-        options.caseDefinition.characterSheets.player, false);
-      const playerTexture = facingTextureKey(options.caseDefinition.characterSheets.player.idle, this.playerFacing);
+      this.playerFacing = movePlayer(
+        this.player,
+        { x: du - dv, y: du + dv },
+        this.playerFacing,
+        options.caseDefinition.characterSheets.player,
+        false,
+      );
+      const playerTexture = facingTextureKey(
+        options.caseDefinition.characterSheets.player.idle,
+        this.playerFacing,
+      );
       if (this.textures.exists(playerTexture)) this.changeFacingTexture(this.player, playerTexture);
       const npcFacing = facingToward(visual.point, this.logicalPosition);
+      this.setNpcWalking(npcId, false);
+      visual.facing = npcFacing;
       const npcSheet = options.caseDefinition.characterSheets[npcId];
       if (npcSheet) {
         const texture = facingTextureKey(npcSheet.idle, npcFacing);
@@ -445,24 +537,61 @@ export class WorldScene extends Phaser.Scene {
 
   private syncNpcPresentation(timeMs: number): void {
     for (const [id, visual] of this.npcVisuals) {
-      const scale = breathing({ timeMs, phaseOffset: visual.phase, walking: false,
-        inDialogue: this.dialogueNpcId === id, reducedMotion: this.options.motion.reducedMotion() });
+      const scale = breathing({
+        timeMs,
+        phaseOffset: visual.phase,
+        walking: visual.walking,
+        inDialogue: this.dialogueNpcId === id,
+        reducedMotion: this.options.motion.reducedMotion(),
+      });
       visual.sprite.setScale(1, scale.scaleY);
-      const promptRect = this.interactionTracker.current === id && !this.inputLock.isInputLocked()
-        ? { x: visual.sprite.x - 64, y: visual.sprite.y - CHARACTER_FIGURE_HEIGHT - 56, width: 128, height: 32 }
-        : null;
-      const pos = nameTagPosition({ centerX: visual.sprite.x, feetY: visual.sprite.y,
-        figureHeight: CHARACTER_FIGURE_HEIGHT, tagHeight: visual.tagHeight, tagWidth: visual.tagWidth,
-        gap: 8, prompt: promptRect });
+      const promptRect =
+        this.interactionTracker.current === id && !this.inputLock.isInputLocked()
+          ? {
+              x: visual.sprite.x - 64,
+              y: visual.sprite.y - CHARACTER_FIGURE_HEIGHT - 56,
+              width: 128,
+              height: 32,
+            }
+          : null;
+      const pos = nameTagPosition({
+        centerX: visual.sprite.x,
+        feetY: visual.sprite.y,
+        figureHeight: CHARACTER_FIGURE_HEIGHT,
+        tagHeight: visual.tagHeight,
+        tagWidth: visual.tagWidth,
+        gap: 8,
+        prompt: promptRect,
+      });
       visual.tag.setPosition(pos.x, pos.y);
     }
   }
 
-  private changeFacingTexture(sprite: Phaser.GameObjects.GameObject & {
-    setAlpha(value: number): unknown;
-    setTexture(key: string): unknown;
-  }, texture: string): void {
-    this.facingTweens.filter((tween) => tween.targets.includes(sprite)).forEach((tween) => tween.stop());
+  private setNpcWalking(id: string, walking: boolean): void {
+    const visual = this.npcVisuals.get(id);
+    const sheet = this.options.caseDefinition.characterSheets[id];
+    if (!visual || !sheet?.walk) return;
+    visual.walking = walking;
+    if (walking) {
+      const key = walkAnimKey(id, visual.facing);
+      if (this.anims.exists(key)) visual.sprite.anims.play(key, true);
+      return;
+    }
+    if (visual.sprite.anims.isPlaying) visual.sprite.anims.stop();
+    const idleKey = facingTextureKey(sheet.idle, visual.facing);
+    if (this.textures.exists(idleKey)) visual.sprite.setTexture(idleKey);
+  }
+
+  private changeFacingTexture(
+    sprite: Phaser.GameObjects.GameObject & {
+      setAlpha(value: number): unknown;
+      setTexture(key: string): unknown;
+    },
+    texture: string,
+  ): void {
+    this.facingTweens
+      .filter((tween) => tween.targets.includes(sprite))
+      .forEach((tween) => tween.stop());
     if (this.options.motion.reducedMotion()) {
       sprite.setTexture(texture);
       sprite.setAlpha(1);
@@ -470,9 +599,14 @@ export class WorldScene extends Phaser.Scene {
     }
     sprite.setAlpha(0.72);
     sprite.setTexture(texture);
-    this.facingTweens.push(this.tweens.add({
-      targets: sprite, alpha: 1, duration: 160, ease: 'Sine.Out',
-    }));
+    this.facingTweens.push(
+      this.tweens.add({
+        targets: sprite,
+        alpha: 1,
+        duration: 160,
+        ease: 'Sine.Out',
+      }),
+    );
   }
 
   /**

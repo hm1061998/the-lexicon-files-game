@@ -31,9 +31,8 @@ class SliceWalkSheetTests(unittest.TestCase):
                 ys = np.nonzero(cell[..., 3] > 8)[0]
                 self.assertGreater(len(ys), 100)
                 bottoms.append(int(ys.max()) + 1)
-            # The lowest foot of each row sits on the 88% line, lifted frames stay lifted.
-            self.assertEqual(max(bottoms), 141)
-            self.assertLess(bottoms[2], 141)
+            # Every frame shares the actor's floor anchor; limb lift stays inside the cell.
+            self.assertEqual(bottoms, [141] * 8)
 
     def test_tallest_figure_is_100px(self):
         out = np.asarray(s.slice_sheet(synthetic_sheet()))

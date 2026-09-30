@@ -1,5 +1,6 @@
 """Convert a hand-made/AI walk sheet (8 columns x 4 rows NE,SE,SW,NW, flat #FF00FF background)
-into the game contract chr_<name>_walk.png: 1280x640, 160 px cells, RGBA.
+into the game contract chr_<name>_walk.png: 1280x640, 160 px cells, RGBA. Each frame's
+lowest sole is aligned to the shared floor line so the actor does not bob vertically in game.
 
 usage (venv python): python tools/art-codegen/slice_walk_sheet.py sheet.png <name>
   -> apps/game-web/public/assets/characters/<name>/chr_<name>_walk.png
@@ -51,12 +52,12 @@ def slice_sheet(img: Image.Image) -> Image.Image:
             .convert("RGBA")
             for c in range(FRAMES)
         ]
-        bottoms = [b[1] for b in (_bbox(np.asarray(cell)[..., 3]) for cell in cells) if b]
-        if not bottoms:
-            raise ValueError(f"row {r} is empty")
-        # Lowest sole of the row goes to the last row above FEET_ROW.
-        dy = (FEET_ROW - 1) - max(bottoms)
         for c, cell in enumerate(cells):
+            bbox = _bbox(np.asarray(cell)[..., 3])
+            if not bbox:
+                raise ValueError(f"row {r} frame {c} is empty")
+            # Keep every frame on one floor anchor; lift is expressed by the legs, not the actor.
+            dy = (FEET_ROW - 1) - bbox[1]
             frame = Image.new("RGBA", (CELL, CELL), (0, 0, 0, 0))
             frame.paste(cell, (CELL // 2 - sw // 2, dy), cell)
             out.paste(Image.fromarray(despill(np.asarray(frame))), (c * CELL, r * CELL))

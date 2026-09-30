@@ -63,6 +63,20 @@ describe('registerCharacterAnimations', () => {
     registerCharacterAnimations(scene, 'player', 'sheet_walk');
     expect(anims.create).toHaveBeenCalledTimes(2);
   });
+
+  it('registers all four directions for an NPC sheet using the actor-specific animation keys', () => {
+    const { scene, created } = fakeScene();
+    registerCharacterAnimations(scene, 'anna', 'sheet_anna_walk');
+    expect(created.map(({ key }) => key)).toEqual([
+      'anna_walk_ne',
+      'anna_walk_se',
+      'anna_walk_sw',
+      'anna_walk_nw',
+    ]);
+    expect(
+      created.every(({ frames }) => frames.every(({ key }) => key === 'sheet_anna_walk')),
+    ).toBe(true);
+  });
 });
 
 describe('planWalk', () => {

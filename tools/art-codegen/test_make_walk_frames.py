@@ -10,7 +10,7 @@ from PIL import Image
 import make_walk_frames as w
 
 NAMES = ("player", "leo", "anna", "david")
-SHIPPED_SHEET_NAMES = ("player",)
+SHIPPED_SHEET_NAMES = ("player", "anna", "leo", "david")
 CELL = 160
 FEET_EXCLUSIVE = 141  # last opaque row 140 -> bbox bottom (exclusive) 141
 

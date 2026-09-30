@@ -23,6 +23,7 @@ function fakeScene() {
     textures: { exists: vi.fn(() => true) },
     add: {
       image: vi.fn(() => sprite),
+      sprite: vi.fn(() => sprite),
       zone: vi.fn(() => ({})),
     },
     physics: { add: { existing: vi.fn() } },
@@ -32,13 +33,38 @@ function fakeScene() {
 
 describe('createSceneAsset', () => {
   it('rotates an asset along its projected logical wall direction', () => {
-    const resolved = resolveSceneAssets([{
-      id: 'wall', type: 'wall', texture: 'wall', position: { u: 2, v: 0 },
-      origin: [0.5, 1], scale: 0.5, depthBias: 0, angle: 26.565,
-    }])[0]!;
+    const resolved = resolveSceneAssets([
+      {
+        id: 'wall',
+        type: 'wall',
+        texture: 'wall',
+        position: { u: 2, v: 0 },
+        origin: [0.5, 1],
+        scale: 0.5,
+        depthBias: 0,
+        angle: 26.565,
+      },
+    ])[0]!;
     const { scene, sprite } = fakeScene();
     createSceneAsset(scene, resolved, projection);
     expect(sprite.setAngle).toHaveBeenCalledWith(26.565);
+  });
+
+  it('creates NPCs as animation-capable Phaser sprites', () => {
+    const resolved = resolveSceneAssets([
+      {
+        id: 'anna',
+        type: 'npc',
+        texture: 'anna_idle',
+        position: { u: 2, v: 3 },
+        origin: [0.5, 0.88],
+        scale: 1,
+        depthBias: 0,
+      },
+    ])[0]!;
+    const { scene } = fakeScene();
+    createSceneAsset(scene, resolved, projection);
+    expect(scene.add.sprite).toHaveBeenCalledWith(36, 210, 'anna_idle');
   });
 
   it('renders an elevated logical asset at its projected visual anchor and floor depth', () => {

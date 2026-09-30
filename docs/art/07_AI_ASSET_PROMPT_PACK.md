@@ -90,7 +90,7 @@ Game đang dùng sheet đi bộ **tạm** sinh bằng code từ 4 ảnh idle (`t
 | Thứ tự hàng (trên → dưới) | `NE`, `SE`, `SW`, `NW` (giống turn-around idle) |
 | Cột | 8 khung của một chu kỳ bước, lặp liền mạch (khung 8 nối về khung 1), 10 fps |
 | Ô trong game | 160×160 px, sheet 1280×640, RGBA nền trong suốt |
-| Chân | đế giày của khung thấp nhất trong hàng ở **88%** chiều cao ô (hàng 141); nhân vật cao ~100 px |
+| Chân | đế giày thấp nhất của **mỗi khung** ở **88%** chiều cao ô (hàng 141); nhân vật cao ~100 px |
 | Khung 1 | gần giống pose idle của hướng đó (hai chân khép) |
 
 **Prompt** — dán STYLE_LOCK (mục 2, giữ dòng "Background" magenta), đính kèm 4 ảnh idle `chr_<tên>_idle_*.png` của đúng nhân vật làm tham chiếu, rồi dán:
@@ -111,7 +111,7 @@ Mô tả nhân vật gắn thêm vào prompt: dùng dòng của nhân vật ở 
 **Đặt file thay thế:**
 
 1. Lưu sheet gốc vào `assets/_incoming/chr_<tên>_walk_raw.png` (không commit). Kích thước bất kỳ nhưng rộng chia hết cho 8, cao chia hết cho 4.
-2. Chạy bằng Python venv: `python tools/art-codegen/slice_walk_sheet.py assets/_incoming/chr_<tên>_walk_raw.png <tên>`. Tool tách nền magenta, dùng một tỉ lệ chung cho cả sheet (nhân vật cao nhất → 100 px), đưa đế giày thấp nhất mỗi hàng về dòng 88% (khung nhấc chân vẫn giữ độ nhấc) và ghi đè `apps/game-web/public/assets/characters/<tên>/chr_<tên>_walk.png`.
+2. Chuẩn hóa canvas nguồn về lưới 8×4 ô vuông nếu ImageGen xuất kích thước gần đúng (giữ tỉ lệ 2:1), rồi chạy bằng Python venv: `python tools/art-codegen/slice_walk_sheet.py assets/_incoming/chr_<tên>_walk_raw.png <tên>`. Tool tách nền magenta, dùng một tỉ lệ chung cho cả sheet (nhân vật cao nhất → 100 px), neo đế giày thấp nhất của từng khung vào dòng 88% để figure không nhấp nhô theo chiều dọc, rồi ghi đè `apps/game-web/public/assets/characters/<tên>/chr_<tên>_walk.png`.
 3. Kiểm tra hợp đồng: `python -m unittest test_make_walk_frames` trong `tools/art-codegen` (kích thước, chân 88%, khung khác nhau, vòng lặp liền mạch, không viền magenta).
 4. Ghi dòng mới vào `assets/PROVENANCE.md`, thay dòng "code-derived" của file đó.
 

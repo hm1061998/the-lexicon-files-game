@@ -114,7 +114,7 @@
 - [x] **Bước 2: Chạy test đỏ** `npx nx test @lexicon/game-web` và `npx nx test @lexicon/game-content`.
 - [x] **Bước 3: Implement** event từ bridge; quay player/NPC và giữ hướng cuối; tween 120–200 ms hoặc snap khi reduced-motion; labels content-driven; breathing trên visual layer riêng, phase theo NPC ID, logical collider/shadow/anchors cố định.
 - [x] **Bước 4: Chạy test xanh** unit/E2E kiểm bốn hướng helper, reduced-motion, đóng dialogue giữ hướng, breathing và nhãn.
-- [ ] **Bước 5: Commit** `feat(game): add iso dialogue facing and character breathing`.
+- [x] **Bước 5: Commit** `feat(game): add iso dialogue facing and character breathing` (`cb3446a`).
 
 ### Tác vụ 7: Walk sheet hoàn chỉnh cho player và NPC
 
@@ -122,11 +122,11 @@
 
 **Giao diện:** mỗi `CharacterSheet.walk` khai báo texture sheet 1280×640, frame 160×160, thứ tự rows NE/SE/SW/NW, 8 frames/hướng, 10 fps; khai báo đủ `player`, `anna`, `leo`, `david`.
 
-- [ ] **Bước 1: Viết test lỗi** cho đủ walk sheets, manifest dimensions/frame count, row/facing mapping, NPC registration, player animation continuity và missing-sheet fallback.
-- [ ] **Bước 2: Chạy test đỏ** `npx nx test @lexicon/game-web` và `npx nx test @lexicon/game-content`.
-- [ ] **Bước 3: Tạo ảnh** bằng ImageGen với bốn idle directions từng actor làm reference và prompt trong `docs/art/07` §4.4; tạo bốn sheet riêng. Chuẩn hóa bằng `.venv-art-codegen`/`slice_walk_sheet.py`; không dùng deform từ `make_walk_frames.py` làm asset phát hành. Xem contact sheet và loop 10 fps; regenerate nếu hình/scale/feet/loop không đạt.
-- [ ] **Bước 4: Implement** provenance, thay sheet procedural player, thêm walk sheet NPC, register animation theo actor/hướng; không thêm autonomous NPC movement. Cập nhật docs art.
-- [ ] **Bước 5: Chạy test xanh**; E2E xác nhận player walk dùng asset thật và NPC walk được đăng ký/trigger qua dev test control.
+- [x] **Bước 1: Viết test lỗi** cho đủ walk sheets, manifest dimensions/frame count, row/facing mapping, NPC registration, player animation continuity và missing-sheet fallback.
+- [x] **Bước 2: Chạy test đỏ** theo package; Nx/npm không có trong PATH nên dùng Vitest cài sẵn trực tiếp. Contract ban đầu bắt được lỗi feet-line/loop của một số ảnh; ảnh được tạo lại và tiêu chí giữ nguyên.
+- [x] **Bước 3: Tạo ảnh** bằng ImageGen với bốn idle directions từng actor làm reference và prompt trong `docs/art/07` §4.4; tạo bốn sheet riêng. Chuẩn hóa canvas gần đúng 1774×887 sang 1792×896 (giữ tỉ lệ 2:1), dùng `.venv-art-codegen`/`slice_walk_sheet.py`, không dùng `make_walk_frames.py` làm asset phát hành. Contact sheet 1280×640 và loop 10 fps đã được kiểm; Player, Anna, Leo được tạo lại đến khi đạt contract.
+- [x] **Bước 4: Implement** provenance, thay sheet procedural player, thêm walk sheet NPC, register animation theo actor/hướng; không thêm autonomous NPC movement. Cập nhật docs art và slicer để neo đế giày mỗi frame vào y=140.
+- [x] **Bước 5: Chạy test xanh**; E2E xác nhận player walk dùng asset thật và cả ba NPC walk được preload/trigger qua dev test control.
 - [ ] **Bước 6: Commit** `feat(assets): add complete isometric walk sheets for cast`.
 
 ### Tác vụ 8: Đồng bộ art/architecture docs và full verification
