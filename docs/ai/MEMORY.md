@@ -1,16 +1,16 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T12:03:00+07:00
+updated_at: 2026-09-30T12:09:00+07:00
 phase: phase-11d
 status: in_progress
-result_commit: e666fb7
+result_commit: 9489678
 active_spec: docs/superpowers/specs/2026-09-30-phase-11d-scene-and-character-feedback-design.md
 active_plan: docs/superpowers/plans/2026-09-30-phase-11d-isometric-dimetric.md
 ---
 
 ## Metadata
 
-- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec `c2f7b50`, plan `e666fb7`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, scene được dựng lại trong Phase 11D.
+- Snapshot duy trì bằng Git; Phase 11C Task 5 `9ef78aa`, verification Task 6 `ba337b9`, Phase 11D spec `c2f7b50`, plan `9489678`; memory commit kế tiếp. Task 4 WIP (`9ee5011`, `7306b1d`) chưa được xác nhận đạt yêu cầu, scene được dựng lại trong Phase 11D.
 
 ## Current Phase
 
@@ -37,7 +37,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11d-isometric-dimetric.md
 
 ## In Progress
 
-- Spec Phase 11D `c2f7b50` và plan tiếng Việt `e666fb7` đã commit; plan gồm 8 task, chưa có implementation; chờ người dùng review/duyệt plan.
+- Spec Phase 11D `c2f7b50` và plan tiếng Việt `9489678` đã commit; plan gồm 8 tác vụ, chưa có implementation; chờ người dùng review/duyệt plan.
 
 ## Active Decisions
 
@@ -69,7 +69,7 @@ active_plan: docs/superpowers/plans/2026-09-30-phase-11d-isometric-dimetric.md
 
 ## Latest Handoff
 
-- Tiếp tục Phase 11D từ cổng review plan `docs/superpowers/plans/2026-09-30-phase-11d-isometric-dimetric.md`; native implementation sau khi người dùng duyệt.
+- Tiếp tục Phase 11D từ cổng review plan tiếng Việt `docs/superpowers/plans/2026-09-30-phase-11d-isometric-dimetric.md`; native implementation sau khi người dùng duyệt.
 
 ## Required Reading
 
