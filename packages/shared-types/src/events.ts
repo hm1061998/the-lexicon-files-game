@@ -4,7 +4,7 @@ export type GameEventMap = {
   /** Screen anchor (CSS px relative to the canvas) for the interaction bubble; null id clears it. */
   'interaction:anchor': { interactableId: string; x: number; y: number } | { interactableId: null };
   'interaction:triggered': { interactableId: string };
-  'player:moved': { x: number; y: number };
+    'player:moved': { coordinateSpace: 'screen' | 'logical'; x: number; y: number };
   'scene:transitionRequested': { sceneId: string; spawnId: string };
   'vocab:seen': { vocabularyId: string; contextId: string };
   'vocab:inspected': { vocabularyId: string; contextId: string };

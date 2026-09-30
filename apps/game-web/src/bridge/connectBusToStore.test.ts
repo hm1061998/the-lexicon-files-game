@@ -45,16 +45,26 @@ describe('connectBusToStore', () => {
     const store = createGameStore({ caseDefinition });
     connectBusToStore(bus, store);
 
-    bus.emit('player:moved', { x: 12, y: 34 });
+    bus.emit('player:moved', { x: 12, y: 34, coordinateSpace: 'screen' });
 
-    expect(store.getState().playerPosition).toEqual({ x: 12, y: 34 });
+    expect(store.getState().playerPosition).toEqual({ x: 12, y: 34, coordinateSpace: 'screen' });
+  });
+
+  it('keeps the logical coordinate-space tag for an isometric scene', () => {
+    const bus = createEventBus<GameEventMap>();
+    const store = createGameStore({ caseDefinition });
+    connectBusToStore(bus, store);
+
+    bus.emit('player:moved', { x: 2, y: 3, coordinateSpace: 'logical' });
+
+    expect(store.getState().playerPosition).toEqual({ x: 2, y: 3, coordinateSpace: 'logical' });
   });
 
   it('a scene transition clears the published player position', () => {
     const bus = createEventBus<GameEventMap>();
     const store = createGameStore({ caseDefinition });
     connectBusToStore(bus, store);
-    bus.emit('player:moved', { x: 12, y: 34 });
+    bus.emit('player:moved', { x: 12, y: 34, coordinateSpace: 'screen' });
 
     bus.emit('scene:transitionRequested', { sceneId: 'archive', spawnId: 'from_office' });
 

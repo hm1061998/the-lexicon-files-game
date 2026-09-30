@@ -351,7 +351,7 @@ export class WorldScene extends Phaser.Scene {
     if (!shouldEmitPlayerMoved(this.lastPublished, next, this.sinceLastPublishMs)) return;
     this.lastPublished = next;
     this.sinceLastPublishMs = 0;
-    this.bus.emit('player:moved', next);
+    this.bus.emit('player:moved', { ...next, coordinateSpace: 'screen' });
   }
 
   /** Red outline around the nearby target and its published screen anchor (view only). */

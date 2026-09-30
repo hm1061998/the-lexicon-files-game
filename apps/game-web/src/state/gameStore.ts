@@ -30,7 +30,7 @@ export type GameStoreState = {
   /** Screen anchor (canvas-relative CSS px) of the nearby target, published by Phaser. */
   interactionAnchor: { x: number; y: number } | null;
   /** Published view of the Phaser player position (Phaser stays the source); null until known. */
-  playerPosition: { x: number; y: number } | null;
+  playerPosition: { x: number; y: number; coordinateSpace?: 'screen' | 'logical' } | null;
   /** HUD-only visibility of the minimap; deliberately not saved or in settings. */
   minimapVisible: boolean;
   paused: boolean;

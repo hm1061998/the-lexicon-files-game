@@ -7,6 +7,7 @@ import {
   shouldEmitAnchor,
   worldToScreen,
 } from './anchorScreen';
+import { projectInteractionAnchor } from './anchorScreen';
 
 const camera = { scrollX: 100, scrollY: 50, zoom: 1, width: 1920, height: 1080 };
 
@@ -37,6 +38,27 @@ describe('worldToScreen', () => {
     expect(
       worldToScreen({ x: centre.x + 1, y: centre.y }, zoomed, { width: 1920, height: 1080 }).x,
     ).toBe(962);
+  });
+});
+
+describe('projectInteractionAnchor', () => {
+  const projection = {
+    type: 'dimetric-2:1' as const,
+    originX: 0,
+    originY: 0,
+    tileWidth: 128 as const,
+    tileHeight: 64 as const,
+  };
+
+  it('applies projection, camera zoom and CSS canvas scaling once each', () => {
+    const anchor = { u: 2, v: 1 };
+    expect(projectInteractionAnchor(anchor, projection, camera, { width: 1920, height: 1080 })).toEqual({
+      x: -36,
+      y: 46,
+    });
+    expect(
+      projectInteractionAnchor(anchor, projection, { ...camera, zoom: 2 }, { width: 960, height: 540 }),
+    ).toEqual({ x: -516, y: -224 });
   });
 });
 

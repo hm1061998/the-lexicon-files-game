@@ -1,3 +1,7 @@
+import type { IsoProjection } from '@lexicon/shared-types';
+import type { LogicalPoint } from './isometricProjection';
+import { projectIso } from './isometricProjection';
+
 export function computeDepth(feetY: number, depthBias = 0): number {
   return feetY + depthBias;
 }
@@ -9,6 +13,17 @@ export function computeDepth(feetY: number, depthBias = 0): number {
  */
 export const PLAYER_DEPTH_EPSILON = 0.01;
 
+/** Depth follows the projected floor contact; visual elevation is deliberately excluded. */
+export function computeIsoDepth(
+  floorAnchor: LogicalPoint,
+  projection: IsoProjection,
+  depthBias = 0,
+): number {
+  return projectIso(floorAnchor, projection).y + depthBias;
+}
+
 export function computePlayerDepth(feetY: number): number {
   return computeDepth(feetY, PLAYER_DEPTH_EPSILON);
 }
+
+

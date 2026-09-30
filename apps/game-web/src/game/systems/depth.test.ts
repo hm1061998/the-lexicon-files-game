@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { PLAYER_DEPTH_EPSILON, computeDepth, computePlayerDepth } from './depth';
+import { computeIsoDepth } from './depth';
+
+const projection = {
+  type: 'dimetric-2:1' as const,
+  originX: 0,
+  originY: 100,
+  tileWidth: 128 as const,
+  tileHeight: 64 as const,
+};
 
 describe('computeDepth', () => {
   it('returns feetY when no bias is given', () => {
@@ -21,5 +30,12 @@ describe('computePlayerDepth', () => {
     expect(PLAYER_DEPTH_EPSILON).toBeLessThan(1);
     expect(computePlayerDepth(999)).toBeLessThan(computeDepth(1000));
     expect(computePlayerDepth(1001)).toBeGreaterThan(computeDepth(1000));
+  });
+});
+
+describe('computeIsoDepth', () => {
+  it('sorts from the projected floor anchor and ignores visual elevation', () => {
+    expect(computeIsoDepth({ u: 2, v: 3 }, projection, 4)).toBe(264);
+    expect(computeIsoDepth({ u: 2, v: 3 }, projection, 5)).toBe(265);
   });
 });

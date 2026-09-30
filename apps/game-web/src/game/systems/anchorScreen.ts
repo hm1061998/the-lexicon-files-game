@@ -1,3 +1,7 @@
+import type { IsoProjection } from '@lexicon/shared-types';
+import type { LogicalPoint } from './isometricProjection';
+import { projectIso } from './isometricProjection';
+
 export type Point = { x: number; y: number };
 export type Size = { width: number; height: number };
 export type Rect = { left: number; top: number; right: number; bottom: number };
@@ -29,6 +33,16 @@ export function worldToScreen(world: Point, camera: CameraView, canvasRect: Size
     x: ((world.x - camera.scrollX) * z - (camera.width * (z - 1)) / 2) * scaleX,
     y: ((world.y - camera.scrollY) * z - (camera.height * (z - 1)) / 2) * scaleY,
   };
+}
+
+/** Projects one logical interaction anchor to canvas CSS pixels, applying camera and CSS scales once. */
+export function projectInteractionAnchor(
+  logicalAnchor: LogicalPoint,
+  projection: IsoProjection,
+  camera: CameraView,
+  canvasRect: Size,
+): Point {
+  return worldToScreen(projectIso(logicalAnchor, projection), camera, canvasRect);
 }
 
 /** Below this HUD width the bubble falls back to the fixed bottom-centre prompt. */
@@ -91,3 +105,5 @@ export function shouldEmitAnchor(prev: IdAnchor | null, next: IdAnchor, dtMs: nu
   if (dtMs < ANCHOR_EMIT_INTERVAL_MS) return false;
   return Math.hypot(next.x - prev.x, next.y - prev.y) >= ANCHOR_MIN_DISTANCE;
 }
+
+
