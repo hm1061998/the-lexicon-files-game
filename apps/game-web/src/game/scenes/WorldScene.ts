@@ -28,6 +28,8 @@ import { markerMotion } from '../systems/markerMotion';
 import { isOccluder, occluderAlpha } from '../systems/occlusion';
 import { shouldEmitPlayerMoved } from '../systems/playerMoved';
 import { markerBaseY, markerPositionY } from '../systems/markerFloat';
+import { resolveSceneAssets } from '../systems/sceneAssetResolver';
+import { projectScenePoint, projectVisualAnchor } from '../systems/sceneProjection';
 
 export type InputLockSource = { isInputLocked(): boolean };
 
@@ -152,25 +154,33 @@ export class WorldScene extends Phaser.Scene {
     this.physics.world.setBounds(b.x, b.y, b.width, b.height);
 
     const colliders = this.physics.add.staticGroup();
-    for (const asset of def.assets) {
-      const { sprite, body } = createSceneAsset(this, asset);
+    const resolvedAssets = resolveSceneAssets(def.assets);
+    for (const resolved of resolvedAssets) {
+      const { asset } = resolved;
+      const floorPoint = projectScenePoint(def, resolved.floorAnchor);
+      const visualPoint = projectVisualAnchor(def, resolved.visualAnchor);
+      const { sprite, body } = createSceneAsset(this, resolved, def.projection);
       this.depths.set(asset.id, sprite.depth);
       this.assetTextures.set(asset.id, sprite.texture.key);
-      if (asset.type === 'npc') createShadow(this, { x: asset.x, y: asset.y, depth: sprite.depth });
+      if (asset.type === 'npc') createShadow(this, { x: floorPoint.x, y: floorPoint.y, depth: sprite.depth });
       if (body) colliders.add(body);
       if (isOccluder(asset, b.width)) {
         // Static sprites: bounds are measured once, not every frame.
         const { x, y, width, height } = sprite.getBounds();
-        this.occluders.push({ id: asset.id, sprite, feetY: asset.y, box: { x, y, width, height } });
+        this.occluders.push({ id: asset.id, sprite, feetY: floorPoint.y, box: { x, y, width, height } });
       }
-      if (asset.interaction) {
+      if (asset.interaction && resolved.interactionAnchor) {
+        const interactionPoint = projectVisualAnchor(def, resolved.interactionAnchor);
         // Character frames carry transparent headroom, so use the figure height for NPCs.
         const visualTop =
-          asset.type === 'npc' ? asset.y - CHARACTER_FIGURE_HEIGHT : sprite.getTopCenter().y;
-        const blockedTop = asset.collision ? asset.y + asset.collision.y : undefined;
+          asset.type === 'npc' ? visualPoint.y - CHARACTER_FIGURE_HEIGHT : sprite.getTopCenter().y;
+        const blockedTop =
+          asset.collision && 'y' in asset.collision && 'y' in resolved.floorAnchor
+            ? resolved.floorAnchor.y + asset.collision.y
+            : undefined;
         this.markerAnchors.set(
           asset.id,
-          markerBaseY(asset.y + asset.interaction.y, visualTop, blockedTop),
+          markerBaseY(interactionPoint.y, visualTop, blockedTop),
         );
         this.targetBounds.set(asset.id, () => {
           const box = sprite.getBounds();
@@ -179,16 +189,16 @@ export class WorldScene extends Phaser.Scene {
           // Character frames carry transparent margins: outline the figure, not the frame.
           const width = CHARACTER_FIGURE_HEIGHT * NPC_FIGURE_ASPECT;
           return {
-            x: asset.x - width / 2,
-            y: asset.y - CHARACTER_FIGURE_HEIGHT,
+            x: floorPoint.x - width / 2,
+            y: floorPoint.y - CHARACTER_FIGURE_HEIGHT,
             width,
             height: CHARACTER_FIGURE_HEIGHT,
           };
         });
         this.areas.push({
           id: asset.id,
-          x: asset.x + asset.interaction.x,
-          y: asset.y + asset.interaction.y,
+          x: interactionPoint.x,
+          y: interactionPoint.y,
           radius: asset.interaction.radius,
           prompt: asset.interaction.prompt,
         });

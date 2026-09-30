@@ -87,6 +87,69 @@ describe('buildMinimapModel', () => {
     expect(buildMinimapModel(s, { x: 3, y: 4 }).player).toEqual({ x: 3, y: 4 });
   });
 
+  it('projects logical asset markers and player events through the same dimetric origin', () => {
+    const s: SceneDefinition = {
+      ...scene([
+        {
+          id: 'note',
+          type: 'interactable',
+          texture: 'note',
+          position: { u: 2, v: 1 },
+          origin: [0.5, 0.5],
+          scale: 1,
+          depthBias: 0,
+          interaction: { x: 0, y: 0, radius: 40, prompt: 'Read' },
+        },
+      ]),
+      projection: { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 },
+    };
+    const model = buildMinimapModel(s, { x: 1, y: 1, coordinateSpace: 'logical' });
+    expect(model.markers).toEqual([{ id: 'note', x: 64, y: 96, kind: 'interactable' }]);
+    expect(model.player).toEqual({ x: 0, y: 64 });
+  });
+
+  it('projects logical collision footprints by their four corners', () => {
+    const s: SceneDefinition = {
+      ...scene([
+        {
+          id: 'desk',
+          type: 'prop',
+          texture: 'desk',
+          position: { u: 2, v: 3 },
+          origin: [0.5, 1],
+          scale: 1,
+          depthBias: 0,
+          collision: { type: 'rect', u: -0.5, v: 0, width: 1, height: 1 },
+        },
+      ]),
+      projection: { type: 'dimetric-2:1', originX: 100, originY: 50, tileWidth: 128, tileHeight: 64 },
+    };
+    expect(buildMinimapModel(s, null).solids).toEqual([
+      { x: -60, y: 194, width: 128, height: 64 },
+    ]);
+  });
+
+  it('projects logical asset markers and player events through the same dimetric origin', () => {
+    const s: SceneDefinition = {
+      ...scene([
+        {
+          id: 'note',
+          type: 'interactable',
+          texture: 'note',
+          position: { u: 2, v: 1 },
+          origin: [0.5, 0.5],
+          scale: 1,
+          depthBias: 0,
+          interaction: { x: 0, y: 0, radius: 40, prompt: 'Read' },
+        },
+      ]),
+      projection: { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 },
+    };
+    const model = buildMinimapModel(s, { x: 1, y: 1, coordinateSpace: 'logical' });
+    expect(model.markers).toEqual([{ id: 'note', x: 64, y: 96, kind: 'interactable' }]);
+    expect(model.player).toEqual({ x: 0, y: 64 });
+  });
+
   it('models every real scene: one marker per interaction, each collision a solid or partition', () => {
     for (const real of caseDefinition.scenes) {
       const model = buildMinimapModel(real, null);

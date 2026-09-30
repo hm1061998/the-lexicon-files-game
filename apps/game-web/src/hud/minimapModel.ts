@@ -1,4 +1,6 @@
 import type { SceneDefinition } from '@lexicon/shared-types';
+import { projectScenePoint, projectVisualAnchor, projectWorldBounds } from '../game/systems/sceneProjection';
+import { resolveSceneAssets } from '../game/systems/sceneAssetResolver';
 
 export type MinimapRect = { x: number; y: number; width: number; height: number };
 export type MinimapMarker = {
@@ -22,41 +24,63 @@ export type MinimapModel = {
   player: { x: number; y: number } | null;
 };
 
-/** Pure projection of a scene definition (world coordinates) into minimap primitives. */
+type PlayerPosition = { x: number; y: number; coordinateSpace?: 'screen' | 'logical' };
+
+/** Converts scene geometry and player position into a single screen-space minimap view. */
 export function buildMinimapModel(
   scene: SceneDefinition,
-  playerPosition: { x: number; y: number } | null,
+  playerPosition: PlayerPosition | null,
 ): MinimapModel {
   const b = scene.worldBounds;
   const solids: MinimapRect[] = [];
   const partitions: MinimapRect[] = [];
   const markers: MinimapMarker[] = [];
-  for (const asset of scene.assets) {
-    const c = asset.collision;
-    if (c) {
-      const rect = { x: asset.x + c.x, y: asset.y + c.y, width: c.width, height: c.height };
-      // The back wall spans the whole world; any narrower wall divides rooms.
-      const partition = asset.type === 'wall' && c.width < b.width;
+  for (const resolved of resolveSceneAssets(scene.assets)) {
+    const { asset, floorAnchor, collision, interactionAnchor } = resolved;
+    if (collision) {
+      let rect: MinimapRect;
+      if ('u' in collision && 'u' in floorAnchor && scene.projection) {
+        rect = projectWorldBounds(
+          {
+            u: floorAnchor.u + collision.u,
+            v: floorAnchor.v + collision.v,
+            width: collision.width,
+            height: collision.height,
+          },
+          scene.projection,
+        );
+      } else if ('x' in collision && 'x' in floorAnchor) {
+        rect = {
+          x: floorAnchor.x + collision.x,
+          y: floorAnchor.y + collision.y,
+          width: collision.width,
+          height: collision.height,
+        };
+      } else {
+        throw new Error(`scene asset "${asset.id}" has collision in a different coordinate space`);
+      }
+      const partition = asset.type === 'wall' && collision.width < b.width;
       (partition ? partitions : solids).push(rect);
     }
-    const interaction = asset.interaction;
-    if (interaction) {
-      const kind = interaction.transition
+    if (asset.interaction && interactionAnchor) {
+      const point = projectVisualAnchor(scene, interactionAnchor);
+      const kind = asset.interaction.transition
         ? 'door'
-        : asset.type === 'npc' || interaction.npcId
+        : asset.type === 'npc' || asset.interaction.npcId
           ? 'npc'
           : 'interactable';
-      markers.push({
-        id: asset.id,
-        x: asset.x + interaction.x,
-        y: asset.y + interaction.y,
-        kind,
-      });
+      markers.push({ id: asset.id, x: point.x, y: point.y, kind });
     }
   }
-  const currentRoom = playerPosition
-    ? (scene.labels ?? []).reduce<{ text: string; distance: number } | null>((nearest, label) => {
-        const distance = Math.hypot(playerPosition.x - label.x, playerPosition.y - label.y);
+  const player = playerPosition
+    ? playerPosition.coordinateSpace === 'logical'
+      ? projectScenePoint(scene, { u: playerPosition.x, v: playerPosition.y })
+      : { x: playerPosition.x, y: playerPosition.y }
+    : null;
+  const labels = (scene.labels ?? []).map(({ id, text, x, y }) => ({ id, text, x, y }));
+  const currentRoom = player
+    ? labels.reduce<{ text: string; distance: number } | null>((nearest, label) => {
+        const distance = Math.hypot(player.x - label.x, player.y - label.y);
         return !nearest || distance < nearest.distance ? { text: label.text, distance } : nearest;
       }, null)
     : null;
@@ -66,9 +90,9 @@ export function buildMinimapModel(
     playerRadius: (b.width * 84) / 2400,
     solids,
     partitions,
-    labels: (scene.labels ?? []).map(({ id, text, x, y }) => ({ id, text, x, y })),
+    labels,
     currentRoomName: currentRoom?.text ?? null,
     markers,
-    player: playerPosition ? { x: playerPosition.x, y: playerPosition.y } : null,
+    player,
   };
 }

@@ -27,6 +27,51 @@ describe('parseSceneDefinition', () => {
     expect(scene.projection?.type).toBe('dimetric-2:1');
   });
 
+  it('accepts a logical asset position and a tabletop attachment', () => {
+    const raw = structuredClone(mainOffice) as {
+      assets: Array<Record<string, unknown>>;
+    };
+    const texture = raw.assets[0]!.texture;
+    raw.assets[0] = {
+      id: 'desk',
+      type: 'prop',
+      texture,
+      position: { u: 2, v: 3 },
+      origin: [0.5, 1],
+      scale: 1,
+      depthBias: 0,
+    };
+    raw.assets.push({
+      id: 'test_surface_item',
+      type: 'interactable',
+      texture,
+      restsOn: 'desk',
+      surfaceOffset: { u: 0.25, v: -0.5, elevationPx: 44 },
+      origin: [0.5, 0.5],
+      scale: 1,
+      depthBias: 0,
+    });
+
+    expect(() => parseSceneDefinition(raw, 'main_office.json')).not.toThrow();
+  });
+
+  it('rejects an isometric surface child without a complete finite surface offset', () => {
+    const raw = structuredClone(mainOffice) as {
+      assets: Array<Record<string, unknown>>;
+    };
+    raw.assets.push({
+      id: 'paper',
+      type: 'interactable',
+      texture: 'paper',
+      restsOn: 'desk',
+      surfaceOffset: { u: 0.25, v: 0, elevationPx: Number.POSITIVE_INFINITY },
+      origin: [0.5, 0.5],
+      scale: 1,
+      depthBias: 0,
+    });
+    expect(() => parseSceneDefinition(raw, 'bad.json')).toThrow(ContentValidationError);
+  });
+
   it.each([
     { type: 'dimetric-3:2', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 },
     { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 96, tileHeight: 64 },

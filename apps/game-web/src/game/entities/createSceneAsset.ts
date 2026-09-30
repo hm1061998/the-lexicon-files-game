@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
-import type { SceneAssetDefinition } from '@lexicon/shared-types';
+import type { IsoProjection } from '@lexicon/shared-types';
 import { resolveTextureKey } from '../assetManifest';
-import { computeDepth } from '../systems/depth';
+import { computeDepth, computeIsoDepth } from '../systems/depth';
+import type { ResolvedSceneAsset } from '../systems/sceneAssetResolver';
+import { projectScenePoint, projectVisualAnchor } from '../systems/sceneProjection';
 
 export type SceneAssetObjects = {
   sprite: Phaser.GameObjects.Image;
@@ -10,20 +12,27 @@ export type SceneAssetObjects = {
 
 export function createSceneAsset(
   scene: Phaser.Scene,
-  asset: SceneAssetDefinition,
+  resolved: ResolvedSceneAsset,
+  projection?: IsoProjection,
 ): SceneAssetObjects {
+  const { asset, floorAnchor, visualAnchor } = resolved;
   const texture = resolveTextureKey(scene, asset.texture);
-  const sprite = scene.add.image(asset.x, asset.y, texture);
+  const floorPoint = projectScenePoint({ projection }, floorAnchor);
+  const visualPoint = projectVisualAnchor({ projection }, visualAnchor);
+  const sprite = scene.add.image(visualPoint.x, visualPoint.y, texture);
   sprite.setOrigin(asset.origin[0], asset.origin[1]);
   sprite.setScale(asset.scale);
-  sprite.setDepth(asset.depth ?? computeDepth(asset.y, asset.depthBias));
+  const depth = 'u' in floorAnchor && projection
+    ? computeIsoDepth(floorAnchor, projection, asset.depthBias)
+    : computeDepth(floorPoint.y, asset.depthBias);
+  sprite.setDepth(asset.depth ?? depth);
 
   let body: Phaser.GameObjects.Zone | null = null;
-  if (asset.collision) {
+  if (asset.collision && 'x' in asset.collision && 'x' in floorAnchor) {
     const c = asset.collision;
     body = scene.add.zone(
-      asset.x + c.x + c.width / 2,
-      asset.y + c.y + c.height / 2,
+      floorAnchor.x + c.x + c.width / 2,
+      floorAnchor.y + c.y + c.height / 2,
       c.width,
       c.height,
     );

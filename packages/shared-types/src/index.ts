@@ -14,6 +14,9 @@ export type {
 export type {
   SceneAssetType,
   IsoProjection,
+  LogicalPoint,
+  LogicalRectCollision,
+  SurfaceOffset,
   RectCollision,
   InteractionArea,
   SceneAssetDefinition,

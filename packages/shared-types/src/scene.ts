@@ -40,6 +40,11 @@ export interface IsoProjection {
   readonly tileHeight: 64;
 }
 
+export interface LogicalPoint {
+  readonly u: number;
+  readonly v: number;
+}
+
 export interface RectCollision {
   readonly type: 'rect';
   readonly x: number;
@@ -48,7 +53,20 @@ export interface RectCollision {
   readonly height: number;
 }
 
+export interface LogicalRectCollision {
+  readonly type: 'rect';
+  readonly u: number;
+  readonly v: number;
+  readonly width: number;
+  readonly height: number;
+}
+
+export interface SurfaceOffset extends LogicalPoint {
+  readonly elevationPx: number;
+}
+
 export interface InteractionArea {
+  /** Pixel offsets in legacy scenes; logical offsets in dimetric scenes. */
   readonly x: number;
   readonly y: number;
   readonly radius: number;
@@ -68,20 +86,49 @@ export interface SpawnPointDefinition {
   readonly y: number;
 }
 
-export interface SceneAssetDefinition {
+interface SceneAssetCommon {
   readonly id: string;
   readonly type: SceneAssetType;
   readonly texture: string;
-  readonly x: number;
-  readonly y: number;
   readonly origin: readonly [number, number];
   /** Uniform display scale of the texture; collision/interaction stay in world pixels. */
   readonly scale: number;
   readonly depth?: number | undefined;
   readonly depthBias: number;
-  readonly collision?: RectCollision | undefined;
+  readonly elevationPx?: number | undefined;
+  readonly collision?: RectCollision | LogicalRectCollision | undefined;
   readonly interaction?: InteractionArea | undefined;
 }
+
+export type LegacySceneAssetDefinition = SceneAssetCommon & {
+  readonly x: number;
+  readonly y: number;
+  readonly position?: never;
+  readonly restsOn?: never;
+  readonly surfaceOffset?: never;
+};
+
+export type PositionedSceneAssetDefinition = SceneAssetCommon & {
+  readonly position: LogicalPoint;
+  readonly x?: never;
+  readonly y?: never;
+  readonly restsOn?: never;
+  readonly surfaceOffset?: never;
+};
+
+export type SurfaceChildSceneAssetDefinition = SceneAssetCommon & {
+  readonly position?: never;
+  readonly x?: never;
+  readonly y?: never;
+  readonly restsOn: string;
+  readonly surfaceOffset: SurfaceOffset;
+};
+
+/** Legacy Cartesian during migration, or logical isometric placement and surface attachment. */
+export type SceneAssetDefinition =
+  | LegacySceneAssetDefinition
+  | PositionedSceneAssetDefinition
+  | SurfaceChildSceneAssetDefinition;
 
 /**
  * A room sign drawn in the world (e.g. on a partition wall). Text comes from content; the label

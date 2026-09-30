@@ -14,6 +14,28 @@ const rectCollisionSchema = z
   })
   .strict();
 
+const logicalCollisionSchema = z
+  .object({
+    type: z.literal('rect'),
+    u: z.number().finite(),
+    v: z.number().finite(),
+    width: z.number().positive(),
+    height: z.number().positive(),
+  })
+  .strict();
+
+const logicalPointSchema = z
+  .object({ u: z.number().finite(), v: z.number().finite() })
+  .strict();
+
+const surfaceOffsetSchema = z
+  .object({
+    u: z.number().finite(),
+    v: z.number().finite(),
+    elevationPx: z.number().finite(),
+  })
+  .strict();
+
 const interactionAreaSchema = z
   .object({
     x: z.number(),
@@ -72,16 +94,35 @@ const sceneAssetDefinitionSchema = z
     id: z.string().min(1),
     type: sceneAssetTypeSchema,
     texture: z.string().min(1),
-    x: z.number(),
-    y: z.number(),
+    x: z.number().finite().optional(),
+    y: z.number().finite().optional(),
+    position: logicalPointSchema.optional(),
+    restsOn: z.string().min(1).optional(),
+    surfaceOffset: surfaceOffsetSchema.optional(),
     origin: z.tuple([z.number(), z.number()]).default([0.5, 0.9]),
     scale: z.number().positive().default(1),
-    depth: z.number().optional(),
-    depthBias: z.number().default(0),
-    collision: rectCollisionSchema.optional(),
+    depth: z.number().finite().optional(),
+    depthBias: z.number().finite().default(0),
+    elevationPx: z.number().finite().optional(),
+    collision: z.union([rectCollisionSchema, logicalCollisionSchema]).optional(),
     interaction: interactionAreaSchema.optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((asset, ctx) => {
+    const legacy = asset.x !== undefined && asset.y !== undefined;
+    const positioned = asset.position !== undefined;
+    const surfaceChild = asset.restsOn !== undefined || asset.surfaceOffset !== undefined;
+    const validLegacy = legacy && !positioned && !surfaceChild;
+    const validPositioned = positioned && !legacy && !surfaceChild;
+    const validChild = surfaceChild && !legacy && !positioned && Boolean(asset.restsOn) && asset.surfaceOffset !== undefined;
+    if (!(validLegacy || validPositioned || validChild)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['position'],
+        message: 'asset must use legacy x/y, logical position, or restsOn with surfaceOffset',
+      });
+    }
+  });
 
 const sceneLabelSchema = z
   .object({
@@ -212,5 +253,5 @@ export function parseSceneDefinition(raw: unknown, source: string): SceneDefinit
     const issues = result.error.issues.map(formatIssue);
     throw new ContentValidationError(source, issues);
   }
-  return result.data;
+  return result.data as unknown as SceneDefinition;
 }

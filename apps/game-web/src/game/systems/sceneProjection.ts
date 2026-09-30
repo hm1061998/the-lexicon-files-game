@@ -2,6 +2,7 @@ import type { IsoProjection, SceneDefinition } from '@lexicon/shared-types';
 import type { LogicalRect } from './logicalCollision';
 import { projectIso, type LogicalPoint, type ScreenPoint } from './isometricProjection';
 import type { Point } from './anchorScreen';
+import type { VisualAnchor } from './sceneAssetResolver';
 
 /** Legacy screen points pass through; logical points use the scene's dimetric projector. */
 export function projectScenePoint(
@@ -30,4 +31,13 @@ export function projectWorldBounds(bounds: LogicalRect, projection: IsoProjectio
   const x = Math.min(...xs);
   const y = Math.min(...ys);
   return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
+}
+
+/** Projects an anchor and applies its image-only elevation after its floor point is projected. */
+export function projectVisualAnchor(
+  scene: Pick<SceneDefinition, 'projection'>,
+  anchor: VisualAnchor,
+): ScreenPoint {
+  const point = projectScenePoint(scene, anchor);
+  return { x: point.x, y: point.y - anchor.elevationPx };
 }

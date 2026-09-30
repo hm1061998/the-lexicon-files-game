@@ -9,6 +9,7 @@ import type {
   FactDefinition,
   ListeningTaskDefinition,
   ObjectiveDefinition,
+  SceneDefinition,
   TimelineDefinition,
 } from '@lexicon/shared-types';
 import { ContentValidationError } from '../loader/ContentValidationError';
@@ -389,7 +390,8 @@ export function parseCaseDefinition(
   const listeningTasks = listeningTasksResult.data.tasks as ListeningTaskDefinition[];
   const vocabulary = vocabularyResult.data.vocabulary;
   const scenes = scenesResult.map(
-    (result) => (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] }).data,
+    (result) =>
+      (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] }).data as unknown as SceneDefinition,
   );
 
   const collections: ReadonlyArray<{ label: string; ids: readonly string[] }> = [
