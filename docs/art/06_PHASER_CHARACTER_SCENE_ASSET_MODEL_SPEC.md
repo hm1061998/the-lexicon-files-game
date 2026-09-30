@@ -89,16 +89,17 @@ Elevation chỉ dịch visual anchor lên màn hình; floor anchor, depth, colli
 
 # 4. Camera Specification
 
-Camera visual reference khi render asset:
+Camera của bộ môi trường Office/Archive từ Phase 11E:
 
 ```text
 Projection: Orthographic dimetric 2:1
 Horizontal rotation: 45°
-Vertical viewing angle: 30°–38°
-Recommended: 35°
+Vertical viewing angle: 30°
 ```
 
-Tất cả environment asset phải dùng **cùng camera reference**.
+Yaw 45° và pitch 30° cho `sin(pitch)=0.5`: hai cạnh sàn có độ dốc ±1:2 đúng với projector §3. Sàn, module tường, khung cửa, furniture và bảng trong Office/Archive dùng chung camera này; renderer `tools/art-codegen/build_environment.py` xuất pivot và footprint vào `environment-models.json` trong game-content.
+
+Tham chiếu 35° trước đây vẫn áp dụng khi đọc concept và asset legacy. Character/evidence art giữ nguyên trong redesign; không tái sinh nhân vật để đổi camera của môi trường.
 
 Không được render mỗi asset với một góc khác.
 
@@ -668,6 +669,8 @@ office_plant_01.webp
 office_foreground_wall.webp
 ```
 
+Office/Archive hiện dùng `environment/common/tex_floor_{office,archive}.png` (diamond 16×12 ô, 1792×896 px), `environment/{office,archive}/wall_<u|v>[_cap_start|_cap_end].png`, `door_frame_<u|v>.png` và sprite riêng trong `environment/props/dimetric/`. Tường là module một đơn vị, không xoay ảnh front-view. Opening không sinh module/collider; khung cửa tương tác là asset riêng.
+
 ---
 
 # 26. Scene Composition Example
@@ -763,7 +766,7 @@ tall cabinets
 
 Không dùng sprite rectangle mặc định.
 
-Mỗi prop có footprint riêng trên cùng hệ tọa độ với scene. Scene dimetric khai báo collider rectangle bằng `u/v` và kích thước logical; chuyển động/collision được giải trước khi projector vẽ vị trí ra screen. Hình sprite có thể lớn hơn footprint.
+Mỗi prop có `footprint` riêng trên cùng hệ tọa độ với scene, độc lập với `collision`: footprint mô tả diện tích chiếm chỗ; collision mô tả phần cản di chuyển và phải nằm trong footprint. Cả hai là offset `u/v/width/height` so với floor anchor. Scene dimetric khai báo collider rectangle bằng `u/v` và kích thước logical; chuyển động/collision được giải trước khi projector vẽ vị trí ra screen. Hình sprite có thể lớn hơn footprint; đổi origin/scale/elevation không làm đổi hình học sàn.
 
 Ví dụ bàn:
 
@@ -780,6 +783,7 @@ Metadata:
 ```json
 {
   "position": { "u": 6, "v": 4 },
+  "footprint": { "u": -0.8, "v": -0.4, "width": 1.6, "height": 0.8 },
   "collision": { "type": "rect", "u": -0.7, "v": -0.25, "width": 1.4, "height": 0.5 }
 }
 ```
@@ -807,6 +811,8 @@ Interaction không nhất thiết nằm tại sprite center. Với logical asset
 Ví dụ tài liệu trên bàn:
 
 Evidence đặt trên mặt bàn khai báo `restsOn` + `surfaceOffset` gồm `(u,v,elevationPx)`; interaction marker bám visual anchor trong khi depth/collision giữ floor anchor.
+
+Bán kính tương tác dùng điểm sàn đã chiếu, bỏ elevation; marker dùng visual anchor có elevation. Vì vậy evidence trên bàn vẫn tương tác được từ lối đi sát bàn. Surface-child không tự nhận collider sàn từ parent.
 
 ---
 
@@ -1743,11 +1749,14 @@ export interface SceneAssetDefinition {
   position?: { u: number; v: number };
   restsOn?: string;
   surfaceOffset?: { u: number; v: number; elevationPx: number };
+  elevationPx?: number;
 
   origin?: [number, number];
+  scale?: number;
 
   depth?: number;
   depthBias?: number;
+  footprint?: { u: number; v: number; width: number; height: number };
 
   collision?:
     | { type: 'rect'; x: number; y: number; width: number; height: number }
@@ -1760,9 +1769,38 @@ export interface DimetricSceneDefinition {
   projection: { type: 'dimetric-2:1'; originX: number; originY: number; tileWidth: 128; tileHeight: 64 };
   worldBounds: { u: number; v: number; width: number; height: number };
   spawnPoints: Record<string, { u: number; v: number }>;
+  walls?: WallSegmentDefinition[];
   assets: SceneAssetDefinition[];
 }
+
+export interface WallSegmentDefinition {
+  id: string;
+  kind: 'office' | 'archive';
+  axis: 'u' | 'v';
+  line: number;
+  start: number;
+  end: number;
+  openings: { id: string; start: number; end: number }[];
+}
 ```
+
+`axis:'u'` chạy theo u tại v=line; `axis:'v'` chạy theo v tại u=line. Start/end và opening là số nguyên, opening rộng tối thiểu 2, nằm trong segment và không chồng nhau. Tường dày 0.25 theo chiều tăng của trục vuông góc; line=0 vì vậy nằm hoàn toàn trong bounds. `expandWalls` sinh module dài 1 và `wallSpan` của segment để phân loại occlusion; collision bằng footprint module. Floor anchor module là tâm footprint, pivot ảnh lấy từ renderer.
+
+Ví dụ opening của cửa Tây:
+
+```json
+{
+  "walls": [
+    {
+      "id": "west_wall", "kind": "office", "axis": "v", "line": 0,
+      "start": 0, "end": 12,
+      "openings": [{ "id": "hallway", "start": 4, "end": 6 }]
+    }
+  ]
+}
+```
+
+Scene có `walls` bắt buộc khai báo footprint cho prop/wall/interactable không phải surface-child. Schema kiểm tra collision nằm trong footprint; loader scene/case chạy geometry gate cho bounds, overlap solids, texture module, spawn và reachability dùng body 0.36×0.36. Doorway cần khe tối thiểu 0.96; reachability dùng interaction radius pixel với margin 20%. Chỉ module tường sinh tự động vuông góc nối ở đầu/cuối segment (góc hoặc mối nối chữ T) được chung thể tích; tường song song chồng nhau hoặc giao giữa hai segment bị từ chối. ID phải duy nhất trên toàn bộ asset khai báo và module sinh tự động. Runtime và minimap cùng dùng asset sinh từ `expandWalls`; JSON không lưu thêm tường thủ công trùng segment.
 
 ---
 

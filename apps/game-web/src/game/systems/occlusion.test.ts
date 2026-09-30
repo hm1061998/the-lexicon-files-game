@@ -21,7 +21,15 @@ function asset(overrides: Partial<SceneAssetDefinition>): SceneAssetDefinition {
 
 describe('isOccluder', () => {
   it('classifies expanded wall modules using the whole segment span', () => {
-    const base = { id: 'wall', kind: 'office' as const, axis: 'u' as const, line: 0, start: 0, end: 16, openings: [] };
+    const base = {
+      id: 'wall',
+      kind: 'office' as const,
+      axis: 'u' as const,
+      line: 0,
+      start: 0,
+      end: 16,
+      openings: [],
+    };
     expect(isOccluder(expandWalls([base]).assets[0]!, 16)).toBe(false);
     expect(isOccluder(expandWalls([{ ...base, line: 5, end: 6 }]).assets[0]!, 16)).toBe(true);
   });

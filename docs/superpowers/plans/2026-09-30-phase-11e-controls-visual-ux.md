@@ -59,6 +59,8 @@
 
 ### Task 2: Hoàn thiện composition office và archive
 
+> **Trạng thái:** Implementation cũ `bcab0e5` không đạt nghiệm thu; các checkbox dưới đây chỉ ghi lịch sử đã thực thi. Task 2 được thay bởi [plan redesign static world](2026-09-30-phase-11e-office-archive-static-world-redesign.md). Chưa đánh dấu Task 2/Phase 11E hoàn tất và chưa bắt đầu Tasks 3–6 cho tới khi redesign qua gates và người dùng duyệt screenshot Office/Archive.
+
 **Files:**
 - Modify: `packages/game-content/cases/case-001/scenes/main_office.json`
 - Modify: `packages/game-content/cases/case-001/scenes/archive.json`

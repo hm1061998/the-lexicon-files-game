@@ -7,12 +7,13 @@ type Asset = {
   surfaceOffset?: Point;
   interaction?: { x: number; y: number };
 };
-export function scenePoint(
-  sceneId: string,
-  id: string,
-  offset: Point = { u: 0, v: 0 },
-): { x: number; y: number } {
-  const scene = JSON.parse(
+type Scene = {
+  projection: { originX: number; originY: number };
+  assets: Asset[];
+  spawnPoints: Record<string, Point>;
+};
+function readScene(sceneId: string): Scene {
+  return JSON.parse(
     readFileSync(
       new URL(
         `../../../packages/game-content/cases/case-001/scenes/${sceneId}.json`,
@@ -20,7 +21,23 @@ export function scenePoint(
       ),
       'utf8',
     ),
-  ) as { projection: { originX: number; originY: number }; assets: Asset[] };
+  ) as Scene;
+}
+export function sceneSpawnPoint(sceneId: string, spawnId = 'default'): { x: number; y: number } {
+  const scene = readScene(sceneId);
+  const p = scene.spawnPoints[spawnId];
+  if (!p) throw new Error(`Unknown test spawn ${sceneId}/${spawnId}`);
+  return {
+    x: scene.projection.originX + (p.u - p.v) * 64,
+    y: scene.projection.originY + (p.u + p.v) * 32,
+  };
+}
+export function scenePoint(
+  sceneId: string,
+  id: string,
+  offset: Point = { u: 0, v: 0 },
+): { x: number; y: number } {
+  const scene = readScene(sceneId);
   const anchor = (asset: Asset): Point => {
     if (asset.position) return asset.position;
     const parent = scene.assets.find((a) => a.id === asset.restsOn);

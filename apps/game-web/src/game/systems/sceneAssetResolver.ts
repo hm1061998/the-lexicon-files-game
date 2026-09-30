@@ -93,7 +93,16 @@ export function resolveSceneAssets(
       floorAnchor,
       visualAnchor,
       collision: asset.collision ?? null,
-      footprint: asset.footprint && 'u' in floorAnchor ? { type: 'rect', u: floorAnchor.u + asset.footprint.u, v: floorAnchor.v + asset.footprint.v, width: asset.footprint.width, height: asset.footprint.height } : null,
+      footprint:
+        asset.footprint && 'u' in floorAnchor
+          ? {
+              type: 'rect',
+              u: floorAnchor.u + asset.footprint.u,
+              v: floorAnchor.v + asset.footprint.v,
+              width: asset.footprint.width,
+              height: asset.footprint.height,
+            }
+          : null,
       interactionAnchor,
     };
     resolving.delete(asset.id);

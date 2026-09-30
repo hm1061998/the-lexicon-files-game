@@ -114,6 +114,16 @@ async function hold(page: Page, key: string, ms: number): Promise<void> {
   await page.keyboard.up(key);
 }
 
+async function openNearbyDialogue(page: Page): Promise<void> {
+  // Phaser polls JustDown per frame; an immediate keyup can clear it before update.
+  await page.keyboard.down('e');
+  try {
+    await expect(page.getByRole('dialog')).toBeVisible();
+  } finally {
+    await page.keyboard.up('e');
+  }
+}
+
 test('WASD moves up, left, down and right relative to the screen', async ({ page }) => {
   await openWorld(page);
   const start = { u: 10, v: 9 };
@@ -148,8 +158,7 @@ test('NPC name comes from case content and dialogue faces player and NPC toward 
   );
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBe('anna');
   expect(await page.evaluate(() => window.__lexiconDebug!.npcName('anna'))).toBe('Anna Reed');
-  await page.keyboard.press('e');
-  await expect(page.getByRole('dialog')).toBeVisible();
+  await openNearbyDialogue(page);
   await expect
     .poll(() => page.evaluate(() => window.__lexiconDebug!.playerTexture()))
     .toBe('tex_player_ne');
@@ -171,8 +180,7 @@ test('NPC breathing stays visual-only and stops during dialogue', async ({ page 
     [anna.u, anna.v],
   );
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.nearby())).toBe('anna');
-  await page.keyboard.press('e');
-  await expect(page.getByRole('dialog')).toBeVisible();
+  await openNearbyDialogue(page);
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug!.npcScaleY('anna'))).toBe(1);
 });
 

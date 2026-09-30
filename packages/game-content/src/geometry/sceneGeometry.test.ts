@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { SceneDefinition, SceneAssetDefinition } from '@lexicon/shared-types';
+import type {
+  SceneDefinition,
+  SceneAssetDefinition,
+  WallSegmentDefinition,
+} from '@lexicon/shared-types';
 import { validateSceneGeometry } from './sceneGeometry';
 
 const asset = (id: string, u: number, v: number, w = 1, h = 1): SceneAssetDefinition => ({
@@ -24,6 +28,51 @@ const room = (assets: SceneAssetDefinition[] = []): SceneDefinition => ({
   textures: [],
 });
 describe('validateSceneGeometry', () => {
+  const wall = (
+    id: string,
+    axis: 'u' | 'v',
+    line = 0,
+    start = 0,
+    end = 8,
+  ): WallSegmentDefinition => ({
+    id,
+    kind: 'office',
+    axis,
+    line,
+    start,
+    end,
+    openings: [],
+  });
+  const walledRoom = (walls: WallSegmentDefinition[]): SceneDefinition => ({
+    ...room(),
+    walls,
+    textures: ['u', 'v'].flatMap((axis) =>
+      ['', '_cap_start', '_cap_end'].map((suffix) => ({
+        key: `tex_wall_office_${axis}${suffix}`,
+        url: `/assets/wall_${axis}${suffix}.png`,
+      })),
+    ),
+  });
+  it('accepts perpendicular wall modules joined at a corner', () => {
+    expect(validateSceneGeometry(walledRoom([wall('back', 'u'), wall('west', 'v')]))).toEqual([]);
+  });
+  it('accepts a perpendicular endpoint joined to the interior of another wall', () => {
+    expect(
+      validateSceneGeometry(walledRoom([wall('west', 'v'), wall('partition', 'u', 4, 0, 3)])),
+    ).toEqual([]);
+  });
+  it.each([0, 0.1])('rejects parallel wall overlap with offset %s', (line) => {
+    expect(
+      validateSceneGeometry(walledRoom([wall('back', 'u'), wall('duplicate', 'u', line)])).join(),
+    ).toMatch(/back:0.*duplicate:0/);
+  });
+  it('rejects perpendicular walls crossing away from their endpoints', () => {
+    expect(
+      validateSceneGeometry(
+        walledRoom([wall('horizontal', 'u', 4, 1, 7), wall('vertical', 'v', 4, 1, 7)]),
+      ).join(),
+    ).toMatch(/horizontal:4.*vertical:4/);
+  });
   it('accepts an open room', () => expect(validateSceneGeometry(room())).toEqual([]));
   it('rejects overlapping solids naming both IDs', () =>
     expect(validateSceneGeometry(room([asset('a', 3, 3), asset('b', 3.5, 3.5)])).join()).toMatch(

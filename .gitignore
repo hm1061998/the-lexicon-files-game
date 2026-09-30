@@ -20,6 +20,7 @@ obj/
 
 # Art pipeline
 __pycache__/
+.pytest_cache/
 .venv-art-codegen/
 assets/_incoming/*
 !assets/_incoming/.gitkeep

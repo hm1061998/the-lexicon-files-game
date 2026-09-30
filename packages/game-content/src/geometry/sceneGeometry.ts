@@ -3,8 +3,9 @@ import type {
   SceneAssetDefinition,
   LogicalPoint,
   LogicalRectFootprint,
+  WallSegmentDefinition,
 } from '@lexicon/shared-types';
-import { expandWalls } from './wallSegments';
+import { expandWalls, WALL_THICKNESS } from './wallSegments';
 
 export const PLAYER_LOGICAL_BODY = { u: -0.18, v: -0.18, width: 0.36, height: 0.36 } as const;
 const EPS = 1e-9;
@@ -25,6 +26,29 @@ export function validateSceneGeometry(scene: SceneDefinition): string[] {
     errors: string[] = [];
   const expanded = expandWalls(scene.walls),
     assets = [...scene.assets, ...expanded.assets];
+  const ids = new Set<string>();
+  for (const a of assets) {
+    if (ids.has(a.id)) errors.push(`duplicate asset id "${a.id}" after wall expansion`);
+    ids.add(a.id);
+  }
+  if (errors.length) return errors;
+  const expandedIds = new Set(expanded.assets.map((a) => a.id));
+  const wallSources = new Map<string, WallSegmentDefinition>(
+    scene.walls.flatMap((wall) =>
+      Array.from(
+        { length: wall.end - wall.start },
+        (_, i) => [`${wall.id}:${wall.start + i}`, wall] as const,
+      ),
+    ),
+  );
+  const joinedWalls = (a?: WallSegmentDefinition, b?: WallSegmentDefinition): boolean => {
+    if (!a || !b || a.axis === b.axis) return false;
+    // A perpendicular wall can meet a corner or end against an existing wall (a T junction).
+    // Interior crossings and parallel overlap are not endpoint joins.
+    const touchesEndpoint = (wall: WallSegmentDefinition, line: number) =>
+      [wall.start, wall.end].some((end) => line <= end + EPS && line + WALL_THICKNESS >= end - EPS);
+    return touchesEndpoint(a, b.line) || touchesEndpoint(b, a.line);
+  };
   const byId = new Map(assets.map((a) => [a.id, a]));
   const anchors = new Map<string, LogicalPoint>();
   const visiting = new Set<string>();
@@ -51,7 +75,7 @@ export function validateSceneGeometry(scene: SceneDefinition): string[] {
       ? [
           {
             id: a.id,
-            wall: a.type === 'wall',
+            wall: expandedIds.has(a.id) ? wallSources.get(a.id) : undefined,
             u: p.u + c.u,
             v: p.v + c.v,
             width: c.width,
@@ -68,8 +92,8 @@ export function validateSceneGeometry(scene: SceneDefinition): string[] {
   for (const [i, s] of solids.entries()) {
     if (!inside(s)) errors.push(`asset "${s.id}": collision outside worldBounds`);
     for (const other of solids.slice(i + 1)) {
-      // Joined perpendicular wall modules intentionally share their corner volume.
-      if (!(s.wall && other.wall) && overlapsLogical(s, other))
+      // Only generated perpendicular endpoint joins may share their corner volume.
+      if (overlapsLogical(s, other) && !joinedWalls(s.wall, other.wall))
         errors.push(`solid "${s.id}" overlaps "${other.id}"`);
     }
   }

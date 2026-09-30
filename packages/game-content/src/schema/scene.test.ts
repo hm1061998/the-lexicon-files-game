@@ -4,6 +4,20 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 import mainOffice from '../../cases/case-001/scenes/main_office.json';
 import archive from '../../cases/case-001/scenes/archive.json';
 
+it('rejects a declared asset ID that collides with an expanded wall module', () => {
+  const raw = structuredClone(mainOffice) as { assets: unknown[] };
+  raw.assets.push({
+    id: 'wall_back:0',
+    type: 'prop',
+    texture: 'ph_prop',
+    position: { u: 0.5, v: 0.125 },
+    footprint: { u: 0, v: 0, width: 0.1, height: 0.1 },
+  });
+  expect(() => parseSceneDefinition(raw, 'main_office.json')).toThrow(
+    'duplicate asset id "wall_back:0"',
+  );
+});
+
 describe('static model schema', () => {
   const wall = {
     id: 'west',

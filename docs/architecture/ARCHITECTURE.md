@@ -87,6 +87,8 @@ src/schema/      Zod schemas (mirror shared-types)
 src/loader/      loadCase(id) → CaseDefinition đã validate
 src/validation/  cross-reference checks: duplicate id, missing NPC/evidence/vocab,
                  objective dependency, broken dialogue next-node
+src/geometry/    expandWalls: segment/opening → modules + doorways;
+                 validateSceneGeometry: bounds, solids, clearance, reachable spawns/interactables
 ```
 `tools/validate-content` chạy validation; **build phải fail khi content invalid**.
 
@@ -138,9 +140,12 @@ Modal critical mở → store.setInputLocked(true) → Phaser dừng movement
 
 ## 5. Scene & asset model (tóm tắt docs/art/06)
 
-- Case #001 lưu vị trí trên mặt sàn logic `(u,v)` và dùng phép chiếu dimetric 2:1: `x=originX+(u-v)×64`, `y=originY+(u+v)×32−elevationPx` (mỗi ô tham chiếu 128×64 px). `u+` đi SE, `v+` đi SW; WASD: W=`−u`/NW, D=`−v`/NE, S=`+u`/SE, A=`+v`/SW. Đây là game 2D với artwork vẽ theo góc dimetric, không phải world 3D.
+- Case #001 lưu vị trí trên mặt sàn logic `(u,v)` và dùng phép chiếu dimetric 2:1: `x=originX+(u-v)×64`, `y=originY+(u+v)×32−elevationPx` (mỗi ô tham chiếu 128×64 px). `u+` đi SE, `v+` đi SW. WASD theo màn hình: W lên, A trái, S xuống, D phải; vector màn hình được đổi về logical bằng nghịch đảo projector và chuẩn hóa tốc độ trong screen-space. Đây là game 2D với artwork vẽ theo góc dimetric, không phải world 3D.
 - World position = **feet / floor contact point**. Character origin `(0.5, 0.88)`; depth lấy từ điểm sàn đã chiếu cộng `depthBias`, không cộng elevation artwork.
 - Collider là footprint nhỏ trên logical plane; movement và va chạm giải trong `(u,v)`, không dùng AABB của sprite trên màn hình. Nội dung tabletop tách `floorAnchor` khỏi `visualAnchor` bằng `restsOn`/`surfaceOffset`.
+- Office/Archive có `footprint` (diện tích chiếm chỗ), `collision` (phần cản di chuyển nằm trong footprint), interaction floor point/radius và visual pivot/elevation độc lập. Đổi origin/scale/elevation không dịch collision, depth nền hay vùng tương tác. Marker theo visual elevation; proximity dùng điểm sàn đã chiếu.
+- `walls[]` mô tả segment theo u/v có opening nguyên rộng ≥2; module dài 1, dày 0.25 về chiều tăng của trục vuông góc. `expandWalls` trong game-content sinh wall assets/doorway rects dùng chung cho runtime, minimap và validator. Opening không có collider tường; door interactable giữ transition/spawn theo content. Geometry gate chạy ở loader scene/case, kiểm tra body player 0.36×0.36 và doorway clearance ≥0.96.
+- Bộ sàn/tường/cửa/furniture Office/Archive dùng camera yaw 45°/pitch 30° đúng 2:1, pivot/footprint từ `environment-models.json`; asset legacy tham chiếu 35° và character/evidence giữ nguyên trong redesign. Xem hợp đồng đầy đủ tại art/06 §74.
 - Mọi tọa độ hiển thị (sprite, marker, label, minimap) được chiếu đúng một lần; anchor React nhận screen CSS px qua event bus. Scene JSON vẫn là dữ liệu, `WorldScene` dựng generic từ `SceneDefinition`.
 - 4 hướng NE/SE/SW/NW; anim key `${actor}_${action}_${direction}`. Player, Anna, Leo và David khai báo walk sheet 8×4, frame 160×160, 10 fps trong `case.json`.
 - Chỉ load asset của scene hiện tại (manifest → preload → create); manifest là trường `textures` của scene JSON (còn `characterSheets`/`sharedTextures` ở `case.json`) trong `packages/game-content`, tải theo scene bằng `loadSceneTextures` (không còn manifest global trong game-web).

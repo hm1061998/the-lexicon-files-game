@@ -15,7 +15,12 @@ const wall: WallSegmentDefinition = {
 describe('expandWalls', () => {
   it('matches the generated PNG floor pivot metadata', () => {
     for (const axis of ['u', 'v'] as const) {
-      const png = readFileSync(new URL(`../../../../apps/game-web/public/assets/environment/office/wall_${axis}.png`, import.meta.url));
+      const png = readFileSync(
+        new URL(
+          `../../../../apps/game-web/public/assets/environment/office/wall_${axis}.png`,
+          import.meta.url,
+        ),
+      );
       expect(png.readUInt32BE(16)).toBe(80);
       expect(png.readUInt32BE(20)).toBe(130);
       expect(WALL_MODULE_ART[axis].origin).toEqual([0.5, 110 / 130]);

@@ -17,10 +17,10 @@
     "memory:check": "nx run ai-memory:check",
     "memory:test": "nx run ai-memory:test",
     "typecheck": "tsc -b",
-    "format": "prettier --write .",
+    "format": "prettier --write --ignore-unknown \"**/*\" \"!**/.pytest_cache/**\" \"!**/.venv-art-codegen/**\"",
     "affected": "nx affected -t lint test build",
     "graph": "nx graph",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check --ignore-unknown \"**/*\" \"!**/.pytest_cache/**\" \"!**/.venv-art-codegen/**\""
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

@@ -62,7 +62,10 @@ export function buildMinimapModel(
   const solids: MinimapRect[] = [];
   const partitions: MinimapRect[] = [];
   const markers: MinimapMarker[] = [];
-  for (const resolved of resolveSceneAssets([...scene.assets, ...expandWalls(scene.walls ?? []).assets])) {
+  for (const resolved of resolveSceneAssets([
+    ...scene.assets,
+    ...expandWalls(scene.walls ?? []).assets,
+  ])) {
     const { asset, floorAnchor, collision, interactionAnchor } = resolved;
     if (collision) {
       let rect: MinimapRect;

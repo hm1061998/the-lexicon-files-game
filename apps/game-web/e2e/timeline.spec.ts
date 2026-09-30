@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { scenePoint } from './sceneTestData';
+import { scenePoint, sceneSpawnPoint } from './sceneTestData';
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
@@ -234,7 +234,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(page.locator('canvas')).toHaveCount(1);
   await expect
     .poll(() => page.evaluate(() => window.__lexiconDebug!.player()))
-    .toMatchObject({ x: 1200, y: 1100 });
+    .toMatchObject(sceneSpawnPoint(recordBeforeReload!.activeSceneId));
   expect(await saved(page)).toMatchObject(recordBeforeReload);
 
   // Phase 9: confession opens the conclusion; a wrong accusation changes nothing.

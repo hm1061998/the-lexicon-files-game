@@ -154,7 +154,7 @@ export class WorldScene extends Phaser.Scene {
   private unsubscribeDialogueStarted: (() => void) | null = null;
   private unsubscribeDialogueEnded: (() => void) | null = null;
   private dialogueNpcId: string | null = null;
-  private facingTweens: Phaser.Tweens.Tween[] = [];
+  private facingTweens = new Map<Phaser.GameObjects.GameObject, Phaser.Tweens.Tween>();
 
   constructor() {
     super(WorldScene.KEY);
@@ -593,9 +593,8 @@ export class WorldScene extends Phaser.Scene {
     },
     texture: string,
   ): void {
-    this.facingTweens
-      .filter((tween) => tween.targets.includes(sprite))
-      .forEach((tween) => tween.stop());
+    this.facingTweens.get(sprite)?.stop();
+    this.facingTweens.delete(sprite);
     if (this.options.motion.reducedMotion()) {
       sprite.setTexture(texture);
       sprite.setAlpha(1);
@@ -603,12 +602,14 @@ export class WorldScene extends Phaser.Scene {
     }
     sprite.setAlpha(0.72);
     sprite.setTexture(texture);
-    this.facingTweens.push(
+    this.facingTweens.set(
+      sprite,
       this.tweens.add({
         targets: sprite,
         alpha: 1,
         duration: 160,
         ease: 'Sine.Out',
+        onComplete: () => this.facingTweens.delete(sprite),
       }),
     );
   }
@@ -881,7 +882,7 @@ export class WorldScene extends Phaser.Scene {
     this.npcVisuals.clear();
     this.dialogueNpcId = null;
     this.facingTweens.forEach((tween) => tween.stop());
-    this.facingTweens = [];
+    this.facingTweens.clear();
     if (this.keys) {
       for (const key of Object.values(this.keys)) this.input.keyboard?.removeKey(key, true);
       this.keys = null;

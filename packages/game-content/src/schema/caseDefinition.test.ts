@@ -174,6 +174,17 @@ function expectValidationIssue(changes: Partial<RawInput>, expected: string): vo
 }
 
 describe('parseCaseDefinition', () => {
+  it('rejects a declared asset ID that collides with a wall module during case loading', () => {
+    const scene = sceneWithEffects([]) as { assets: unknown[] };
+    scene.assets.push({
+      id: 'wall_back:0',
+      type: 'prop',
+      texture: 'ph_prop',
+      position: { u: 0.5, v: 0.125 },
+      footprint: { u: 0, v: 0, width: 0.1, height: 0.1 },
+    });
+    expectValidationIssue({ sceneRaws: [scene] }, 'duplicate asset id "wall_back:0"');
+  });
   it('rejects blocked spawn geometry during case loading', () => {
     const scene = sceneWithEffects([]) as {
       spawnPoints: Record<string, unknown>;

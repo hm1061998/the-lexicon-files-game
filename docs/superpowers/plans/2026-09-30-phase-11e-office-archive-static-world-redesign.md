@@ -6,9 +6,21 @@
 
 **Architecture:** `SceneDefinition` thêm `footprint` cho asset và mảng `walls` (segment trục-thẳng với `openings`). Một hàm thuần `expandWalls` trong `packages/game-content` biến mỗi segment thành các `SceneAssetDefinition` kiểu `wall` (mỗi module 1 đơn vị logic, collision = footprint module, không có collider trong opening); `WorldScene` chỉ nối thêm các asset sinh ra vào `resolveSceneAssets` nên depth/occluder/collision hiện có dùng lại. Validator hình học trong `game-content` (overlap, collision ⊆ footprint, doorway clearance, reachability theo body thật của player) là cổng chặn mọi lệch giữa ảnh/collision/lối đi. Art sinh bằng renderer Python sẵn có với camera dimetric đúng 2:1, ghi thẳng vào `apps/game-web/public/assets/environment/`.
 
-**Tech Stack:** TypeScript strict, Zod, Phaser 3, Vitest, Playwright, Python (`.venv-art-codegen`: numpy + Pillow, `unittest`), npm + Nx (npm không có trong PATH: dùng runner trực tiếp như trong `docs/ai/MEMORY.md`).
+**Tech Stack:** TypeScript strict, Zod, Phaser 3, Vitest, Playwright, Python (`.venv-art-codegen`: numpy + Pillow, `unittest`), npm + Nx. Phiên tiếp tục dùng npm 10.9.7 sẵn có qua PATH shim cục bộ; chạy entrypoint npm/Nx thật.
 
 **Spec:** `docs/superpowers/specs/2026-09-30-phase-11e-office-archive-static-world-redesign-design.md` (đã duyệt). Bối cảnh: Task 2 của `docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md` (commit `bcab0e5`) chưa đạt; plan này thay phần composition Office/Archive của Task 2 đó và phải xong trước Task 3 của plan cũ.
+
+## Trạng thái thực thi — phiên tiếp tục 2026-09-30
+
+Các bước checkbox bên dưới là brief ban đầu; trạng thái hiện tại và output nằm trong [verification](../../ai/2026-09-30-phase-11e-static-world-verification.md) và [review cuối](../../ai/2026-09-30-phase-11e-static-world-final-review.md).
+
+| Task | Trạng thái |
+| --- | --- |
+| 1–5 | Đã triển khai, commit và kiểm tra ở checkpoint |
+| 6–7 | Migration Office/Archive đã triển khai và đạt gate kỹ thuật, gồm traversal WASD/E hai chiều và repeat 152/152 |
+| 8 | Docs/review/gates kỹ thuật đạt; ảnh Office/Archive chờ người dùng duyệt, trạng thái vẫn in_progress |
+
+Hai Important từ final reviewer đã sửa với test RED→GREEN. Giữ art/builders cũ vì registry còn tham chiếu. Không push/merge hoặc bắt đầu Tasks 3–6 của plan cha/Phase 12 trong phiên này. Chỉ nghiệm thu redesign sau khi người dùng duyệt screenshot.
 
 ## Global Constraints
 

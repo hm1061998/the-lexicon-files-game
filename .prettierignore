@@ -10,6 +10,8 @@ package-lock.json
 playwright-report
 test-results
 *.tsbuildinfo
+.pytest_cache
+.venv-art-codegen
 
 # Keep the manually aligned provenance table readable.
 assets/PROVENANCE.md
