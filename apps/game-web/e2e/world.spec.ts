@@ -113,22 +113,38 @@ async function hold(page: Page, key: string, ms: number): Promise<void> {
   await page.keyboard.up(key);
 }
 
-/** Walk right until the note is in range; fixed hold times are too fragile on slow renderers. */
+/** Walk up-left toward the note; fixed hold times are too fragile on slow renderers. */
 async function walkToNote(page: Page): Promise<void> {
-  await page.keyboard.down('d');
+  await page.keyboard.down('w');
+  await page.keyboard.down('a');
   await expect
     .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()))
     .toBe('objective_note');
-  await page.keyboard.up('d');
+  await page.keyboard.up('a');
+  await page.keyboard.up('w');
 }
 
-test('D moves northeast along the selected dimetric projection', async ({ page }) => {
+test('WASD moves up, left, down and right relative to the screen', async ({ page }) => {
   await openWorld(page);
-  const before = await player(page);
-  await hold(page, 'd', 600);
-  const after = await player(page);
-  expect(after.x - before.x).toBeGreaterThanOrEqual(40);
-  expect(before.y - after.y).toBeGreaterThanOrEqual(15);
+  const start = { u: 10, v: 9 };
+  const cases = [
+    { key: 'w', dx: 0, dy: -1 },
+    { key: 'a', dx: -1, dy: 0 },
+    { key: 's', dx: 0, dy: 1 },
+    { key: 'd', dx: 1, dy: 0 },
+  ] as const;
+  for (const { key, dx, dy } of cases) {
+    await page.evaluate(
+      ([u, v]) => window.__lexiconDebug!.teleportLogical(u!, v!),
+      [start.u, start.v],
+    );
+    const before = await player(page);
+    await hold(page, key, 250);
+    const after = await player(page);
+    expect((after.x - before.x) * dx + (after.y - before.y) * dy).toBeGreaterThanOrEqual(25);
+    if (dx === 0) expect(Math.abs(after.x - before.x)).toBeLessThan(10);
+    else expect(Math.abs(after.y - before.y)).toBeLessThan(10);
+  }
 });
 
 test('NPC name comes from case content and dialogue faces player and NPC toward each other', async ({
@@ -204,11 +220,12 @@ test('NPC walk sheets preload and can be triggered by the dev test control only'
 
 test('player cannot walk through the desk', async ({ page }) => {
   await openWorld(page);
-  await hold(page, 'd', 3000);
+  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(7.3, 6));
+  await hold(page, 'd', 400);
   const after = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer());
   expect(after).not.toBeNull();
   expect(after!.v).toBeGreaterThan(5.5);
-  expect(after!.v).toBeLessThan(7);
+  expect(after!.v).toBeLessThan(5.8);
 });
 
 test('player cannot leave the world', async ({ page }) => {
@@ -461,11 +478,11 @@ test('real textures load without missing-texture or loader warnings', async ({ p
 test('player stops at the desk footprint when walking into it from the side', async ({ page }) => {
   await openWorld(page);
   // Left of the desk, level with its footprint; walking right must be blocked.
-  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(8, 7));
-  await hold(page, 'd', 1500);
+  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(7.3, 6));
+  await hold(page, 'd', 500);
   const after = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer());
   expect(after!.v).toBeGreaterThan(5.5);
-  expect(after!.v).toBeLessThan(7);
+  expect(after!.v).toBeLessThan(5.8);
 });
 
 test('player texture follows the facing and keeps it while idle', async ({ page }) => {
@@ -668,27 +685,21 @@ test('the dev transition hook goes through the store so it matches the shown sce
   expect(await page.evaluate(() => window.__lexiconDebug!.storeSceneId())).toBe('main_office');
 });
 
-test('pushing into the desk does not play the walk animation', async ({ page }) => {
+test('walking along the desk edge side-slides without crossing its footprint', async ({ page }) => {
   await openWorld(page);
-  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(8, 7));
+  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(7.3, 6));
+  const before = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer());
   await page.keyboard.down('d');
-  await expect.poll(async () => (await playerAnim(page)).playing).toBe(true);
-  // The swept logical collider stops the player at the desk edge while D remains held.
-  await expect
-    .poll(() => page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!.v))
-    .toBeGreaterThan(5.5);
-  await expect
-    .poll(async () => {
-      const a = (await page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!)).v;
-      await page.waitForTimeout(150);
-      const b = (await page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!)).v;
-      return Math.abs(a - b) < 0.001;
-    })
-    .toBe(true);
   await page.waitForTimeout(500);
+  const after = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer());
   const anim = await playerAnim(page);
-  const texture = await page.evaluate(() => window.__lexiconDebug!.playerTexture());
   await page.keyboard.up('d');
-  expect(anim.playing).toBe(false);
-  expect(texture).toBe('tex_player_ne');
+  expect(after!.u).toBeGreaterThan(before!.u);
+  expect(after!.u).toBeLessThan(8.5);
+  expect(after!.v).toBeCloseTo(5.68, 1);
+  expect(anim.playing).toBe(true);
+  await expect.poll(async () => (await playerAnim(page)).playing).toBe(false);
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.playerTexture()))
+    .toBe('tex_player_ne');
 });

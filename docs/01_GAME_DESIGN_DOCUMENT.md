@@ -270,7 +270,10 @@ Case Closed
 ## Controls
 
 ```text
-WASD     Move
+W        Lên màn hình
+A        Sang trái màn hình
+S        Xuống màn hình
+D        Sang phải màn hình
 E        Interact
 J        Notebook
 M        Map

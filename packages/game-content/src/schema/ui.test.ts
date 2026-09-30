@@ -30,6 +30,7 @@ describe('parseUiStrings', () => {
     expect(strings.openNotebook).toBeTruthy();
     expect(strings.minimapTitle).toBe('Bản đồ nhỏ');
     expect(strings.toggleMap).toBe('Bản đồ');
+    expect(strings.move).toBe('Di chuyển: W lên, A trái, S xuống, D phải');
   });
 
   it('provides localized timeline and contradiction controls and feedback', () => {

@@ -178,7 +178,7 @@ async function open(page: Page): Promise<void> {
 }
 async function drive(page: Page, route: readonly Point[], targetId: string): Promise<void> {
   for (const waypoint of route.slice(1)) {
-    let held: string | null = null;
+    let held: string[] = [];
     const deadline = Date.now() + 8000;
     while (Date.now() < deadline) {
       const state = await page.evaluate(() => ({
@@ -186,21 +186,28 @@ async function drive(page: Page, route: readonly Point[], targetId: string): Pro
         nearby: window.__lexiconDebug!.nearby(),
       }));
       if (state.nearby === targetId) {
-        if (held) await page.keyboard.up(held);
+        for (const key of held) await page.keyboard.up(key);
         return;
       }
       const du = waypoint.u - state.point.u,
         dv = waypoint.v - state.point.v;
       if (Math.abs(du) < 0.12 && Math.abs(dv) < 0.12) break;
-      const key = Math.abs(du) > Math.abs(dv) ? (du > 0 ? 's' : 'w') : dv > 0 ? 'a' : 'd';
-      if (held !== key) {
-        if (held) await page.keyboard.up(held);
-        await page.keyboard.down(key);
-        held = key;
-      }
+      const screenX = (du - dv) * 64;
+      const screenY = (du + dv) * 32;
+      const max = Math.max(Math.abs(screenX), Math.abs(screenY));
+      const next =
+        max === 0
+          ? []
+          : [
+              ...(Math.abs(screenX) / max >= 0.414 ? [screenX < 0 ? 'a' : 'd'] : []),
+              ...(Math.abs(screenY) / max >= 0.414 ? [screenY < 0 ? 'w' : 's'] : []),
+            ];
+      for (const key of held.filter((key) => !next.includes(key))) await page.keyboard.up(key);
+      for (const key of next.filter((key) => !held.includes(key))) await page.keyboard.down(key);
+      held = next;
       await page.waitForTimeout(30);
     }
-    if (held) await page.keyboard.up(held);
+    for (const key of held) await page.keyboard.up(key);
   }
   await expect
     .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()), { timeout: 3000 })

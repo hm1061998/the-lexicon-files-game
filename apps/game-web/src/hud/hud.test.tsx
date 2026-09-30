@@ -82,8 +82,10 @@ describe('InteractionPrompt', () => {
 });
 
 describe('KeyHints', () => {
-  it('lists E, J, M and Esc with labels', () => {
+  it('lists WASD, E, J, M and Esc with labels', () => {
     const html = renderToString(<KeyHints strings={strings} />);
+    expect(html).toContain('WASD');
+    expect(html).toContain(strings.move);
     expect(html).toContain('E');
     expect(html).toContain('Esc');
     expect(html).toContain('J');
@@ -91,7 +93,7 @@ describe('KeyHints', () => {
     expect(html).toContain(strings.pause);
     expect(html).toContain('>M<');
     expect(html).toContain(strings.toggleMap);
-    expect(html.match(/class="hud-key-hint"/g)).toHaveLength(4);
+    expect(html.match(/<span class="hud-key-hint/g)).toHaveLength(5);
   });
 });
 

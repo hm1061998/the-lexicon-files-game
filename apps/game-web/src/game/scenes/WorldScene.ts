@@ -656,8 +656,8 @@ export class WorldScene extends Phaser.Scene {
     this.player.setPosition(screen.x, screen.y);
     this.player.setDepth(computeIsoDepth(result.position, projection) + PLAYER_DEPTH_EPSILON);
     const screenDirection = {
-      x: input.u - input.v,
-      y: input.u + input.v,
+      x: (velocity.u - velocity.v) * (projection.tileWidth / 2),
+      y: (velocity.u + velocity.v) * (projection.tileHeight / 2),
     };
     this.playerFacing = movePlayer(
       this.player,

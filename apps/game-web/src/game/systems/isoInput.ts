@@ -2,12 +2,14 @@ import type { IsoProjection } from '@lexicon/shared-types';
 import type { LogicalPoint } from './isometricProjection';
 import type { MovementKeys } from './input';
 
-/** WASD on the logical floor: W=-u/NW, D=-v/NE, S=+u/SE, A=+v/SW. */
+/** WASD expresses a screen-relative vector, converted back onto the logical floor. */
 export function resolveIsoInput(keys: MovementKeys, typing: boolean): LogicalPoint {
   if (typing) return { u: 0, v: 0 };
+  const screenX = Number(keys.right) - Number(keys.left);
+  const screenY = Number(keys.down) - Number(keys.up);
   return {
-    u: Number(keys.down) - Number(keys.up),
-    v: Number(keys.left) - Number(keys.right),
+    u: screenX / 128 + screenY / 64,
+    v: screenY / 64 - screenX / 128,
   };
 }
 

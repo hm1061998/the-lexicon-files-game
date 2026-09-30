@@ -81,7 +81,7 @@ screenX = originX + (u - v) × 64
 screenY = originY + (u + v) × 32 - elevationPx
 ```
 
-`u+` đi SE, `v+` đi SW. Mapping bàn phím: W=`−u`/NW, D=`−v`/NE, S=`+u`/SE, A=`+v`/SW. Vận tốc tổ hợp được chuẩn hóa theo screen-space. Legacy scenes có thể tiếp tục dùng screen pixel qua adapter migration; mọi scene Case #001 hiện tại dùng logical position/bounds/collision.
+`u+` đi SE, `v+` đi SW. WASD điều khiển theo hướng màn hình truyền thống: W lên, A trái, S xuống, D phải. Vector màn hình `(screenX,screenY)` được đổi về logical bằng `u=screenX/128+screenY/64`, `v=screenY/64−screenX/128`; vận tốc tổ hợp được chuẩn hóa theo screen-space. Các hàng animation NE/SE/SW/NW được chọn từ vector chiếu với quy tắc tie ổn định. Legacy scenes có thể tiếp tục dùng screen pixel qua adapter migration; mọi scene Case #001 hiện tại dùng logical position/bounds/collision.
 
 Elevation chỉ dịch visual anchor lên màn hình; floor anchor, depth, collision và interaction range không đổi. Minimap dùng cùng logical source rồi chiếu sang diamond.
 

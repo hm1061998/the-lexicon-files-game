@@ -18,11 +18,23 @@ const keys = (up = false, down = false, left = false, right = false) => ({
 
 describe('isometric keyboard input', () => {
   it.each([
-    [keys(true), { u: -1, v: 0 }],
-    [keys(false, false, false, true), { u: 0, v: -1 }],
-    [keys(false, true), { u: 1, v: 0 }],
-    [keys(false, false, true), { u: 0, v: 1 }],
-  ])('maps logical keys to isometric directions', (pressed, expected) => {
+    [keys(true), { u: -1 / 64, v: -1 / 64 }, { x: 0, y: -1 }],
+    [keys(false, false, false, true), { u: 1 / 128, v: -1 / 128 }, { x: 1, y: 0 }],
+    [keys(false, true), { u: 1 / 64, v: 1 / 64 }, { x: 0, y: 1 }],
+    [keys(false, false, true), { u: -1 / 128, v: 1 / 128 }, { x: -1, y: 0 }],
+  ])('maps screen-relative keys to logical vectors', (pressed, expected, screenExpected) => {
+    expect(resolveIsoInput(pressed, false)).toEqual(expected);
+    const vector = resolveIsoInput(pressed, false);
+    expect((vector.u - vector.v) * 64).toBeCloseTo(screenExpected.x);
+    expect((vector.u + vector.v) * 32).toBeCloseTo(screenExpected.y);
+  });
+
+  it.each([
+    [keys(true, true), { u: 0, v: 0 }],
+    [keys(false, false, true, true), { u: 0, v: 0 }],
+    [keys(true, true, true, true), { u: 0, v: 0 }],
+    [keys(true, false, false, true), { u: -1 / 128, v: -3 / 128 }],
+  ])('cancels opposing axes and preserves diagonal screen intent', (pressed, expected) => {
     expect(resolveIsoInput(pressed, false)).toEqual(expected);
   });
 
@@ -31,8 +43,16 @@ describe('isometric keyboard input', () => {
   });
 
   it('keeps the rendered speed constant for cardinal and diagonal input', () => {
-    const cardinal = screenSpeedVector({ u: 1, v: 0 }, projection, 120);
-    const diagonal = screenSpeedVector({ u: 1, v: 1 }, projection, 120);
+    const cardinal = screenSpeedVector(
+      resolveIsoInput(keys(false, false, false, true), false),
+      projection,
+      120,
+    );
+    const diagonal = screenSpeedVector(
+      resolveIsoInput(keys(true, false, false, true), false),
+      projection,
+      120,
+    );
     const screenLength = (d: { u: number; v: number }) => {
       const { x, y } = {
         x: (d.u - d.v) * 64,

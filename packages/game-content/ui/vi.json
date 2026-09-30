@@ -2,6 +2,7 @@
   "objectiveHeading": "Mục tiêu hiện tại",
   "caseFile": "Hồ sơ",
   "interact": "Tương tác",
+  "move": "Di chuyển: W lên, A trái, S xuống, D phải",
   "pause": "Tạm dừng",
   "paused": "Đã tạm dừng",
   "resume": "Tiếp tục",

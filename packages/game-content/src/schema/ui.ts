@@ -10,6 +10,7 @@ const uiStringsSchema = z
     objectiveHeading: z.string().min(1),
     caseFile: z.string().min(1),
     interact: z.string().min(1),
+    move: z.string().min(1),
     pause: z.string().min(1),
     paused: z.string().min(1),
     resume: z.string().min(1),

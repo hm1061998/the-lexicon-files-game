@@ -21,6 +21,19 @@ describe('resolveDirection', () => {
   it('returns null for (0,0)', () => {
     expect(resolveDirection(0, 0)).toBeNull();
   });
+
+  it.each([
+    [1, 0, 'NE'],
+    [0, -1, 'NW'],
+    [-1, 0, 'SW'],
+    [0, 1, 'SE'],
+    [1, 1e-8, 'NE'],
+    [1, -1e-8, 'NE'],
+    [-1, 1e-8, 'SW'],
+    [-1, -1e-8, 'SW'],
+  ] as const)('resolves screen-cardinal tie %i,%i consistently', (vx, vy, expected) => {
+    expect(resolveDirection(vx, vy)).toBe(expected);
+  });
 });
 
 describe('nextFacing', () => {
@@ -30,6 +43,6 @@ describe('nextFacing', () => {
 
   it('switches to the resolved direction while moving', () => {
     expect(nextFacing('SE', -1, -1)).toBe('NW');
-    expect(nextFacing('NW', 1, 0)).toBe('SE');
+    expect(nextFacing('NW', 1, 0)).toBe('NE');
   });
 });
