@@ -1,8 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { shouldEmitPlayerMoved } from './playerMoved';
+import { projectIso } from './isometricProjection';
 
 describe('shouldEmitPlayerMoved', () => {
   const prev = { x: 100, y: 100 };
+  it('accepts a short logical step only after projecting it into world pixels', () => {
+    const projection = {
+      type: 'dimetric-2:1',
+      originX: 832,
+      originY: 180,
+      tileWidth: 128,
+      tileHeight: 64,
+    } as const;
+    const before = projectIso({ u: 10, v: 9 }, projection);
+    const after = projectIso({ u: 10.2578125, v: 8.7421875 }, projection);
+    expect(shouldEmitPlayerMoved(before, after, 100)).toBe(true);
+    expect(shouldEmitPlayerMoved(before, after, 99)).toBe(false);
+  });
 
   it('emits the first position immediately', () => {
     expect(shouldEmitPlayerMoved(null, { x: 5, y: 5 }, 0)).toBe(true);

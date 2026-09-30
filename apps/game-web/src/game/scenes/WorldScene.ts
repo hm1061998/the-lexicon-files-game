@@ -681,8 +681,10 @@ export class WorldScene extends Phaser.Scene {
     const next = this.logicalPosition
       ? { x: this.logicalPosition.u, y: this.logicalPosition.v }
       : { x: this.player.x, y: this.player.y };
-    if (!shouldEmitPlayerMoved(this.lastPublished, next, this.sinceLastPublishMs)) return;
-    this.lastPublished = next;
+    // The threshold is measured in world pixels; the HUD payload keeps its own units.
+    const projected = { x: this.player.x, y: this.player.y };
+    if (!shouldEmitPlayerMoved(this.lastPublished, projected, this.sinceLastPublishMs)) return;
+    this.lastPublished = projected;
     this.sinceLastPublishMs = 0;
     this.bus.emit('player:moved', {
       ...next,
