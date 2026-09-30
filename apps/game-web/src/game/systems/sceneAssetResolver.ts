@@ -19,10 +19,14 @@ export interface ResolvedSceneAsset {
 }
 
 function addOffset(anchor: SpatialPoint, u: number, v: number): SpatialPoint {
-  return 'u' in anchor ? { u: anchor.u + u, v: anchor.v + v } : { x: anchor.x + u, y: anchor.y + v };
+  return 'u' in anchor
+    ? { u: anchor.u + u, v: anchor.v + v }
+    : { x: anchor.x + u, y: anchor.y + v };
 }
 
-function isSurfaceChild(asset: SceneAssetDefinition): asset is Extract<SceneAssetDefinition, { restsOn: string }> {
+function isSurfaceChild(
+  asset: SceneAssetDefinition,
+): asset is Extract<SceneAssetDefinition, { restsOn: string }> {
   return 'restsOn' in asset && asset.restsOn !== undefined;
 }
 
@@ -48,15 +52,22 @@ export function resolveSceneAssets(
     let floorAnchor: SpatialPoint;
     let elevationPx = asset.elevationPx ?? 0;
     if (isSurfaceChild(asset)) {
-      if (asset.restsOn === asset.id) throw new Error(`scene asset "${asset.id}" cannot rest on itself`);
+      if (asset.restsOn === asset.id)
+        throw new Error(`scene asset "${asset.id}" cannot rest on itself`);
       const parent = byId.get(asset.restsOn);
-      if (!parent) throw new Error(`scene asset "${asset.id}" rests on unknown asset "${asset.restsOn}"`);
+      if (!parent)
+        throw new Error(`scene asset "${asset.id}" rests on unknown asset "${asset.restsOn}"`);
       const resolvedParent = resolve(parent);
       if (!('u' in resolvedParent.floorAnchor)) {
         throw new Error(`scene asset "${asset.id}" surface parent must use logical coordinates`);
       }
       const offset = asset.surfaceOffset;
-      if (!offset || !Number.isFinite(offset.u) || !Number.isFinite(offset.v) || !Number.isFinite(offset.elevationPx)) {
+      if (
+        !offset ||
+        !Number.isFinite(offset.u) ||
+        !Number.isFinite(offset.v) ||
+        !Number.isFinite(offset.elevationPx)
+      ) {
         throw new Error(`scene asset "${asset.id}" requires a finite surfaceOffset`);
       }
       floorAnchor = addOffset(resolvedParent.floorAnchor, offset.u, offset.v);

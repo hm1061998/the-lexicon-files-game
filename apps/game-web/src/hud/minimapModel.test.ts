@@ -122,11 +122,15 @@ describe('buildMinimapModel', () => {
           collision: { type: 'rect', u: -0.5, v: 0, width: 1, height: 1 },
         },
       ]),
-      projection: { type: 'dimetric-2:1', originX: 100, originY: 50, tileWidth: 128, tileHeight: 64 },
+      projection: {
+        type: 'dimetric-2:1',
+        originX: 100,
+        originY: 50,
+        tileWidth: 128,
+        tileHeight: 64,
+      },
     };
-    expect(buildMinimapModel(s, null).solids).toEqual([
-      { x: -60, y: 194, width: 128, height: 64 },
-    ]);
+    expect(buildMinimapModel(s, null).solids).toEqual([{ x: -60, y: 194, width: 128, height: 64 }]);
   });
 
   it('projects a logical floor to a diamond and uses the projected bounds for its viewBox', () => {

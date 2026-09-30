@@ -81,9 +81,7 @@ export interface SceneTransitionDefinition {
   readonly targetSpawnId: string;
 }
 
-export type SpawnPointDefinition =
-  | { readonly x: number; readonly y: number }
-  | LogicalPoint;
+export type SpawnPointDefinition = { readonly x: number; readonly y: number } | LogicalPoint;
 
 interface SceneAssetCommon {
   readonly id: string;
@@ -126,9 +124,7 @@ export type SurfaceChildSceneAssetDefinition = SceneAssetCommon & {
 
 /** Legacy Cartesian during migration, or logical isometric placement and surface attachment. */
 export type SceneAssetDefinition =
-  | LegacySceneAssetDefinition
-  | PositionedSceneAssetDefinition
-  | SurfaceChildSceneAssetDefinition;
+  LegacySceneAssetDefinition | PositionedSceneAssetDefinition | SurfaceChildSceneAssetDefinition;
 
 /**
  * A room sign drawn in the world (e.g. on a partition wall). Text comes from content; the label

@@ -77,7 +77,9 @@ export function movePlayer(
   const next = nextFacing(facing, direction.x, direction.y);
   const plan = planWalk({
     name: PLAYER_NAME,
-    moving: (direction.x !== 0 || direction.y !== 0) && (actuallyMoved ?? isWalking(displacement(player))),
+    moving:
+      (direction.x !== 0 || direction.y !== 0) &&
+      (actuallyMoved ?? isWalking(displacement(player))),
     hasWalk: sheet.walk !== null && player.scene.anims.exists(walkAnimKey(PLAYER_NAME, next)),
     facing: next,
     current: currentWalk(player),

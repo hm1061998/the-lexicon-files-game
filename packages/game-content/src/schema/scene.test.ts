@@ -63,7 +63,13 @@ describe('parseSceneDefinition', () => {
       labels?: unknown;
       assets: Array<Record<string, unknown>>;
     };
-    raw.projection = { type: 'dimetric-2:1', originX: 640, originY: 360, tileWidth: 128, tileHeight: 64 };
+    raw.projection = {
+      type: 'dimetric-2:1',
+      originX: 640,
+      originY: 360,
+      tileWidth: 128,
+      tileHeight: 64,
+    };
     raw.worldBounds = { u: -5, v: -4, width: 10, height: 8 };
     raw.spawnPoints = { default: { u: 0, v: 0 }, from_archive: { u: 4, v: 2 } };
     raw.labels = [{ id: 'office', text: 'OFFICE', u: 0, v: 1 }];
@@ -104,7 +110,13 @@ describe('parseSceneDefinition', () => {
     { type: 'dimetric-3:2', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 },
     { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 96, tileHeight: 64 },
     { type: 'dimetric-2:1', originX: 0, originY: Number.NaN, tileWidth: 128, tileHeight: 64 },
-    { type: 'dimetric-2:1', originX: Number.POSITIVE_INFINITY, originY: 0, tileWidth: 128, tileHeight: 64 },
+    {
+      type: 'dimetric-2:1',
+      originX: Number.POSITIVE_INFINITY,
+      originY: 0,
+      tileWidth: 128,
+      tileHeight: 64,
+    },
   ])('rejects invalid projection metadata: %o', (projection) => {
     expect(() =>
       parseSceneDefinition({ ...(mainOffice as Record<string, unknown>), projection }, 'bad.json'),

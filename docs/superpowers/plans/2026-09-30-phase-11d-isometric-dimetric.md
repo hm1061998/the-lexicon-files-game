@@ -13,7 +13,7 @@
 ## Ràng buộc chung
 
 - Projection dimetric 2:1, cell tham chiếu 128×64 px: `screenX = originX + (u-v)×64`; `screenY = originY + (u+v)×32 - elevationPx`.
-- Trục `u+` theo SE, `v+` theo NE; input `W=NW`, `D=NE`, `S=SE`, `A=SW`; chuẩn hóa vận tốc theo screen-space.
+- Projector `x=originX+(u-v)×64`, `y=originY+(u+v)×32−elevationPx`; `u+` theo SE, `v+` theo SW. Input `W=−u/NW`, `D=−v/NE`, `S=+u/SE`, `A=+v/SW`; chuẩn hóa vận tốc theo screen-space.
 - Tọa độ content, spawn, collision, interaction, labels và minimap đều logical; render anchor được project đúng một lần.
 - Gameplay physics/collision không dùng AABB screen-space. Không thêm dependency. `game-core` và `learning-engine` không import UI/Phaser/DOM.
 - React↔Phaser chỉ qua `GameEventMap` và Zustand; Phaser không gọi backend; IDs/effects/dialogue semantics/persistence giữ nguyên.
@@ -127,17 +127,17 @@
 - [x] **Bước 3: Tạo ảnh** bằng ImageGen với bốn idle directions từng actor làm reference và prompt trong `docs/art/07` §4.4; tạo bốn sheet riêng. Chuẩn hóa canvas gần đúng 1774×887 sang 1792×896 (giữ tỉ lệ 2:1), dùng `.venv-art-codegen`/`slice_walk_sheet.py`, không dùng `make_walk_frames.py` làm asset phát hành. Contact sheet 1280×640 và loop 10 fps đã được kiểm; Player, Anna, Leo được tạo lại đến khi đạt contract.
 - [x] **Bước 4: Implement** provenance, thay sheet procedural player, thêm walk sheet NPC, register animation theo actor/hướng; không thêm autonomous NPC movement. Cập nhật docs art và slicer để neo đế giày mỗi frame vào y=140.
 - [x] **Bước 5: Chạy test xanh**; E2E xác nhận player walk dùng asset thật và cả ba NPC walk được preload/trigger qua dev test control.
-- [ ] **Bước 6: Commit** `feat(assets): add complete isometric walk sheets for cast`.
+- [x] **Bước 6: Commit** `feat(assets): add complete isometric walk sheets for cast` (`bb5038b`).
 
 ### Tác vụ 8: Đồng bộ art/architecture docs và full verification
 
 **Tệp:** sửa `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md` §3, §16–17, §30–32, §51–55; `docs/architecture/ARCHITECTURE.md`; `docs/art/07_AI_ASSET_PROMPT_PACK.md`; tạo `docs/ai/2026-09-30-phase-11d-verification.md`; `docs/ai/MEMORY.md` ở commit riêng tiếp theo.
 
-- [ ] **Bước 1: Cập nhật** art/architecture docs từ runtime contract: logical plane, 128×64 projection, WASD, collision/depth, event/render boundary, tabletop metadata; gỡ mô tả Cartesian mâu thuẫn. Ghi game là 2D dimetric, không phải 3D.
-- [ ] **Bước 2: Chạy gate** `npm run lint`, `npm run test`, `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run memory:check`; Python unittest nếu tool art đổi; full E2E hai lần liên tiếp; scene-layout `--repeat-each=2 --retries=0` hai lần. Backend không đổi.
-- [ ] **Bước 3: Chụp/xem** office, archive, dialogue, evidence, minimap, notebook, pause và toàn bộ sheet; ghi giống/khác concept.
-- [ ] **Bước 4: Viết ledger** tiếng Việt: commit code, lệnh/output thật, screenshot verdict, provenance, hạn chế còn lại.
-- [ ] **Bước 5: Self-review** đủ projector/controls/collision/camera/depth/minimap/scenes/tabletop/doors/names/facing/breathing/four sheets/docs; cleanup events, reduced-motion, product rules và texture completeness.
+- [x] **Bước 1: Cập nhật** art/architecture docs từ runtime contract: logical plane, 128×64 projection, WASD, collision/depth, event/render boundary, tabletop metadata; gỡ mô tả Cartesian mâu thuẫn. Ghi game là 2D dimetric, không phải 3D.
+- [x] **Bước 2: Chạy gate** `npm run lint`, `npm run test`, `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run memory:check`; Python unittest nếu tool art đổi; full E2E hai lần liên tiếp; scene-layout `--repeat-each=2 --retries=0` hai lần. Backend không đổi.
+- [x] **Bước 3: Chụp/xem** office, archive, dialogue, evidence, minimap, notebook, pause và toàn bộ sheet; ghi giống/khác concept.
+- [x] **Bước 4: Viết ledger** tiếng Việt: commit code, lệnh/output thật, screenshot verdict, provenance, hạn chế còn lại.
+- [x] **Bước 5: Self-review** đủ projector/controls/collision/camera/depth/minimap/scenes/tabletop/doors/names/facing/breathing/four sheets/docs; cleanup events, reduced-motion, product rules và texture completeness.
 - [ ] **Bước 6: Commit** implementation/docs/ledger; update memory sau đó với `result_commit` là commit trước.
 
 ## Phụ thuộc

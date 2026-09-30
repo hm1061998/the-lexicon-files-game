@@ -40,7 +40,7 @@ function clampAxis(
   for (const solid of solids) {
     const solidStart = axis === 'u' ? solid.u : solid.v;
     const solidSize = axis === 'u' ? solid.width : solid.height;
-    const solidOtherStart = (axis === 'u' ? solid.v : solid.u);
+    const solidOtherStart = axis === 'u' ? solid.v : solid.u;
     const solidOtherSize = axis === 'u' ? solid.height : solid.width;
     const otherStart = otherPosition + otherOffset;
     if (!overlaps(otherStart, otherSize, solidOtherStart, solidOtherSize)) continue;
@@ -51,7 +51,11 @@ function clampAxis(
     const targetEnd = targetStart + size;
     if (delta > 0 && currentEnd <= solidStart && targetEnd > solidStart) {
       resolved = Math.min(resolved, solidStart - offset - size);
-    } else if (delta < 0 && currentStart >= solidStart + solidSize && targetStart < solidStart + solidSize) {
+    } else if (
+      delta < 0 &&
+      currentStart >= solidStart + solidSize &&
+      targetStart < solidStart + solidSize
+    ) {
       resolved = Math.max(resolved, solidStart + solidSize - offset);
     }
   }

@@ -2,7 +2,7 @@ import type { IsoProjection } from '@lexicon/shared-types';
 import type { LogicalPoint } from './isometricProjection';
 import type { MovementKeys } from './input';
 
-/** WASD movement on the logical floor: W=NW, D=NE, S=SE, A=SW. */
+/** WASD on the logical floor: W=-u/NW, D=-v/NE, S=+u/SE, A=+v/SW. */
 export function resolveIsoInput(keys: MovementKeys, typing: boolean): LogicalPoint {
   if (typing) return { u: 0, v: 0 };
   return {

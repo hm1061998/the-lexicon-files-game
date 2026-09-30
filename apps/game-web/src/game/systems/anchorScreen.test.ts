@@ -52,12 +52,19 @@ describe('projectInteractionAnchor', () => {
 
   it('applies projection, camera zoom and CSS canvas scaling once each', () => {
     const anchor = { u: 2, v: 1 };
-    expect(projectInteractionAnchor(anchor, projection, camera, { width: 1920, height: 1080 })).toEqual({
+    expect(
+      projectInteractionAnchor(anchor, projection, camera, { width: 1920, height: 1080 }),
+    ).toEqual({
       x: -36,
       y: 46,
     });
     expect(
-      projectInteractionAnchor(anchor, projection, { ...camera, zoom: 2 }, { width: 960, height: 540 }),
+      projectInteractionAnchor(
+        anchor,
+        projection,
+        { ...camera, zoom: 2 },
+        { width: 960, height: 540 },
+      ),
     ).toEqual({ x: -516, y: -224 });
   });
 });

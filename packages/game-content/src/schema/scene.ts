@@ -24,9 +24,7 @@ const logicalCollisionSchema = z
   })
   .strict();
 
-const logicalPointSchema = z
-  .object({ u: z.number().finite(), v: z.number().finite() })
-  .strict();
+const logicalPointSchema = z.object({ u: z.number().finite(), v: z.number().finite() }).strict();
 
 const surfaceOffsetSchema = z
   .object({
@@ -54,11 +52,10 @@ const interactionAreaSchema = z
   })
   .strict();
 
-const spawnPointSchema = z
-  .union([
-    z.object({ x: z.number().finite(), y: z.number().finite() }).strict(),
-    logicalPointSchema,
-  ]);
+const spawnPointSchema = z.union([
+  z.object({ x: z.number().finite(), y: z.number().finite() }).strict(),
+  logicalPointSchema,
+]);
 
 export const PLACEHOLDER_TEXTURE_PREFIX = 'ph_';
 
@@ -114,7 +111,12 @@ const sceneAssetDefinitionSchema = z
     const surfaceChild = asset.restsOn !== undefined || asset.surfaceOffset !== undefined;
     const validLegacy = legacy && !positioned && !surfaceChild;
     const validPositioned = positioned && !legacy && !surfaceChild;
-    const validChild = surfaceChild && !legacy && !positioned && Boolean(asset.restsOn) && asset.surfaceOffset !== undefined;
+    const validChild =
+      surfaceChild &&
+      !legacy &&
+      !positioned &&
+      Boolean(asset.restsOn) &&
+      asset.surfaceOffset !== undefined;
     if (!(validLegacy || validPositioned || validChild)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -135,7 +137,18 @@ const sceneLabelSchema = z
     angle: z.number().optional(),
   })
   .strict()
-  .refine((label) => (label.x !== undefined && label.y !== undefined && label.u === undefined && label.v === undefined) || (label.u !== undefined && label.v !== undefined && label.x === undefined && label.y === undefined), 'label must use x/y or u/v');
+  .refine(
+    (label) =>
+      (label.x !== undefined &&
+        label.y !== undefined &&
+        label.u === undefined &&
+        label.v === undefined) ||
+      (label.u !== undefined &&
+        label.v !== undefined &&
+        label.x === undefined &&
+        label.y === undefined),
+    'label must use x/y or u/v',
+  );
 
 const isoProjectionSchema = z
   .object({
@@ -158,8 +171,22 @@ export const sceneDefinitionSchema = z
       })
       .strict(),
     worldBounds: z.union([
-      z.object({ x: z.number().finite(), y: z.number().finite(), width: z.number().positive(), height: z.number().positive() }).strict(),
-      z.object({ u: z.number().finite(), v: z.number().finite(), width: z.number().positive(), height: z.number().positive() }).strict(),
+      z
+        .object({
+          x: z.number().finite(),
+          y: z.number().finite(),
+          width: z.number().positive(),
+          height: z.number().positive(),
+        })
+        .strict(),
+      z
+        .object({
+          u: z.number().finite(),
+          v: z.number().finite(),
+          width: z.number().positive(),
+          height: z.number().positive(),
+        })
+        .strict(),
     ]),
     spawnPoints: z.record(z.string().min(1), spawnPointSchema),
     textures: z.array(textureEntrySchema),
@@ -201,12 +228,36 @@ export const sceneDefinitionSchema = z
 
     const { spawnPoints, worldBounds } = scene;
     const logicalBounds = 'u' in worldBounds;
-    const within = (p: { x?: number | undefined; y?: number | undefined; u?: number | undefined; v?: number | undefined }) => {
-      if (logicalBounds) return p.u !== undefined && p.v !== undefined && p.u >= worldBounds.u && p.u <= worldBounds.u + worldBounds.width && p.v >= worldBounds.v && p.v <= worldBounds.v + worldBounds.height;
-      return p.x !== undefined && p.y !== undefined && p.x >= worldBounds.x && p.x <= worldBounds.x + worldBounds.width && p.y >= worldBounds.y && p.y <= worldBounds.y + worldBounds.height;
+    const within = (p: {
+      x?: number | undefined;
+      y?: number | undefined;
+      u?: number | undefined;
+      v?: number | undefined;
+    }) => {
+      if (logicalBounds)
+        return (
+          p.u !== undefined &&
+          p.v !== undefined &&
+          p.u >= worldBounds.u &&
+          p.u <= worldBounds.u + worldBounds.width &&
+          p.v >= worldBounds.v &&
+          p.v <= worldBounds.v + worldBounds.height
+        );
+      return (
+        p.x !== undefined &&
+        p.y !== undefined &&
+        p.x >= worldBounds.x &&
+        p.x <= worldBounds.x + worldBounds.width &&
+        p.y >= worldBounds.y &&
+        p.y <= worldBounds.y + worldBounds.height
+      );
     };
     if (logicalBounds && !scene.projection) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['worldBounds'], message: 'logical worldBounds require dimetric projection metadata' });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['worldBounds'],
+        message: 'logical worldBounds require dimetric projection metadata',
+      });
     }
     if (logicalBounds) {
       scene.assets.forEach((asset, index) => {

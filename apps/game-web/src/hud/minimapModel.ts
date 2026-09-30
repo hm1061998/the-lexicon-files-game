@@ -1,5 +1,9 @@
 import type { SceneDefinition } from '@lexicon/shared-types';
-import { projectScenePoint, projectVisualAnchor, projectWorldBounds } from '../game/systems/sceneProjection';
+import {
+  projectScenePoint,
+  projectVisualAnchor,
+  projectWorldBounds,
+} from '../game/systems/sceneProjection';
 import { resolveSceneAssets } from '../game/systems/sceneAssetResolver';
 
 export type MinimapRect = { x: number; y: number; width: number; height: number };
@@ -36,21 +40,22 @@ export function buildMinimapModel(
   let projectedBounds: MinimapRect;
   let floorCorners: Array<{ x: number; y: number }>;
   if ('u' in b) {
-    if (!scene.projection) throw new Error(`Scene "${scene.id}" has logical bounds without projection metadata`);
+    if (!scene.projection)
+      throw new Error(`Scene "${scene.id}" has logical bounds without projection metadata`);
     projectedBounds = projectWorldBounds(b, scene.projection);
     floorCorners = [
-        projectScenePoint(scene, { u: b.u, v: b.v }),
-        projectScenePoint(scene, { u: b.u + b.width, v: b.v }),
-        projectScenePoint(scene, { u: b.u + b.width, v: b.v + b.height }),
-        projectScenePoint(scene, { u: b.u, v: b.v + b.height }),
+      projectScenePoint(scene, { u: b.u, v: b.v }),
+      projectScenePoint(scene, { u: b.u + b.width, v: b.v }),
+      projectScenePoint(scene, { u: b.u + b.width, v: b.v + b.height }),
+      projectScenePoint(scene, { u: b.u, v: b.v + b.height }),
     ];
   } else {
     projectedBounds = b;
     floorCorners = [
-        { x: b.x, y: b.y },
-        { x: b.x + b.width, y: b.y },
-        { x: b.x + b.width, y: b.y + b.height },
-        { x: b.x, y: b.y + b.height },
+      { x: b.x, y: b.y },
+      { x: b.x + b.width, y: b.y },
+      { x: b.x + b.width, y: b.y + b.height },
+      { x: b.x, y: b.y + b.height },
     ];
   }
   const solids: MinimapRect[] = [];
@@ -99,9 +104,10 @@ export function buildMinimapModel(
       : { x: playerPosition.x, y: playerPosition.y }
     : null;
   const labels = (scene.labels ?? []).map((label) => {
-    const point = 'u' in label
-      ? projectScenePoint(scene, { u: label.u, v: label.v })
-      : { x: label.x, y: label.y };
+    const point =
+      'u' in label
+        ? projectScenePoint(scene, { u: label.u, v: label.v })
+        : { x: label.x, y: label.y };
     return { id: label.id, text: label.text, ...point };
   });
   const currentRoom = player

@@ -41,7 +41,6 @@ import type { IsoProjection } from '@lexicon/shared-types';
 import type { LogicalPoint } from './isometricProjection';
 import { projectIso } from './isometricProjection';
 
-
 /** Resolves logical interaction points after projection so radius stays in visible screen pixels. */
 export function findNearestIsoInteractable(
   pos: LogicalPoint,

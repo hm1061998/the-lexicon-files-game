@@ -391,7 +391,8 @@ export function parseCaseDefinition(
   const vocabulary = vocabularyResult.data.vocabulary;
   const scenes = scenesResult.map(
     (result) =>
-      (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] }).data as unknown as SceneDefinition,
+      (result as { success: true; data: (typeof sceneDefinitionSchema)['_output'] })
+        .data as unknown as SceneDefinition,
   );
 
   const collections: ReadonlyArray<{ label: string; ids: readonly string[] }> = [

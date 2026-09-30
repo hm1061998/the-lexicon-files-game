@@ -10,3 +10,6 @@ package-lock.json
 playwright-report
 test-results
 *.tsbuildinfo
+
+# Keep the manually aligned provenance table readable.
+assets/PROVENANCE.md

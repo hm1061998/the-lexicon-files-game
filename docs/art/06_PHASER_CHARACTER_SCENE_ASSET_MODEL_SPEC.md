@@ -2,7 +2,7 @@
 # CHARACTER & SCENE ASSET MODEL SPECIFICATION FOR PHASER
 
 > Tài liệu thiết kế mô hình nhân vật và cảnh dùng trực tiếp cho pipeline **Phaser 3 + React + TypeScript**.  
-> Mục tiêu: giữ phong cách đồ họa gần với ảnh concept ban đầu — isometric 2.5D, vẽ tay, giấy cũ, màu trầm, điểm nhấn đỏ.
+> Mục tiêu: giữ phong cách đồ họa gần với ảnh concept ban đầu — game 2D chiếu dimetric 2:1, vẽ tay, giấy cũ, màu trầm, điểm nhấn đỏ. Đây không phải world 3D.
 
 ---
 
@@ -74,16 +74,16 @@ menus
 
 ## 3.1. World Coordinate
 
-Phaser vẫn sử dụng hệ:
+Case #001 lưu mặt sàn trong logical plane `(u,v)`. Phép chiếu dimetric 2:1 tham chiếu ô 128×64 px:
 
 ```text
-X → ngang màn hình
-Y → dọc màn hình
+screenX = originX + (u - v) × 64
+screenY = originY + (u + v) × 32 - elevationPx
 ```
 
-Với scene isometric prerendered, không bắt buộc chuyển tile coordinate.
+`u+` đi SE, `v+` đi SW. Mapping bàn phím: W=`−u`/NW, D=`−v`/NE, S=`+u`/SE, A=`+v`/SW. Vận tốc tổ hợp được chuẩn hóa theo screen-space. Legacy scenes có thể tiếp tục dùng screen pixel qua adapter migration; mọi scene Case #001 hiện tại dùng logical position/bounds/collision.
 
-Player và props dùng world coordinate trực tiếp.
+Elevation chỉ dịch visual anchor lên màn hình; floor anchor, depth, collision và interaction range không đổi. Minimap dùng cùng logical source rồi chiếu sang diamond.
 
 ---
 
@@ -92,7 +92,7 @@ Player và props dùng world coordinate trực tiếp.
 Camera visual reference khi render asset:
 
 ```text
-Projection: Orthographic
+Projection: Orthographic dimetric 2:1
 Horizontal rotation: 45°
 Vertical viewing angle: 30°–38°
 Recommended: 35°
@@ -430,14 +430,9 @@ Không để animation “nhảy” do chân lệch.
 
 Không dùng toàn bộ sprite làm collider.
 
-Dùng collider nhỏ ở chân:
+Dùng footprint nhỏ ở chân, tách khỏi toàn bộ hình sprite. Với scene dimetric, collider player chạy trên logical plane `(u,v)` (hiện tại khoảng `0.36 × 0.36` ô); scene resolver cũng lưu obstacle footprint theo `u/v/width/height`. Phaser không dùng screen-space AABB của artwork làm collision shape.
 
-```text
-width: 24–36 px
-height: 14–22 px
-```
-
-Ví dụ:
+Với legacy screen-space scene, Arcade body phải nhỏ và đặt sát chân. Ví dụ legacy:
 
 ```ts
 player.body.setSize(30, 18);
@@ -450,19 +445,14 @@ Thông số cuối phụ thuộc frame size.
 
 # 17. Depth Sorting Character
 
-Runtime:
+Depth dùng projected floor-contact Y, có thể cộng `depthBias`:
 
 ```ts
-player.setDepth(player.y);
+player.setDepth(projectIso(logicalFeet, projection).y + depthBias);
 ```
 
-hoặc:
+`elevationPx` không tham gia depth sorting; chỉ thay đổi nơi sprite được vẽ. Player có tie-breaker nhỏ `0.01` để không nhấp nháy khi trùng depth prop.
 
-```ts
-player.setDepth(player.y + depthOffset);
-```
-
-Depth dựa trên **feet Y**, không dựa trên sprite center.
 
 ---
 
@@ -773,13 +763,13 @@ tall cabinets
 
 Không dùng sprite rectangle mặc định.
 
-Mỗi prop cần collider riêng.
+Mỗi prop có footprint riêng trên cùng hệ tọa độ với scene. Scene dimetric khai báo collider rectangle bằng `u/v` và kích thước logical; chuyển động/collision được giải trước khi projector vẽ vị trí ra screen. Hình sprite có thể lớn hơn footprint.
 
 Ví dụ bàn:
 
 ```text
 visual:
-large isometric rectangle
+diamond artwork projected from the logical plane
 
 collision:
 small polygon/rectangle near footprint
@@ -789,57 +779,34 @@ Metadata:
 
 ```json
 {
-  "collision": {
-    "type": "rect",
-    "x": -80,
-    "y": -28,
-    "width": 160,
-    "height": 56
-  }
+  "position": { "u": 6, "v": 4 },
+  "collision": { "type": "rect", "u": -0.7, "v": -0.25, "width": 1.4, "height": 0.5 }
 }
 ```
 
 ---
 
-# 31. Polygon Collision
+# 31. Complex Collision Footprints
 
-Cho object irregular:
+Runtime hiện dùng rectangle footprint trên logical plane. Object không đều có thể khai báo nhiều rectangle nhỏ; không lấy polygon screen-space từ silhouette sprite.
 
 ```json
 {
-  "collision": {
-    "type": "polygon",
-    "points": [
-      [-60, -20],
-      [0, -42],
-      [60, -20],
-      [0, 12]
-    ]
-  }
+  "collision": { "type": "rect", "u": -0.3, "v": -0.2, "width": 0.6, "height": 0.4 }
 }
 ```
 
-Nếu dùng Arcade Physics, có thể simplify thành rectangle.
-
-Matter.js chỉ dùng nếu thật sự cần polygon precision.
+Không thêm physics engine khác cho case hiện tại; `game-web` giải collision logic trong `(u,v)`.
 
 ---
 
 # 32. Interaction Point
 
-Interaction không nhất thiết nằm tại sprite center.
+Interaction không nhất thiết nằm tại sprite center. Với logical asset, offset `x/y` của metadata được hiểu là offset `u/v` trên floor plane; `radius` đo theo pixel màn hình. Anchor được project đúng một lần. Elevation của evidence tabletop ảnh hưởng visual anchor, không kéo theo floor/collision anchor.
 
 Ví dụ tài liệu trên bàn:
 
-```json
-{
-  "interaction": {
-    "x": 0,
-    "y": 10,
-    "radius": 80
-  }
-}
-```
+Evidence đặt trên mặt bàn khai báo `restsOn` + `surfaceOffset` gồm `(u,v,elevationPx)`; interaction marker bám visual anchor trong khi depth/collision giữ floor anchor.
 
 ---
 
@@ -876,14 +843,16 @@ Không glow.
 
 # 34. Scene JSON Definition
 
+Ví dụ lịch sử theo screen pixel của scene Cartesian trước Phase 11D (chỉ tham khảo khi đọc legacy content; scene Case #001 hiện tại dùng `position: {u,v}` như hợp đồng §74):
+
 Ví dụ:
 
 ```json
 {
   "id": "meeting_room",
   "size": {
-    "width": 2400,
-    "height": 1600
+    "width": 16,
+    "height": 12
   },
   "spawn": {
     "x": 1050,
@@ -1276,9 +1245,11 @@ this.anims.create({
 
 # 51. Direction Resolver
 
-Pseudo:
+Resolver animation nhận vector screen-space sinh từ bước logic `(du,dv)`:
 
 ```ts
+screenX = du - dv;
+screenY = du + dv;
 function resolveDirection(vx: number, vy: number) {
   if (vx >= 0 && vy < 0) return 'NE';
   if (vx >= 0 && vy >= 0) return 'SE';
@@ -1287,15 +1258,17 @@ function resolveDirection(vx: number, vy: number) {
 }
 ```
 
+Trục đơn theo projector: `−u → NW`, `−v → NE`, `+u → SE`, `+v → SW`. Quy tắc tie hiện tại giữ `SE` khi vector bằng 0.
+
 ---
 
 # 52. World Position Standard
 
-Character world position = **feet position**.
+Character world position = **logical feet position `(u,v)`**.
 
-Prop world position = **floor contact point**.
+Prop world position = **logical floor contact point `(u,v)`**; evidence trên mặt bàn có thêm visual elevation.
 
-Đây là rule quan trọng nhất để depth sorting đúng.
+Project floor point bằng công thức §3 để tính render anchor và depth. Elevation chỉ dịch visual Y; không thay floor contact, collision, depth hoặc logical minimap position.
 
 ---
 
@@ -1306,18 +1279,19 @@ Mỗi scene JSON có:
 ```json
 {
   "worldBounds": {
-    "x": 0,
-    "y": 0,
-    "width": 2400,
-    "height": 1600
+    "u": 0,
+    "v": 0,
+    "width": 16,
+    "height": 12
   }
 }
 ```
 
-Camera:
+Bounds hiện tại là số ô logical; camera bounds lấy từ bốn góc đã chiếu:
 
 ```ts
-this.cameras.main.setBounds(0, 0, 2400, 1600);
+const screenBounds = projectWorldBounds(worldBounds, projection);
+this.cameras.main.setBounds(screenBounds.x, screenBounds.y, screenBounds.width, screenBounds.height);
 ```
 
 ---
@@ -1327,9 +1301,9 @@ this.cameras.main.setBounds(0, 0, 2400, 1600);
 MVP:
 
 ```text
-free movement
+free movement over logical (u,v)
 +
-collision
+logical footprint collision and screen-space interaction radius
 ```
 
 Không cần pathfinding.
@@ -1346,17 +1320,15 @@ navigation graph
 
 # 55. Door Transition Model
 
-Door metadata:
+Door metadata uses a logical position, logical footprint and logical destination spawn IDs:
 
 ```json
 {
   "id": "door_to_archive",
-  "type": "transition",
-  "x": 2200,
-  "y": 700,
-  "radius": 80,
-  "targetScene": "archive",
-  "targetSpawn": "from_office"
+  "type": "interactable",
+  "position": { "u": 15, "v": 6 },
+  "interaction": { "x": 0, "y": 0, "radius": 100,
+    "transition": { "targetSceneId": "archive", "targetSpawnId": "from_office" } }
 }
 ```
 
@@ -1364,12 +1336,14 @@ Door metadata:
 
 # 56. Spawn Point Model
 
+Scene dimetric lưu spawn theo tọa độ logic; cặp pixel chỉ dành cho legacy scene.
+
 ```json
 {
   "spawnPoints": {
-    "default": [1100, 1050],
-    "from_archive": [2000, 720],
-    "from_meeting_room": [420, 820]
+    "default": { "u": 8, "v": 10 },
+    "from_archive": { "u": 14, "v": 7 },
+    "from_meeting_room": { "u": 4, "v": 8 }
   }
 }
 ```
@@ -1747,6 +1721,8 @@ Không được xem placeholder là final.
 
 # 74. Scene Data Contract
 
+Hợp đồng dưới đây mô tả scene dimetric hiện hành. `position` và `worldBounds` dùng logical plane; không trộn tọa độ pixel màn hình vào scene Case #001.
+
 TypeScript:
 
 ```ts
@@ -1754,58 +1730,61 @@ export interface SceneAssetDefinition {
   id: string;
   type:
     | 'background'
+    | 'wall'
     | 'prop'
     | 'interactable'
-    | 'foreground'
-    | 'transition';
+    | 'npc';
 
   texture: string;
 
-  x: number;
-  y: number;
+  /** Legacy pixel position; không dùng trong scene dimetric Case #001. */
+  x?: number;
+  y?: number;
+  position?: { u: number; v: number };
+  restsOn?: string;
+  surfaceOffset?: { u: number; v: number; elevationPx: number };
 
   origin?: [number, number];
 
   depth?: number;
-  depthMode?: 'fixed' | 'y';
-
   depthBias?: number;
 
-  collision?: CollisionDefinition;
+  collision?:
+    | { type: 'rect'; x: number; y: number; width: number; height: number }
+    | { type: 'rect'; u: number; v: number; width: number; height: number };
+  interaction?: { x: number; y: number; radius: number };
+}
 
-  interaction?: InteractionDefinition;
-
-  fadeWhenPlayerBehind?: boolean;
+export interface DimetricSceneDefinition {
+  id: string;
+  projection: { type: 'dimetric-2:1'; originX: number; originY: number; tileWidth: 128; tileHeight: 64 };
+  worldBounds: { u: number; v: number; width: number; height: number };
+  spawnPoints: Record<string, { u: number; v: number }>;
+  assets: SceneAssetDefinition[];
 }
 ```
 
 ---
 
-# 75. Character Data Contract
+# 75. Character Texture Manifest Contract
+
+`characterSheets` là registry texture của `case.json`; cấu trúc runtime hiện tại như sau:
 
 ```ts
-export interface CharacterDefinition {
-  id: string;
+export type CharacterSheets = Record<
+  string,
+  {
+    idle: Record<'NE' | 'SE' | 'SW' | 'NW', string>;
+    walk: string | null;
+  }
+>;
 
-  spriteSheet: string;
-
-  frameWidth: number;
-  frameHeight: number;
-
-  origin: [number, number];
-
-  collision: {
-    width: number;
-    height: number;
-    offsetX?: number;
-    offsetY?: number;
-  };
-
-  directions: Array<'NE' | 'SE' | 'SW' | 'NW'>;
-
-  animations: Record<string, AnimationDefinition>;
-}
+// The manifest texture entry uses frameWidth/frameHeight for walk sheets.
+// Runtime walk animation: 8 columns × 4 rows, 160×160 per cell, 10 fps.
+type WalkTextureEntry = { key: string; url: string; frameWidth: 160; frameHeight: 160 };
 ```
+
+Các sheet đi bộ có thứ tự hàng NE, SE, SW, NW; mỗi sheet là lưới 8×4 ô 160×160 px. Walk animation chỉ chạy khi được điều khiển, không tự làm NPC di chuyển.
 
 ---
 

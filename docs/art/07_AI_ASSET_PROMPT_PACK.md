@@ -14,7 +14,7 @@ Tài liệu vận hành (không đổi product rule). Nguồn sự thật về p
 
 ```text
 Style: "lexicon_isometric_v1" — hand-drawn 2.5D isometric illustration for a detective game.
-Camera: orthographic isometric view, rotated 45 degrees horizontally, looking down about 35 degrees. Never perspective, never a different angle.
+Camera: orthographic dimetric 2:1 view, floor axes project to a 128×64 px diamond cell (`u+` screen-right/down, `v+` screen-left/down). Never perspective, never switch to a 3D world camera.
 Lines and shading: clean ink outline, soft pencil shading, subtle paper grain, low saturation, warm sepia mood.
 Lighting: key light from the upper-left, soft fill, soft shadows falling to the lower-right. Same direction for every asset.
 Palette only: Paper Cream #D8C5A4, Light Beige #CDBA97, Warm Gray #A89B87, Dark Brown #3E342B, Ink Black #2A2521, Muted Green #737660, Dusty Olive #8A8469. Investigation Red #A4412D / Dark Red #743026 ONLY on clues, evidence and objective marks — never on furniture or clothing.

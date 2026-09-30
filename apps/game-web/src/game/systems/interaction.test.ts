@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { findNearestInteractable, findNearestIsoInteractable, type InteractableArea } from './interaction';
+import {
+  findNearestInteractable,
+  findNearestIsoInteractable,
+  type InteractableArea,
+} from './interaction';
 import type { IsoProjection } from '@lexicon/shared-types';
 
 const projection: IsoProjection = {

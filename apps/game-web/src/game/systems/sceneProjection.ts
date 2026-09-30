@@ -14,7 +14,10 @@ export function projectScenePoint(
 }
 
 /** Projects a logical rectangle by its four corners, preserving its complete screen bounds. */
-export function projectWorldBounds(bounds: LogicalRect, projection: IsoProjection): {
+export function projectWorldBounds(
+  bounds: LogicalRect,
+  projection: IsoProjection,
+): {
   x: number;
   y: number;
   width: number;

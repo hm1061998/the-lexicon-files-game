@@ -105,7 +105,7 @@ game/
   scenes/      BootScene, WorldScene (generic, load từ SceneDefinition)
   loaders/     scene manifest → preload; asset registry
   entities/    Player, Npc, Prop, Interactable (feet-origin, y-depth)
-  systems/     movement (WASD), collision, depth sort, interaction radius, foreground fade, camera
+  systems/     dimetric projection, logical movement/collision, depth sort, interaction radius, foreground fade, camera
 hud/           ObjectivePanel, CaseProgress, InteractionPrompt, KeyHints
 notebook/      tabs Case / People / Evidence / Vocabulary / Timeline
 dialogue/      DialogueView + clickable words
@@ -138,10 +138,11 @@ Modal critical mở → store.setInputLocked(true) → Phaser dừng movement
 
 ## 5. Scene & asset model (tóm tắt docs/art/06)
 
-- World position = **feet / floor contact point**. Character origin `(0.5, 0.88)`; depth = `y (+ depthBias)`.
-- Collider = footprint nhỏ, không dùng full sprite. Arcade Physics; Matter chỉ khi thật cần polygon.
-- Scene layer: `00_floor … 70_fx`. Scene data trong JSON, `WorldScene` generic dựng từ `SceneDefinition`.
-- 4 hướng NE/SE/SW/NW; anim key `${actor}_${action}_${direction}`.
+- Case #001 lưu vị trí trên mặt sàn logic `(u,v)` và dùng phép chiếu dimetric 2:1: `x=originX+(u-v)×64`, `y=originY+(u+v)×32−elevationPx` (mỗi ô tham chiếu 128×64 px). `u+` đi SE, `v+` đi SW; WASD: W=`−u`/NW, D=`−v`/NE, S=`+u`/SE, A=`+v`/SW. Đây là game 2D với artwork vẽ theo góc dimetric, không phải world 3D.
+- World position = **feet / floor contact point**. Character origin `(0.5, 0.88)`; depth lấy từ điểm sàn đã chiếu cộng `depthBias`, không cộng elevation artwork.
+- Collider là footprint nhỏ trên logical plane; movement và va chạm giải trong `(u,v)`, không dùng AABB của sprite trên màn hình. Nội dung tabletop tách `floorAnchor` khỏi `visualAnchor` bằng `restsOn`/`surfaceOffset`.
+- Mọi tọa độ hiển thị (sprite, marker, label, minimap) được chiếu đúng một lần; anchor React nhận screen CSS px qua event bus. Scene JSON vẫn là dữ liệu, `WorldScene` dựng generic từ `SceneDefinition`.
+- 4 hướng NE/SE/SW/NW; anim key `${actor}_${action}_${direction}`. Player, Anna, Leo và David khai báo walk sheet 8×4, frame 160×160, 10 fps trong `case.json`.
 - Chỉ load asset của scene hiện tại (manifest → preload → create); manifest là trường `textures` của scene JSON (còn `characterSheets`/`sharedTextures` ở `case.json`) trong `packages/game-content`, tải theo scene bằng `loadSceneTextures` (không còn manifest global trong game-web).
 - Placeholder đặt tên final-friendly và gắn nhãn `PLACEHOLDER_*`.
 - Palette cố định; **đỏ chỉ dùng cho investigation accent**.
