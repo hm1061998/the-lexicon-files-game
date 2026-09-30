@@ -1,84 +1,90 @@
 ---
 schema_version: 1
-updated_at: 2026-09-30T20:09:42.8657301+07:00
+updated_at: 2026-09-30T20:32:26.1692381+07:00
 phase: phase-11e
 status: in_progress
-result_commit: 40c9911
-active_spec: docs/superpowers/specs/2026-09-30-phase-11e-office-archive-static-world-redesign-design.md
-active_plan: docs/superpowers/plans/2026-09-30-phase-11e-office-archive-static-world-redesign.md
+result_commit: c8ac245
+active_spec: docs/superpowers/specs/2026-09-30-phase-11e-feedback-polish-design.md
+active_plan: none
 ---
 
 ## Metadata
 
-- Phiên tiếp tục theo yêu cầu đọc memory. Code/docs/verification commit 40c9911; memory lưu trong commit kế tiếp. Gate kỹ thuật đạt, chưa nghiệm thu hình ảnh.
+- Người dùng đánh giá bố cục Office/Archive tạm ổn và đưa 10 feedback. Đã khám phá, tái hiện lỗi và viết spec đề xuất c8ac245; chờ duyệt spec trước khi lập implementation plan. Memory commit kế tiếp theo protocol.
 
 ## Current Phase
 
-- Phase 11E redesign Office/Archive. Plan cha controls-visual-ux: Task 1 xong; Task 2 composition cũ được thay bằng redesign này; Tasks 3–6 chờ. Phase 12 chưa bắt đầu.
+- Phase 11E, mở rộng polish world/HUD/audio theo feedback. Redesign static world baseline đạt kỹ thuật, được tạm chấp nhận về bố cục. Plan cha controls-visual-ux còn Tasks 3–6; không xem Phase 11E complete. Phase 12 chưa bắt đầu.
 
 ## Active Goal
 
-- Nghiệm thu static world Office/Archive sau khi người dùng duyệt hai screenshot 1280×720; giữ traversal WASD/E hai chiều và nội dung điều tra hiện tại.
+- Xử lý 10 feedback: nhãn tường/sàn, cửa đối ứng, viewport/background, SFX/voice đầy đủ, markers, ghế, prompt gọn, minimap theo movement và HUD thu gọn. Bước hiện tại là user review spec đã viết.
 
 ## Current Status
 
-- Tasks 1–5 đã triển khai ở checkpoint. Tasks 6–7 migration đạt gate kỹ thuật: traversal thật, collision, reachable interactables, projection, textures và hồi quy hai lần đều xanh.
-- Task 8 đã cập nhật art06/architecture/provenance, chạy gates và một final reviewer. Hai Important đã sửa bằng test RED→GREEN; không có Critical. Chờ user review screenshot, phase vẫn in_progress.
-- Runtime Map sprite→active facing tween sửa crash lúc phỏng vấn liên tiếp do completed tween có targets=null. Validator reject ID khai báo trùng wall module và chỉ cho phép overlap tường vuông góc tại endpoint (góc/chữ T).
-- Fixtures minimap/reload lấy điểm từ content; hai NPC tests giữ E tới dialog rồi thả để không mất JustDown giữa frame. Không đổi test traversal thành teleport, không đổi learning/persistence/backend.
+- Giữ hai cảnh Office/Kho lưu trữ, căn cặp cửa/arrival tương ứng; không scene Hành lang thứ ba (người dùng đã chọn).
+- Voice đọc đầy đủ câu tiếng Anh bằng audio tạo sẵn (người dùng đã chọn). Có 3 dialogue trees/15 NPC nodes cần clip, gồm nhánh điều kiện; không dùng tiếng nói ngắn thay câu thoại.
+- Đã tái hiện page overflow và minimap chậm cập nhật; diagnostic/spec chỉ đọc runtime, chưa có implementation của feedback.
+- Spec mới đề xuất một plan tích hợp trong Phase 11E. Architectural path: duyệt written spec → writing-plans → duyệt written plan; Native đã được chọn trong session, không hỏi lại execution method.
 
 ## Completed
 
 - Phase 0A–11D: Git và docs/ai/2026-09-30-phase-11d-verification.md.
 - Controls Task 1 b3fa09d. Composition Task 2 bcab0e5 bị thay, không xem là nghiệm thu.
-- Redesign Tasks 1–5: d2fef68, 18af425, 619ea31, 7e04784, c2b7591. Migration/boards/runtime checkpoint: 9db54e6; checkpoint memory: 3b758e1.
-- 40c9911: runtime/validation fixes, 7 regressions mới, fixture cleanup, hợp đồng, review và verification cuối.
+- Redesign Tasks 1–5: d2fef68, 18af425, 619ea31, 7e04784, c2b7591. Migration/boards checkpoint 9db54e6; memory 3b758e1.
+- Redesign kỹ thuật cuối 40c9911, memory 6a4e716: sửa facing tween crash, global ID/overlap validation, 7 regressions mới, docs/gates/final review.
+- c8ac245: spec đề xuất feedback polish, đủ 10 mục, baseline chứng minh và tiêu chí nghiệm thu. Không sửa product code hoặc tạo audio mới ở commit này.
 
 ## In Progress
 
-- Task 8 còn user approval Office/Archive. Chưa đánh dấu redesign, Task 2 cha hoặc Phase 11E complete.
-- Hai Minor hoãn: E2E chưa assert tọa độ chính xác của arrival spawns; thiếu fixture opening riêng đúng 0/1 module. Validator kiểm mọi spawn; reviewer đã tái hiện opening đúng. Chi tiết trong final-review.
-- HUD che một phần góc phòng/cửa; character/breathing thuộc phạm vi giữ nguyên hoặc Tasks 3–6 cha. Không mở rộng redesign để sửa.
+- Chờ duyệt docs/superpowers/specs/2026-09-30-phase-11e-feedback-polish-design.md. Chưa có implementation plan được duyệt cho feedback; active_plan=none là trạng thái thực tế.
+- Footstep/UI/door SFX và voice sẽ dùng Howler hiện có. Môi trường hiện chưa có kokoro/torch/soundfile hoặc model cache; khôi phục dev-only generator khi triển khai, không model/TTS/API runtime.
+- Hai Minor của review trước vẫn hoãn: assertion tọa độ arrival chính xác và fixture opening đúng 0/1 module. Arrival assertions được đưa vào phạm vi sửa cửa lần này; không tuyên bố đã sửa.
+- Task modal/header và breathing của plan cha chưa triển khai. Spec mới chỉ điều chỉnh modal layout tối thiểu nếu shell viewport mới làm lộ lỗi cản thao tác.
 
 ## Active Decisions
 
-- Native inline, checkout dev hiện tại. Phiên này chỉ commit local, không push/merge; quyền push checkpoint trước không mở rộng sang phiên này.
-- Projection 2:1 và WASD theo màn hình. Hợp đồng footprint/collision/interaction/visual, wall segments/openings ở art06/architecture; không thay product rules.
-- Miễn trừ overlap chỉ cho generated walls vuông góc gặp endpoint dạng góc/chữ T; reject song song/interior crossing, global asset ID unique sau expansion.
-- Môi trường Office/Archive camera 30°, palette giấy/sepia; character/evidence giữ nguyên. Legacy PNG/builders giữ vì assets_config.json còn tham chiếu.
-- npm + Nx; không dependency JS mới. Format glob loại generated pytest/venv trước expansion để tránh EPERM; docs/provenance giữ quy tắc ignore có sẵn.
-- Toolchain local đã khôi phục: Node 24.19.0, npm 10.9.7 qua .superpowers/runtime/npm-shim/npm.cmd, venv Python bundle 3.12 + numpy/Pillow/scipy. Kiểm tồn tại trước dùng, không suy từ memory.
-- Không sửa runtime khi browser tests đang chạy: Vite HMR từng detach canvas. Playwright 1 worker, chạy từ apps/game-web, Vite port 5174.
-- Spec/plan tiếng Việt. Giữ user approval screenshot trước nghiệm thu; Tasks 3–6 cha và Phase 12 cần yêu cầu tiếp theo.
+- Native inline, checkout dev hiện tại. Commit local; không push/merge theo workflow đang giữ.
+- Giữ hai scene Office/Archive, căn doors/arrival đối ứng. Người dùng không yêu cầu cảnh Hành lang riêng.
+- Voice NPC đọc đầy đủ câu tiếng Anh bằng clip tạo sẵn; mỗi NPC một giọng ổn định, source text từ content. Quyết định đã xác nhận; thiết kế lifecycle/cues còn chờ spec approval.
+- Projection 2:1, WASD theo màn hình; footprint/collision/interaction/visual độc lập theo art06/architecture. Không đổi product rules, gameplay IDs hoặc learning/persistence/backend.
+- Generated walls chỉ được overlap vuông góc tại endpoint góc/chữ T; global asset IDs unique sau expansion. Gate cũ vẫn giữ khi đổi door layout.
+- Môi trường camera 30°, giấy/sepia; character/evidence giữ nguyên. Legacy PNG/builders giữ vì assets_config.json còn tham chiếu.
+- npm + Nx. Node 24.19.0, npm 10.9.7 qua .superpowers/runtime/npm-shim/npm.cmd; venv art Python bundle 3.12 + numpy/Pillow/scipy. Kiểm tồn tại trước dùng, không suy từ memory.
+- Không sửa runtime khi browser tests chạy; Vite HMR từng detach canvas. Playwright 1 worker, chạy từ apps/game-web, Vite 5174.
+- Spec/plan tiếng Việt. Không tự đánh dấu Phase 11E complete hoặc bắt đầu Phase 12. Review spec/plan mới theo brainstorming/writing-plans trước implementation.
+- Bố cục nền chỉ tạm chấp nhận; user review ảnh và audition audio vẫn cần cho polish cuối. Giữ việc điều tra nhìn thấy, HUD gọn và không audio phạt sai.
 
 ## Blockers
 
-- Không có blocker kỹ thuật. Gate còn lại là người dùng duyệt ảnh. Build có cảnh báo Vite chunk lớn (Phaser), ghi trong verification; không đổi chunking ở redesign.
+- Gate hiện tại: user review spec đề xuất, chưa phải lỗi kỹ thuật chặn triển khai. Không hỏi lại hai lựa chọn voice/cảnh đã được trả lời.
 
 ## Next Actions
 
-1. Đọc Git, active plan, verification và final-review; không chạy lại scratch migrate.mjs (không idempotent, có vị trí cũ).
-2. Lấy phản hồi người dùng cho hai screenshot Office/Archive; chỉnh trong phạm vi spec nếu cần, rồi kiểm tra phần bị ảnh hưởng.
-3. Chỉ sau khi duyệt ảnh mới nghiệm thu redesign/Task 2 cha; tiếp tục Tasks 3–6 cha khi được yêu cầu. Không bắt đầu Phase 12.
+1. Nhận duyệt/chỉnh sửa written spec feedback polish. Không coi phản hồi đã duyệt bố cục nền là duyệt spec mới.
+2. Sau spec approval, dùng writing-plans tạo plan tiếng Việt và để user review; tiếp tục Native đã chọn khi plan được duyệt.
+3. Triển khai theo task: shell/minimap bugs, world labels/door/chairs, markers/prompt/collapsible HUD, rồi SFX/15-node voice; test RED→GREEN và gate từng phần.
+4. Chạy full gates/review, gửi ảnh và mẫu audio nghiệm thu, commit verification rồi memory riêng. Giữ backlog plan cha/Phase 12 rõ ràng.
 
 ## Verification
 
-- npm run lint: Nx PASS 7 projects. npm run test: 87 Vitest files, 685 tests + 30 ai-memory tests PASS. npm run build: tsc + Vite PASS. Lượt cuối Nx cache hợp lệ 5/7 lint/test tasks, chạy mới hai task còn lại.
-- npm run format:check PASS; scoped ESLint apps/game-web/e2e PASS; git diff --check PASS. validateRegisteredContent nằm trong game-content 158/158 PASS.
-- Full E2E 96/96 (8.5m) sau tween/fixtures, trước review validation. Sau mọi sửa: world/HUD/layout repeat 152/152 (6.9m) + sáu suite còn lại 20/20 (3.4m), phủ cả 96 E2E với 76 test chạy hai lần.
-- Python unittest discover tools/art-codegen: 41/41 PASS (32.551s), gồm boards. memory:check chạy trước và sau cập nhật handoff; kết quả sau cập nhật được xác nhận trước memory commit.
-- Backend không đổi. Bằng chứng/output đầy đủ: docs/ai/2026-09-30-phase-11e-static-world-verification.md. Review/rulings/minors: docs/ai/2026-09-30-phase-11e-static-world-final-review.md.
+- Baseline product code chưa đổi trong phiên feedback: npm/Nx lint 7 projects PASS, 685 Vitest +30 memory tests PASS, build/typecheck/format PASS; E2E repeat world/HUD/layout 152/152 + sáu suite 20/20, Python 41/41. Chi tiết tại docs/ai/2026-09-30-phase-11e-static-world-verification.md.
+- Diagnostic feedback: body margin 8px + shell 100vw/100vh → page 1288×736 ở viewport 1280×720; 768×616 ở 760×600; 1928×1096 ở 1920×1080. Body background trong suốt giải thích viền trắng.
+- Di chuyển ngắn: logical player (10,9) → (10.2578125,8.7421875), minimap dot vẫn (896,788). Root cause: ngưỡng 2 px của shouldEmitPlayerMoved đang nhận đơn vị logic. Test cũ chỉ bắt cập nhật sau đi đủ xa.
+- Browser diagnostic exit 0, log .superpowers/phase-11e-feedback-baseline.log. Không tuyên bố lỗi đã fixed hoặc các gate của implementation mới pass.
+- Spec self-review: đủ 10 feedback, không placeholder/chưa rõ, giữ IDs/architecture; git diff --check PASS. memory:check được chạy sau cập nhật này trước memory commit. Backend không đổi.
 
 ## Latest Handoff
 
-- Result commit 40c9911 trên dev; không push. Memory commit kế tiếp theo protocol.
-- Screenshot mới: .superpowers/sdd/2026-09-30-phase-11e-office-archive-static-world-redesign/office-1280x720.png và archive-1280x720.png. Ledger cùng thư mục, ignored, giữ lại vì user approval pending.
-- Vite preview đang chạy 127.0.0.1:5174. Khi tiếp tục kiểm process/port trước khởi động, không assume phiên tool còn sống.
-- Không sửa/xóa thư mục untracked Claude outputs/ hoặc generated debug.log ở root/apps/game-web. Không dùng git add . để kéo chúng vào commit.
+- Result commit c8ac245 lưu spec đề xuất; code baseline 40c9911. Memory commit kế tiếp, không push.
+- Vite 127.0.0.1:5174 và ignored .superpowers scripts/logs có trên máy hiện tại; kiểm process/port khi tiếp tục. Không chạy lại scratch migrate.mjs (không idempotent).
+- Screenshot baseline và ledger: .superpowers/sdd/2026-09-30-phase-11e-office-archive-static-world-redesign/. Giữ để đối chiếu; người dùng chỉ tạm chấp nhận và yêu cầu chỉnh polish.
+- Không sửa/xóa untracked Claude outputs/ hoặc generated debug.log ở root/apps/game-web; không git add .
 
 ## Required Reading
 
-- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md và active spec/plan metadata.
+- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, spec feedback polish trong metadata.
+- docs/superpowers/specs/2026-09-30-phase-11e-office-archive-static-world-redesign-design.md và plan cùng tên; baseline authoritative, placement được phép chỉnh theo feedback mới.
 - docs/ai/2026-09-30-phase-11e-static-world-verification.md; docs/ai/2026-09-30-phase-11e-static-world-final-review.md.
-- docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md, docs/art/07_AI_ASSET_PROMPT_PACK.md, docs/architecture/ARCHITECTURE.md.
-- Plan cha docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md: Tasks 3–6 vẫn chờ, không tự chuyển phase.
+- docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md, docs/architecture/ARCHITECTURE.md, docs/concept/ingame_main_office_hud.webp; docs/ai/2026-09-29-phase-7-audio-listening-verification.md và WAV provenance để khôi phục TTS generator.
+- Plan cha docs/superpowers/plans/2026-09-30-phase-11e-controls-visual-ux.md: Tasks 3–6 còn lại, không tự chuyển phase.
