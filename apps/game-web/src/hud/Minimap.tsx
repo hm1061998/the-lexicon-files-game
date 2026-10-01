@@ -2,29 +2,10 @@ import { useMemo } from 'react';
 import { PaperPanel } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import { useGameStore } from '../state/GameStoreContext';
-import { buildMinimapModel, type MinimapMarker } from './minimapModel';
+import { buildMinimapModel } from './minimapModel';
 import './minimap.css';
 
 const ROOM_DOT_R = 34;
-
-function Marker({ marker, radius }: { marker: MinimapMarker; radius: number }): JSX.Element {
-  const { x, y, kind } = marker;
-  const className = `minimap-marker minimap-marker-${kind}`;
-  if (kind === 'door') {
-    return (
-      <rect
-        className={className}
-        x={x - radius * 0.75}
-        y={y - radius * 0.75}
-        width={radius * 1.5}
-        height={radius * 1.5}
-      />
-    );
-  }
-  if (kind === 'npc') return <circle className={className} cx={x} cy={y} r={radius * 0.7} />;
-  const points = `${x},${y - radius} ${x + radius},${y} ${x},${y + radius} ${x - radius},${y}`;
-  return <polygon className={className} points={points} />;
-}
 
 export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null {
   const visible = useGameStore((state) => state.minimapVisible);
@@ -51,6 +32,8 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
     );
   }
   if (!model || !scene) return null;
+  const [vx, vy, vw, vh] = model.viewBox.split(' ').map(Number) as [number, number, number, number];
+  const placement = (point: {x:number;y:number}) => ({ left: `${((point.x-vx)/vw)*100}%`, top: `${((point.y-vy)/vh)*100}%` });
   return (
     <PaperPanel className="hud-minimap">
       <button
@@ -62,6 +45,7 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
       >
         −
       </button>
+      <div className="minimap-drawing">
       <svg
         className="minimap-svg"
         viewBox={model.viewBox}
@@ -102,19 +86,14 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
             r={ROOM_DOT_R}
           />
         ))}
-        {model.markers.map((marker) => (
-          <Marker key={marker.id} marker={marker} radius={model.markerRadius} />
-        ))}
-        {model.player && (
-          <circle
-            className="minimap-player"
-            cx={model.player.x}
-            cy={model.player.y}
-            r={model.playerRadius}
-          />
-        )}
       </svg>
+      <div className="minimap-overlay" aria-hidden="true">
+        {model.markers.map(marker => <span key={marker.id} className={`minimap-marker minimap-marker-${marker.kind}`} style={placement(marker)} />)}
+        {model.player && <span className="minimap-player" data-world-x={model.player.x} data-world-y={model.player.y} style={placement(model.player)} />}
+      </div>
+      </div>
       <p className="minimap-label">{strings.minimapTitle}</p>
     </PaperPanel>
   );
 }
+

@@ -8,8 +8,8 @@ test('minimap follows short movement in all four directions and resets on scene 
   await expect(page.locator('.minimap-player')).toBeVisible();
   for (const key of ['w', 'a', 's', 'd']) {
     await page.evaluate(() => window.__lexiconDebug!.teleportLogical(10, 9));
-    await expect.poll(() => page.locator('.minimap-player').getAttribute('cx')).toBe('896');
-    const before = await page.locator('.minimap-player').getAttribute('cy');
+    await expect.poll(() => page.locator('.minimap-player').getAttribute('data-world-x')).toBe('896');
+    const before = await page.locator('.minimap-player').getAttribute('data-world-y');
     await page.keyboard.down(key);
     await page.waitForTimeout(150);
     await page.keyboard.up(key);
@@ -20,8 +20,8 @@ test('minimap follows short movement in all four directions and resets on scene 
         async () => {
           const dot = page.locator('.minimap-player');
           return key === 'a' || key === 'd'
-            ? await dot.getAttribute('cx')
-            : await dot.getAttribute('cy');
+            ? await dot.getAttribute('data-world-x')
+            : await dot.getAttribute('data-world-y');
         },
         { timeout: 500 },
       )
@@ -31,7 +31,7 @@ test('minimap follows short movement in all four directions and resets on scene 
       .poll(
         async () =>
           Math.abs(
-            Number(await page.locator('.minimap-player').getAttribute('cx')) -
+            Number(await page.locator('.minimap-player').getAttribute('data-world-x')) -
               (832 + (player.u - player.v) * 64),
           ),
         { timeout: 500 },
@@ -41,7 +41,7 @@ test('minimap follows short movement in all four directions and resets on scene 
       .poll(
         async () =>
           Math.abs(
-            Number(await page.locator('.minimap-player').getAttribute('cy')) -
+            Number(await page.locator('.minimap-player').getAttribute('data-world-y')) -
               (180 + (player.u + player.v) * 32),
           ),
         { timeout: 500 },
@@ -53,6 +53,20 @@ test('minimap follows short movement in all four directions and resets on scene 
     .poll(() => page.evaluate(() => window.__lexiconDebug?.storeSceneId()))
     .toBe('archive');
   await expect
-    .poll(async () => Number(await page.locator('.minimap-player').getAttribute('cx')))
+    .poll(async () => Number(await page.locator('.minimap-player').getAttribute('data-world-x')))
     .not.toBe(896);
+});
+
+test('player has visible CSS size on desktop and compact', async ({ page }) => {
+  await page.goto('/');
+  for (const viewport of [{width:1280,height:720},{width:760,height:600}]) {
+    await page.setViewportSize(viewport);
+    const dot = page.locator('.minimap-player');
+    await expect(dot).toBeVisible();
+    const box = await dot.boundingBox();
+    expect(box!.width).toBeGreaterThanOrEqual(8);
+    expect(box!.width).toBeLessThanOrEqual(10);
+    expect(box!.height).toBeGreaterThanOrEqual(8);
+    expect(box!.height).toBeLessThanOrEqual(10);
+  }
 });

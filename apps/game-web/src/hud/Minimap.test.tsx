@@ -53,7 +53,10 @@ describe('Minimap', () => {
   });
 
   it('draws the player once a position is published', () => {
-    expect(render({ playerPosition: { x: 400, y: 500 } })).toContain('minimap-player');
+    const html = render({ playerPosition: { x: 400, y: 500 } });
+    expect(html).toContain('<span class="minimap-player"');
+    expect(html.indexOf('minimap-player')).toBeGreaterThan(html.lastIndexOf('minimap-marker'));
+    expect(html).toContain('data-world-x="400"');
   });
 
   it('announces the room nearest to the player in the map accessible name', () => {

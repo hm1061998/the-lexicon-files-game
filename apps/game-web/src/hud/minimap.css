@@ -77,3 +77,11 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+.minimap-drawing { position: relative; }
+.minimap-overlay { position: absolute; inset: 1px; pointer-events: none; }
+.minimap-overlay span { position: absolute; width: 9px; height: 9px; box-sizing: border-box; transform: translate(-50%, -50%); border: 1px solid var(--lexicon-paper); }
+.minimap-overlay .minimap-player { background: var(--lexicon-ink); border: 2px solid var(--lexicon-paper); border-radius: 50%; }
+.minimap-overlay .minimap-marker-interactable { background: var(--lexicon-investigation-red); transform: translate(-50%, -50%) rotate(45deg); }
+.minimap-overlay .minimap-marker-door { background: var(--lexicon-paper); border-color: var(--lexicon-border); }
+.minimap-overlay .minimap-marker-npc { background: var(--lexicon-beige); border: 2px solid var(--lexicon-border); border-radius: 50%; }
