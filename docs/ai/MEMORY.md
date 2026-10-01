@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T15:51:32+07:00
+updated_at: 2026-10-01T16:10:00+07:00
 phase: phase-11e
 status: proposed
-result_commit: 88800bb
+result_commit: a7ea0c2
 active_spec: docs/superpowers/specs/2026-10-01-notebook-people-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-10-01-notebook-people.md
 ---
 
 ## Metadata
@@ -19,7 +19,7 @@ active_plan: none
 
 ## Active Goal
 
-- Người dùng đã duyệt hướng People để lập spec. Spec tiếng Việt88800bb ở docs/superpowers/specs/2026-10-01-notebook-people-design.md đã viết/tự review, chờ duyệt spec trước plan/code.
+- Người dùng đồng ý đi tiếp qua “duyệt plan” sau khi nhận spec, khi chưa có plan. Đã lập/tự review plan tiếng Việt a7ea0c2 từ spec; chờ review file plan thực tế trước code. Giữ Native inline.
 
 ## Current Status
 
@@ -55,7 +55,7 @@ active_plan: none
 
 ## Next Actions
 
-1. Người dùng review/duyệt spec People88800bb; sau duyệt lập plan tiếng Việt và gate plan trước code.
+1. Người dùng review/duyệt plan docs/superpowers/plans/2026-10-01-notebook-people.md; sau đó Native inline 5 task contract/content/selector/UI/browser theo plan và spec.
 2. Các đề xuất còn lại: cue mục tiêu/hướng dẫn chuột, feedback click bị chặn, copy toggleminimap; chưa tự triển khai. Chơi lại tiếp cận bàn compact sau fix trước kết luận collider/pathfinding lỗi.
 3. Phân tích/spec/plan People mới phải được xác nhận trước push; phần viewport đã push theo yêu cầu.
 
@@ -67,7 +67,7 @@ active_plan: none
 
 ## Latest Handoff
 
-- Push completed2b97bc8. Hướng People đã duyệt; spec result88800bb, memory commit kế tiếp. Spec chờ duyệt trước plan/code; docs mới local chưa push.
+- Push completed2b97bc8. People plan result a7ea0c2, memory commit kế tiếp; plan chờ review trước code. Docs mới local chưa push. Phiên này chỉ sửa tài liệu; diff check và memory validator là kiểm tra mới, các kết quả sản phẩm phía trên thuộc viewport trước đó.
 
 - Result cb18871 đã commit trước memory. Báo cáo đầy đủ output/limitations/review: docs/ai/2026-10-01-viewport-focus-verification.md. Scratch logs .superpowers/verification/viewport-focus/ ignored; kết quả viewport đã push.
 
