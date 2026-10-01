@@ -1,46 +1,46 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T15:00:00+07:00
+updated_at: 2026-10-01T18:00:00+07:00
 phase: phase-12
-status: not_started
-result_commit: a031ec3
-active_spec: none
-active_plan: none
+status: verified
+result_commit: 2946e55
+active_spec: docs/superpowers/specs/2026-10-01-phase-12-testing-performance-design.md
+active_plan: docs/superpowers/plans/2026-10-01-phase-12-testing-performance.md
 ---
 
 ## Metadata
 
-- Người dùng chốt Phase 11 (kể cả 11E) vào 2026-10-01 và yêu cầu bắt đầu Phase 12. Các việc tồn đọng của Phase 11 làm sau Phase 12.
-- Phase 12 = Testing & Performance (roadmap mục 31). Workflow: brainstorming → spec tiếng Việt → plan → thực thi. Chưa có spec/plan được duyệt.
+- Phase 12 (Testing & Performance) triển khai Native inline trên dev theo spec/plan được người dùng duyệt. Chưa push. Nợ Phase 11 hoãn theo yêu cầu, chưa làm.
+- Verification chi tiết: docs/superpowers/specs/2026-10-01-phase-12-verification.md; hiệu năng: docs/superpowers/specs/2026-10-01-phase-12-performance-report.md.
 
 ## Current Phase
 
-- Phase 12 — Testing & Performance: not_started (đang chuẩn bị brainstorming). Phase 11 đã đóng với danh sách hoãn bên dưới.
+- Phase 12: verified, chờ người dùng chấp nhận. Không tự sang việc khác.
 
 ## Active Goal
 
-- Hardening MVP: unit/E2E theo roadmap mục 31, hiệu năng (atlas, lazy assets, không leak, cleanup scene).
+- Chờ người dùng quyết định: chấp nhận Phase 12 và chọn bước kế (nợ Phase 11, push, hoặc việc mới).
 
 ## Current Status
 
-- Phase 0A–11E hoàn tất ở mức người dùng chốt. Branch dev, result a031ec3, chưa push.
-- Full E2E gần nhất 122/123; lỗi duy nhất (oracle tốc độ phím) đã nới và pass khi chạy riêng. Chưa có lượt full xanh sau sửa cuối.
+- Coverage game-core 96.7/91.4, learning-engine 100/96.7 với ngưỡng; E2E hành trình 8 bước; đo leak/tải; không leak, không cần atlas/lazy/nén.
+- Full E2E 133/133 trên 40ef0bc; sau đó c9cfafe chỉ chạm test/hook debug, đã chạy lại journey+performance (10/10) và lint/test/build/typecheck/format/memory.
 
 ## Completed
 
-- Phase11E navigation: zoom/camera, minimap, HUD chuột 44px, A* + click-to-move, mũi tên, cổng đồng Office/Archive, nhạc Mystical Piano + footsteps CC0.
-- Sửa cuối Phase 11: bubble tương tác thêm vị trí phía trên mục tiêu; dời ghế khỏi bục cổng Office (+ regression geometry); delay 250ms fallback prompt; cập nhật E2E oracle cũ.
+- Phase 0A–12 theo mức người dùng chốt. Phase 12: 8 commit d4fd681..c9cfafe + báo cáo 2946e55.
+- Lỗi sản phẩm sửa trong phase: prompt nháy ở vị trí fallback khi tải lạnh (InteractionPrompt).
 
 ## In Progress
 
-- Chưa có. Bước tiếp theo là brainstorming Phase 12.
+- Không có.
 
 ## Active Decisions
 
-- Native inline trên dev, npm + Nx, không dependency/backend mới nếu không cần.
-- Hoãn sang sau Phase 12 (nợ Phase 11): (1) browser regression cho 5 lỗi review: minimap chặn click, giữ mũi tên khi pause/resume/native repeat/form control, alpha tường, tốc độ route; (2) chẩn đoán test resize lệch ~18px thỉnh thoảng; (3) full E2E xanh liên tục; (4) người dùng nghe/xem chấp nhận nhạc, bước chân, cổng đồng; (5) Node 22 chưa xác minh tươi.
-- Giữ nguyên hai file debug.log untracked, không stage (dùng `git add` theo đường dẫn cụ thể).
-- Git cần `-c safe.directory=F:/work/the-lexicon-files-game`; PATH thêm `.superpowers/runtime/npm-shim`, `NX_DAEMON=false`.
+- Native inline trên dev, npm + Nx; dependency mới duy nhất @vitest/coverage-v8@2.1.9.
+- Nợ Phase 11 còn nguyên: regression 5 lỗi review điều hướng; test resize lệch ~18px; nghiệm thu nhạc/hình/cổng; Node 22.
+- Minor hoãn của Phase 12: readyMs<5000 trên dev server; biên heap mỏng; e2e chưa type-check; save sau sai suspect có thể pass sớm; guard window ở InteractionPrompt; test riêng cho fix prompt; ngưỡng coverage không nằm trong npm run test.
+- Giữ hai file debug.log untracked, chỉ git add theo đường dẫn cụ thể. Git cần -c safe.directory=F:/work/the-lexicon-files-game; PATH thêm .superpowers/runtime/npm-shim, NX_DAEMON=false.
 
 ## Blockers
 
@@ -48,17 +48,17 @@ active_plan: none
 
 ## Next Actions
 
-1. Brainstorming Phase 12 với người dùng, viết spec tiếng Việt vào docs/superpowers/specs/2026-10-01-phase-12-testing-performance-design.md.
-2. Sau khi spec được duyệt: writing-plans rồi thực thi. Không đụng nợ Phase 11 trừ khi spec Phase 12 gộp vào.
+1. Người dùng chấp nhận Phase 12 hoặc yêu cầu sửa.
+2. Theo yêu cầu: làm nợ Phase 11 (xem Active Decisions) hoặc việc khác. Không push khi chưa được yêu cầu.
 
 ## Verification
 
-- Trên a031ec3-trước-sửa-cuối: lint 7 project, test, build, format, tsc -b pass; frontend 499 test; E2E 122/123 (xem .superpowers/sdd/2026-10-01-phase-11e-navigation-portals/e2e-run5.log, ignored). Không có thay đổi backend.
+- lint 7 project, test (game-web 499, content 166, core 57, learning 17, ui 18), build, typecheck, format, memory pass; full E2E 133/133 trên 40ef0bc; journey+performance 10/10 sau c9cfafe. Không có thay đổi backend.
 
 ## Latest Handoff
 
-- Chi tiết Phase 11E: docs/ai/2026-10-01-phase-11e-navigation-portals-handoff.md (một phần lỗi trong đó đã được sửa). Memory này thay thế các mục cũ.
+- Phase 12 xong ở mức verified. Ledger tạm .superpowers/sdd/2026-10-01-phase-12-testing-performance/ (ignored) có log DoD.
 
 ## Required Reading
 
-- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, docs/04_CODEX_IMPLEMENTATION_ROADMAP.md (mục 31), docs/architecture/ARCHITECTURE.md.
+- AGENTS.md, docs/ai/README.md, spec/plan Phase 12 ở trên, hai báo cáo Phase 12, docs/04_CODEX_IMPLEMENTATION_ROADMAP.md mục 31.
