@@ -40,10 +40,10 @@ describe('NotebookPanel', () => {
     expect(html).toContain(strings.vocabulary);
     expect(html).toContain(strings.timeline);
     expect(html).toContain(strings.close);
-    expect(html).toContain(strings.vocabularyMode);
-    expect(html).toContain(strings.vocabularyModeLearning);
-    expect(html).toContain('role="group"');
-    expect(html).toContain('aria-pressed="true">Đang học</button>');
+    expect(html).not.toContain(strings.vocabularyMode);
+    expect(html).not.toContain(strings.vocabularyModeLearning);
+    expect(html).not.toContain('translation-mode-control');
+    expect(html).not.toContain('aria-pressed="true">Đang học</button>');
     expect(html).not.toContain('<select');
     expect(html).toContain('vocabulary-word');
   });
@@ -290,3 +290,6 @@ describe('NotebookPanel', () => {
     expect(html.split(`>${strings.evidenceReview}</button>`).length - 1).toBe(2);
   });
 });
+
+
+

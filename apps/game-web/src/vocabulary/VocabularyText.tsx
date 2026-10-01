@@ -6,7 +6,6 @@ import type {
   VocabularySpan,
 } from '@lexicon/shared-types';
 import './vocabulary.css';
-import { TranslationModeControl } from './TranslationModeControl';
 
 export function VocabularyText({
   text,
@@ -19,7 +18,6 @@ export function VocabularyText({
   onEncounter,
   onInspect,
   onRevealTranslation,
-  onModeChange,
   tutorialSeen = true,
   onTutorialSeen,
 }: {
@@ -33,7 +31,6 @@ export function VocabularyText({
   onEncounter(id: string, contextId: string): void;
   onInspect(id: string, contextId: string): void;
   onRevealTranslation(id: string, contextId: string): void;
-  onModeChange?: ((mode: TranslationMode) => void) | undefined;
   tutorialSeen?: boolean;
   onTutorialSeen?: (() => void) | undefined;
 }): JSX.Element {
@@ -104,9 +101,6 @@ export function VocabularyText({
   const entry = catalogue.find((item) => item.id === active);
   return (
     <span className="vocabulary-reader">
-      {onModeChange && (
-        <TranslationModeControl mode={mode} strings={strings} onChange={onModeChange} />
-      )}
       {parts}
       {translationVi && mode === 'Beginner' && (
         <span className="vocabulary-translation">{translationVi}</span>
@@ -160,3 +154,4 @@ export function VocabularyText({
     </span>
   );
 }
+

@@ -10,7 +10,6 @@ import type {
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './dialogue.css';
 import { VocabularyText } from '../vocabulary/VocabularyText';
-import { TranslationModeControl } from '../vocabulary/TranslationModeControl';
 import { DialogueVoiceControls } from './DialogueVoiceControls';
 const FOCUSABLE =
   'button:not(:disabled), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -30,7 +29,6 @@ export type DialogueViewProps = {
   onEncounter?(vocabularyId: string, contextId: string): void;
   onInspect?(vocabularyId: string, contextId: string): void;
   onRevealTranslation?(vocabularyId: string, contextId: string): void;
-  onTranslationModeChange?(mode: import('@lexicon/shared-types').TranslationMode): void;
   vocabularyTutorialSeen?: boolean;
   onVocabularyTutorialSeen?(): void;
 };
@@ -50,7 +48,6 @@ export function DialogueView({
   onEncounter = () => undefined,
   onInspect = () => undefined,
   onRevealTranslation = () => undefined,
-  onTranslationModeChange,
   vocabularyTutorialSeen = true,
   onVocabularyTutorialSeen,
 }: DialogueViewProps): JSX.Element {
@@ -97,11 +94,6 @@ export function DialogueView({
             </button>
           </div>
           <div className="dialogue-tools">
-            <TranslationModeControl
-              mode={translationMode}
-              strings={strings}
-              onChange={onTranslationModeChange ?? (() => undefined)}
-            />
             <DialogueVoiceControls audio={node.audio} strings={strings} />
           </div>
           <p ref={textRef} tabIndex={-1} lang="en" className="dialogue-text">
@@ -153,3 +145,4 @@ export function DialogueView({
     </div>
   );
 }
+

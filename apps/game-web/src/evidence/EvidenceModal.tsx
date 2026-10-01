@@ -34,7 +34,6 @@ export function EvidenceModal({
   onEncounter = () => undefined,
   onInspect = () => undefined,
   onRevealTranslation = () => undefined,
-  onTranslationModeChange,
   vocabularyTutorialSeen = true,
   onVocabularyTutorialSeen,
   listeningTask,
@@ -51,7 +50,6 @@ export function EvidenceModal({
   onEncounter?(vocabularyId: string, contextId: string): void;
   onInspect?(vocabularyId: string, contextId: string): void;
   onRevealTranslation?(vocabularyId: string, contextId: string): void;
-  onTranslationModeChange?(mode: import('@lexicon/shared-types').TranslationMode): void;
   vocabularyTutorialSeen?: boolean;
   onVocabularyTutorialSeen?(): void;
   listeningTask?: ListeningTaskDefinition;
@@ -123,7 +121,6 @@ export function EvidenceModal({
               onEncounter={onEncounter}
               onInspect={onInspect}
               onRevealTranslation={onRevealTranslation}
-              onModeChange={onTranslationModeChange}
               tutorialSeen={vocabularyTutorialSeen}
               onTutorialSeen={onVocabularyTutorialSeen}
             />
@@ -144,3 +141,4 @@ export function EvidenceModal({
     </div>
   );
 }
+

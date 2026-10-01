@@ -12,7 +12,6 @@ import type {
 } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
 import { VocabularyText } from '../vocabulary/VocabularyText';
-import { TranslationModeControl } from '../vocabulary/TranslationModeControl';
 import { AccusationPanel } from '../conclusion/AccusationPanel';
 import './notebook.css';
 
@@ -39,7 +38,6 @@ export function NotebookPanel({
   onRevealTranslation = () => undefined,
   onEncounter = () => undefined,
   onInspect = () => undefined,
-  onTranslationModeChange = () => undefined,
   onPlaceTimelineEvent,
   onSubmitContradiction,
   onSubmitAccusation,
@@ -56,7 +54,6 @@ export function NotebookPanel({
   onRevealTranslation?(vocabularyId: string, contextId: string): void;
   onEncounter?(vocabularyId: string, contextId: string): void;
   onInspect?(vocabularyId: string, contextId: string): void;
-  onTranslationModeChange?(mode: TranslationMode): void;
   onPlaceTimelineEvent(eventId: string, slotId: string): TimelinePlacementResult;
   onSubmitContradiction(contradictionId: string, factIds: readonly string[]): ContradictionResult;
   onSubmitAccusation(suspectNpcId: string): AccusationResult;
@@ -133,11 +130,6 @@ export function NotebookPanel({
     <div className="notebook-overlay">
       <PaperPanel as="div" className="notebook-panel">
         <section aria-labelledby={headingId}>
-          <TranslationModeControl
-            mode={translationMode}
-            strings={strings}
-            onChange={onTranslationModeChange}
-          />
           <header className="notebook-header">
             <h2 id={headingId}>{strings.notebook}</h2>
             <button type="button" onClick={onClose} aria-label={strings.close}>
@@ -428,3 +420,4 @@ export function NotebookPanel({
     </div>
   );
 }
+

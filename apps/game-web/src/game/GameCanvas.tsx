@@ -528,7 +528,7 @@ function GameRoot({
                     `${strings.vocabularyLearningError} ${learningPersistenceError}`}
                 </aside>
               )}
-              <Hud strings={strings} />
+              <Hud strings={strings} bus={bus} />
               <PersistenceNotice strings={strings} />
               <DialogueLayer strings={strings} returnFocusRef={containerRef} />
               <PauseLayer strings={strings} store={store} />
@@ -563,7 +563,7 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       null,
   );
   const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
-  const [translationMode, setTranslationMode] = useTranslationMode();
+  const [translationMode] = useTranslationMode();
   const subtitles = useSettingsStore((state) => state.settings.subtitles);
   const vocabularyTutorialSeen = useLearningStore((state) => state.vocabularyTutorialSeen);
   const markVocabularyTutorialSeen = useLearningStore((state) => state.markVocabularyTutorialSeen);
@@ -610,7 +610,6 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       onEncounter={onEncounter}
       onInspect={onInspect}
       onRevealTranslation={onRevealTranslation}
-      onTranslationModeChange={setTranslationMode}
       vocabularyTutorialSeen={vocabularyTutorialSeen}
       onVocabularyTutorialSeen={markVocabularyTutorialSeen}
       {...(listeningTask ? { listeningTask } : {})}
@@ -647,7 +646,7 @@ function NotebookLayer({
   const store = useGameStore((state) => state);
   const learningProfile = useLearningStore((state) => state.profile);
   const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
-  const [translationMode, setTranslationMode] = useTranslationMode();
+  const [translationMode] = useTranslationMode();
   const onEncounter = useCallback(
     (vocabularyId: string, contextId: string) =>
       dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
@@ -677,7 +676,6 @@ function NotebookLayer({
       onRevealTranslation={onRevealTranslation}
       onEncounter={onEncounter}
       onInspect={onInspect}
-      onTranslationModeChange={setTranslationMode}
       onPlaceTimelineEvent={(eventId, slotId) => store.placeTimelineEvent(eventId, slotId)}
       onSubmitAccusation={(suspectNpcId) => store.submitAccusation(suspectNpcId)}
       onReviewEvidence={(evidenceId) => store.reviewEvidence(evidenceId)}
@@ -703,3 +701,5 @@ function PauseLayer({ strings, store }: { strings: UiStrings; store: GameStore }
   if (!paused) return null;
   return <PauseMenu strings={strings} onResume={() => store.getState().setPaused(false)} />;
 }
+
+

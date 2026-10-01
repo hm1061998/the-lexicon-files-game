@@ -5,7 +5,7 @@ import { scenePoint } from './sceneTestData';
 test('dialogue and notebook controls stay accessible and fit a compact viewport', async ({
   page,
 }) => {
-  const output = '../../.superpowers/sdd/2026-10-01-phase-11e-camera-audio-ui-addendum';
+  const output = '../../.superpowers/sdd/2026-10-01-phase-11e-navigation-portals';
   mkdirSync(output, { recursive: true });
   await page.setViewportSize({ width: 760, height: 600 });
   await page.goto('/');
@@ -19,20 +19,10 @@ test('dialogue and notebook controls stay accessible and fit a compact viewport'
 
   const dialogue = page.getByRole('dialog');
   await expect(dialogue).toBeVisible();
-  const modes = page.getByRole('group', { name: 'Chế độ dịch' }).first();
-  await expect(modes.getByRole('button', { name: 'Đang học' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
+  await expect(page.getByRole('group', { name: 'Chế độ dịch' })).toHaveCount(0);
   await page.screenshot({ path: `${output}/dialogue-compact-760x600.png` });
   await expect(dialogue.getByRole('button', { name: 'Phát lại giọng đọc' })).toBeVisible();
-  await expect(page.locator('.dialogue-tools').getByRole('group')).toHaveCount(2);
-  await modes.getByRole('button', { name: 'Cơ bản' }).focus();
-  await page.keyboard.press('Enter');
-  await expect(modes.getByRole('button', { name: 'Cơ bản' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
+  await expect(page.locator('.dialogue-tools').getByRole('group')).toHaveCount(1);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.screenshot({ path: `${output}/dialogue-desktop-1280x720.png` });
   await page.setViewportSize({ width: 760, height: 600 });
@@ -55,12 +45,7 @@ test('dialogue and notebook controls stay accessible and fit a compact viewport'
   await page.keyboard.press('j');
   const notebook = page.locator('.notebook-panel');
   await expect(notebook).toBeVisible();
-  const notebookModes = notebook.getByRole('group', { name: 'Chế độ dịch' });
-  await expect(notebookModes).toBeVisible();
-  await expect(notebookModes).toBeInViewport();
-  const notebookModeBounds = await notebookModes.boundingBox();
-  expect(notebookModeBounds).not.toBeNull();
-  expect(notebookModeBounds!.y).toBeGreaterThanOrEqual(0);
+  await expect(notebook.getByRole('group', { name: 'Chế độ dịch' })).toHaveCount(0);
   await page.screenshot({ path: `${output}/notebook-compact-760x600.png` });
   await notebook.getByRole('button', { name: 'Chứng cứ', exact: true }).click();
   await expect(
@@ -74,3 +59,5 @@ test('dialogue and notebook controls stay accessible and fit a compact viewport'
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.screenshot({ path: `${output}/notebook-desktop-1280x720.png` });
 });
+
+

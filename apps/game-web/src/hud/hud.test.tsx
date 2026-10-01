@@ -83,7 +83,7 @@ describe('InteractionPrompt', () => {
 
 describe('KeyHints', () => {
   it('lists WASD, E, J, M and Esc with labels', () => {
-    const html = renderToString(<KeyHints strings={strings} />);
+    const html = renderToString(<GameStoreProvider store={createGameStore({ caseDefinition })}><KeyHints strings={strings} /></GameStoreProvider>);
     expect(html).toContain('WASD');
     expect(html).toContain(strings.move);
     expect(html).toContain('E');
@@ -93,7 +93,7 @@ describe('KeyHints', () => {
     expect(html).toContain(strings.pause);
     expect(html).toContain('>M<');
     expect(html).toContain(strings.toggleMap);
-    expect(html.match(/<span class="hud-key-hint/g)).toHaveLength(5);
+    expect(html.match(/<button type="button" class="hud-key-hint/g)).toHaveLength(3);
   });
 });
 

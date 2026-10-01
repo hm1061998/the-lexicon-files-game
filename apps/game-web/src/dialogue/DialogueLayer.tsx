@@ -14,7 +14,7 @@ export function DialogueLayer({
 }): JSX.Element | null {
   const state = useGameStore((s) => s);
   const dispatchLearning = useLearningStore((s) => s.dispatchLearning);
-  const [translationMode, setTranslationMode] = useTranslationMode();
+  const [translationMode] = useTranslationMode();
   const vocabularyTutorialSeen = useLearningStore((s) => s.vocabularyTutorialSeen);
   const markVocabularyTutorialSeen = useLearningStore((s) => s.markVocabularyTutorialSeen);
   const onEncounter = useCallback(
@@ -65,9 +65,9 @@ export function DialogueLayer({
       onEncounter={onEncounter}
       onInspect={onInspect}
       onRevealTranslation={onRevealTranslation}
-      onTranslationModeChange={setTranslationMode}
       vocabularyTutorialSeen={vocabularyTutorialSeen}
       onVocabularyTutorialSeen={markVocabularyTutorialSeen}
     />
   );
 }
+

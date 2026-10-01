@@ -18,6 +18,10 @@ const props = {
   returnFocusRef: { current: null },
 };
 describe('DialogueView', () => {
+  it('keeps the translation selector in Settings only', () => {
+    const html = renderToString(<DialogueView {...props} />);
+    expect(html).not.toContain('translation-mode-control');
+  });
   it('renders authored speaker and choices as an accessible paper dialog', () => {
     const html = renderToString(<DialogueView {...props} />);
     expect(html).toContain('role="dialog"');
