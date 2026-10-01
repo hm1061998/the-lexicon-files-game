@@ -1,25 +1,25 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T22:57:06+07:00
+updated_at: 2026-10-01T23:16:10+07:00
 phase: phase-11e
-status: complete
-result_commit: 19d3450
-active_spec: docs/superpowers/specs/2026-10-01-notebook-people-design.md
-active_plan: docs/superpowers/plans/2026-10-01-notebook-people.md
+status: proposed
+result_commit: 6cc18ff
+active_spec: docs/superpowers/specs/2026-10-01-notebook-deduction-ui-design.md
+active_plan: none
 ---
 
 ## Metadata
 
-- Phase11E/12 và viewport/focus trước People đã accepted. Gói Notebook People complete về implementation/verification; sáu commit People + memory đã push thành công lên origin/dev đến e08ea5f.
-- Reconcile phiên này: HEAD/ref origin/dev lúc bắt đầu cùng ecb7b21; git ls-remote qua escalation xác nhận remote dev ecb7b21. Memory cũ ghi docs People chưa push bị stale; metadata/result theo Git.
+- Phase11E/12, viewport/focus và People đã accepted/verified; People/result19d3450 và handoff đã push đến d306c7c. Gói notebook/board UI mới chỉ ở bước spec.
+- Reconcile gói UI: HEAD/ref origin/dev ban đầu cùng d306c7c. Spec mới local6cc18ff; chưa push gói mới, chưa đổi code sản phẩm.
 
 ## Current Phase
 
-- Notebook People hoàn tất theo file plan đã được người dùng duyệt qua “Duyệt plan, triển khai”; Native inline trên dev. Không tự mở phase/gói khác.
+- Notebook People đã hoàn tất; yêu cầu mới: chỉnh UI/UX sổ tay theo ảnh tham chiếu người dùng gửi. Reconcile HEAD và origin/dev cùng d306c7c; chỉ debug.log untracked trước phiên này.
 
 ## Active Goal
 
-- Implementation, verification và push People đã đạt; hoàn tất cập nhật memory bàn giao, chờ yêu cầu mới.
+- Người dùng đã duyệt notebook hai trang, bổ sung board riêng, rồi chọn “Làm cả sổ tay và bảng suy luận riêng, dùng logic điều tra hiện có”. Written spec đã tạo/commit, chờ người dùng duyệt file trước viết plan.
 
 ## Current Status
 
@@ -35,11 +35,12 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-people.md
 
 ## In Progress
 
-- Không implementation dở hoặc push đang chờ duyệt.
+- Spec mới: notebook bốn tab đọc lại; board xếp sự kiện/chọn hai facts/suy luận/kết luận dùng engine hiện có; modal loại trừ nhau, J/B, native Tab và focus trap. Timeline notebook chỉ event đã đặt. Dây nối chỉ relation content đã khám phá; không free drag/link, không thêm dữ liệu giả từ ảnh.
+- Code hiện vẫn nguyên: NotebookPanel chứa timeline placement/contradiction/accusation; gameStore có NotebookTab conclusion, chưa có board overlay. Scope architectural do đổi component/store/input boundaries; spec đã tự review ambiguity/availability/spoiler/asset fallback, commit6cc18ff. Chưa bắt đầu code hoặc plan trước file approval.
 
 ## Active Decisions
 
-- Native inline dev; npm+Nx; một gói People theo spec. Không tự mở onboarding/pathfinding hoặc phase kế tiếp.
+- Native inline dev; npm+Nx; scope notebook + board riêng dùng logic hiện có đã chọn. Không tự mở onboarding/pathfinding hoặc phase nội dung kế tiếp.
 - Notebook metadata positive own-tree node/choice writer, không completionFlag; condition hiện tại không ẩn lịch sử. Save David cũ không đoán hai answer3 thiếu khóa; giữ progress.
 - Vocabulary context dialogue:tree:node:text gốc; Settings sở hữu mode; callbacks learning idempotent, node ẩn không mount.
 - Notebook focus trap scoped trên section, loại disabled/hidden controls, cleanup listener; focus restore previous control hoặc canvas container tabindex=-1. Không preventScroll hàng loạt/timer reset.
@@ -55,7 +56,9 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-people.md
 
 ## Next Actions
 
-1. Chờ yêu cầu mới ngoài People; không tự triển khai cue onboarding/blocked click/minimap copy hoặc phase khác. Nếu tiếp tục các đề xuất playtest, dùng report và design workflow.
+1. Chờ người dùng duyệt file docs/superpowers/specs/2026-10-01-notebook-deduction-ui-design.md; approval scope không tự duyệt artifact.
+2. Sau spec approval, dùng writing-plans viết plan tiếng Việt, trình file plan và xác nhận execution inline dev theo workflow architectural.
+3. Sau plan approval, triển khai và kiểm tra unit/browser/DoD; không tự push scope mới theo approval push People cũ.
 
 ## Verification
 
@@ -66,8 +69,8 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-people.md
 
 ## Latest Handoff
 
-- Result19d3450 và memory e08ea5f đã push lên origin/dev sau direct approval; SHA remote đã xác nhận. Commit memory kế tiếp chỉ ghi nhận trạng thái push này, không đổi code đã verified. Giữ debug.log untracked; không tự mở phase khác.
+- People đã push đến d306c7c; result code19d3450. Scope cả notebook/board đã chọn; spec6cc18ff là result phiên này, memory commit riêng tiếp theo. Chưa sửa code/viết plan/push gói mới; chờ duyệt file spec. Giữ debug.log untracked.
 
 ## Required Reading
 
-- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, active spec/plan, report People ở trên; report playtest/viewport và docs01–03/art06/ARCHITECTURE nếu cần mở scope khác.
+- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, active spec UI mới; People spec/plan2026-10-01-notebook-people và report là baseline. Docs01–03/art06/ARCHITECTURE là product/input/state contracts.
