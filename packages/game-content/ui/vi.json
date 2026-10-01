@@ -114,5 +114,8 @@
   "listeningEnded": "Đã phát hết bản ghi.",
   "listeningPlaybackError": "Không thể phát bản ghi. Bạn có thể thử lại.",
   "listeningMismatch": "This interpretation doesn't match the evidence.",
-  "listeningCompleted": "Bạn đã rút ra fact từ bản ghi này."
+  "listeningCompleted": "Bạn đã rút ra fact từ bản ghi này.",
+  "notebookStatementsHeading": "Lời khai đã ghi nhận",
+  "notebookInterviewInProgress": "Đang phỏng vấn",
+  "notebookInterviewComplete": "Đã phỏng vấn xong"
 }

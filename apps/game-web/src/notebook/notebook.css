@@ -22,10 +22,40 @@
 
 .notebook-header,
 .notebook-tabs {
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+.notebook-people-list,
+.notebook-statement-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notebook-people-list {
+  padding-top: 16px;
+}
+
+.notebook-person {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--lexicon-border);
+}
+
+.notebook-person h4 {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.notebook-person-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .notebook-header h2 {

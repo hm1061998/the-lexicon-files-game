@@ -14,6 +14,8 @@ import type { NotebookTab } from '../state/gameStore';
 import { VocabularyText } from '../vocabulary/VocabularyText';
 import { AccusationPanel } from '../conclusion/AccusationPanel';
 import './notebook.css';
+import { NotebookPeoplePanel } from './NotebookPeoplePanel';
+import { selectNotebookPeople } from './selectNotebookPeople';
 
 const TABS: readonly {
   id: NotebookTab;
@@ -150,7 +152,17 @@ export function NotebookPanel({
             ))}
           </nav>
           <div className="notebook-content">
-            {activeTab === 'people' && <p>{strings.notebookEmptyPeople}</p>}
+            {activeTab === 'people' && (
+              <NotebookPeoplePanel
+                people={selectNotebookPeople(caseDefinition, caseState)}
+                catalogue={caseDefinition.vocabulary}
+                strings={strings}
+                translationMode={translationMode}
+                onEncounter={onEncounter}
+                onInspect={onInspect}
+                onRevealTranslation={onRevealTranslation}
+              />
+            )}
             {activeTab === 'conclusion' && conclusionAvailable && (
               <AccusationPanel
                 suspects={suspects}

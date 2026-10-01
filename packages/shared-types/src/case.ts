@@ -62,6 +62,9 @@ export interface UiStrings {
   readonly noListeningData: string;
   readonly close: string;
   readonly notebookEmptyPeople: string;
+  readonly notebookStatementsHeading: string;
+  readonly notebookInterviewInProgress: string;
+  readonly notebookInterviewComplete: string;
   readonly notebookEmptyVocabulary: string;
   readonly evidenceEmpty: string;
   readonly evidenceReview: string;

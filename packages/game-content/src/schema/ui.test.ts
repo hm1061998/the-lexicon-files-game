@@ -4,6 +4,20 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 import viStrings from '../../ui/vi.json';
 
 describe('parseUiStrings', () => {
+  it('provides notebook statement and interview status labels', () => {
+    const strings = parseUiStrings(viStrings, 'ui/vi.json');
+    expect(strings.notebookStatementsHeading).toBe('Lời khai đã ghi nhận');
+    expect(strings.notebookInterviewInProgress).toBe('Đang phỏng vấn');
+    expect(strings.notebookInterviewComplete).toBe('Đã phỏng vấn xong');
+  });
+
+  it.each([
+    'notebookStatementsHeading',
+    'notebookInterviewInProgress',
+    'notebookInterviewComplete',
+  ])('requires a nonempty %s label', (key) => {
+    expect(() => parseUiStrings({ ...viStrings, [key]: '' }, 'ui/vi.json')).toThrow(key);
+  });
   it('accepts vi strings', () => {
     const strings = parseUiStrings(viStrings, 'ui/vi.json');
     expect(strings.objectiveHeading).toBe('Mục tiêu hiện tại');
