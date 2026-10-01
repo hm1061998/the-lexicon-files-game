@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T23:00:00+07:00
+updated_at: 2026-10-01T15:13:00+07:00
 phase: phase-11e
-status: complete
-result_commit: a5c1822
+status: proposed
+result_commit: 0ebdaec
 active_spec: docs/superpowers/specs/2026-10-01-phase-11e-navigation-portals-design.md
 active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
 ---
@@ -19,9 +19,11 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
 
 ## Active Goal
 
-- Không có công việc đang chạy; chờ yêu cầu tiếp theo của người dùng.
+- Hai agent đã chơi thử độc lập bản9cff732 theo yêu cầu. Báo cáo docs/ai/2026-10-01-player-playtest-feedback.md; đề xuất gói bounded sửa viewport/focus, chờ duyệt thiết kế trước code.
 
 ## Current Status
+
+- Playtest mới: chuột desktop1/5evidence và ba nhánh Anna; keyboardcompact0/5, gặp game-root scrollTop86 làm header/Đóng ngoài viewport. TabPeople trống vô điều kiện được parent xác minh source. Không debug/teleport, chưa đánh giá fullcase/portal/audio. Persona AI, không người dùng thật.
 
 - Browser regression cho minimap consume-click, held/native repeat qua pause, native form arrows, alpha PNG wall và resize desktop/compact đã đạt.
 - Unit kiểm mọi spawn→mọi interactable của hai scene và từng segment clear; passage hẹp lệch grid và frame remainder/speed có regression.
@@ -53,16 +55,21 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
 
 ## Next Actions
 
-1. Chờ người dùng giao công việc tiếp theo; không tự mở phase mới.
-2. Chỉ push khi người dùng yêu cầu.
+1. Người dùng duyệt gói viewport/focus bounded trong báo cáo playtest; sau đó RED/GREEN regression compact rồi code.
+2. Sau viewport, thiết kế tabPeople từ dữ kiện đã khám phá; chưa tự triển khai các cải thiện còn lại.
+3. Báo cáo playtest và memory mới local; chỉ push phân tích khi người dùng xác nhận.
 
 ## Verification
+
+- Lượt playtest chỉ thêm docs/ảnh: format:check và diff --check pass; memory:check chạy trước commit handoff. Không chạy lại quality gates sản phẩm vì không thay source/test. Các kết quả dưới là verification trước playtest.
 
 - Node22.23.3/npm10.9.9: lint/test/build fresh --skip-nx-cache pass; frontend499, content166, core57, learning17, ui18, shared1, memory30. Typecheck/format/coverage pass, core lines96.7/branches91.4, learning100/96.72.
 - Full E2E138/138(11.0m) trên bb109fe; sau đó chỉ tăng assertion test minimap, không đổi runtime/source; mutation pointer-events:none RED rồi CSS khôi phục, nhóm ảnh hưởng chạy lại10/10(1.5m). Unit navigation/input/pointer15/15.
 - Leak10laps: textures70→70, listeners80→80, DOM166→166; heap ratio1.0469. Load ready1488ms,253requests,13,198,245bytes. Không thay đổi backend.
 
 ## Latest Handoff
+
+- Kết quả playtest0ebdaec, memory commit kế tiếp; Phase11/12 acceptance giữ nguyên. Origin/dev ở9cff732; báo cáo mới chưa push. Ảnh chính và report riêng hai persona được lưu docs/ai/playtests/2026-10-01/. Gói cải thiện đầu tiên mới proposed, chưa fix gameplay.
 
 - Kết quả a5c1822 commit trước memory; scratch riêng debt-closure được dọn theo executing-plans sau khi output/rulings lưu trong báo cáo. Giữ runtime Node22 và artifact các phase trước. Đã push kết quả lên origin/dev theo yêu cầu.
 
