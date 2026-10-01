@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T09:12:00+07:00
+updated_at: 2026-10-01T09:14:00+07:00
 phase: phase-11e
 status: in_progress
-result_commit: 7a51f81
+result_commit: 8724ce0
 active_spec: docs/superpowers/specs/2026-10-01-phase-11e-camera-audio-ui-addendum.md
 active_plan: docs/superpowers/plans/2026-10-01-phase-11e-camera-audio-ui-addendum.md
 ---
@@ -14,7 +14,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11e-camera-audio-ui-addendu
 - On resuming, live `git ls-remote origin refs/heads/dev` confirmed remote SHA `85229df`, matching local HEAD then. The old memory's claim that the earlier implementation was still awaiting push was stale.
 - This session's result and subsequent memory commit are local; no new push has been attempted. Keep remote destination confirmation explicit after the earlier auto-review rejection.
 - New input/camera feedback analysis is in `1df8743`; no production change for that feedback yet. Last implementation result remains `cfbf5f2`.
-- Portal visual-reference extension is recorded in `7a51f81`; the user supplied a round neon-blue holographic teleport podium as inspiration. Palette direction is awaiting clarification.
+- Portal visual reference/preference is recorded in `8724ce0`; user selected brass podium and soft warm light, taking circular forms from the supplied hologram image.
 
 ## Current Phase
 
@@ -32,7 +32,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11e-camera-audio-ui-addendu
 - Added E2E camera bounds/player checks at all four edges of both scenes at 1280x720 and 760x600. Missing addendum screenshots were regenerated via E2E in the ignored artifact directory.
 - New user feedback: deeper zoom; translation mode selector only in Settings; visible player on minimap; arrows alongside WASD; mouse movement and interaction alongside keyboard. User selected: click a distant target to approach, then click again to interact. Design approval remains pending.
 - Minimap root cause confirmed in browser: position updates correctly but player diameter is about 0.12 CSS px. Radius uses logical width 16 while viewBox uses projected width 1792. Analysis/design proposal: `docs/ai/2026-10-01-phase-11e-input-feedback-analysis.md`.
-- User additionally wants scene portals inspired by the attached circular podium/hologram/light-column image. Asked whether to retain blue hologram or adapt to brass/soft warm light for existing sepia/no-neon rules. No answer/approval inferred; no asset or game change yet.
+- User wants portals inspired by the attached circular podium/hologram/light-column image and explicitly chose brass podium with soft golden light. Use aged brass, sepia ink outlines, slow concentric rings and subtle light/particles; static under reduced motion. Full combined design approval remains pending; no asset/game changes yet.
 
 ## Completed
 
@@ -63,7 +63,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11e-camera-audio-ui-addendu
 
 ## Next Actions
 
-1. Clarify portal visual palette with user, then obtain approval for combined camera/minimap/Settings/input/portal design.
+1. Obtain approval for combined camera/minimap/Settings/input/portal design; brass/soft warm light preference is already confirmed.
 2. After design approval, write and obtain review of the Vietnamese spec and implementation plan for this feedback.
 3. Implement approved scope with navigation/input/minimap regressions and required quality gates.
 4. Obtain human visual/audio acceptance before closing Phase 11E; Phase 12 stays untouched until requested.
@@ -81,7 +81,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11e-camera-audio-ui-addendu
 
 ## Latest Handoff
 
-- Latest analysis result `7a51f81` adds portal visual reference to input feedback/minimap evidence; last implementation `cfbf5f2`, prior memory `760b8f5`. New memory is committed separately afterwards.
+- Latest analysis result `8724ce0` records confirmed brass/soft warm portal preference with pending input feedback/minimap design; last implementation `cfbf5f2`. New memory is committed separately afterwards.
 - User music rejection has been addressed with a new candidate, not marked accepted. Phase remains in_progress.
 - Regenerated artifacts: `.superpowers/sdd/2026-10-01-phase-11e-camera-audio-ui-addendum/`. Directory is ignored and may be absent in another checkout; corresponding E2E recreates screenshots.
 - Leave `apps/game-web/debug.log` and root `debug.log` untouched and unstaged. No new push or Phase 12 work in this session.
