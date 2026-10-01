@@ -10,7 +10,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
 
 ## Metadata
 
-- Phase 12 đã được người dùng chấp nhận; theo yêu cầu tiếp tục đóng nợ Phase 11. Cổng đồng/ánh vàng nhẹ và nhạc Mystical Piano cũng được chấp nhận riêng. Chưa push.
+- Phase 12 đã được người dùng chấp nhận; theo yêu cầu tiếp tục đóng nợ Phase 11. Cổng đồng/ánh vàng nhẹ và nhạc Mystical Piano cũng được chấp nhận riêng. Đã push origin/dev tới e4f5780 theo yêu cầu người dùng; commit memory cập nhật trạng thái push được gửi tiếp.
 - Báo cáo cuối: docs/ai/2026-10-01-phase-11-debt-closure-verification.md. Báo cáo Phase 12: docs/superpowers/specs/2026-10-01-phase-12-verification.md và 2026-10-01-phase-12-performance-report.md.
 
 ## Current Phase
@@ -39,7 +39,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
 
 ## Active Decisions
 
-- Native inline trên dev; npm + Nx; không dependency/backend mới ở debt closure, không push.
+- Native inline trên dev; npm + Nx; không dependency/backend mới ở debt closure; push origin/dev đã được người dùng yêu cầu.
 - Nhạc đã chấp nhận: apps/game-web/public/audio/case-001/music/mystical-piano-loop.ogg. Cổng Office/Archive đồng/ánh vàng nhẹ; artifact ở .superpowers/sdd/2026-10-01-phase-11e-navigation-portals/.
 - Click xa đi tới rồi click lần nữa tương tác, không auto trigger; keyboard/mouse song song. Translation selector chỉ Settings.
 - Node22 verification dùng .superpowers/runtime/node-v22.23.3-win-x64 prepend PATH, npm10.9.9, NX_DAEMON=false; official ZIP kiểm SHA256. Không dùng npm-shim cũ vì hardcode Node24; không đổi Node hệ thống.
@@ -64,7 +64,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
 
 ## Latest Handoff
 
-- Kết quả a5c1822 commit trước memory; scratch riêng debt-closure được dọn theo executing-plans sau khi output/rulings lưu trong báo cáo. Giữ runtime Node22 và artifact các phase trước. Không push.
+- Kết quả a5c1822 commit trước memory; scratch riêng debt-closure được dọn theo executing-plans sau khi output/rulings lưu trong báo cáo. Giữ runtime Node22 và artifact các phase trước. Đã push kết quả lên origin/dev theo yêu cầu.
 
 ## Required Reading
 
