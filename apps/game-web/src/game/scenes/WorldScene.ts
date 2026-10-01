@@ -516,6 +516,15 @@ export class WorldScene extends Phaser.Scene {
       labels: () => this.roomLabels.map(({ text }) => text),
       labelTextureCount: () =>
         Object.keys(this.textures.list).filter((key) => key.startsWith('label-')).length,
+      textureCount: () =>
+        Object.keys(this.textures.list).filter((key) => !key.startsWith('__')).length,
+      listenerCount: () =>
+        [this.events, this.input].reduce(
+          (total, emitter) =>
+            total +
+            emitter.eventNames().reduce((sum, name) => sum + emitter.listenerCount(name), 0),
+          0,
+        ),
       worldCueCount: () => this.cueLayer?.activeCount ?? 0,
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
       nearby: () => this.interactionTracker.current,

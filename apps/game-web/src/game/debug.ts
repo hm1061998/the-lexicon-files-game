@@ -26,6 +26,10 @@ export type LexiconDebug = {
   labels(): string[];
   /** Generated room-sign textures currently owned by the renderer. */
   labelTextureCount(): number;
+  /** Textures in the Phaser cache, excluding Phaser built-ins (`__DEFAULT` etc.). */
+  textureCount(): number;
+  /** Listeners currently registered on the active scene's event and input emitters. */
+  listenerCount(): number;
   /** Visible world cue markers currently owned by the active scene. */
   worldCueCount(): number;
   /** Current alpha of an occluding wall/board (NaN for any other id). */
