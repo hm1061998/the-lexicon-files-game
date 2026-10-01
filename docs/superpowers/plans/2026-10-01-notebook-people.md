@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-01-notebook-people-design.md`.
 
-**Trạng thái:** Plan mới lập, đã tự review; chờ người dùng review file này. Phản hồi trước khi file tồn tại không được tính là duyệt artifact này.
+**Trạng thái:** Người dùng đã duyệt file plan và yêu cầu triển khai ngày 2026-10-01; đang thực hiện Native inline trên dev.
 
 ## Global Constraints
 

@@ -27,6 +27,10 @@ export interface DialogueNode {
   readonly choices: readonly DialogueChoice[];
   readonly terminal: boolean;
 }
+export interface NotebookStatementDefinition {
+  readonly nodeId: string;
+  readonly recordedCondition: Condition;
+}
 export interface DialogueTree {
   readonly id: string;
   readonly npcId: string;
@@ -34,6 +38,7 @@ export interface DialogueTree {
   readonly nodes: readonly DialogueNode[];
   readonly completionFlag: string;
   readonly completionCondition: Condition;
+  readonly notebookStatements?: readonly NotebookStatementDefinition[] | undefined;
 }
 export interface DialogueSession {
   readonly treeId: string;

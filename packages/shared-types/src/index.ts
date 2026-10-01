@@ -72,6 +72,7 @@ export type {
   DialogueChoice,
   DialogueNode,
   DialogueTree,
+  NotebookStatementDefinition,
   DialogueSession,
   DialogueAction,
   DialogueError,

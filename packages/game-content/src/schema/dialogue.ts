@@ -44,5 +44,15 @@ export const dialogueTreeSchema = z
     nodes: z.array(nodeSchema).min(1),
     completionFlag: id,
     completionCondition: conditionSchema,
+    notebookStatements: z
+      .array(
+        z
+          .object({
+            nodeId: id,
+            recordedCondition: conditionSchema,
+          })
+          .strict(),
+      )
+      .optional(),
   })
   .strict();

@@ -104,6 +104,130 @@ function changed(change: (v: Input) => void) {
   return value;
 }
 describe('dialogue graph validation', () => {
+  it('loads trees without notebook metadata', () => {
+    expect(parse(input()).dialogues[0]).not.toHaveProperty('notebookStatements');
+  });
+
+  function notebookInput(statements: unknown) {
+    const value = input();
+    const tree = value.dialoguesRaw.dialogues[0]!;
+    return {
+      ...value,
+      dialoguesRaw: {
+        dialogues: [
+          {
+            ...tree,
+            nodes: tree.nodes.map((node) =>
+              node.id === 'answer'
+                ? { ...node, effects: [{ type: 'setFlag', key: 'answer_seen', value: true }] }
+                : node,
+            ),
+            notebookStatements: statements,
+          },
+        ],
+      },
+    };
+  }
+
+  it('accepts positive own-tree node and choice flags', () => {
+    const statements = [
+      {
+        nodeId: 'answer',
+        recordedCondition: {
+          type: 'all',
+          conditions: [
+            { type: 'flag', key: 'answer_seen', value: true },
+            { type: 'any', conditions: [{ type: 'flag', key: 'read', value: true }] },
+          ],
+        },
+      },
+    ];
+    expect(parse(notebookInput(statements)).dialogues[0]).toHaveProperty(
+      'notebookStatements',
+      statements,
+    );
+  });
+
+  it.each([
+    [
+      'duplicate',
+      [
+        { nodeId: 'answer', recordedCondition: { type: 'flag', key: 'read', value: true } },
+        { nodeId: 'answer', recordedCondition: { type: 'flag', key: 'read', value: true } },
+      ],
+    ],
+    [
+      'missing node',
+      [{ nodeId: 'missing', recordedCondition: { type: 'flag', key: 'read', value: true } }],
+    ],
+    [
+      'empty nodeId',
+      [{ nodeId: '', recordedCondition: { type: 'flag', key: 'read', value: true } }],
+    ],
+    [
+      'unknown flag',
+      [{ nodeId: 'answer', recordedCondition: { type: 'flag', key: 'unknown', value: true } }],
+    ],
+    [
+      'completion flag',
+      [{ nodeId: 'answer', recordedCondition: { type: 'flag', key: 'done', value: true } }],
+    ],
+    [
+      'false flag',
+      [{ nodeId: 'answer', recordedCondition: { type: 'flag', key: 'read', value: false } }],
+    ],
+    ['empty all', [{ nodeId: 'answer', recordedCondition: { type: 'all', conditions: [] } }]],
+    ['empty any', [{ nodeId: 'answer', recordedCondition: { type: 'any', conditions: [] } }]],
+    [
+      'nested forbidden',
+      [
+        {
+          nodeId: 'answer',
+          recordedCondition: {
+            type: 'all',
+            conditions: [{ type: 'not', condition: { type: 'flag', key: 'read', value: true } }],
+          },
+        },
+      ],
+    ],
+  ])('rejects invalid notebook statement with path: %s', (_, statements) => {
+    expect(() => parse(notebookInput(statements))).toThrow(/notebookStatements.*[01]/);
+  });
+
+  it('rejects notebook statements by a different speaker with a path', () => {
+    const value = notebookInput([
+      { nodeId: 'answer', recordedCondition: { type: 'flag', key: 'read', value: true } },
+    ]);
+    value.dialoguesRaw.dialogues[0]!.nodes[1]!.speakerId = 'investigator';
+    expect(() => parse(value)).toThrow(/notebookStatements.*0/);
+  });
+
+  it('rejects a flag written only by a foreign tree with a path', () => {
+    const value = notebookInput([
+      { nodeId: 'answer', recordedCondition: { type: 'flag', key: 'foreign_seen', value: true } },
+    ]);
+    value.npcsRaw.npcs.push({
+      id: 'other',
+      name: 'Other',
+      role: 'Witness',
+      dialogueTreeId: 'foreign',
+    });
+    const tree = value.dialoguesRaw.dialogues[0]!;
+    value.dialoguesRaw.dialogues.push({
+      ...tree,
+      id: 'foreign',
+      npcId: 'other',
+      completionFlag: 'foreign_done',
+      notebookStatements: [],
+      nodes: tree.nodes.map((node) => ({
+        ...node,
+        speakerId: 'other',
+        effects: [{ type: 'setFlag', key: 'foreign_seen', value: true }],
+      })),
+    });
+    expect(() => parse(value)).toThrow(/notebookStatements.*0/);
+  });
+
   it('loads NPCs and dialogue trees', () => {
     expect(parse(input())).toMatchObject({ npcs: [{ id: 'anna' }], dialogues: [{ id: 'test' }] });
   });

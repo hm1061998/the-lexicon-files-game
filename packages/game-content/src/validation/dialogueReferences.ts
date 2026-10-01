@@ -1,4 +1,5 @@
 import type { CaseDefinition, Condition, Effect } from '@lexicon/shared-types';
+import { validateNotebookStatements } from './notebookStatements';
 export function validateDialogueReferences(
   definition: Pick<
     CaseDefinition,
@@ -36,6 +37,7 @@ export function validateDialogueReferences(
       issues.push(`npcs.${npc.id}.dialogueTreeId: missing or mismatched owner`);
   }
   for (const tree of dialogues) {
+    validateNotebookStatements(tree, issues);
     const path = `dialogues.${tree.id}`;
     if (!npcIds.has(tree.npcId)) issues.push(`${path}.npcId: unknown NPC`);
     duplicates(
