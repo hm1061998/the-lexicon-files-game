@@ -251,3 +251,79 @@ describe('learning reducer', () => {
     expect(invalidTime).toMatchObject({ ok: false, profile, error: { code: 'invalidTimestamp' } });
   });
 });
+
+describe('learning reducer edge cases', () => {
+  const nowIso = '2026-09-29T00:00:00.000Z';
+  const seen = (profile = createInitialLanguageProfile(), contextId = contexts[0]!.id) => {
+    const result = applyLearningAction(
+      profile,
+      catalogue,
+      contexts,
+      { type: 'encounterContext', vocabularyId: 'leave', contextId },
+      nowIso,
+    );
+    if (!result.ok) throw new Error(result.error.detail);
+    return result.profile;
+  };
+
+  it('rejects a negative or non-finite elapsed time on a correct answer', () => {
+    for (const elapsedMs of [-1, Number.NaN, Number.POSITIVE_INFINITY]) {
+      const result = applyLearningAction(
+        createInitialLanguageProfile(),
+        catalogue,
+        contexts,
+        { type: 'recordListeningEvent', event: 'answerCorrect', elapsedMs },
+        nowIso,
+      );
+      expect(result).toMatchObject({ ok: false, error: { code: 'invalidAction' } });
+    }
+  });
+
+  it('keeps a higher stage when the word is met in a second context', () => {
+    const profile = seen();
+    const advanced = {
+      ...profile,
+      vocabulary: { leave: { ...profile.vocabulary.leave!, stage: 'understood' as const } },
+    };
+    const next = seen(advanced, contexts[1]!.id);
+    expect(next.vocabulary.leave).toMatchObject({ stage: 'understood', encounterCount: 2 });
+  });
+
+  it('does not count the same context twice', () => {
+    const once = seen();
+    const again = applyLearningAction(
+      once,
+      catalogue,
+      contexts,
+      { type: 'encounterContext', vocabularyId: 'leave', contextId: contexts[0]!.id },
+      nowIso,
+    );
+    expect(again).toEqual({ ok: true, profile: once, events: [] });
+  });
+
+  it('refuses to reveal a translation the content does not author', () => {
+    const noTranslation = [{ ...catalogue[0]!, translationVi: undefined }];
+    const profile = seen();
+    const result = applyLearningAction(
+      profile,
+      noTranslation,
+      contexts,
+      { type: 'revealTranslation', vocabularyId: 'leave', contextId: contexts[0]!.id },
+      nowIso,
+    );
+    expect(result).toMatchObject({ ok: false, error: { code: 'translationUnavailable' } });
+    expect(result.profile).toBe(profile);
+  });
+
+  it('reports an unsupported action instead of throwing', () => {
+    const profile = seen();
+    const result = applyLearningAction(
+      profile,
+      catalogue,
+      contexts,
+      { type: 'bogus', vocabularyId: 'leave', contextId: contexts[0]!.id } as never,
+      nowIso,
+    );
+    expect(result).toMatchObject({ ok: false, error: { code: 'invalidAction' } });
+  });
+});
