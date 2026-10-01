@@ -1,6 +1,6 @@
 # Thiết kế UI/UX sổ tay và bảng suy luận riêng
 
-Ngày: 2026-10-01. Trạng thái: đề xuất, chờ duyệt file spec.
+Ngày: 2026-10-01. Trạng thái: người dùng đã duyệt file spec.
 
 ## 1. Mục tiêu và phạm vi đã thống nhất
 
@@ -161,6 +161,6 @@ Khi objective kết luận active, sử dụng AccusationPanel với danh sách 
 
 ## 9. Handoff
 
-Spec này cụ thể hóa hai yêu cầu ảnh và phạm vi “cả hai, dùng logic hiện có”. Cần người dùng duyệt **file spec** trước khi tạo implementation plan theo workflow architectural. Approval thiết kế notebook trước không được dùng thay approval artifact mới này.
+Spec này cụ thể hóa hai yêu cầu ảnh và phạm vi “cả hai, dùng logic hiện có”. Người dùng đã duyệt file spec. Approval thiết kế notebook trước không được dùng thay approval artifact mới này.
 
-Sau khi spec được duyệt: viết plan tiếng Việt có các task tách metadata UI, vòng đời modal/store, notebook, board, browser/regression; trình file plan và chốt execution inline dev. Chỉ commit/push implementation sau verification và authorization phù hợp; approval push People trước không tự áp dụng cho gói mới.
+Bước tiếp theo: viết plan tiếng Việt có các task tách metadata UI, vòng đời modal/store, notebook, board, browser/regression; trình file plan và chốt execution inline dev. Chỉ commit/push implementation sau verification và authorization phù hợp; approval push People trước không tự áp dụng cho gói mới.
