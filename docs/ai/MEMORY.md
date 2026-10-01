@@ -1,17 +1,17 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T23:16:10+07:00
+updated_at: 2026-10-01T23:30:53+07:00
 phase: phase-11e
 status: proposed
-result_commit: 6cc18ff
+result_commit: ce0d898
 active_spec: docs/superpowers/specs/2026-10-01-notebook-deduction-ui-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 ---
 
 ## Metadata
 
 - Phase11E/12, viewport/focus và People đã accepted/verified; People/result19d3450 và handoff đã push đến d306c7c. Gói notebook/board UI mới chỉ ở bước spec.
-- Reconcile gói UI: HEAD/ref origin/dev ban đầu cùng d306c7c. Spec mới local6cc18ff; chưa push gói mới, chưa đổi code sản phẩm.
+- Reconcile gói UI: HEAD/ref origin/dev ban đầu cùng d306c7c. Spec6cc18ff, memory2b8ed1f, plan+spec-state ce0d898 local; chưa push gói mới, chưa đổi code sản phẩm.
 
 ## Current Phase
 
@@ -19,7 +19,7 @@ active_plan: none
 
 ## Active Goal
 
-- Người dùng đã duyệt notebook hai trang, bổ sung board riêng, rồi chọn “Làm cả sổ tay và bảng suy luận riêng, dùng logic điều tra hiện có”. Written spec đã tạo/commit, chờ người dùng duyệt file trước viết plan.
+- Người dùng đã duyệt notebook hai trang, bổ sung board riêng, rồi chọn “Làm cả sổ tay và bảng suy luận riêng, dùng logic điều tra hiện có”; đã duyệt written spec. Plan đã tạo/commit, chờ người dùng xem file plan trước implementation.
 
 ## Current Status
 
@@ -36,7 +36,7 @@ active_plan: none
 ## In Progress
 
 - Spec mới: notebook bốn tab đọc lại; board xếp sự kiện/chọn hai facts/suy luận/kết luận dùng engine hiện có; modal loại trừ nhau, J/B, native Tab và focus trap. Timeline notebook chỉ event đã đặt. Dây nối chỉ relation content đã khám phá; không free drag/link, không thêm dữ liệu giả từ ảnh.
-- Code hiện vẫn nguyên: NotebookPanel chứa timeline placement/contradiction/accusation; gameStore có NotebookTab conclusion, chưa có board overlay. Scope architectural do đổi component/store/input boundaries; spec đã tự review ambiguity/availability/spoiler/asset fallback, commit6cc18ff. Chưa bắt đầu code hoặc plan trước file approval.
+- Code hiện vẫn nguyên: NotebookPanel chứa timeline placement/contradiction/accusation; gameStore có NotebookTab conclusion, chưa có board overlay. Plan tiếng Việt 7 tasks, TDD/review/DoD/E2E responsive+journey, commit ce0d898. Chưa code; user approval spec cho phép viết plan, không tự duyệt plan.
 
 ## Active Decisions
 
@@ -56,9 +56,8 @@ active_plan: none
 
 ## Next Actions
 
-1. Chờ người dùng duyệt file docs/superpowers/specs/2026-10-01-notebook-deduction-ui-design.md; approval scope không tự duyệt artifact.
-2. Sau spec approval, dùng writing-plans viết plan tiếng Việt, trình file plan và xác nhận execution inline dev theo workflow architectural.
-3. Sau plan approval, triển khai và kiểm tra unit/browser/DoD; không tự push scope mới theo approval push People cũ.
+1. Trình file docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md cho người dùng duyệt; phương thức Native inline dev đã chọn, không hỏi lại.
+2. Sau plan approval, dùng executing-plans triển khai 7 tasks với TDD, browser regression, review/DoD; không tự push scope mới theo approval push People cũ.
 
 ## Verification
 
@@ -69,7 +68,7 @@ active_plan: none
 
 ## Latest Handoff
 
-- People đã push đến d306c7c; result code19d3450. Scope cả notebook/board đã chọn; spec6cc18ff là result phiên này, memory commit riêng tiếp theo. Chưa sửa code/viết plan/push gói mới; chờ duyệt file spec. Giữ debug.log untracked.
+- People đã push đến d306c7c; result code19d3450. Gói UI mới spec đã duyệt, plan ce0d898 là result phiên này; memory commit riêng tiếp theo. Chưa sửa code/push gói mới; chờ duyệt file plan. Giữ debug.log untracked.
 
 ## Required Reading
 
