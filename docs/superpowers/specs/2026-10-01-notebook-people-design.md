@@ -1,6 +1,6 @@
 # Sổ tay Nhân vật — hồ sơ và lời khai đã ghi nhận
 
-**Trạng thái:** Người dùng duyệt hướng để lập spec ngày2026-10-01. Spec này chờ review/duyệt trước lập implementation plan; chưa có code triển khai.
+**Trạng thái:** Người dùng đồng ý đi tiếp ngày2026-10-01 qua phản hồi “duyệt plan” sau khi nhận spec. Hướng và spec được dùng để lập plan cụ thể; plan mới cần review trên file trước triển khai. Chưa có code triển khai.
 
 ## 1. Mục tiêu và phạm vi
 
