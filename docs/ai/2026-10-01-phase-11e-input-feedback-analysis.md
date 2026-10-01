@@ -9,7 +9,7 @@ Trạng thái: phân tích và đề xuất, chưa duyệt thiết kế mới, c
 3. Minimap thể hiện rõ vị trí nhân vật.
 4. Phím mũi tên dùng song song WASD.
 5. Chuột dùng song song bàn phím để di chuyển và tương tác.
-6. Cổng chuyển scene lấy ý tưởng từ ảnh bục teleport tròn, vòng năng lượng và cột ánh sáng người dùng cung cấp. Hướng palette/hiệu ứng đang chờ làm rõ.
+6. Cổng chuyển scene lấy ý tưởng từ ảnh bục teleport tròn, vòng năng lượng và cột ánh sáng người dùng cung cấp. Người dùng đã chọn bục đồng, ánh vàng nhẹ.
 
 Đã làm rõ với người dùng: click NPC/chứng cứ/cửa từ xa để đi tới; khi đã tới gần, click lần nữa để tương tác. Không tự tương tác khi hoàn tất đường đi.
 
@@ -38,12 +38,10 @@ position after D = cx 1080.8, cy 589.6
 - Click mới thay đường đi, bàn phím hủy đường chuột, modal/pause/transition hủy navigation. Click HUD/modal không truyền xuống world. Đích ngoài bounds, trong vật cản hoặc không tới được không xuyên tường và không teleport.
 - Kiểm unit cho navigation/input/minimap và E2E cho mouse-only play, phương thức input xen kẽ, tương tác hai bước, viewport/zoom, Settings-only translation và cleanup.
 
-## Handoff
-
 ## Bổ sung tham chiếu cổng chuyển scene
 
 - Ảnh người dùng cung cấp ngày 2026-10-01: bục tròn với các vòng đồng tâm nằm trên sàn, vòng năng lượng xoay và tia sáng dựng đứng. Đây là nguồn ý tưởng hình dáng/hiệu ứng; chưa phải asset game đã tạo.
-- Art/06 và `apps/game-web/AGENTS.md` hiện yêu cầu muted sepia, không neon/bloom mạnh. Đã hỏi người dùng chọn giữ xanh hologram như ảnh hay chuyển sang bục đồng/ánh vàng nhẹ. Chưa suy ra lựa chọn từ option mặc định.
+- Người dùng đã trả lời rõ **“Bục đồng, ánh vàng nhẹ”**. Lấy hình dạng bục tròn, vòng đồng tâm và tia sáng trong ảnh, chuyển thành bề mặt đồng cũ, nét mực/sepia, ánh vàng mềm, vòng sáng chuyển động chậm và hạt nhỏ tiết chế. Giữ art/06 và `apps/game-web/AGENTS.md`: không neon xanh hoặc bloom mạnh. Reduced motion giữ visual tĩnh.
 - Các transition hiện tại: `hallway_door` ở Office → Archive/from_office; `PLACEHOLDER_archive_door` ở Archive → Office/from_archive. Visual mới cần điểm đặt trên sàn phía trong scene, fit toàn bộ bục và lối tiếp cận; không đặt tâm bục trên tọa độ door frame ở mép world.
 - Giữ chuyển cảnh hai chiều và ID public khi thiết kế visual mới. Cổng không tự kích hoạt khi bước vào; dùng E hoặc click tương tác lần hai, phù hợp quyết định mouse input đã chốt. Chưa sửa geometry/content/renderer.
 
