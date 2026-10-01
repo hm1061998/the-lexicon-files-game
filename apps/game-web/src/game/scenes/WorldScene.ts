@@ -30,7 +30,7 @@ import { installDebugHook, paperOverlayAlpha } from '../debug';
 import { shouldEmitAnchor, worldToScreen, type IdAnchor, type Rect } from '../systems/anchorScreen';
 import { computeIsoDepth, computePlayerDepth, PLAYER_DEPTH_EPSILON } from '../systems/depth';
 import type { Facing } from '../systems/direction';
-import { isTypingTarget, resolveInputVector } from '../systems/input';
+import { isTypingTarget, mergeMovementKeys, resolveInputVector } from '../systems/input';
 import type { InteractableArea } from '../systems/interaction';
 import { InteractionTracker } from '../systems/InteractionTracker';
 import { markerMotion } from '../systems/markerMotion';
@@ -52,6 +52,9 @@ import { facingToward } from '../systems/facingToward';
 import { breathing } from '../systems/breathing';
 import { nameTagPosition } from '../systems/nameTagLayout';
 import { cameraFollowConfig } from '../systems/cameraFollow';
+import { createNavigationController } from '../systems/navigationController';
+import { findNavigationPath } from '../systems/navigation';
+import { pickWorldTarget, pointerToLogical, type PointerTarget } from '../systems/worldPointer';
 import { facingTextureKey } from '../assetManifest';
 import { registerCharacterAnimations, walkAnimKey } from '../entities/characterAnimations';
 
@@ -77,7 +80,7 @@ export type WorldOptions = {
   interactionAvailable?: (sceneId: string, interactableId: string) => boolean;
 };
 
-type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
+type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D' | 'UP' | 'DOWN' | 'LEFT' | 'RIGHT', Phaser.Input.Keyboard.Key>;
 
 const MARKER_DEPTH = 10000;
 /** Red target outline: above the sprites, just under the marker. */
@@ -149,6 +152,18 @@ export class WorldScene extends Phaser.Scene {
   private logicalPosition: LogicalPoint | null = null;
   private logicalBounds: LogicalRect | null = null;
   private logicalSolids: LogicalRect[] = [];
+  private navigation = createNavigationController();
+  private lastPointerAt = -Infinity;
+  private blockedIndicator: Phaser.GameObjects.Graphics | null = null;
+  private indicatorTimer: Phaser.Time.TimerEvent | null = null;
+  private cancelInput = () => {
+    this.navigation.cancel();
+    if(this.keys) for(const key of Object.values(this.keys)) key.reset();
+    this.interactKey?.reset();
+  };
+  private preventGameplayArrows = (event: KeyboardEvent) => {
+    if(event.key.startsWith('Arrow') && !this.inputLock.isInputLocked() && !this.transitioning && !this.formHasFocus()) event.preventDefault();
+  };
   private npcVisuals = new Map<
     string,
     {
@@ -181,6 +196,8 @@ export class WorldScene extends Phaser.Scene {
     this.bus = options.bus;
     this.inputLock = options.input;
     this.transitioning = false;
+    this.navigation.cancel();
+    this.lastPointerAt = -Infinity;
     this.areas = [];
     this.depths.clear();
     this.assetTextures.clear();
@@ -383,9 +400,12 @@ export class WorldScene extends Phaser.Scene {
 
     const keyboard = this.input.keyboard;
     if (keyboard) {
-      this.keys = keyboard.addKeys('W,A,S,D', false) as MovementKeyMap;
+      this.keys = keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT', false) as MovementKeyMap;
       this.interactKey = keyboard.addKey('E', false);
     }
+    this.input.on('pointerdown', this.handleWorldPointer, this);
+    window.addEventListener('blur', this.cancelInput);
+    window.addEventListener('keydown', this.preventGameplayArrows);
 
     this.refreshCanvasSize();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.refreshCanvasSize, this);
@@ -555,24 +575,22 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
     if (this.inputLock.isInputLocked()) {
+      this.navigation.cancel();
       this.playerFacing = movePlayer(
         this.player,
         { x: 0, y: 0 },
         this.playerFacing,
         this.options.caseDefinition.characterSheets.player,
       );
+      for (const key of Object.values(this.keys)) key.reset();
       // Consume a press made while locked so it does not fire after unlock.
       if (this.interactKey) Phaser.Input.Keyboard.JustDown(this.interactKey);
       return;
     }
-    const typing = isTypingTarget(document.activeElement);
+    const typing = this.formHasFocus();
+    if (typing) this.cancelInput();
     const direction = resolveInputVector(
-      {
-        up: this.keys.W.isDown,
-        down: this.keys.S.isDown,
-        left: this.keys.A.isDown,
-        right: this.keys.D.isDown,
-      },
+      this.movementKeys(),
       typing,
     );
     if (this.logicalPosition && this.logicalBounds && this.options.scene.projection) {
@@ -697,31 +715,78 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Logical collision and projection path used by migrated dimetric scenes. */
+  private movementKeys() {
+    const keys = this.keys!;
+    return mergeMovementKeys({ up:keys.W.isDown, down:keys.S.isDown, left:keys.A.isDown, right:keys.D.isDown }, {up:keys.UP.isDown,down:keys.DOWN.isDown,left:keys.LEFT.isDown,right:keys.RIGHT.isDown});
+  }
+
+  private formHasFocus(): boolean {
+    const el=document.activeElement;
+    return isTypingTarget(el) || el?.tagName==='SELECT' || el?.tagName==='INPUT' || Boolean(el?.closest('[role="dialog"]'));
+  }
+
+  private handleWorldPointer(pointer: Phaser.Input.Pointer): void {
+    if (!pointer.leftButtonDown() || this.inputLock.isInputLocked() || this.transitioning || this.pendingTransition || !this.logicalPosition || !this.logicalBounds || !this.options.scene.projection) return;
+    const event=pointer.event;
+    if(event.target !== this.game.canvas || event.detail > 1 || this.time.now-this.lastPointerAt<250) return;
+    this.lastPointerAt=this.time.now;
+    // Phaser owns CSS/canvas/letterbox conversion; use the current camera exactly once.
+    pointer.updateWorldPoint(this.cameras.main);
+    const worldPoint={x:pointer.worldX,y:pointer.worldY},projection=this.options.scene.projection;
+    const targets:PointerTarget[]=this.areas.filter(a=>!this.options.interactionAvailable || this.options.interactionAvailable(this.options.scene.id,a.id)).flatMap(a=>{
+      const visualBounds=this.targetBounds.get(a.id)?.();
+      return visualBounds?[{interactableId:a.id,visualBounds,depth:this.depths.get(a.id)??0,anchor:pointerToLogical(a,projection),radiusPx:a.radius}]:[];
+    });
+    const target=pickWorldTarget(worldPoint,targets,this.occluders.map(o=>({bounds:o.box,depth:o.sprite.depth,opaque:o.sprite.alpha>=.99})));
+    // An opaque wall consumes a click, including floor clicks, rather than selecting behind it.
+    if(!target && this.occluders.some(o=>o.sprite.alpha>=.99&&worldPoint.x>=o.box.x&&worldPoint.x<=o.box.x+o.box.width&&worldPoint.y>=o.box.y&&worldPoint.y<=o.box.y+o.box.height)) {this.navigation.cancel();return;}
+    if(target){
+      const a=this.areas.find(a=>a.id===target.interactableId)!;
+      if(Math.hypot(this.player.x-a.x,this.player.y-a.y)<=a.radius){
+        this.navigation.cancel();this.bus.emit('interaction:triggered',{interactableId:target.interactableId});return;
+      }
+    }
+    const goal=target?{kind:'interaction' as const,anchor:target.anchor,radiusPx:target.radiusPx-2}:{kind:'point' as const,point:pointerToLogical(worldPoint,projection)};
+    const result=findNavigationPath(this.logicalPosition,goal,{bounds:this.logicalBounds,solids:this.logicalSolids,body:{u:-.18,v:-.18,width:.36,height:.36},projection});
+    this.navigation.cancel();
+    if(result.status==='found')this.navigation.replace(result.points);
+    else {
+      this.blockedIndicator?.destroy();this.indicatorTimer?.remove();
+      this.blockedIndicator=this.add.graphics().lineStyle(2,0x493b2f,.7).strokeCircle(worldPoint.x,worldPoint.y,8).setDepth(MARKER_DEPTH);
+      this.indicatorTimer=this.time.delayedCall(700,()=>{this.blockedIndicator?.destroy();this.blockedIndicator=null;this.indicatorTimer=null;});
+    }
+  }
+
   private updateLogicalMovement(typing: boolean, deltaMs: number): void {
     const position = this.logicalPosition;
     const bounds = this.logicalBounds;
     const projection = this.options.scene.projection;
     const keys = this.keys;
     if (!position || !bounds || !projection || !keys) return;
-    const input = resolveIsoInput(
-      {
-        up: keys.W.isDown,
-        down: keys.S.isDown,
-        left: keys.A.isDown,
-        right: keys.D.isDown,
-      },
+    let input = resolveIsoInput(
+      this.movementKeys(),
       typing,
     );
+    if(input.u!==0 || input.v!==0) this.navigation.cancel();
+    const routeDirection = typing ? null : this.navigation.direction(position,deltaMs);
+    if(routeDirection) input=routeDirection;
     const velocity = screenSpeedVector(input, projection, PLAYER_SPEED);
     const dt = Math.min(Math.max(deltaMs, 0), 50) / 1000;
+    const requested={u:velocity.u*dt,v:velocity.v*dt};
+    if(routeDirection){
+      const remaining=projectScenePoint(this.options.scene,{u:position.u+routeDirection.u,v:position.v+routeDirection.v});
+      const distance=Math.hypot(remaining.x-this.player.x,remaining.y-this.player.y);
+      const factor=Math.min(1,distance/(PLAYER_SPEED*dt || 1));requested.u*=factor;requested.v*=factor;
+    }
     const result = moveWithCollisions(
       position,
-      { u: velocity.u * dt, v: velocity.v * dt },
+      requested,
       { u: -0.18, v: -0.18, width: 0.36, height: 0.36 },
       this.logicalSolids,
       bounds,
     );
     this.logicalPosition = result.position;
+    this.navigation.observeMovement(position,result.position,deltaMs);
     const screen = projectScenePoint(this.options.scene, result.position);
     this.player.setPosition(screen.x, screen.y);
     this.player.setDepth(computeIsoDepth(result.position, projection) + PLAYER_DEPTH_EPSILON);
@@ -994,6 +1059,12 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private cleanup(): void {
+    this.cancelInput();
+    window.removeEventListener('blur',this.cancelInput);
+    window.removeEventListener('keydown',this.preventGameplayArrows);
+    this.input.off('pointerdown',this.handleWorldPointer,this);
+    this.blockedIndicator?.destroy();this.blockedIndicator=null;
+    this.indicatorTimer?.remove();this.indicatorTimer=null;
     // A load that settles after shutdown must not restart this scene again.
     this.pendingTransition = null;
     if (this.fadeOutHandler) {
@@ -1047,3 +1118,4 @@ export class WorldScene extends Phaser.Scene {
     this.events.off(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
   }
 }
+
