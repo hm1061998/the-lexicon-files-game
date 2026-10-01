@@ -39,10 +39,22 @@
   text-transform: uppercase;
 }
 .dialogue-text {
-  margin: 24px 0;
+  margin: 16px 0;
   padding: 12px 0;
   border-top: 1px solid var(--lexicon-border);
   border-bottom: 1px solid var(--lexicon-border);
+}
+.dialogue-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin: 16px 0 0;
+}
+.dialogue-panel .translation-mode-control {
+  display: flex;
+  margin: 0;
 }
 .dialogue-choices {
   display: grid;
@@ -76,11 +88,12 @@
 }
 @media (max-height: 720px) {
   .dialogue-overlay {
-    padding: 16px 16px 56px;
+    align-items: center;
+    padding: 16px;
   }
   .dialogue-panel {
     padding: 16px;
-    max-height: calc(100vh - 88px);
+    max-height: calc(100vh - 32px);
   }
 }
 .dialogue-voice-controls {
@@ -88,18 +101,37 @@
   min-height: 44px;
   align-items: center;
   gap: 10px;
-  margin: 0 0 16px;
+  margin: 0;
   color: var(--lexicon-ink);
   font-size: 14px;
 }
 
 .dialogue-voice-controls button {
-  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   min-height: 44px;
-  border: 1px solid var(--lexicon-border);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.dialogue-voice-controls button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+.dialogue-voice-controls button svg path:last-child {
+  fill: currentColor;
+  stroke-width: 1;
+}
+.dialogue-voice-controls [role='status'] {
+  padding: 4px 9px;
+  border-radius: 999px;
   background: var(--lexicon-beige);
-  color: var(--lexicon-ink);
-  font: inherit;
-  font-size: 22px;
-  cursor: pointer;
+  font-size: 13px;
 }

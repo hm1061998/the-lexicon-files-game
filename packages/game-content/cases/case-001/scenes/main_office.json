@@ -1246,7 +1246,7 @@
     {
       "id": "label_investigation_room",
       "text": "PHÒNG ĐIỀU TRA",
-      "u": 7.5,
+      "u": 6,
       "v": 0,
       "mount": {
         "kind": "wall",

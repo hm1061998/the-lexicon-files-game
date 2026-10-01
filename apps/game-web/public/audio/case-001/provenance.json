@@ -188,6 +188,66 @@
     }
   },
   "sfx": {
+    "footstep/footstep-01": {
+      "url": "/audio/case-001/sfx/footstep-01.ogg",
+      "sha256": "33c9bef5e8aeb1069455699a34a0c5e1ef1787fd3f61594b0859d7e6bb9f9dec",
+      "format": "Ogg Vorbis",
+      "author": "GboxMikeFozzy",
+      "license": "CC0 1.0",
+      "sourcePage": "https://opengameart.org/content/footsteps-0",
+      "downloadUrl": "https://opengameart.org/sites/default/files/01-footstep.ogg",
+      "attribution": "Not required; author states free use."
+    },
+    "footstep/footstep-02": {
+      "url": "/audio/case-001/sfx/footstep-02.ogg",
+      "sha256": "f05396c807eb8eaecffb2a1ead611ec971c5a7914d1d081c91d7796e852692a2",
+      "format": "Ogg Vorbis",
+      "author": "GboxMikeFozzy",
+      "license": "CC0 1.0",
+      "sourcePage": "https://opengameart.org/content/footsteps-0",
+      "downloadUrl": "https://opengameart.org/sites/default/files/02-footstep.ogg",
+      "attribution": "Not required; author states free use."
+    },
+    "footstep/footstep-03": {
+      "url": "/audio/case-001/sfx/footstep-03.ogg",
+      "sha256": "9817cc93897ed1de5da87675b26be4196bfda3daa6f1de9dc4398a68d250cdb9",
+      "format": "Ogg Vorbis",
+      "author": "GboxMikeFozzy",
+      "license": "CC0 1.0",
+      "sourcePage": "https://opengameart.org/content/footsteps-0",
+      "downloadUrl": "https://opengameart.org/sites/default/files/03-footstep.ogg",
+      "attribution": "Not required; author states free use."
+    },
+    "footstep/footstep-04": {
+      "url": "/audio/case-001/sfx/footstep-04.ogg",
+      "sha256": "b373ff981e44d6f7ba2291225a4803078771029615ed81606136fdb9599906d5",
+      "format": "Ogg Vorbis",
+      "author": "GboxMikeFozzy",
+      "license": "CC0 1.0",
+      "sourcePage": "https://opengameart.org/content/footsteps-0",
+      "downloadUrl": "https://opengameart.org/sites/default/files/04-footstep.ogg",
+      "attribution": "Not required; author states free use."
+    },
+    "footstep/footstep-05": {
+      "url": "/audio/case-001/sfx/footstep-05.ogg",
+      "sha256": "f1b4893dd3cebe23438567a0dcaf047848a52b594e7eb03e5c212d99e83d2298",
+      "format": "Ogg Vorbis",
+      "author": "GboxMikeFozzy",
+      "license": "CC0 1.0",
+      "sourcePage": "https://opengameart.org/content/footsteps-0",
+      "downloadUrl": "https://opengameart.org/sites/default/files/05-footstep.ogg",
+      "attribution": "Not required; author states free use."
+    },
+    "footstep/footstep-06": {
+      "url": "/audio/case-001/sfx/footstep-06.ogg",
+      "sha256": "39147cc1b98abb4b5378ad07b15d50d18f2aa0f0fd2f5514f078c1e574d14773",
+      "format": "Ogg Vorbis",
+      "author": "GboxMikeFozzy",
+      "license": "CC0 1.0",
+      "sourcePage": "https://opengameart.org/content/footsteps-0",
+      "downloadUrl": "https://opengameart.org/sites/default/files/06-footstep.ogg",
+      "attribution": "Not required; author states free use."
+    },
     "footstep/step-1": {
       "url": "/audio/case-001/sfx/step-1.wav",
       "wavSha256": "0253bc611d9932138d174dd53cfdfb8fab75afce1dcd88968dd114ff22838880",
@@ -237,5 +297,16 @@
       "channels": 1,
       "bitsPerSample": 16
     }
+  },
+  "music": {
+    "url": "/audio/case-001/music/project-utopia.ogg",
+    "sha256": "88d9956c98282523dd1a00fc6023ee01619818c4ce138c52816e0a39f837fa50",
+    "format": "Ogg Vorbis",
+    "author": "congusbongus",
+    "title": "Project Utopia (seamless loop)",
+    "license": "CC0 1.0",
+    "sourcePage": "https://opengameart.org/content/project-utopia-seamless-loop",
+    "downloadUrl": "https://opengameart.org/sites/default/files/Project%20Utopia.ogg",
+    "attribution": "Not required; source describes the track as a short, moody ambient piece."
   }
 }

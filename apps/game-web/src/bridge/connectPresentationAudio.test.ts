@@ -15,6 +15,8 @@ function setup() {
   const audio = {
     playCue: (cue: string) => cues.push(cue),
     setListeningActive: vi.fn(),
+    setPaused: vi.fn(),
+    startMusicFromGesture: vi.fn(),
     stopVoice: vi.fn(),
     playVoice: (key: string) => voices.push(key),
     replayVoice: vi.fn(),
@@ -32,6 +34,15 @@ function setup() {
 }
 
 describe('presentation cue bridge', () => {
+  it('pauses and resumes presentation music with the game pause state', () => {
+    const { store, audio, disconnect } = setup();
+    store.getState().togglePause();
+    expect(audio.setPaused).toHaveBeenLastCalledWith(true);
+    store.getState().togglePause();
+    expect(audio.setPaused).toHaveBeenLastCalledWith(false);
+    disconnect();
+  });
+
   it('emits one UI cue for a visibility action and ignores rejected locked actions', () => {
     const { store, cues, disconnect } = setup();
     store.getState().toggleMinimap();

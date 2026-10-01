@@ -296,8 +296,16 @@
     ]
   },
   "audio": {
+    "music": "/audio/case-001/music/project-utopia.ogg",
     "sfx": {
-      "footstep": ["/audio/case-001/sfx/step-1.wav", "/audio/case-001/sfx/step-2.wav"],
+      "footstep": [
+        "/audio/case-001/sfx/footstep-01.ogg",
+        "/audio/case-001/sfx/footstep-02.ogg",
+        "/audio/case-001/sfx/footstep-03.ogg",
+        "/audio/case-001/sfx/footstep-04.ogg",
+        "/audio/case-001/sfx/footstep-05.ogg",
+        "/audio/case-001/sfx/footstep-06.ogg"
+      ],
       "paper": ["/audio/case-001/sfx/paper.wav"],
       "ui": ["/audio/case-001/sfx/ui.wav"],
       "evidence": ["/audio/case-001/sfx/evidence.wav"],

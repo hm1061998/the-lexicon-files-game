@@ -15,6 +15,7 @@ export const dialogueAudioSchema: z.ZodType<DialogueAudio> = z
 const cuePaths = (minimum: number) => z.array(audioUrl).min(minimum);
 export const caseAudioDefinitionSchema = z
   .object({
+    music: audioUrl.optional(),
     sfx: z
       .object({
         footstep: cuePaths(2),

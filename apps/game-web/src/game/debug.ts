@@ -1,4 +1,11 @@
 export type LexiconDebug = {
+  cameraState(): {
+    zoom: number;
+    scrollX: number;
+    scrollY: number;
+    view: { x: number; y: number; width: number; height: number };
+    bounds: { x: number; y: number; width: number; height: number };
+  };
   player(): { x: number; y: number; depth: number };
   logicalPlayer(): { u: number; v: number } | null;
   playerTexture(): string;
@@ -10,6 +17,9 @@ export type LexiconDebug = {
   npcTexture(id: string): string | undefined;
   npcScaleY(id: string): number | undefined;
   npcName(id: string): string | undefined;
+  npcNameplate(
+    id: string,
+  ): { text: string; hasPaperPlate: boolean; textColor: string; gap: number } | undefined;
   npcAnim(id: string): { key: string | null; frame: number | null; playing: boolean } | undefined;
   setNpcWalking(id: string, walking: boolean): void;
   /** Texts of the room labels drawn in the current scene, in content order. */

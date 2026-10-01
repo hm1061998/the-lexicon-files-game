@@ -5,4 +5,5 @@ export interface DialogueAudio {
 }
 export interface CaseAudioDefinition {
   readonly sfx: Readonly<Record<AudioCue, readonly string[]>>;
+  readonly music?: string | undefined;
 }

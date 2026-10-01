@@ -42,6 +42,9 @@ describe('NotebookPanel', () => {
     expect(html).toContain(strings.close);
     expect(html).toContain(strings.vocabularyMode);
     expect(html).toContain(strings.vocabularyModeLearning);
+    expect(html).toContain('role="group"');
+    expect(html).toContain('aria-pressed="true">Đang học</button>');
+    expect(html).not.toContain('<select');
     expect(html).toContain('vocabulary-word');
   });
 

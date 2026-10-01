@@ -378,6 +378,17 @@ function GameRoot({
     const disconnect = connectBusToStore(bus, store);
     const disconnectCaseEngine = connectCaseEngine(bus, store, caseDefinition);
     presentationAudio.activate();
+    const removeFirstGestureListeners = () => {
+      window.removeEventListener('pointerdown', activateAmbientMusic, true);
+      window.removeEventListener('keydown', activateAmbientMusic, true);
+    };
+    const activateAmbientMusic = (event: Event) => {
+      if (!event.isTrusted) return;
+      removeFirstGestureListeners();
+      presentationAudio.startMusicFromGesture();
+    };
+    window.addEventListener('pointerdown', activateAmbientMusic, { capture: true, passive: true });
+    window.addEventListener('keydown', activateAmbientMusic, true);
     const disconnectPresentationAudio = connectPresentationAudio(
       bus,
       store,
@@ -413,6 +424,7 @@ function GameRoot({
       disconnect();
       disconnectCaseEngine();
       disconnectPresentationAudio();
+      removeFirstGestureListeners();
       disconnectAutosave?.();
     };
   }, [

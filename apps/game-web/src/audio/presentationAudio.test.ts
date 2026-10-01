@@ -25,17 +25,69 @@ function mockHowl() {
 const definition = {
   audio: {
     sfx: {
-      footstep: ['/audio/step1.wav', '/audio/step2.wav'],
+      footstep: ['/audio/footstep-01.ogg', '/audio/footstep-02.ogg'],
       paper: ['/audio/paper.wav'],
       ui: ['/audio/ui.wav'],
       evidence: ['/audio/evidence.wav'],
       door: ['/audio/door.wav'],
       dialogue: ['/audio/dialogue.wav'],
     },
+    music: '/audio/ambience.ogg',
   },
 } as never;
 
 describe('presentation audio', () => {
+  it('starts one looping ambience only after a user gesture and ducks it for voice/listening', () => {
+    const created: ReturnType<typeof mockHowl>[] = [];
+    const options: HowlOptions[] = [];
+    const audio = createPresentationAudio(definition, ((input: HowlOptions) => {
+      options.push(input);
+      const howl = mockHowl();
+      created.push(howl);
+      return howl as unknown as AudioHowl;
+    }) as (input: HowlOptions) => AudioHowl);
+
+    expect(created).toHaveLength(0);
+    audio.startMusicFromGesture();
+    audio.startMusicFromGesture();
+    expect(created).toHaveLength(1);
+    expect(options[0]).toMatchObject({ src: ['/audio/ambience.ogg'], loop: true, volume: 0.07 });
+
+    audio.setListeningActive(true);
+    expect(created[0]?.volume).toHaveBeenLastCalledWith(0.025);
+    audio.setListeningActive(false);
+    expect(created[0]?.volume).toHaveBeenLastCalledWith(0.07);
+    audio.playVoice('voice', '/audio/voice.wav');
+    created[1]?.emit('play');
+    expect(created[0]?.volume).toHaveBeenLastCalledWith(0.025);
+    audio.stopVoice();
+    expect(created[0]?.volume).toHaveBeenLastCalledWith(0.07);
+
+    audio.setPaused(true);
+    expect(created[0]?.pause).toHaveBeenCalledOnce();
+    audio.setPaused(false);
+    expect(created[0]?.play).toHaveBeenCalledTimes(2);
+    audio.dispose();
+    expect(created[0]?.unload).toHaveBeenCalledOnce();
+  });
+
+  it('does not retry a music playback blocked by the browser', () => {
+    const created: ReturnType<typeof mockHowl>[] = [];
+    const audio = createPresentationAudio(definition, (() => {
+      const howl = mockHowl();
+      howl.play.mockImplementation(() => {
+        throw new Error('autoplay blocked');
+      });
+      created.push(howl);
+      return howl as unknown as AudioHowl;
+    }) as (options: HowlOptions) => AudioHowl);
+
+    audio.startMusicFromGesture();
+    audio.startMusicFromGesture();
+    expect(created).toHaveLength(1);
+    audio.dispose();
+  });
+
   it('alternates local cue variants, ducks effects for listening, and unloads every Howl', () => {
     const created: ReturnType<typeof mockHowl>[] = [];
     const audio = createPresentationAudio(definition, (() => {

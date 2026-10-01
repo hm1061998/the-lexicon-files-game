@@ -25,12 +25,17 @@ export function DialogueVoiceControls({
   return (
     <div
       className="dialogue-voice-controls"
-      aria-label={strings.dialogue}
+      role="group"
+      aria-label={strings.voiceReplay}
       data-voice-status={state.status}
       data-voice-key={state.key ?? ''}
     >
       <button type="button" aria-label={strings.voiceReplay} onClick={() => owner.replayVoice()}>
-        ↻
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 11a8 8 0 1 1 2.2 5.5M4 5v6h6" />
+          <path d="M11 9v6l5-3-5-3Z" />
+        </svg>
+        <span>{strings.voiceReplay}</span>
       </button>
       {message && (
         <span role="status" aria-live="polite">

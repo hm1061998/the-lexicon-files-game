@@ -12,6 +12,7 @@ import type {
 } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
 import { VocabularyText } from '../vocabulary/VocabularyText';
+import { TranslationModeControl } from '../vocabulary/TranslationModeControl';
 import { AccusationPanel } from '../conclusion/AccusationPanel';
 import './notebook.css';
 
@@ -132,17 +133,11 @@ export function NotebookPanel({
     <div className="notebook-overlay">
       <PaperPanel as="div" className="notebook-panel">
         <section aria-labelledby={headingId}>
-          <label className="vocabulary-mode">
-            {strings.vocabularyMode}
-            <select
-              value={translationMode}
-              onChange={(event) => onTranslationModeChange(event.target.value as TranslationMode)}
-            >
-              <option value="Beginner">{strings.vocabularyModeBeginner}</option>
-              <option value="Learning">{strings.vocabularyModeLearning}</option>
-              <option value="Immersion">{strings.vocabularyModeImmersion}</option>
-            </select>
-          </label>
+          <TranslationModeControl
+            mode={translationMode}
+            strings={strings}
+            onChange={onTranslationModeChange}
+          />
           <header className="notebook-header">
             <h2 id={headingId}>{strings.notebook}</h2>
             <button type="button" onClick={onClose} aria-label={strings.close}>
@@ -226,6 +221,7 @@ export function NotebookPanel({
                       <h3>{item.name}</h3>
                       <button
                         type="button"
+                        className="notebook-review-action"
                         aria-label={`${strings.evidenceReview}: ${item.name}`}
                         onClick={() => onReviewEvidence(item.id)}
                       >

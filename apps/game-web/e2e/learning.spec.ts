@@ -106,16 +106,25 @@ test('visible dialogue records only annotated contexts and persists mode/progres
   await expect(page.getByRole('dialog', { name: 'leave' })).not.toContainText('rời đi');
   await page.getByRole('button', { name: 'Hiện bản dịch' }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).toContainText('rời đi');
-  await page.getByLabel('Chế độ dịch').selectOption('Beginner');
+  await page
+    .getByRole('group', { name: 'Chế độ dịch' })
+    .getByRole('button', { name: 'Cơ bản', exact: true })
+    .click();
   await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
   await expect.poll(async () => (await profile(page))?.vocabularyTutorialSeen).toBe(true);
   await page.getByRole('button', { name: /left\. Xem nghĩa từ/ }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).toContainText('rời đi');
-  await page.getByLabel('Chế độ dịch').selectOption('Immersion');
+  await page
+    .getByRole('group', { name: 'Chế độ dịch' })
+    .getByRole('button', { name: 'Đắm chìm', exact: true })
+    .click();
   await expect.poll(async () => (await settings(page))?.translationMode).toBe('Immersion');
   await page.getByRole('button', { name: /left\. Xem nghĩa từ/ }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).not.toContainText('rời đi');
-  await page.getByLabel('Chế độ dịch').selectOption('Beginner');
+  await page
+    .getByRole('group', { name: 'Chế độ dịch' })
+    .getByRole('button', { name: 'Cơ bản', exact: true })
+    .click();
   await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
   await page.reload();
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);

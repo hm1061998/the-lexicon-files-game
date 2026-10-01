@@ -71,7 +71,6 @@ async function openInMode(page: Page, mode: 'Beginner' | 'Learning' | 'Immersion
   const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
-  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog')).toContainText("Leo's Phone Recording");
 }
@@ -89,7 +88,6 @@ test('phone recording resolves the fact and persists playback telemetry after re
   const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
-  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
   await page.keyboard.press('e');
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText("Leo's Phone Recording");
@@ -204,7 +202,6 @@ test('a collected recording can be reopened from the notebook to answer later', 
   const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
-  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog')).toContainText("Leo's Phone Recording");
   await page.keyboard.press('Escape');

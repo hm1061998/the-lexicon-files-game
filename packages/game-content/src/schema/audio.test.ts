@@ -30,4 +30,24 @@ describe('case audio schema', () => {
       caseAudioDefinitionSchema.safeParse({ sfx: { ...sfx, footstep: ['/audio/a.wav'] } }).success,
     ).toBe(false);
   });
+
+  it('accepts an optional local music loop and rejects remote or traversal paths', () => {
+    const sfx = {
+      footstep: ['/audio/a.wav', '/audio/b.wav'],
+      paper: ['/audio/a.wav'],
+      ui: ['/audio/a.wav'],
+      evidence: ['/audio/a.wav'],
+      door: ['/audio/a.wav'],
+      dialogue: ['/audio/a.wav'],
+    };
+    expect(
+      caseAudioDefinitionSchema.safeParse({ sfx, music: '/audio/case-001/music.ogg' }).success,
+    ).toBe(true);
+    expect(
+      caseAudioDefinitionSchema.safeParse({ sfx, music: 'https://example.com/music.ogg' }).success,
+    ).toBe(false);
+    expect(caseAudioDefinitionSchema.safeParse({ sfx, music: '/audio/../music.ogg' }).success).toBe(
+      false,
+    );
+  });
 });

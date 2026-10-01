@@ -231,13 +231,29 @@
   }
 }
 
-.notebook-panel .vocabulary-mode {
+.notebook-panel .translation-mode-control {
   display: flex;
-  align-items: center;
-  gap: 10px;
   margin-bottom: 12px;
 }
 
-.notebook-panel select {
+.notebook-panel .translation-mode-options button {
+  min-width: 0;
   min-height: 44px;
+}
+
+.notebook-panel .translation-mode-options button:focus-visible {
+  outline: 3px solid var(--lexicon-ink);
+  outline-offset: 2px;
+}
+
+.notebook-review-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.notebook-review-action::before {
+  content: '↗';
+  font-size: 1.1em;
 }

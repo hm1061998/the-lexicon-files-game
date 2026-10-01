@@ -118,7 +118,6 @@ test('settings and progress survive reload', async ({ page }) => {
   const hotspot = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), hotspot);
   await expect(page.getByText('Nghe bản ghi điện thoại của Leo')).toBeVisible();
-  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog')).toContainText("Leo's Phone Recording");
   await page.keyboard.press('Escape');

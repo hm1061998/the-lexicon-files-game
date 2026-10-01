@@ -6,6 +6,7 @@ import type {
   VocabularySpan,
 } from '@lexicon/shared-types';
 import './vocabulary.css';
+import { TranslationModeControl } from './TranslationModeControl';
 
 export function VocabularyText({
   text,
@@ -104,17 +105,7 @@ export function VocabularyText({
   return (
     <span className="vocabulary-reader">
       {onModeChange && (
-        <label className="vocabulary-mode">
-          {strings.vocabularyMode}
-          <select
-            value={mode}
-            onChange={(event) => onModeChange(event.target.value as TranslationMode)}
-          >
-            <option value="Beginner">{strings.vocabularyModeBeginner}</option>
-            <option value="Learning">{strings.vocabularyModeLearning}</option>
-            <option value="Immersion">{strings.vocabularyModeImmersion}</option>
-          </select>
-        </label>
+        <TranslationModeControl mode={mode} strings={strings} onChange={onModeChange} />
       )}
       {parts}
       {translationVi && mode === 'Beginner' && (

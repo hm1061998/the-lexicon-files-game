@@ -10,6 +10,7 @@ import type {
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './dialogue.css';
 import { VocabularyText } from '../vocabulary/VocabularyText';
+import { TranslationModeControl } from '../vocabulary/TranslationModeControl';
 import { DialogueVoiceControls } from './DialogueVoiceControls';
 const FOCUSABLE =
   'button:not(:disabled), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -79,7 +80,7 @@ export function DialogueView({
     };
   }, [returnFocusRef]);
   useEffect(() => {
-    textRef.current?.focus();
+    textRef.current?.focus({ preventScroll: true });
   }, [session.nodeId, session.revision]);
   return (
     <div className="dialogue-overlay">
@@ -95,6 +96,14 @@ export function DialogueView({
               {strings.close}
             </button>
           </div>
+          <div className="dialogue-tools">
+            <TranslationModeControl
+              mode={translationMode}
+              strings={strings}
+              onChange={onTranslationModeChange ?? (() => undefined)}
+            />
+            <DialogueVoiceControls audio={node.audio} strings={strings} />
+          </div>
           <p ref={textRef} tabIndex={-1} lang="en" className="dialogue-text">
             <VocabularyText
               text={node.text}
@@ -107,12 +116,10 @@ export function DialogueView({
               onEncounter={onEncounter}
               onInspect={onInspect}
               onRevealTranslation={onRevealTranslation}
-              onModeChange={onTranslationModeChange}
               tutorialSeen={vocabularyTutorialSeen}
               onTutorialSeen={onVocabularyTutorialSeen}
             />
           </p>
-          <DialogueVoiceControls audio={node.audio} strings={strings} />
           {error && (
             <p role="alert">
               {strings.dialogueError} {error}

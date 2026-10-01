@@ -17,6 +17,27 @@ def wav(path: Path, *, frames: int = 12_000, rate: int = 24_000) -> None:
         audio.writeframes(b'\x01\x00' * frames)
 
 
+def ogg(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    header = bytearray(27)
+    header[:4] = b'OggS'
+    header[5] = 0x06  # beginning and end of the single-page logical stream
+    header[14:18] = (1).to_bytes(4, 'little')
+    header[18:22] = (0).to_bytes(4, 'little')
+    header[26] = 1
+    page = header + b'\x01\x00'
+    crc = 0
+    for value in page:
+        crc ^= value << 24
+        for _ in range(8):
+            if crc & 0x80000000:
+                crc = ((crc << 1) ^ 0x04C11DB7) & 0xFFFFFFFF
+            else:
+                crc = (crc << 1) & 0xFFFFFFFF
+    page[22:26] = crc.to_bytes(4, 'little')
+    path.write_bytes(page)
+
+
 def fixture(root: Path):
     case_dir = root / 'packages/game-content/cases/case-001'
     case_dir.mkdir(parents=True)
@@ -37,6 +58,45 @@ def fixture(root: Path):
 
 
 class AudioAssetValidationTests(unittest.TestCase):
+    def test_cc0_music_loop_requires_valid_ogg_hash_and_source_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture(root)
+            url = '/audio/case-001/music/loop.ogg'
+            music_path = root / 'apps/game-web/public' / url.lstrip('/')
+            ogg(music_path)
+            case_path = root / 'packages/game-content/cases/case-001/case.json'
+            case = json.loads(case_path.read_text())
+            case['audio']['music'] = url
+            case_path.write_text(json.dumps(case))
+            provenance_path = root / 'apps/game-web/public/audio/case-001/provenance.json'
+            provenance = json.loads(provenance_path.read_text())
+            provenance['music'] = {
+                'url': url,
+                'sha256': hashlib.sha256(music_path.read_bytes()).hexdigest(),
+                'license': 'CC0 1.0',
+                'author': 'Example Artist',
+                'sourcePage': 'https://example.org/music',
+                'downloadUrl': 'https://example.org/music.ogg',
+            }
+            provenance_path.write_text(json.dumps(provenance))
+            self.assertEqual(validate_assets(root), [])
+
+            provenance['music']['sha256'] = '0' * 64
+            provenance_path.write_text(json.dumps(provenance))
+            self.assertTrue(any('hash mismatch' in item for item in validate_assets(root)))
+
+            provenance['music']['sha256'] = hashlib.sha256(music_path.read_bytes()).hexdigest()
+            provenance['music']['license'] = 'unknown'
+            provenance_path.write_text(json.dumps(provenance))
+            self.assertTrue(any('license' in item for item in validate_assets(root)))
+
+            provenance['music']['license'] = 'CC0 1.0'
+            music_path.write_bytes(music_path.read_bytes()[:28])
+            provenance['music']['sha256'] = hashlib.sha256(music_path.read_bytes()).hexdigest()
+            provenance_path.write_text(json.dumps(provenance))
+            self.assertTrue(any('truncated Ogg page' in item for item in validate_assets(root)))
+
     def test_valid_fixture_passes(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory); fixture(root)

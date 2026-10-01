@@ -1,5 +1,17 @@
 import { expect, test } from '@playwright/test';
 
+test('loads ambient music only after the first real browser gesture', async ({ page }) => {
+  const requests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('project-utopia.ogg')) requests.push(request.url());
+  });
+  await page.goto('/');
+  await expect.poll(() => page.evaluate(() => Boolean(window.__lexiconDebug))).toBe(true);
+  expect(requests).toHaveLength(0);
+  await page.locator('canvas').click({ position: { x: 300, y: 300 } });
+  await expect.poll(() => requests.length).toBe(1);
+});
+
 async function openAnnaDialogue(page: import('@playwright/test').Page) {
   await page.goto('/');
   await expect

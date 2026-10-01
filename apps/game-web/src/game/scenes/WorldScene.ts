@@ -8,6 +8,7 @@ import type {
 } from '@lexicon/shared-types';
 import { loadSceneTextures } from '../assetManifest';
 import { createRoomLabel } from '../entities/createRoomLabel';
+import { createNpcNameplate } from '../entities/createNpcNameplate';
 import { WorldCueLayer, type CueAnchor } from '../entities/WorldCueLayer';
 import { resolveLabelPlane } from '../systems/labelPlane';
 import { createSceneAsset } from '../entities/createSceneAsset';
@@ -50,6 +51,7 @@ import { unprojectIso, type LogicalPoint } from '../systems/isometricProjection'
 import { facingToward } from '../systems/facingToward';
 import { breathing } from '../systems/breathing';
 import { nameTagPosition } from '../systems/nameTagLayout';
+import { cameraFollowConfig } from '../systems/cameraFollow';
 import { facingTextureKey } from '../assetManifest';
 import { registerCharacterAnimations, walkAnimKey } from '../entities/characterAnimations';
 
@@ -123,6 +125,7 @@ export class WorldScene extends Phaser.Scene {
   private lastAnchor: IdAnchor | null = null;
   /** Canvas CSS size, cached; refreshed on Phaser scale 'resize' instead of every frame. */
   private canvasSize = { width: 1920, height: 1080 };
+  private screenBounds: Bounds = { x: 0, y: 0, width: 0, height: 0 };
   private sinceAnchorMs = 0;
   private interactionTracker!: InteractionTracker;
   private nearbyEventCount = 0;
@@ -151,7 +154,8 @@ export class WorldScene extends Phaser.Scene {
     {
       sprite: Phaser.GameObjects.Sprite;
       point: LogicalPoint;
-      tag: Phaser.GameObjects.Text;
+      tag: Phaser.GameObjects.Container;
+      tagText: Phaser.GameObjects.Text;
       tagWidth: number;
       tagHeight: number;
       phase: number;
@@ -213,6 +217,7 @@ export class WorldScene extends Phaser.Scene {
     } else {
       screenBounds = b;
     }
+    this.screenBounds = screenBounds;
     this.physics.world.setBounds(
       screenBounds.x,
       screenBounds.y,
@@ -251,22 +256,14 @@ export class WorldScene extends Phaser.Scene {
         }
         const npc = options.caseDefinition.npcs.find(({ id }) => id === asset.id);
         if (npc && 'u' in resolved.floorAnchor) {
-          const tag = this.add
-            .text(0, 0, npc.name, {
-              fontFamily: 'Cambria, "Times New Roman", Georgia, serif',
-              fontSize: '18px',
-              color: '#332820',
-              backgroundColor: '#F2E8D5',
-              padding: { x: 8, y: 4 },
-            })
-            .setOrigin(0.5, 0.5)
-            .setDepth(sprite.depth + 1);
+          const nameplate = createNpcNameplate(this, npc.name, sprite.depth + 1);
           this.npcVisuals.set(asset.id, {
             sprite,
             point: resolved.floorAnchor,
-            tag,
-            tagWidth: tag.width,
-            tagHeight: tag.height,
+            tag: nameplate.container,
+            tagText: nameplate.text,
+            tagWidth: nameplate.width,
+            tagHeight: nameplate.height,
             phase: Array.from(asset.id).reduce((n, c) => n + c.charCodeAt(0), 0) * 0.37,
             facing: 'SE',
             walking: false,
@@ -378,7 +375,7 @@ export class WorldScene extends Phaser.Scene {
 
     const camera = this.cameras.main;
     camera.setBounds(screenBounds.x, screenBounds.y, screenBounds.width, screenBounds.height);
-    camera.startFollow(this.player, true);
+    camera.startFollow(this.player, true, 0.08, 0.08);
     // Fade in only when arriving through a transition; the initial boot stays instant so
     // first-frame input latency is unaffected.
     if (this.fadeInPending && !options.motion.reducedMotion()) camera.fadeIn(SCENE_FADE_MS);
@@ -409,6 +406,21 @@ export class WorldScene extends Phaser.Scene {
     if (this.reducedMotion) this.markerTween.pause();
 
     this.uninstallDebug = installDebugHook({
+      cameraState: () => {
+        const camera = this.cameras.main;
+        return {
+          zoom: camera.zoom,
+          scrollX: camera.scrollX,
+          scrollY: camera.scrollY,
+          view: {
+            x: camera.worldView.x,
+            y: camera.worldView.y,
+            width: camera.worldView.width,
+            height: camera.worldView.height,
+          },
+          bounds: { ...this.screenBounds },
+        };
+      },
       player: () => ({ x: this.player.x, y: this.player.y, depth: this.player.depth }),
       logicalPlayer: () => (this.logicalPosition ? { ...this.logicalPosition } : null),
       playerTexture: () => this.player.texture.key,
@@ -420,7 +432,18 @@ export class WorldScene extends Phaser.Scene {
       textureOf: (id) => this.assetTextures.get(id),
       npcTexture: (id) => this.npcVisuals.get(id)?.sprite.texture.key,
       npcScaleY: (id) => this.npcVisuals.get(id)?.sprite.scaleY,
-      npcName: (id) => this.npcVisuals.get(id)?.tag.text,
+      npcName: (id) => this.npcVisuals.get(id)?.tagText.text,
+      npcNameplate: (id) => {
+        const visual = this.npcVisuals.get(id);
+        if (!visual) return undefined;
+        return {
+          text: visual.tagText.text,
+          hasPaperPlate: visual.tag.list.length === 2,
+          textColor:
+            typeof visual.tagText.style.color === 'string' ? visual.tagText.style.color : '',
+          gap: visual.sprite.y - CHARACTER_FIGURE_HEIGHT - (visual.tag.y + visual.tagHeight / 2),
+        };
+      },
       npcAnim: (id) => {
         const sprite = this.npcVisuals.get(id)?.sprite;
         return sprite
@@ -833,6 +856,11 @@ export class WorldScene extends Phaser.Scene {
     const rect = this.game.canvas.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0)
       this.canvasSize = { width: rect.width, height: rect.height };
+    const camera = this.cameras.main;
+    const follow = cameraFollowConfig(this.canvasSize, camera, this.screenBounds);
+    camera.setZoom(follow.zoom);
+    camera.setLerp(follow.lerpX, follow.lerpY);
+    camera.setDeadzone(follow.deadZoneWidth, follow.deadZoneHeight);
   }
 
   private drawOutline(box: Bounds): void {
