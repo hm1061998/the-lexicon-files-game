@@ -135,3 +135,13 @@
 ## Execution Handoff
 
 Spec và plan đã được người dùng duyệt; implementation Tasks 1–4, quality gates và verification đã hoàn thành. Còn chờ người dùng nghe thử ambience/footsteps và xem lại screenshots trước khi đóng Phase 11E. Phase 12 chưa bắt đầu.
+
+## Tiếp tục phiên 2026-10-01
+
+- [x] Đối chiếu memory với Git và remote thật: `origin/dev` đã có `85229df`; thông tin chờ push cũ không còn đúng cho implementation trước.
+- [x] Đóng phần kỹ thuật của prior partial review: reviewer độc lập xác nhận tám sửa lỗi cũ, không còn Critical/Important.
+- [x] Sửa hai Minor: status giọng đọc đạt 14px; fixture voice có cấu trúc `DialogueAudio` hợp lệ và assert URL.
+- [x] Bổ sung E2E camera kiểm bounds/player ở bốn rìa của Office/Archive, cả 1280×720 và 760×600.
+- [x] Theo phản hồi người dùng, thay Project Utopia bằng Mystical Piano CC0, hướng thư giãn; cập nhật provenance và source/output hashes.
+- [x] Chạy E2E toàn game trước sửa (114/114), rồi các suite ảnh hưởng sau sửa (7/7); audio validator và Python tests 6/6.
+- [ ] Người dùng nghiệm thu bản nhạc thay thế và hình ảnh; giữ Phase 11E mở.

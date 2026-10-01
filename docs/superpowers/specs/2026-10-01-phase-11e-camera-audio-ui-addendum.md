@@ -1,6 +1,6 @@
 # Bổ sung thiết kế — camera, âm thanh nền và giao diện
 
-**Trạng thái:** Bản nháp cần người dùng duyệt trước khi triển khai. Bổ sung cho feedback Phase 11E; không sửa product rules đã chốt.
+**Trạng thái:** Spec và plan đã được người dùng duyệt ngày 2026-10-01; implementation đã bàn giao, còn chờ nghiệm thu hình ảnh/âm thanh. Bổ sung cho feedback Phase 11E; không sửa product rules đã chốt.
 
 ## Bối cảnh
 
@@ -54,3 +54,7 @@ Các link trên là nguồn nghiên cứu, chưa xác nhận dùng file nào và
 - Camera khoảng 1.2× là điểm bắt đầu để nghiệm thu; có thể cần chỉnh bằng ảnh thử. Phần addendum không cam kết zoom slider.
 - Hai candidate CC0 chỉ là đề xuất; cần nghe thử trước khi chọn. Nếu không hợp, tìm candidate CC0 khác thay vì tự ý chọn nhạc Pixabay có Content ID.
 - Chỉnh UI giới hạn vào cụm điều khiển dialogue/notebook; không làm lại nội dung modal, vocabulary interaction hoặc case flow.
+
+## Cập nhật nghiệm thu 2026-10-01
+
+Người dùng yêu cầu đổi Project Utopia và làm rõ hướng nhạc: “nhạc thư giãn thôi, đừng quá u tối”. Candidate thay thế là **Mystical Piano** của Indieteur, CC0, cắt tại 1:35 theo hướng dẫn loop trên trang nguồn. Giữ audio owner, gain nền và lifecycle đã duyệt; cập nhật file local, case URL, provenance và kiểm tra asset/E2E. Chưa coi candidate mới hoặc hình ảnh đã được người dùng nghiệm thu.

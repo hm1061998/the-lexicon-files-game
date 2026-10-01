@@ -1,5 +1,13 @@
 # Provenance của asset AI
 
+## Âm thanh bên thứ ba — Phase 11E
+
+- Nhạc nền hiện tại: `apps/game-web/public/audio/case-001/music/mystical-piano-loop.ogg`, **Mystical Piano** của **Indieteur**, [nguồn CC0](https://opengameart.org/content/mystical-piano), [WAV gốc](https://opengameart.org/sites/default/files/Mystical%20Piano.Wav). Cắt 0:00–1:35 theo hướng dẫn loop của tác giả, encode Ogg Vorbis bằng soundfile 0.14.0; không đổi gain/fade. Đã thay Project Utopia ngày 2026-10-01 theo yêu cầu nhạc thư giãn, không quá u tối. Attribution không bắt buộc; vẫn ghi tên tác giả.
+- Sáu footsteps CC0 của **GboxMikeFozzy**: [Footsteps-0](https://opengameart.org/content/footsteps-0), giữ nguyên recordings.
+- URL tải từng file, SHA-256 nguồn/kết quả, license và transformation nằm trong `apps/game-web/public/audio/case-001/provenance.json`. Cảm nhận âm thanh và nghiệm thu loop vẫn cần người dùng nghe thử.
+
+## Tài sản hình ảnh
+
 Mỗi asset đưa vào `assets/` phải có một dòng. Không dùng asset nếu điều khoản của công cụ cấm dùng thương mại hoặc không rõ.
 
 > Lưu ý: `assets/_incoming/` được giữ cục bộ, không commit (ảnh nguồn AI, điều khoản đầu ra đã được chủ dự án xác nhận ngày 2026-09-30; vẫn giữ cục bộ vì là ảnh thô). `tools/art-codegen/build_game_assets.py` cần thư mục này để tái tạo `apps/game-web/public/assets`.

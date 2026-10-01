@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('loads ambient music only after the first real browser gesture', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', (request) => {
-    if (request.url().includes('project-utopia.ogg')) requests.push(request.url());
+    if (request.url().includes('mystical-piano-loop.ogg')) requests.push(request.url());
   });
   await page.goto('/');
   await expect.poll(() => page.evaluate(() => Boolean(window.__lexiconDebug))).toBe(true);
@@ -54,6 +54,13 @@ test('voice load failure leaves authored text and choices usable', async ({ page
     .poll(() => page.locator('.dialogue-voice-controls').getAttribute('data-voice-status'))
     .toBe('error');
   await expect(page.getByText(/Không thể tải giọng đọc/)).toBeVisible();
+  await page.setViewportSize({ width: 760, height: 600 });
+  const status = page.locator('.dialogue-voice-controls [role="status"]');
+  expect(
+    await status.evaluate((node) => parseFloat(getComputedStyle(node).fontSize)),
+  ).toBeGreaterThanOrEqual(14);
+  await expect(status).toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(760);
   await expect(
     page.getByText('I left the meeting early. I had a call with a client.'),
   ).toBeVisible();

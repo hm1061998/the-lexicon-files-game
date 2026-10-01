@@ -299,14 +299,19 @@
     }
   },
   "music": {
-    "url": "/audio/case-001/music/project-utopia.ogg",
-    "sha256": "88d9956c98282523dd1a00fc6023ee01619818c4ce138c52816e0a39f837fa50",
+    "url": "/audio/case-001/music/mystical-piano-loop.ogg",
+    "sha256": "7d28fa5059789a442cdd1dac9d7fb2f70bde9bbfba32bdcbc08d7fe2008bb2d8",
     "format": "Ogg Vorbis",
-    "author": "congusbongus",
-    "title": "Project Utopia (seamless loop)",
+    "author": "Indieteur",
+    "title": "Mystical Piano",
     "license": "CC0 1.0",
-    "sourcePage": "https://opengameart.org/content/project-utopia-seamless-loop",
-    "downloadUrl": "https://opengameart.org/sites/default/files/Project%20Utopia.ogg",
-    "attribution": "Not required; source describes the track as a short, moody ambient piece."
+    "sourcePage": "https://opengameart.org/content/mystical-piano",
+    "downloadUrl": "https://opengameart.org/sites/default/files/Mystical%20Piano.Wav",
+    "attribution": "Music by Indieteur. Attribution appreciated but not required (CC0 1.0).",
+    "sourceSha256": "e87ccffc94434be0d94dd91113725c13a42a88805f4091e5cecc7008fe8ba82d",
+    "durationSeconds": 95,
+    "sampleRate": 44100,
+    "channels": 2,
+    "transformation": "Trimmed source WAV to 0:00-1:35 following the author's loop instructions; encoded Ogg Vorbis with soundfile 0.14.0. No gain, fade, or other arrangement changes."
   }
 }

@@ -57,7 +57,8 @@ describe('presentation audio', () => {
     expect(created[0]?.volume).toHaveBeenLastCalledWith(0.025);
     audio.setListeningActive(false);
     expect(created[0]?.volume).toHaveBeenLastCalledWith(0.07);
-    audio.playVoice('voice', '/audio/voice.wav');
+    audio.playVoice('voice', { url: '/audio/voice.wav', textSha256: 'voice-text-hash' });
+    expect(options[1]?.src).toEqual(['/audio/voice.wav']);
     created[1]?.emit('play');
     expect(created[0]?.volume).toHaveBeenLastCalledWith(0.025);
     audio.stopVoice();
@@ -115,8 +116,8 @@ describe('presentation audio', () => {
     }) as (options: HowlOptions) => AudioHowl);
     const states: string[] = [];
     audio.subscribeVoice(({ status }) => states.push(status));
-    audio.playVoice('one', '/audio/a.wav');
-    audio.playVoice('two', '/audio/b.wav');
+    audio.playVoice('one', { url: '/audio/a.wav', textSha256: 'first-text-hash' });
+    audio.playVoice('two', { url: '/audio/b.wav', textSha256: 'second-text-hash' });
     created[0]?.emit('end');
     expect(audio.getVoiceState()).toEqual({ status: 'loading', key: 'two' });
     created[1]?.emit('play');

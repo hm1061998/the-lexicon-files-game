@@ -19,6 +19,59 @@ async function cameraState(
   });
 }
 
+async function expectCameraContainsPlayer(page: import('@playwright/test').Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const debug = window.__lexiconDebug;
+        if (!debug) return false;
+        const { view, bounds } = debug.cameraState();
+        const player = debug.player();
+        return (
+          view.x >= bounds.x - 2 &&
+          view.y >= bounds.y - 2 &&
+          view.x + view.width <= bounds.x + bounds.width + 2 &&
+          view.y + view.height <= bounds.y + bounds.height + 2 &&
+          player.x >= view.x &&
+          player.x <= view.x + view.width &&
+          player.y >= view.y &&
+          player.y <= view.y + view.height
+        );
+      }),
+    )
+    .toBe(true);
+}
+
+test('Office and Archive keep the player visible and clamp all four edges through resize', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.waitForFunction(() => window.__lexiconDebug !== undefined);
+  for (const sceneId of ['main_office', 'archive']) {
+    if (sceneId === 'archive') {
+      await page.evaluate(() => window.__lexiconDebug!.requestTransition('archive', 'from_office'));
+      await expect
+        .poll(() => page.evaluate(() => window.__lexiconDebug?.logicalPlayer()?.u))
+        .toBe(14.85);
+    }
+    for (const viewport of [
+      { width: 760, height: 600 },
+      { width: 1280, height: 720 },
+    ]) {
+      await page.setViewportSize(viewport);
+      for (const [u, v] of [
+        [0.5, 0.5],
+        [15.5, 0.5],
+        [0.5, 11.5],
+        [15.5, 11.5],
+      ]) {
+        await page.evaluate(([u, v]) => window.__lexiconDebug!.teleportLogical(u!, v!), [u, v]);
+        await expectCameraContainsPlayer(page);
+      }
+    }
+  }
+});
+
 test('camera zooms closer, follows the player, and stays inside the scene bounds', async ({
   page,
 }) => {
