@@ -1,4 +1,24 @@
 export interface UiStrings {
+  readonly deductionBoard: string;
+  readonly openDeductionBoard: string;
+  readonly openNotebookFromBoard: string;
+  readonly notebookPeopleHeading: string;
+  readonly notebookEvidenceHeading: string;
+  readonly notebookVocabularyHeading: string;
+  readonly notebookVocabularyExamples: string;
+  readonly notebookVocabularySources: string;
+  readonly notebookRelatedPeople: string;
+  readonly deductionFactsHeading: string;
+  readonly deductionCluesHeading: string;
+  readonly deductionInstructions: string;
+  readonly deductionClearSelection: string;
+  readonly deductionRelationships: string;
+  readonly vocabularyStageUnknown: string;
+  readonly vocabularyStageRecognized: string;
+  readonly vocabularyStageUnderstood: string;
+  readonly vocabularyStageUsed: string;
+  readonly vocabularyStageMastered: string;
+
   readonly investigator: string;
   readonly dialogue: string;
   readonly dialogueError: string;

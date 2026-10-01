@@ -4,6 +4,20 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 import viStrings from '../../ui/vi.json';
 
 describe('parseUiStrings', () => {
+  it('provides labels for the separate deduction board and readable notebook pages', () => {
+    const strings = parseUiStrings(viStrings, 'ui/vi.json') as unknown as Record<string, string>;
+    for (const key of ['deductionBoard', 'openDeductionBoard', 'openNotebookFromBoard',
+      'notebookPeopleHeading', 'notebookEvidenceHeading', 'notebookVocabularyHeading',
+      'notebookVocabularyExamples', 'notebookVocabularySources', 'notebookRelatedPeople',
+      'deductionFactsHeading', 'deductionCluesHeading', 'deductionInstructions',
+      'deductionClearSelection', 'deductionRelationships', 'vocabularyStageUnknown',
+      'vocabularyStageRecognized', 'vocabularyStageUnderstood', 'vocabularyStageUsed',
+      'vocabularyStageMastered']) expect(strings[key]?.length).toBeGreaterThan(0);
+  });
+  it('rejects an empty board label with a readable content error', () => {
+    expect(() => parseUiStrings({ ...viStrings, deductionBoard: '' }, 'ui/vi.json'))
+      .toThrow('deductionBoard');
+  });
   it('provides notebook statement and interview status labels', () => {
     const strings = parseUiStrings(viStrings, 'ui/vi.json');
     expect(strings.notebookStatementsHeading).toBe('Lời khai đã ghi nhận');
