@@ -12,6 +12,7 @@
     "dev": "nx run @lexicon/game-web:dev",
     "build": "nx run-many -t build",
     "test": "nx run-many -t test",
+    "test:coverage": "npm run test:coverage -w @lexicon/game-core -w @lexicon/learning-engine",
     "test:e2e": "nx run @lexicon/game-web:test:e2e",
     "lint": "nx run-many -t lint",
     "memory:check": "nx run ai-memory:check",
