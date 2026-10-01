@@ -1,4 +1,6 @@
 export type LexiconDebug = {
+  /** Last accepted canvas pointer conversion; read-only diagnostic, dev builds only. */
+  pointerState(): { x: number; y: number; targetId: string | null; status: string } | null;
   cameraState(): {
     zoom: number;
     scrollX: number;

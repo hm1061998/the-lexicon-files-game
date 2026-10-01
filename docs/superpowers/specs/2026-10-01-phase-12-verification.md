@@ -1,5 +1,7 @@
 # Phase 12 — báo cáo verification (2026-10-01)
 
+Người dùng chấp nhận Phase 12 ngày 2026-10-01 và yêu cầu giải quyết nợ Phase 11 trong lượt tiếp theo; acceptance này không thay đổi các limitations của số đo bên dưới.
+
 Spec: `2026-10-01-phase-12-testing-performance-design.md`. Plan: `docs/superpowers/plans/2026-10-01-phase-12-testing-performance.md`. Phạm vi: Testing & Performance; nợ Phase 11 được hoãn theo yêu cầu.
 
 ## Tóm tắt

@@ -167,6 +167,12 @@ export class WorldScene extends Phaser.Scene {
   private keyGate = createGameInputGate();
   private portals: ReturnType<typeof createPortalPresentation>[] = [];
   private lastPointerAt = -Infinity;
+  private pointerDiagnostic: {
+    x: number;
+    y: number;
+    targetId: string | null;
+    status: string;
+  } | null = null;
   private blockedIndicator: Phaser.GameObjects.Graphics | null = null;
   private indicatorTimer: Phaser.Time.TimerEvent | null = null;
   private cancelInput = () => {
@@ -228,6 +234,7 @@ export class WorldScene extends Phaser.Scene {
     this.transitioning = false;
     this.navigation.cancel();
     this.lastPointerAt = -Infinity;
+    this.pointerDiagnostic = null;
     this.areas = [];
     this.depths.clear();
     this.assetTextures.clear();
@@ -461,6 +468,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.reducedMotion) this.markerTween.pause();
 
     this.uninstallDebug = installDebugHook({
+      pointerState: () => (this.pointerDiagnostic ? { ...this.pointerDiagnostic } : null),
       cameraState: () => {
         const camera = this.cameras.main;
         return {
@@ -842,14 +850,22 @@ export class WorldScene extends Phaser.Scene {
       },
     }));
     const target = pickWorldTarget(worldPoint, targets, occluders);
+    if (import.meta.env.DEV)
+      this.pointerDiagnostic = {
+        ...worldPoint,
+        targetId: target?.interactableId ?? null,
+        status: 'pending',
+      };
     // An opaque wall consumes a click, including floor clicks, rather than selecting behind it.
     if (!target && occluders.some((o) => isPointOccluded(worldPoint, o))) {
+      if (this.pointerDiagnostic) this.pointerDiagnostic.status = 'occluded';
       this.navigation.cancel();
       return;
     }
     if (target) {
       const a = this.areas.find((a) => a.id === target.interactableId)!;
       if (Math.hypot(this.player.x - a.x, this.player.y - a.y) <= a.radius) {
+        if (this.pointerDiagnostic) this.pointerDiagnostic.status = 'interaction';
         this.navigation.cancel();
         this.bus.emit('interaction:triggered', { interactableId: target.interactableId });
         return;
@@ -864,6 +880,7 @@ export class WorldScene extends Phaser.Scene {
       body: { u: -0.18, v: -0.18, width: 0.36, height: 0.36 },
       projection,
     });
+    if (this.pointerDiagnostic) this.pointerDiagnostic.status = result.status;
     this.navigation.cancel();
     if (result.status === 'found') this.navigation.replace(result.points);
     else {

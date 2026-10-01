@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findNavigationPath, type NavigationWorld } from './navigation';
+import { findNavigationPath, navigationSegmentClear, type NavigationWorld } from './navigation';
 import { moveWithCollisions } from './logicalCollision';
 import { projectIso } from './isometricProjection';
 import { loadCaseDefinition, expandWalls } from '@lexicon/game-content';
@@ -49,10 +49,9 @@ describe('navigation', () => {
       const fixture = { ...world, projection: scene.projection, bounds: scene.worldBounds, solids };
       for (const r of resolved) {
         if (!r.asset.interaction || !r.interactionAnchor || !('u' in r.interactionAnchor)) continue;
-        const start = scene.spawnPoints.default!;
-        if (!('u' in start)) continue;
-        expect(
-          findNavigationPath(
+        for (const [spawnId, start] of Object.entries(scene.spawnPoints)) {
+          if (!('u' in start)) continue;
+          const result = findNavigationPath(
             start,
             {
               kind: 'interaction',
@@ -60,9 +59,18 @@ describe('navigation', () => {
               radiusPx: r.asset.interaction.radius - 2,
             },
             fixture,
-          ).status,
-          `${scene.id}/${r.id}`,
-        ).toBe('found');
+          );
+          expect(result.status, `${scene.id}/${spawnId}/${r.id}`).toBe('found');
+          if (result.status !== 'found') continue;
+          let previous = start;
+          for (const point of result.points) {
+            expect(
+              navigationSegmentClear(previous, point, fixture),
+              `${scene.id}/${spawnId}/${r.id} segment`,
+            ).toBe(true);
+            previous = point;
+          }
+        }
       }
       if (scene.id === 'main_office') {
         expect(

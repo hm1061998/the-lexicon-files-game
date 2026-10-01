@@ -1,6 +1,6 @@
 # Phase 12 — Testing & Performance: thiết kế
 
-Ngày: 2026-10-01. Trạng thái: **chờ người dùng duyệt**. Nguồn: roadmap mục 31 (`docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`).
+Ngày: 2026-10-01. Trạng thái: **đã triển khai, verified và người dùng chấp nhận Phase 12 ngày 2026-10-01**. Nguồn: roadmap mục 31 (`docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`).
 
 ## 1. Mục tiêu và phạm vi
 
