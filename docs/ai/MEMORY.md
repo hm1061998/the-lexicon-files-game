@@ -1,76 +1,74 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T16:10:00+07:00
+updated_at: 2026-10-01T22:52:06+07:00
 phase: phase-11e
-status: proposed
-result_commit: a7ea0c2
+status: complete
+result_commit: 19d3450
 active_spec: docs/superpowers/specs/2026-10-01-notebook-people-design.md
 active_plan: docs/superpowers/plans/2026-10-01-notebook-people.md
 ---
 
 ## Metadata
 
-- Phase11E/12 đã được người dùng chấp nhận; nợPhase11 đã đóng. Gói bounded viewport/focus sau playtest được duyệt và đã sửa trong cb18871. Báo cáo docs/ai/2026-10-01-viewport-focus-verification.md.
-- Người dùng yêu cầu tiếp tục và push; đã push origin/dev tới2b97bc8, gồm playtest/viewport/memory. Phân tích People mới d2b6541 và memory kế tiếp local, chưa push trước xác nhận.
+- Phase11E/12 và viewport/focus trước People đã accepted. Gói Notebook People hiện complete về implementation/verification; push bị auto-review chặn, chưa gọi là đã push.
+- Reconcile phiên này: HEAD/ref origin/dev lúc bắt đầu cùng ecb7b21; git ls-remote qua escalation xác nhận remote dev ecb7b21. Memory cũ ghi docs People chưa push bị stale; metadata/result theo Git.
 
 ## Current Phase
 
-- Phase11E/12 complete theo acceptance trước. Gói viewport/focus complete; không tự mở phase hoặc cải thiện khác.
+- Notebook People hoàn tất theo file plan đã được người dùng duyệt qua “Duyệt plan, triển khai”; Native inline trên dev. Không tự mở phase/gói khác.
 
 ## Active Goal
 
-- Người dùng đồng ý đi tiếp qua “duyệt plan” sau khi nhận spec, khi chưa có plan. Đã lập/tự review plan tiếng Việt a7ea0c2 từ spec; chờ review file plan thực tế trước code. Giữ Native inline.
+- Implementation và verification People đã đạt; chỉ còn push code/memory lên origin/dev khi có xác nhận trực tiếp mà automatic approval review yêu cầu.
 
 ## Current Status
 
-- People spec: notebookStatements tham chiếu node/positive own-tree recordedCondition, không transcriptstate mới. David hai nhánh dùng chung q3read cần hai khóa flag content riêng, giữ flagcompletion cũ; không suy đoán transcript legacy thiếu flag. Chi tiết ở spec, chưa implement.
-
-- Viewport fixed/clip không cuộn theo focus; notebook/evidence border-box và max-height vừa viewport; Settings dài cuộn nội bộ. Notices learning/settings recovery đặt trong viewport, không theo sau canvas trong flow.
-- Native Tab/Shift+Tab đưa control vào panel nhìn thấy, Enter đóng evidence; không dùng preventScroll hàng loạt hoặc reset scroll bằng timer.
-- Playtest hai persona AI bản9cff732: chuột1/5evidence, ba nhánhAnna; keyboard0/5 và lỗi cuộn86px. Đây không phải dữ liệu người dùng thật, chưa đánh giá fullcase/portal/audio. Lỗi viewport đã sửa riêng; People vẫn render empty vô điều kiện, cần thiết kế mapping dữ kiện đã khám phá.
+- Tasks1–5 đã commit b8e7fd8/25cf6a3/0db1c9f/3f25b26/19d3450. Metadata optional/validator, flags David riêng, selector thuần, UI/context gốc, keyboard/focus và browser đã hoàn tất.
+- Không state transcript/visitedNPC/save version/backend/dependency mới. Code/spec/plan/report/ảnh ở result19d3450; memory commit riêng kế tiếp.
+- Báo cáo đầy đủ output, files, tests, failures/reruns, review và limitations: docs/ai/2026-10-01-notebook-people-verification.md. Ảnh1280/760: docs/ai/playtests/2026-10-01-notebook-people/.
 
 ## Completed
 
-- Phase0A–12 theo mức người dùng chốt. Debtclosure bb109fe/a5c1822/e4f5780; acceptance cổng đồng/nhạc Mystical Piano. Báo cáo docs/ai/2026-10-01-phase-11-debt-closure-verification.md và các báo cáoPhase12.
-- Playtest report/ảnh: docs/ai/2026-10-01-player-playtest-feedback.md và docs/ai/playtests/2026-10-01/.
-- Viewport fix cb18871:4CSS, browser regression và báo cáo. REDroot86, notebookbottom748>720, evidencetop−8; GREEN các trường hợp này. Review độc lập không Critical/Important source, Important oracle evidence đã tăng native keyboard traversal và đạt GREEN.
+- Phase0A–12 theo acceptance trước; debtclosure bb109fe/a5c1822/e4f5780, nhạc Mystical Piano/cổng đồng đã accepted; pointers các báo cáoPhase12/debtclosure trong docs/ai.
+- Viewport cb18871, report docs/ai/2026-10-01-viewport-focus-verification.md, giữ fixed/clip và regression.
+- People5tasks theo active plan: content185/185; frontend510/510; nhóm6file E2E cuối29/29 (8.3m); DoD tất cảpass. Hai Important review đã sửa (focus trap + legacy fixture), không Critical/Minor/Declined to judge còn lại.
 
 ## In Progress
 
-- Không có.
+- Không implementation dở. Push đang chờ direct approval do auto-review rejection; không retry/bypass khi chưa có bằng chứng xác nhận mới.
 
 ## Active Decisions
 
-- Native inline trên dev; npm + Nx; không dependency/backend mới, không tự push hoặc mở gói People/onboarding.
-- Nhạc mystical-piano-loop.ogg và cổng đồng/ánh vàng nhẹ đã accepted. Click xa đi tới, click lại tương tác; chuột/phím song song. Translation selector chỉ Settings.
-- Node22 verification dùng .superpowers/runtime/node-v22.23.3-win-x64 prepend PATH, npm10.9.9, NX_DAEMON=false. OfficialZIP đã kiểmSHA256; không dùng npm-shim cũ hardcodeNode24, không đổi Node hệ thống.
-- Giữ hai debug.log untracked; git add đường dẫn cụ thể. Git cần -c safe.directory=F:/work/the-lexicon-files-game.
-- Resize lệch18px trước đây không tái hiện; regression camera ổn định1.5s, chưa chứng minh mọi timing đang resize/follow.
-- Viewport/focus verification Chromium Windows. File regression mới budget90s cho chuỗi đa-panel dài47.8s; assertion scroll0/focus trong panel không nới. Không chạy lại full E2E toàn repo trong gói này.
-- Các MinorPhase12 ngoài phạm vi giữ theo docs/superpowers/specs/2026-10-01-phase-12-verification.md; bundle advisory>500kB giữ nguyên.
+- Native inline dev; npm+Nx; một gói People theo spec. Không tự mở onboarding/pathfinding hoặc phase kế tiếp.
+- Notebook metadata positive own-tree node/choice writer, không completionFlag; condition hiện tại không ẩn lịch sử. Save David cũ không đoán hai answer3 thiếu khóa; giữ progress.
+- Vocabulary context dialogue:tree:node:text gốc; Settings sở hữu mode; callbacks learning idempotent, node ẩn không mount.
+- Notebook focus trap scoped trên section, loại disabled/hidden controls, cleanup listener; focus restore previous control hoặc canvas container tabindex=-1. Không preventScroll hàng loạt/timer reset.
+- Node22.23.3 riêng ở .superpowers/runtime/node-v22.23.3-win-x64, npm10.9.9, NX_DAEMON=false. OfficialZIP SHA256 2b0ff57b049cda1bbcea2240eec20467018713c1efe1f7360c2681859b90ed71. HostNode24/no npmPATH; không dùng shim cũ/đổi Node hệ thống.
+- Giữ apps/game-web/debug.log untracked, git add đường dẫn cụ thể. Git tại D:/Works/the-lexicon-files-game hoạt động, safe.directory F: cũ không cần.
+- Skill Bash helpers thiếu basename/dirname; dùng equivalent Python briefs/PowerShell ledger. Ruling này và cost bookkeeping ghi trong report; không đổi scope/product.
+- One independent final reviewer, hai Important sửa một pass bằng browser RED→GREEN; không dispatch re-review. Không Minor deferred mới.
+- Giữ các MinorPhase12 theo report cũ và bundle advisory>500kB; browser Chromium Windows, chỉ nhóm6file liên quan, không full E2E toàn repo.
 
 ## Blockers
 
-- Không có trong gói viewport/focus đã duyệt.
+- Automatic approval review từ chối git push origin dev: cần human trực tiếp xác nhận payload và remote cụ thể, chưa coi remote trusted. Remote URL đã đọc từ git: https://github.com/hm1061998/the-lexicon-files-game.git. Không có push thành công trong phiên này.
 
 ## Next Actions
 
-1. Người dùng review/duyệt plan docs/superpowers/plans/2026-10-01-notebook-people.md; sau đó Native inline 5 task contract/content/selector/UI/browser theo plan và spec.
-2. Các đề xuất còn lại: cue mục tiêu/hướng dẫn chuột, feedback click bị chặn, copy toggleminimap; chưa tự triển khai. Chơi lại tiếp cận bàn compact sau fix trước kết luận collider/pathfinding lỗi.
-3. Phân tích/spec/plan People mới phải được xác nhận trước push; phần viewport đã push theo yêu cầu.
+1. Nhận direct approval cho push các commit People b8e7fd8..19d3450 và memory handoff lên origin/dev của https://github.com/hm1061998/the-lexicon-files-game.git; sau đó push fast-forward, xác nhận SHA remote và cập nhật handoff.
+2. Chờ yêu cầu mới ngoài People; không tự triển khai cue onboarding/blocked click/minimap copy hoặc phase khác. Nếu tiếp tục các đề xuất playtest, dùng report và design workflow.
 
 ## Verification
 
-- Node22: npm run lint/test/build/typecheck/format pass; Nx lint/test7projects (6cache, frontend chạy), frontend499/76files; các package không đổi dùng cache. Build25.39kBCSS/1946.25kBJS, gzip5.41/474.44. Không backend nên không dotnet.
-- Nhóm E2E rộng36/38(5.6m) trước chỉnh recovery và oracle; journey đến caseclosed/reload, navigation/cổng/dialogue/viewport pass. Hai failure đã xử lý; chạy lại toàn bộ nhóm ảnh hưởng viewport-focus/learning/settings8/8(2.4m) trên source cuối. Không cộng hai lượt thành fullsuite.
-- Recovery notice ngoài viewport được CSS đưa vào viewport; native focus evidence360px/Settings240px đạt. Test thứ nhất chạm budget30s trước đây, sau90s đạt với assertion nguyên trạng. Format/memory/diff check trước commit handoff.
+- Final Node22: npm run format/lint/test/build/typecheck/memory:check đều exit0; lint/test7projects6cache, frontend chạy mới510/78files, content185/16files cache từ lượt không-cache task4. Build25.79kBCSS/1951.56kBJS gzip5.48/475.71, advisory>500kB. Không backend nên không dotnet.
+- Final độc lập E2E29/29 (8.3m), một worker, notebook-people/viewport-focus/dialogue/learning/settings/journey. Journey caseclosed/reload, branches/legacy, learning context, Settings, native keyboard/mouse/inner scroll đềupass.
+- Các lượt trước:25/29 gồm goto ERR_NO_BUFFER_SPACE, fixture thiếu eligible facts và focus escape; diagnostic legacypass/focus contains=false; nhómfix8/10 còn targetrestore outer root không focusable. Tất cả xử lý/rerun trong report; không cộng nhiều lượt thành green suite.
+- TDD metadata/content/selector/UI và browser baseline empty đều đã quan sátRED→GREEN. Ảnhdesktop/compact đã xem; năm tab wrap không tràn ngang, longlist cuộn nội bộ.
 
 ## Latest Handoff
 
-- Push completed2b97bc8. People plan result a7ea0c2, memory commit kế tiếp; plan chờ review trước code. Docs mới local chưa push. Phiên này chỉ sửa tài liệu; diff check và memory validator là kiểm tra mới, các kết quả sản phẩm phía trên thuộc viewport trước đó.
-
-- Result cb18871 đã commit trước memory. Báo cáo đầy đủ output/limitations/review: docs/ai/2026-10-01-viewport-focus-verification.md. Scratch logs .superpowers/verification/viewport-focus/ ignored; kết quả viewport đã push.
+- Result19d3450 đã commit trước memory này. Local implementation complete; push chưa thành công vì automatic approval review. Cần hỏi trực tiếp một lần với payload/remote cụ thể, không hỏi lại execution hoặc sửa code đã verified.
 
 ## Required Reading
 
-- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, report playtest và viewport verification ở trên; docs01–03/art06/ARCHITECTURE nếu mở cải thiện khác. Navspec và debtclosure/Phase12 report để giữ quyết định đã chốt.
+- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, active spec/plan, report People ở trên; report playtest/viewport và docs01–03/art06/ARCHITECTURE nếu cần mở scope khác.
