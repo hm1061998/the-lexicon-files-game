@@ -28,6 +28,9 @@ test('minimap drawing, player marker, legend and padding consume clicks', async 
           : { x: box.x + box.width / 2, y: box.y + box.height / 2 };
       await page.mouse.click(point.x, point.y);
       await page.waitForTimeout(350);
+      // A leaked click can be rejected as invalid/occluded without changing position.
+      // No world command may be received at all, including commands that cancel a route.
+      expect(await page.evaluate(() => window.__lexiconDebug!.pointerState()), selector).toBeNull();
       expect(await position(page), selector).toEqual(before);
       expect(await page.evaluate(() => window.__lexiconDebug!.triggeredEvents()), selector).toBe(
         triggered,

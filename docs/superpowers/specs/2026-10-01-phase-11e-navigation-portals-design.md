@@ -1,6 +1,6 @@
 # Phase 11E — Camera gần, điều khiển chuột/phím và cổng chuyển scene
 
-**Trạng thái:** Người dùng đã duyệt hướng thiết kế và spec trong chat ngày 2026-10-01. Implementation plan được lập từ spec này và chờ review trước coding. Chưa triển khai phạm vi mới.
+**Trạng thái:** Đã duyệt, triển khai và kiểm chứng; người dùng chấp nhận cổng đồng/ánh vàng nhẹ cùng nhạc Mystical Piano ngày 2026-10-01. Nợ kỹ thuật đã đóng, xem `docs/ai/2026-10-01-phase-11-debt-closure-verification.md`.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -15,7 +15,7 @@ Phạm vi gồm sáu phần:
 5. Click để đi và tương tác, có tìm đường tránh vật cản.
 6. Hai cổng chuyển scene với hình dáng bục đồng và hiệu ứng ánh vàng tiết chế.
 
-Giữ Phase 11E mở. Không bắt đầu Phase 12, không thêm backend, dependency, nội dung học, scene thứ ba, zoom slider hoặc hệ thống teleport tùy ý trong cùng scene.
+Phạm vi triển khai của spec chỉ thuộc Phase 11E; không thêm backend, dependency, nội dung học, scene thứ ba, zoom slider hoặc hệ thống teleport tùy ý trong cùng scene. Phase 12 được triển khai và chấp nhận riêng theo spec/plan của phase đó.
 
 ## 2. Nguồn và quyết định đã chốt
 
