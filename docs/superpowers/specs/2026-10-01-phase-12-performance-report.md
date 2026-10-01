@@ -8,11 +8,13 @@ Mỗi vòng = Office→Archive→Office + mở/đóng notebook. Có một vòng 
 
 | Số vòng | Texture | Listener | Node DOM | Heap trước → sau | Tỉ lệ |
 | ------- | ------- | -------- | -------- | ---------------- | ----- |
-| 10 | 70 → 70 | 56 → 56 | 166 → 166 | 44.8 → 46.6 MB | 1.039 |
-| 10 | 70 → 70 | 56 → 56 | 166 → 166 | 45.2 → 46.9 MB | 1.037 |
-| 30 | 70 → 70 | 56 → 56 | 166 → 166 | 45.2 → 47.1 MB | 1.042 |
-| 30 | 70 → 70 | 56 → 56 | 166 → 166 | 44.7 → 47.5 MB | 1.062 |
+| 10 | 70 → 70 | 80 → 80 | 166 → 166 | 44.8 → 46.6 MB | 1.039 |
+| 10 | 70 → 70 | 80 → 80 | 166 → 166 | 45.2 → 46.9 MB | 1.037 |
+| 30 | 70 → 70 | 80 → 80 | 166 → 166 | 45.2 → 47.1 MB | 1.042 |
+| 30 | 70 → 70 | 80 → 80 | 166 → 166 | 44.7 → 47.5 MB | 1.062 |
 
+- Listener = scene `events` + `input` + `scale` + `game.events` (sau review mở rộng từ 56 lên 80; bus của React không nằm trong số đếm). Số liệu 4 dòng bảng trên được lấy trước khi mở rộng; lần đo lại sau mở rộng: 10 vòng, texture 70→70, listener 80→80, DOM 166→166, heap 44.7→46.9 MB (1.049).
+- Bộ đệm resource timing được nâng lên 100 000 mục (mặc định 250) để không đếm thiếu; kết quả 253 request, 13.2 MB.
 - Texture, listener, DOM: **không đổi** (assert chính xác; DOM cho phép +5).
 - Heap: tăng ~1.7 MB ở 10 vòng và ~1.9–2.8 MB ở 30 vòng, tức gấp 3 số vòng mà mức tăng gần như không đổi ⇒ khởi động bộ nhớ đệm, không phải tăng theo vòng.
 - Đối chứng: cấp phát giữ lại 50 000 object làm cùng phép đo tăng ~10% (1.102), nên phép đo đủ nhạy.
@@ -24,7 +26,7 @@ Mỗi vòng = Office→Archive→Office + mở/đóng notebook. Có một vòng 
 | Chỉ số | Giá trị | Ngưỡng |
 | ------ | ------- | ------ |
 | Thời gian tới `__lexiconDebug` | ~1.1 s | < 5 s |
-| Tổng bytes (250 request) | 13.2 MB | < 25 MB |
+| Tổng bytes (253 request) | 13.2 MB | < 25 MB |
 | Trong đó ảnh | 3.4 MB | |
 | Trong đó script (chưa minify) | 9.4 MB | |
 | Audio lúc tải lạnh | 0 | |

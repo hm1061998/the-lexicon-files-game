@@ -28,7 +28,7 @@ export type LexiconDebug = {
   labelTextureCount(): number;
   /** Textures in the Phaser cache, excluding Phaser built-ins (`__DEFAULT` etc.). */
   textureCount(): number;
-  /** Listeners currently registered on the active scene's event and input emitters. */
+  /** Listeners on the scene's events and input plus the scale manager and game events it subscribes to. */
   listenerCount(): number;
   /** Visible world cue markers currently owned by the active scene. */
   worldCueCount(): number;

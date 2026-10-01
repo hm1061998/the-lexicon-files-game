@@ -519,7 +519,7 @@ export class WorldScene extends Phaser.Scene {
       textureCount: () =>
         Object.keys(this.textures.list).filter((key) => !key.startsWith('__')).length,
       listenerCount: () =>
-        [this.events, this.input].reduce(
+        [this.events, this.input, this.scale, this.game.events].reduce(
           (total, emitter) =>
             total +
             emitter.eventNames().reduce((sum, name) => sum + emitter.listenerCount(name), 0),

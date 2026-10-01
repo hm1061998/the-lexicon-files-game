@@ -126,6 +126,11 @@ test.describe.serial('Case #001 journey', () => {
   });
 
   test('accuse David', async () => {
+    // Reload mid-journey: the save must come back identical and the case must stay playable.
+    const beforeReload = await saved(page);
+    await page.reload();
+    await page.waitForFunction(() => window.__lexiconDebug !== undefined);
+    expect(await saved(page)).toEqual(beforeReload);
     await talkToDavid(page);
     await page.getByRole('button', { name: "Are you sure you didn't enter the room?" }).click();
     await expect(page.getByRole('dialog')).toContainText('...I may have gone in for a moment.');

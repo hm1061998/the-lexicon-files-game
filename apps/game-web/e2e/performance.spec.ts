@@ -78,6 +78,8 @@ test('scene swaps and modals do not leak textures, listeners, DOM or heap', asyn
 });
 
 test('cold load stays within the load budget', async ({ page }) => {
+  // Chromium keeps only 250 resource entries by default, which would undercount a larger load.
+  await page.addInitScript(() => performance.setResourceTimingBufferSize(100_000));
   const start = Date.now();
   await page.goto('/');
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
