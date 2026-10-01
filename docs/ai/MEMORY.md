@@ -1,97 +1,95 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T09:35:00+07:00
+updated_at: 2026-10-01T10:40:00+07:00
 phase: phase-11e
 status: in_progress
-result_commit: 5d4068f
+result_commit: 0febc788253277f23e65db9708b1e004b9777781
 active_spec: docs/superpowers/specs/2026-10-01-phase-11e-navigation-portals-design.md
 active_plan: docs/superpowers/plans/2026-10-01-phase-11e-navigation-portals.md
 ---
 
 ## Metadata
 
-- Approved Phase 11E addendum implementation was committed in `22be905`; resumed-session fixes, review closure and verification are in `cfbf5f2` on `dev`.
-- On resuming, live `git ls-remote origin refs/heads/dev` confirmed remote SHA `85229df`, matching local HEAD then. The old memory's claim that the earlier implementation was still awaiting push was stale.
-- This session's result and subsequent memory commit are local; no new push has been attempted. Keep remote destination confirmation explicit after the earlier auto-review rejection.
-- New input/camera feedback analysis is in `1df8743`; no production change for that feedback yet. Last implementation result remains `cfbf5f2`.
-- Portal visual reference/preference is recorded in `8724ce0`; user selected brass podium and soft warm light, taking circular forms from the supplied hologram image.
-- User approved the combined design in chat on 2026-10-01. Written Vietnamese spec in `c1f3a4d` is now approved by the user. Eight-task Vietnamese implementation plan and approved-spec status are committed in `5d4068f`; plan review is pending. No new production implementation yet.
+- User approved design, spec and eight-task plan on 2026-10-01. Native inline on dev, no new worktree. Earlier pending-plan-review/no-code memory is superseded by Git.
+- User then requested: “commit và lưu memory những thứ đã làm được, tôi sẽ tiếp tục công việc sau”. Stop implementation after this snapshot. Resume only when requested.
+- Latest result 0febc78 is WIP: review fixes, tests, plan status and detailed handoff. Memory is committed separately afterwards; no push attempted.
+- Canonical resume detail: docs/ai/2026-10-01-phase-11e-navigation-portals-handoff.md. It records failures/root causes, fixes, commands and artifacts.
 
 ## Current Phase
 
-- Phase 11E remains open for human visual/audio acceptance. The older partial technical review is now closed; do not start Phase 12 without the user's request and Phase 11E acceptance.
+- Phase11E open. Task1–7 implemented; Task8 final browser regressions/quality gates/review closure incomplete. Human visual/audio acceptance pending. No Phase12.
 
 ## Active Goal
 
-- Obtain implementation-plan review, then implement the approved navigation/portal scope within Phase 11E using the preserved Native method.
+- Preserve implemented navigation/portals and remaining work for user resume. Work stopped at user request; this is not completion.
 
 ## Current Status
 
-- Camera/follow, wall label, NPC paper nameplates, two paired Office/Archive scenes, projected minimap and compact dialogue/notebook controls are implemented.
-- User rejected Project Utopia and specified relaxing music, not too dark. Replaced it with Indieteur's CC0 Mystical Piano: trim 0:00-1:35 per author loop instructions, stereo 44.1 kHz Ogg Vorbis. Removed old music file; case URL, E2E and provenance agree. Human acceptance of the replacement is pending.
-- Independent reviewer verified all eight earlier fixes and found no Critical/Important issue. Both Minor findings were fixed: voice status 13px to 14px, and proper DialogueAudio unit fixtures/source assertion. Follow-up review found no regression.
-- Added E2E camera bounds/player checks at all four edges of both scenes at 1280x720 and 760x600. Missing addendum screenshots were regenerated via E2E in the ignored artifact directory.
-- User approved deeper zoom 1.8x desktop/1.6x compact, Settings-only translation, visible minimap player, arrows alongside WASD and mouse input. Mouse behavior: click distant target to approach, then click again to interact. Written spec is approved; plan review remains pending.
-- Minimap root cause confirmed in browser: position updates correctly but player diameter is about 0.12 CSS px. Radius uses logical width 16 while viewBox uses projected width 1792. Analysis/design proposal: `docs/ai/2026-10-01-phase-11e-input-feedback-analysis.md`.
-- Portals use reference-inspired circular aged-brass podium, soft golden light, sepia ink outlines, slow concentric rings and subtle particles; static under reduced motion. Included in the approved combined direction and written spec; no asset/game changes yet.
+- 4a12ace: zoom1.8desktop/1.6compact, camera fit/clamp tests all four edges of both scenes.
+- bbaa19c: minimap player/markers fixed9CSSpx, ink/paper player foreground; later added player legend.
+- 146de79: translation selector only Settings; readers use saved mode. Mouse HUD notebook/map/pause/interaction minimum44px; compact controls visible.
+- b377663,89e98da: A*, transient route/controller, arrows alongside WASD, click floor/distant target then second click to interact. No arrival trigger/overlap teleport. Keyboard/modal/pause/blur/transition cancel route.
+- ae36b49: deterministic brass portal asset/provenance and soft gold slow rings/motes in Office/Archive; reduced motion static; paired IDs/spawns preserved.
+- 0febc78: review fixes for minimap click-through, off-grid narrow passages, held native repeat, FPS-dependent route speed and transparent wall-corner occlusion. Unit15/15 pass; browser verification pending. Extra bubble regression intentionally remains RED at user stop.
+- Relaxing music candidate remains Indieteur CC0 Mystical Piano (trim0:00–1:35, Ogg44.1kHz), implemented in earlier cfbf5f2. Keep six current CC0 footsteps. Audio/visual human acceptance pending.
 
 ## Completed
 
-- Phase 0A-11D and Phase 11E implementation baseline/addendum; historical implementation pointers remain in the phase spec/plan and verification documents.
-- Resumed-session technical review closure, relaxing music replacement, voice readability/test corrections, and camera coverage are committed in `cfbf5f2`.
-- Root lint/test/build/typecheck/format and audio validation passed after changes. Full E2E 114/114 passed before this session's corrections; affected E2E 7/7 passed afterwards.
+- Phase0A–11D and previous Phase11E baseline/addendum; historical pointers in prior specs/verification.
+- Approved navigation/portal Task1–7 and one independent whole-branch review (gpt-6-astra, d940c64..ae36b49): no Critical, five Important. Snapshot implements five fixes but review closure not verified.
+- Requested WIP result commit and detailed handoff saved; memory follows separately.
 
 ## In Progress
 
-- User auditions Mystical Piano, footsteps and reviews desktop/compact screenshots. Do not infer acceptance from their music-direction request.
-- Commit memory separately after result commit; new commits remain local until remote confirmation. Keep both debug.log files untouched/unstaged.
-- Await user review of the eight-task active plan. Preserve Native inline already selected; do not ask for execution method again. Earlier implemented addendum documents remain historical context.
+- Final regression/E2E fixes and quality gates. User asked to continue later; no active browser suite/dev server remains.
+- RED anchorScreen.test.ts: enlarged44px action bubble falls back at zoom1.8; candidate positions collide with target/player. Browser measured root cause; extra above-target candidate not implemented.
+- Office portal center(1.5,5) overlaps decor_chair_desk_west collider(1.8,4.5). Keep approved portal position and relocate chair after geometry validation; not done.
 
 ## Active Decisions
 
-- Continue native inline on `dev`; no new worktree or dependency.
-- Keep two scenes, paired doorway positions, projection/collision/minimap and authored case/learning/save/backend behavior.
-- Existing Howler owner controls trusted-gesture start, master volume, ducking, pause and disposal.
-- User music direction: relaxing, not too dark. Current candidate is Mystical Piano by Indieteur, CC0; human audition remains the subjective gate.
-- Keep six original CC0 footstep recordings from GboxMikeFozzy; no request to replace footsteps was received.
-- npm + Nx only; local npm shim at `.superpowers/runtime/npm-shim` resolves npm for child processes. Sandbox cannot read installed npm in AppData, so gates needed approved escalation.
-- One-worker browser E2E; do not mutate runtime while its suite is running.
-- Combined design and written spec approved in chat. Plan authored and self-reviewed; wait for plan review before coding, then use executing-plans with Native inline.
+- Native inline on dev; no new worktree/dependency/backend; npm+Nx only.
+- Only approved Phase11E spec. Two scenes/paired IDs/spawns, authored case/learning/save behavior preserved.
+- Distant click approaches; second click interacts. Route never persists or auto triggers.
+- Minimap reads typed player bus; Phaser owns position. Overlay9px, panel consumes pointer.
+- A* lattice now adds clearance boundaries/exact endpoints, checks every segment, expansion cap50k. Movement spends frame remainder across waypoints at220projectedpx/s.
+- Physical-key gate suppresses repeats until keyup; listeners cleanup. Opaque wall hit testing samples texture alpha.
+- Music relaxing/not dark: Mystical Piano and current footsteps require human audition acceptance.
+- One-worker E2E; no runtime edits during suite. Art Python .venv-art-codegen/Scripts/python.exe has scipy.
+- Git/npm writes/checks need escalation here. Prepend .superpowers/runtime/npm-shim to PATH, NX_DAEMON=false; Git safe.directory override required.
+- No push authorized for this snapshot. Preserve both debug.log files untouched/unstaged. Prior remote dev verified at85229df before implementation session.
 
 ## Blockers
 
-- Navigation/portal plan review is pending before coding; mouse pathfinding/new control scope are not implemented. Existing human visual/audio acceptance remains pending.
-- Historical push auto-review rejected export to an insufficiently explicitly authorized destination. Earlier commits are now verified on origin/dev, but do not infer approval for pushing this session's new commits.
+- No external blocker. User requested stopping; remaining failures are implementation/test work, not plan approval.
+- Human visual/audio acceptance pending before closing phase.
 
 ## Next Actions
 
-1. User reviews active eight-task Vietnamese implementation plan; spec is approved.
-2. After plan approval, execute task-by-task with executing-plans and the preserved Native method.
-3. Implement approved scope with navigation/input/minimap regressions and required quality gates.
-4. Obtain human visual/audio acceptance before closing Phase 11E; Phase 12 stays untouched until requested.
-5. Confirm origin/dev for any new push; never stage debug.log files or push unapproved design documents.
+1. On user resume read detailed navigation-portals handoff and reconcile Git; preserve Native method/scope.
+2. Fix RED bubble and portal/ghế overlap with regressions, then diagnose mouse evidence/resize and world-cue visibility failures.
+3. Update stale E2E assumptions for Settings-only translation, compact mouse bar, arrows keycap and content portal prompts. Stabilize E/frame and timed movement oracles without arbitrary tolerance changes.
+4. Add browser regressions for five review fixes; run full one-worker E2E and root lint/test/build/typecheck/format/memory; record final verification/review closure.
+5. Present screenshots/audio for human acceptance before closing Phase11E. No Phase12/push without request.
 
 ## Verification
 
-- Latest detailed evidence: `docs/ai/2026-10-01-phase-11e-resume-verification.md`; technical closure appended to `docs/ai/2026-10-01-phase-11e-feedback-polish-final-review.md`.
-- Final `npm run lint`: seven Nx projects succeeded (5/7 cached). `npm run test`: seven projects succeeded (5/7 cached), game-web 70 files / 475 tests, AI-memory 30 tests. `npm run build`: success, 203 modules, existing 1936.45 kB / 471.06 kB gzip large-chunk advisory.
-- `npm run typecheck` and `npm run format:check` passed. Audio Python tests 6/6 and validator passed after replacement. Rerun memory check after editing this handoff.
-- Full E2E 114/114 in 7.3m on the resumed baseline; after changes, feedback-audio/camera/ui-controls 7/7 in 31.8s. Full suite was not rerun after this session's small corrections.
-- Voice status regression failed before CSS fix (expected >=14, actual 13) and passed after fix at compact size with no horizontal overflow.
-- This session used bundled Node 24.19.0; not freshly verified on Node 22. No backend files changed; no dotnet checks.
-- Latest plan session changed documentation only; plan self-review covered all spec sections, typed interfaces and five failure modes.  spec self-review found no placeholders or contradictory interaction/ownership rules, git diff check passed. No new lint/test/build run because production code is unchanged; validate memory after this update.
+- On ae36b49 before review fixes: root lint/test/build passed7Nx projects; frontend492tests/74files, content165/16. Typecheck/format pass; art45/45 pass. Existing bundle large-chunk advisory.
+- Full E2E that baseline: 22failed,101passed(10.8m). Exact list/root causes in handoff. Not a passing DoD.
+- Review-fix unit group15/15 in4files passed (navigation/worldPointer/gameInputGate/navigationMovement). Off-grid and alpha corner RED then GREEN; new helper tests pass.
+- Bubble regression1failed/16passed: expected non-null placement, gotnull. Intentionally committed unfinished for resume.
+- Snapshot npm run typecheck exit0. Changed TS/CSS formatted and git diff check pass. No root lint/test/build/E2E rerun after review fixes. Memory check runs after update.
+- Latest commands report Node24.15.0; targetNode22 not freshly verified. No backend changes/dotnet checks.
 
 ## Latest Handoff
 
-- Latest result `5d4068f` contains the implementation plan and approved-spec status; last implementation `cfbf5f2`. New memory is committed separately afterwards.
-- User music rejection has been addressed with a new candidate, not marked accepted. Phase remains in_progress.
-- Regenerated artifacts: `.superpowers/sdd/2026-10-01-phase-11e-camera-audio-ui-addendum/`. Directory is ignored and may be absent in another checkout; corresponding E2E recreates screenshots.
-- Leave `apps/game-web/debug.log` and root `debug.log` untouched and unstaged. No new push or Phase 12 work in this session.
+- Result0febc78 includes WIP code and docs/ai/2026-10-01-phase-11e-navigation-portals-handoff.md. Memory follows separately. Stop until user resumes.
+- Ignored artifact directory .superpowers/sdd/2026-10-01-phase-11e-navigation-portals/: ledger, full-e2e.log, diagnostic.log, diagnostic-prompt.png and Office/Archive desktop/compact portal screenshots. E2E recreates portal shots in another checkout.
+- Temporary diagnostic E2E removed after measuring chair overlap/bubble geometry. All runs finished. Both untracked debug.log files preserved.
 
 ## Required Reading
 
-- `AGENTS.md`, `apps/game-web/AGENTS.md`, `docs/ai/README.md` and this memory.
-- Active navigation/portal spec above; previous implemented addendum spec/plan `2026-10-01-phase-11e-camera-audio-ui-addendum.md`; latest resumed verification and prior technical-review closure above.
-- `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`, `docs/architecture/ARCHITECTURE.md`.
-- Audio source/output hashes and transforms: `apps/game-web/public/audio/case-001/provenance.json`, `assets/PROVENANCE.md`.
-- Pending input/camera analysis: `docs/ai/2026-10-01-phase-11e-input-feedback-analysis.md`.
+- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, memory, active spec/plan above.
+- docs/ai/2026-10-01-phase-11e-navigation-portals-handoff.md for remaining root causes and next steps.
+- docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md, docs/architecture/ARCHITECTURE.md and product/learning/MVP docs.
+- Previous implemented addendum spec/plan2026-10-01-phase-11e-camera-audio-ui-addendum.md; older docs/ai/2026-10-01-phase-11e-resume-verification.md is historical.
+- assets/PROVENANCE.md and apps/game-web/public/audio/case-001/provenance.json for portal/audio sources and transforms.
