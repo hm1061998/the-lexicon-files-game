@@ -291,7 +291,7 @@ describe('createGameStore', () => {
   it('closes the notebook when the correct accusation closes the case', () => {
     const { conclusion, store } = storeReadyToAccuse();
     store.getState().toggleNotebook();
-    store.getState().setNotebookTab('conclusion');
+    store.getState().openDeduction();
     store.getState().submitAccusation(conclusion.correctSuspectNpcId);
     expect(store.getState().notebookOpen).toBe(false);
     expect(store.getState().notebookTab).toBe('evidence');

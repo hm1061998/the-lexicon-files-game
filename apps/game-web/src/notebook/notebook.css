@@ -1,291 +1,86 @@
 .notebook-overlay {
-  box-sizing: border-box;
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px;
-  background: rgba(42, 37, 33, 0.38);
-  color: var(--lexicon-ink);
-  font-size: 16px;
+ box-sizing:border-box;position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;padding:20px;
+ background:rgba(42,37,33,.64);color:var(--lexicon-ink);font-family:var(--lexicon-font-body);font-size:16px;
 }
-
-.notebook-panel {
-  box-sizing: border-box;
-  width: min(460px, 100%);
-  height: 100%;
-  overflow: auto;
-  padding: 20px;
-  line-height: 1.5;
+.notebook-panel {box-sizing:border-box;width:min(1160px,100%);height:100%;max-height:850px;padding:12px 10px 10px;line-height:1.5;
+ border:5px double var(--lexicon-border);border-radius:9px;box-shadow:0 7px 0 var(--lexicon-beige),0 10px 0 var(--lexicon-border),0 16px 30px rgba(0,0,0,.4);}
+.notebook-dialog {height:100%;display:flex;flex-direction:column;min-height:0;}
+.notebook-header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 12px 8px;flex-shrink:0;}
+.notebook-header h2 {margin:0;font-size:20px;}
+.notebook-header > div {display:flex;flex-direction:row-reverse;gap:8px;align-items:center;}
+.notebook-header kbd {display:inline-block;font:16px var(--lexicon-font-body);padding:1px 6px;border:1px solid var(--lexicon-border);border-radius:3px;}
+.notebook-panel button {min-height:44px;min-width:44px;border:1px solid var(--lexicon-border);border-radius:3px;padding:8px 12px;background:var(--lexicon-beige);color:var(--lexicon-ink);font:inherit;cursor:pointer;}
+.notebook-panel button:focus-visible,.notebook-panel [tabindex]:focus-visible {outline:3px solid var(--lexicon-ink);outline-offset:3px;}
+.notebook-panel button:disabled {opacity:.62;cursor:not-allowed;}
+.notebook-header button[aria-label] {font-size:28px;line-height:1;padding:6px;}
+.notebook-tabs {display:flex;flex-wrap:wrap;gap:4px;flex-shrink:0;padding:0 16px;border-bottom:2px solid var(--lexicon-border);}
+.notebook-tabs button {padding:10px 20px;border-bottom:0;border-radius:7px 7px 0 0;background:var(--lexicon-paper);position:relative;}
+.notebook-tabs button[aria-current='page'] {background:var(--lexicon-dark-red);color:var(--lexicon-paper);font-weight:700;box-shadow:inset 0 0 0 2px var(--lexicon-paper);}
+.notebook-content {flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scroll-padding:16px;background:rgba(255,255,255,.14);border:1px solid var(--lexicon-warm-gray);}
+.notebook-spread {min-height:100%;display:grid;grid-template-columns:minmax(0,.36fr) minmax(0,.64fr);position:relative;}
+.notebook-spread::before {content:'';position:absolute;left:36%;top:0;bottom:0;width:14px;transform:translateX(-50%);pointer-events:none;
+ background:linear-gradient(90deg,transparent,rgba(62,52,43,.22),transparent),repeating-linear-gradient(0deg,transparent 0 65px,var(--lexicon-warm-gray) 65px 68px,var(--lexicon-border) 68px 70px,transparent 70px 130px);}
+.notebook-index {min-width:0;padding:22px 26px 28px 18px;}
+.notebook-detail {min-width:0;padding:22px 26px 32px;}
+.notebook-index h3,.notebook-timeline-page>h3 {font-size:17px;text-transform:uppercase;border-bottom:1px solid var(--lexicon-border);padding-bottom:8px;margin:0 0 16px;}
+.notebook-detail h3 {font-size:26px;margin:0 0 8px;color:var(--lexicon-dark-red);}
+.notebook-detail h4 {font-size:18px;margin:22px 0 12px;border-bottom:1px solid var(--lexicon-warm-gray);padding-bottom:7px;}
+.notebook-detail p {margin:0 0 12px;}
+.notebook-people-list,.notebook-evidence-grid,.notebook-word-list,.notebook-statement-list,.notebook-source-chips,.notebook-examples {list-style:none;margin:0;padding:0;}
+.notebook-people-list,.notebook-word-list {display:grid;gap:12px;}
+.notebook-people-list button {display:grid;grid-template-columns:72px minmax(0,1fr);width:100%;gap:12px;padding:10px;text-align:left;background:rgba(255,255,255,.06);}
+.notebook-people-list button>span:last-child {display:grid;align-content:center;gap:4px;}
+.notebook-people-list strong {font-size:18px;}
+.notebook-people-list small {font-size:14px;}
+.notebook-panel button[aria-pressed='true']:not(.vocabulary-word) {border-color:var(--lexicon-investigation-red);box-shadow:inset 0 0 0 1px var(--lexicon-investigation-red);}
+.investigation-artwork {position:relative;display:block;box-sizing:border-box;background:var(--lexicon-beige);border:1px solid var(--lexicon-warm-gray);overflow:hidden;aspect-ratio:4/5;width:100%;}
+.investigation-artwork img {position:relative;display:block;width:100%;height:100%;object-fit:contain;background:var(--lexicon-beige);}
+.artwork-fallback {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--lexicon-border);font-size:26px;}
+.investigation-portrait {width:72px;height:90px;aspect-ratio:auto;border:4px solid var(--lexicon-paper);outline:1px solid var(--lexicon-warm-gray);}
+.investigation-portrait img {position:absolute;width:360%;max-width:none;height:auto;left:50%;top:-85%;transform:translateX(-50%);background:transparent;}
+.notebook-person-profile {display:flex;align-items:flex-start;gap:26px;margin-bottom:20px;}
+.notebook-person-profile .investigation-portrait {width:140px;height:178px;flex-shrink:0;transform:rotate(-3deg);border-width:7px;}
+.notebook-person-status {display:inline-block;border:1px solid var(--lexicon-warm-gray);padding:3px 8px;font-size:14px;}
+.notebook-statement-list {display:grid;gap:12px;}
+.notebook-statement-list>li {border:1px solid var(--lexicon-warm-gray);padding:14px 16px;border-radius:4px;background:rgba(255,255,255,.08);}
+.notebook-evidence-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.notebook-evidence-grid button {width:100%;padding:8px;text-align:left;background:transparent;display:grid;gap:8px;align-content:start;height:100%;}
+.notebook-evidence-grid .investigation-artwork {max-height:180px;}
+.notebook-evidence-detail>.investigation-artwork {width:180px;float:left;margin:6px 24px 14px 0;transform:rotate(-2deg);}
+.notebook-evidence-detail>section,.notebook-evidence-detail>.notebook-review-action {clear:both;}
+.notebook-source-chips {display:flex;flex-wrap:wrap;gap:8px;}
+.notebook-source-chips li {border:1px solid var(--lexicon-warm-gray);padding:4px 8px;}
+.notebook-word-list button {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;width:100%;text-align:left;background:transparent;}
+.notebook-word-list button>span {grid-column:1/-1;font-size:14px;}
+.notebook-word-list strong {font-size:19px;}
+.notebook-word-detail>header {display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;}
+.notebook-word-detail h3 {font-size:34px;}
+.notebook-examples li {border:1px solid var(--lexicon-warm-gray);padding:14px;margin-bottom:12px;font-style:italic;}
+.notebook-source-note {border:1px solid var(--lexicon-warm-gray);padding:4px 16px 12px;background:var(--lexicon-beige);}
+.notebook-empty {padding:30px;margin:0;}
+.notebook-timeline-page {padding:24px 28px;}
+.timeline-recorded-list {list-style:none;position:relative;padding:0 0 0 22px;margin:0 0 24px;display:grid;gap:12px;}
+.timeline-recorded-list::before {position:absolute;content:'';left:5px;top:10px;bottom:10px;width:2px;background:var(--lexicon-investigation-red);}
+.timeline-recorded-card {position:relative;display:grid;grid-template-columns:76px minmax(0,1fr) minmax(120px,.35fr);gap:16px;align-items:center;border:1px solid var(--lexicon-warm-gray);padding:12px 16px;}
+.timeline-recorded-card::before {content:'';position:absolute;left:-23px;top:22px;width:9px;height:9px;border:2px solid var(--lexicon-investigation-red);border-radius:50%;background:var(--lexicon-paper);}
+.timeline-time {font-size:22px;font-weight:700;color:var(--lexicon-dark-red);}
+.timeline-recorded-card p {margin:4px 0 0;}
+.timeline-source {border-left:1px solid var(--lexicon-warm-gray);padding-left:14px;}
+.notebook-feedback,.contradiction-confirmed {padding:10px 12px;border-left:3px solid var(--lexicon-investigation-red);background:var(--lexicon-beige);}
+@media (max-width:900px) {
+ .notebook-overlay {padding:12px;}.notebook-index {padding:18px 18px 24px 12px;}.notebook-detail {padding:18px 20px 24px;}
+ .notebook-person-profile {gap:16px;}.notebook-person-profile .investigation-portrait {width:90px;height:118px;}
+ .notebook-people-list button {grid-template-columns:52px minmax(0,1fr);gap:8px;}.notebook-people-list .investigation-portrait {width:52px;height:70px;}
+ .notebook-people-list strong {font-size:16px;}.notebook-evidence-grid {gap:8px;}
 }
-
-.notebook-header,
-.notebook-tabs {
-  flex-wrap: wrap;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.notebook-people-list,
-.notebook-statement-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.notebook-people-list {
-  padding-top: 16px;
-}
-
-.notebook-person {
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--lexicon-border);
-}
-
-.notebook-person h4 {
-  margin: 8px 0;
-  font-size: 16px;
-}
-
-.notebook-person-status {
-  display: inline-block;
-  padding: 4px 8px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.notebook-header h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.notebook-panel button {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 4px;
-  background: var(--lexicon-beige);
-  color: var(--lexicon-ink);
-  font: inherit;
-  cursor: pointer;
-}
-
-.notebook-panel button:focus-visible,
-.notebook-panel select:focus-visible {
-  outline: 3px solid var(--lexicon-ink);
-  outline-offset: 3px;
-}
-
-.notebook-panel button:disabled {
-  cursor: not-allowed;
-  opacity: 0.62;
-}
-
-.notebook-tabs {
-  justify-content: flex-start;
-  margin-top: 20px;
-  border-bottom: 1px solid var(--lexicon-border);
-}
-
-.notebook-tabs button[aria-current='page'] {
-  border-bottom-width: 3px;
-  font-weight: 700;
-}
-
-.notebook-content li + li {
-  margin-top: 16px;
-}
-
-.notebook-content h3,
-.notebook-content p {
-  margin: 0 0 8px;
-}
-
-.timeline-notebook {
-  display: grid;
-  gap: 28px;
-  padding-top: 16px;
-}
-
-.timeline-notebook section,
-.contradiction-card {
-  min-width: 0;
-}
-
-.timeline-event-picker,
-.timeline-slot-picker,
-.contradiction-fact-picker {
-  min-width: 0;
-  margin: 12px 0 0;
-  padding: 12px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 4px;
-}
-
-.timeline-event-list,
-.contradiction-fact-picker ul,
-.timeline-recorded-list {
-  display: grid;
-  gap: 12px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.timeline-event-card,
-.timeline-recorded-card,
-.contradiction-card {
-  padding: 12px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 4px;
-  background: var(--lexicon-paper);
-}
-
-.timeline-event-card > button,
-.contradiction-fact-picker li > button {
-  width: 100%;
-  text-align: left;
-}
-
-.timeline-event-card button[aria-pressed='true'],
-.timeline-slot-list button[aria-pressed='true'],
-.contradiction-fact-picker button[aria-pressed='true'],
-.timeline-event-card.is-selected {
-  border-color: var(--lexicon-investigation-red);
-  box-shadow: inset 0 0 0 1px var(--lexicon-investigation-red);
-}
-
-.timeline-event-card button[aria-pressed='true']::before,
-.timeline-slot-list button[aria-pressed='true']::before,
-.contradiction-fact-picker button[aria-pressed='true']::before {
-  content: '✓ ';
-  font-weight: 700;
-}
-
-.timeline-event-card dl {
-  display: grid;
-  gap: 6px;
-  margin: 12px 0 0;
-}
-
-.timeline-event-card dl > div {
-  display: grid;
-  grid-template-columns: minmax(92px, 0.7fr) minmax(0, 1.3fr);
-  gap: 8px;
-}
-
-.timeline-event-card dt {
-  font-weight: 700;
-}
-
-.timeline-event-card dd {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.timeline-slot-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.timeline-place-action,
-.contradiction-card > button {
-  width: 100%;
-}
-
-.timeline-recorded-list {
-  position: relative;
-  padding-left: 16px;
-}
-
-.timeline-recorded-list::before {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 4px;
-  width: 2px;
-  background: var(--lexicon-border);
-  content: '';
-}
-
-.timeline-recorded-card {
-  display: grid;
-  gap: 4px;
-  position: relative;
-}
-
-.timeline-recorded-card::before {
-  position: absolute;
-  top: 16px;
-  left: -18px;
-  width: 8px;
-  height: 8px;
-  border: 2px solid var(--lexicon-investigation-red);
-  border-radius: 50%;
-  background: var(--lexicon-paper);
-  content: '';
-}
-
-.timeline-time {
-  font-weight: 700;
-}
-
-.notebook-feedback,
-.contradiction-confirmed {
-  padding: 10px 12px;
-  border-left: 3px solid var(--lexicon-investigation-red);
-  background: var(--lexicon-beige);
-}
-
-@media (max-width: 560px) {
-  .notebook-overlay {
-    padding: 8px;
-  }
-
-  .notebook-panel {
-    padding: 14px;
-  }
-
-  .notebook-tabs {
-    flex-wrap: wrap;
-  }
-
-  .timeline-event-card dl > div {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-}
-
-.notebook-panel .translation-mode-control {
-  display: flex;
-  margin-bottom: 12px;
-}
-
-.notebook-panel .translation-mode-options button {
-  min-width: 0;
-  min-height: 44px;
-}
-
-.notebook-panel .translation-mode-options button:focus-visible {
-  outline: 3px solid var(--lexicon-ink);
-  outline-offset: 2px;
-}
-
-.notebook-review-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-}
-
-.notebook-review-action::before {
-  content: '↗';
-  font-size: 1.1em;
+@media (max-width:719px) {
+ .notebook-overlay {padding:12px;}.notebook-panel {padding:6px;height:100%;border-width:3px;}
+ .notebook-header {padding:0 4px 6px;gap:8px;}.notebook-header h2 {font-size:16px;}.notebook-header button {padding:6px 8px;font-size:14px;}
+ .notebook-header>div {gap:4px;}.notebook-tabs {padding:0 2px;gap:2px;}.notebook-tabs button {padding:8px 10px;font-size:14px;flex:1 1 40%;}
+ .notebook-spread {grid-template-columns:1fr;}.notebook-spread::before {display:none;}.notebook-index {padding:16px;border-bottom:2px solid var(--lexicon-warm-gray);}
+ .notebook-detail {padding:20px 16px;}.notebook-people-list button {grid-template-columns:60px minmax(0,1fr);}.notebook-people-list .investigation-portrait {width:60px;height:76px;}
+ .notebook-evidence-grid {grid-template-columns:repeat(2,minmax(0,1fr));}.notebook-evidence-grid .investigation-artwork {height:100px;}
+ .notebook-evidence-detail>.investigation-artwork {width:110px;margin-right:14px;}
+ .notebook-timeline-page {padding:20px 16px;}.timeline-recorded-card {grid-template-columns:62px minmax(0,1fr);gap:10px;}
+ .timeline-source {grid-column:2;border:0;padding:0;font-size:14px;}
 }

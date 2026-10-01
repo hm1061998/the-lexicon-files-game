@@ -21,7 +21,7 @@ import {
   submitContradiction as submitContradictionCore,
   submitAccusation as submitAccusationCore,
 } from '@lexicon/game-core';
-export type NotebookTab = 'people' | 'evidence' | 'vocabulary' | 'timeline' | 'conclusion';
+export type NotebookTab = 'people' | 'evidence' | 'vocabulary' | 'timeline';
 export type GameStoreState = {
   caseDefinition: CaseDefinition;
   caseState: CaseState;

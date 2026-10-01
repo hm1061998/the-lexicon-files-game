@@ -676,12 +676,8 @@ function NotebookLayer({
       onRevealTranslation={onRevealTranslation}
       onEncounter={onEncounter}
       onInspect={onInspect}
-      onPlaceTimelineEvent={(eventId, slotId) => store.placeTimelineEvent(eventId, slotId)}
-      onSubmitAccusation={(suspectNpcId) => store.submitAccusation(suspectNpcId)}
+      onOpenDeduction={() => store.openDeduction()}
       onReviewEvidence={(evidenceId) => store.reviewEvidence(evidenceId)}
-      onSubmitContradiction={(contradictionId, factIds) =>
-        store.submitContradiction(contradictionId, factIds)
-      }
     />
   );
 }
