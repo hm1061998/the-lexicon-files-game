@@ -22,6 +22,8 @@ import { DialogueLayer } from '../dialogue/DialogueLayer';
 import { Hud } from '../hud/Hud';
 import { PauseMenu } from '../pause/PauseMenu';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
+import { DeductionBoard } from '../deduction/DeductionBoard';
+import { useDeductionShortcut } from '../deduction/useDeductionShortcut';
 import { useNotebookShortcut } from '../notebook/useNotebookShortcut';
 import { useMinimapShortcut } from '../hud/useMinimapShortcut';
 import { EvidenceModal } from '../evidence/EvidenceModal';
@@ -366,6 +368,7 @@ function GameRoot({
   useEffect(() => () => presentationAudio.dispose(), [presentationAudio]);
   usePauseShortcut(store);
   useNotebookShortcut(store);
+  useDeductionShortcut(store);
   useMinimapShortcut(store);
   // Dev-only: `?noPaperOverlay` lets perf measurements compare with and without the grain.
   const showPaperOverlay = !(
@@ -534,6 +537,7 @@ function GameRoot({
               <PauseLayer strings={strings} store={store} />
               <EvidenceLayer strings={strings} />
               <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
+                <DeductionLayer strings={strings} caseDefinition={caseDefinition} />
               <CaseSummaryLayer strings={strings} />
             </SettingsStoreProvider>
           </LearningStoreProvider>
@@ -677,6 +681,53 @@ function NotebookLayer({
       onEncounter={onEncounter}
       onInspect={onInspect}
       onOpenDeduction={() => store.openDeduction()}
+      onReviewEvidence={(evidenceId) => store.reviewEvidence(evidenceId)}
+    />
+  );
+}
+
+function DeductionLayer({
+  strings,
+  caseDefinition,
+}: {
+  strings: UiStrings;
+  caseDefinition: CaseDefinition;
+}) {
+  const deductionOpen = useGameStore((state) => state.deductionOpen);
+  const caseState = useGameStore((state) => state.caseState);
+  const store = useGameStore((state) => state);
+  const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
+  const [translationMode] = useTranslationMode();
+  const onEncounter = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onInspect = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'inspectVocabulary', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onRevealTranslation = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  if (!deductionOpen) return null;
+  return (
+    <DeductionBoard
+      caseDefinition={caseDefinition}
+      caseState={caseState}
+      strings={strings}
+      onClose={() => store.closeDeduction()}
+      translationMode={translationMode}
+      onRevealTranslation={onRevealTranslation}
+      onEncounter={onEncounter}
+      onInspect={onInspect}
+      onOpenNotebook={() => store.openNotebook()}
+      onPlaceTimelineEvent={(eventId, slotId) => store.placeTimelineEvent(eventId, slotId)}
+      onSubmitContradiction={(id, facts) => store.submitContradiction(id, facts)}
+      onSubmitAccusation={(id) => store.submitAccusation(id)}
       onReviewEvidence={(evidenceId) => store.reviewEvidence(evidenceId)}
     />
   );

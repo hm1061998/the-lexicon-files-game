@@ -76,3 +76,10 @@ describe('presentation cue bridge', () => {
     disconnect();
   });
 });
+
+it('plays one paper cue per board action including atomic notebook switches',()=>{
+ const {store,cues,disconnect}=setup();store.getState().openDeduction();expect(cues).toEqual(['paper']);
+ store.getState().openNotebook();expect(cues).toEqual(['paper','paper']);
+ store.getState().openDeduction();expect(cues).toEqual(['paper','paper','paper']);
+ store.getState().closeDeduction();expect(cues).toEqual(['paper','paper','paper','paper']);disconnect();
+});

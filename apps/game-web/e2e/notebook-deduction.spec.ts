@@ -21,3 +21,17 @@ test('notebook selects one dossier and one evidence without changing case progre
   await expect(page.locator('.game-root > [tabindex="-1"]')).toBeFocused();
   await expect(page.locator('canvas')).toHaveCount(1);
 });
+
+test('board is separate and supports atomic switching with native keyboard focus',async({page})=>{
+ await seedInvestigation(page,{flags:{anna_q1_read:true,leo_q1_read:true},evidenceIds:['meeting_minutes']});
+ const before=await saved(page);await page.keyboard.press('b');
+ const board=page.locator('.deduction-board');await expect(board).toBeVisible();
+ await expect(page.locator('.notebook-panel')).toHaveCount(0);
+ await expect(board.getByRole('button',{name:strings.close,exact:true})).toBeFocused();
+ await board.getByRole('button',{name:strings.openNotebookFromBoard,exact:true}).click();
+ await expect(board).toHaveCount(0);await expect(page.locator('.notebook-panel')).toBeVisible();
+ await page.keyboard.press('b');await expect(board).toBeVisible();
+ await page.keyboard.press('Escape');await expect(board).toHaveCount(0);
+ await expect(page.locator('.game-root > [tabindex="-1"]')).toBeFocused();
+ expect((await saved(page))?.state).toEqual(before?.state);await expect(page.locator('canvas')).toHaveCount(1);
+});
