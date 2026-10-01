@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T09:18:00+07:00
+updated_at: 2026-10-01T09:35:00+07:00
 phase: phase-11e
 status: in_progress
-result_commit: c1f3a4d
+result_commit: 5d4068f
 active_spec: docs/superpowers/specs/2026-10-01-phase-11e-navigation-portals-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-10-01-phase-11e-navigation-portals.md
 ---
 
 ## Metadata
@@ -15,7 +15,7 @@ active_plan: none
 - This session's result and subsequent memory commit are local; no new push has been attempted. Keep remote destination confirmation explicit after the earlier auto-review rejection.
 - New input/camera feedback analysis is in `1df8743`; no production change for that feedback yet. Last implementation result remains `cfbf5f2`.
 - Portal visual reference/preference is recorded in `8724ce0`; user selected brass podium and soft warm light, taking circular forms from the supplied hologram image.
-- User approved the combined design in chat on 2026-10-01. Written Vietnamese spec is committed in `c1f3a4d`; review of that concrete spec is pending before writing the plan. No new production implementation yet.
+- User approved the combined design in chat on 2026-10-01. Written Vietnamese spec in `c1f3a4d` is now approved by the user. Eight-task Vietnamese implementation plan and approved-spec status are committed in `5d4068f`; plan review is pending. No new production implementation yet.
 
 ## Current Phase
 
@@ -23,7 +23,7 @@ active_plan: none
 
 ## Active Goal
 
-- Obtain written-spec review, then create the implementation plan for the approved camera/minimap/Settings/input/brass-portal design within Phase 11E.
+- Obtain implementation-plan review, then implement the approved navigation/portal scope within Phase 11E using the preserved Native method.
 
 ## Current Status
 
@@ -31,7 +31,7 @@ active_plan: none
 - User rejected Project Utopia and specified relaxing music, not too dark. Replaced it with Indieteur's CC0 Mystical Piano: trim 0:00-1:35 per author loop instructions, stereo 44.1 kHz Ogg Vorbis. Removed old music file; case URL, E2E and provenance agree. Human acceptance of the replacement is pending.
 - Independent reviewer verified all eight earlier fixes and found no Critical/Important issue. Both Minor findings were fixed: voice status 13px to 14px, and proper DialogueAudio unit fixtures/source assertion. Follow-up review found no regression.
 - Added E2E camera bounds/player checks at all four edges of both scenes at 1280x720 and 760x600. Missing addendum screenshots were regenerated via E2E in the ignored artifact directory.
-- User approved deeper zoom 1.8x desktop/1.6x compact, Settings-only translation, visible minimap player, arrows alongside WASD and mouse input. Mouse behavior: click distant target to approach, then click again to interact. Written spec review remains pending.
+- User approved deeper zoom 1.8x desktop/1.6x compact, Settings-only translation, visible minimap player, arrows alongside WASD and mouse input. Mouse behavior: click distant target to approach, then click again to interact. Written spec is approved; plan review remains pending.
 - Minimap root cause confirmed in browser: position updates correctly but player diameter is about 0.12 CSS px. Radius uses logical width 16 while viewBox uses projected width 1792. Analysis/design proposal: `docs/ai/2026-10-01-phase-11e-input-feedback-analysis.md`.
 - Portals use reference-inspired circular aged-brass podium, soft golden light, sepia ink outlines, slow concentric rings and subtle particles; static under reduced motion. Included in the approved combined direction and written spec; no asset/game changes yet.
 
@@ -45,7 +45,7 @@ active_plan: none
 
 - User auditions Mystical Piano, footsteps and reviews desktop/compact screenshots. Do not infer acceptance from their music-direction request.
 - Commit memory separately after result commit; new commits remain local until remote confirmation. Keep both debug.log files untouched/unstaged.
-- Await user review of the written spec above, then write Vietnamese plan and obtain plan review/execution-method choice. Previous implemented addendum spec/plan remain historical context; new active_plan is none until authored.
+- Await user review of the eight-task active plan. Preserve Native inline already selected; do not ask for execution method again. Earlier implemented addendum documents remain historical context.
 
 ## Active Decisions
 
@@ -56,17 +56,17 @@ active_plan: none
 - Keep six original CC0 footstep recordings from GboxMikeFozzy; no request to replace footsteps was received.
 - npm + Nx only; local npm shim at `.superpowers/runtime/npm-shim` resolves npm for child processes. Sandbox cannot read installed npm in AppData, so gates needed approved escalation.
 - One-worker browser E2E; do not mutate runtime while its suite is running.
-- Combined design approved in chat; this authorizes the written spec, not yet coding. Follow written-spec then plan review gates.
+- Combined design and written spec approved in chat. Plan authored and self-reviewed; wait for plan review before coding, then use executing-plans with Native inline.
 
 ## Blockers
 
-- Written navigation/portal spec review is pending before planning; mouse pathfinding/new control scope are not implemented. Existing human visual/audio acceptance remains pending.
+- Navigation/portal plan review is pending before coding; mouse pathfinding/new control scope are not implemented. Existing human visual/audio acceptance remains pending.
 - Historical push auto-review rejected export to an insufficiently explicitly authorized destination. Earlier commits are now verified on origin/dev, but do not infer approval for pushing this session's new commits.
 
 ## Next Actions
 
-1. User reviews active Vietnamese navigation/portal spec; design direction is already approved.
-2. After written-spec approval, write implementation plan and obtain plan review/execution-method choice.
+1. User reviews active eight-task Vietnamese implementation plan; spec is approved.
+2. After plan approval, execute task-by-task with executing-plans and the preserved Native method.
 3. Implement approved scope with navigation/input/minimap regressions and required quality gates.
 4. Obtain human visual/audio acceptance before closing Phase 11E; Phase 12 stays untouched until requested.
 5. Confirm origin/dev for any new push; never stage debug.log files or push unapproved design documents.
@@ -79,11 +79,11 @@ active_plan: none
 - Full E2E 114/114 in 7.3m on the resumed baseline; after changes, feedback-audio/camera/ui-controls 7/7 in 31.8s. Full suite was not rerun after this session's small corrections.
 - Voice status regression failed before CSS fix (expected >=14, actual 13) and passed after fix at compact size with no horizontal overflow.
 - This session used bundled Node 24.19.0; not freshly verified on Node 22. No backend files changed; no dotnet checks.
-- New feedback/spec sessions changed documentation only; spec self-review found no placeholders or contradictory interaction/ownership rules, git diff check passed. No new lint/test/build run because production code is unchanged; validate memory after this update.
+- Latest plan session changed documentation only; plan self-review covered all spec sections, typed interfaces and five failure modes.  spec self-review found no placeholders or contradictory interaction/ownership rules, git diff check passed. No new lint/test/build run because production code is unchanged; validate memory after this update.
 
 ## Latest Handoff
 
-- Latest result `c1f3a4d` contains the written Vietnamese navigation/portal spec after chat design approval; last implementation `cfbf5f2`. New memory is committed separately afterwards.
+- Latest result `5d4068f` contains the implementation plan and approved-spec status; last implementation `cfbf5f2`. New memory is committed separately afterwards.
 - User music rejection has been addressed with a new candidate, not marked accepted. Phase remains in_progress.
 - Regenerated artifacts: `.superpowers/sdd/2026-10-01-phase-11e-camera-audio-ui-addendum/`. Directory is ignored and may be absent in another checkout; corresponding E2E recreates screenshots.
 - Leave `apps/game-web/debug.log` and root `debug.log` untouched and unstaged. No new push or Phase 12 work in this session.
