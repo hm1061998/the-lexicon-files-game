@@ -6,7 +6,12 @@ export type MovementKeys = {
 };
 
 export function mergeMovementKeys(wasd: MovementKeys, arrows: MovementKeys): MovementKeys {
-  return { up:wasd.up || arrows.up, down:wasd.down || arrows.down, left:wasd.left || arrows.left, right:wasd.right || arrows.right };
+  return {
+    up: wasd.up || arrows.up,
+    down: wasd.down || arrows.down,
+    left: wasd.left || arrows.left,
+    right: wasd.right || arrows.right,
+  };
 }
 
 export function resolveInputVector(keys: MovementKeys, typing: boolean): { x: number; y: number } {

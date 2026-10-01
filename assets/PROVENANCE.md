@@ -157,3 +157,11 @@ Mỗi asset đưa vào `assets/` phải có một dòng. Không dùng asset nế
 | `apps/game-web/public/assets/environment/props/dimetric/prop_water_cooler_01.png` | Renderer `tools/art-codegen/build_environment.py`, world_modules/props | 2026-09-30 | Dimetric 2:1, camera 30°, palette giấy/sepia, floor pivot/footprint từ geometry | Tự sinh bằng code |
 | `apps/game-web/public/assets/environment/props/dimetric/prop_whiteboard_01.png` | Renderer `tools/art-codegen/build_environment.py` | 2026-09-30 | Dimetric 2:1, camera 30°, pivot và footprint từ geometry | Tự sinh bằng code |
 | `apps/game-web/public/assets/environment/props/dimetric/prop_bulletin_board_01.png` | Renderer `tools/art-codegen/build_environment.py` | 2026-09-30 | Dimetric 2:1, camera 30°, pivot và footprint từ geometry | Tự sinh bằng code |
+
+## Cổng chuyển scene Phase 11E — 2026-10-01
+
+- Asset: `apps/game-web/public/assets/environment/common/brass_portal.png` (RGBA 128×128).
+- Tự sinh từ `tools/art-codegen/world_modules.py::brass_portal`, export qua `build_environment.py::export_portal`; không sao chép pixels của JPEG tham chiếu.
+- Hình dáng lấy ý tưởng bục/vòng đồng tâm từ ảnh người dùng; palette đồng cũ, mực sepia và ánh vàng nhẹ theo lựa chọn đã duyệt. Ellipse 2:1, floor pivot (64,92), footprint logical1.3×1.3, không collider.
+- SHA256: `7f29807d9bcb0115f89cdea4e20cea78d460ea98dc4852ccac9a0f4851b2f47f`.
+- Hiệu ứng vòng/hạt vẽ bằng Phaser Graphics, reduced motion tĩnh; source code nằm trong `portalPresentation.ts`.

@@ -59,5 +59,3 @@ test('dialogue and notebook controls stay accessible and fit a compact viewport'
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.screenshot({ path: `${output}/notebook-desktop-1280x720.png` });
 });
-
-

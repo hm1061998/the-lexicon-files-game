@@ -4,11 +4,17 @@ from pathlib import Path
 import numpy as np
 from iso import Cam, Scene, M, C
 import props
-from world_modules import floor_diamond, wall_module, door_frame, WALL_HEIGHT_PX
+from world_modules import floor_diamond, wall_module, door_frame, brass_portal, WALL_HEIGHT_PX
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT/'apps/game-web/public/assets/environment'
 CATALOG = ROOT/'packages/game-content/cases/case-001/environment-models.json'
+
+def export_portal(models):
+    path=OUT/'common'/'brass_portal.png'
+    path.parent.mkdir(parents=True,exist_ok=True)
+    brass_portal().save(path,optimize=True)
+    models['brass_portal']={'url':'/assets/environment/common/brass_portal.png','origin':[.5,92/128],'footprint':{'u':-.65,'v':-.65,'width':1.3,'height':1.3},'scale':1,'camera':'dimetric-2:1'}
 
 def export_props():
     models = {}
@@ -40,6 +46,7 @@ def export_props():
         path=OUT/'props/dimetric'/f'{name}.png'; path.parent.mkdir(parents=True,exist_ok=True);image.save(path,optimize=True)
         models[name]={'url':'/assets/'+path.relative_to(ROOT/'apps/game-web/public/assets').as_posix(),'origin':(anchor/[width,height]).tolist(),'footprint':{'u':float((xymin-base)[0]),'v':float((xymin-base)[1]),'width':float((xymax-xymin)[0]),'height':float((xymax-xymin)[1])},'scale':1,'camera':'dimetric-2:1'}
         print(name,width,height,'pivot',anchor.tolist())
+    export_portal(models)
     CATALOG.write_text(json.dumps(models,indent=2)+'\n',encoding='utf-8')
 
 def main():

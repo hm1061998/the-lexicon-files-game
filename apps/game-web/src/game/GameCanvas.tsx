@@ -701,5 +701,3 @@ function PauseLayer({ strings, store }: { strings: UiStrings; store: GameStore }
   if (!paused) return null;
   return <PauseMenu strings={strings} onResume={() => store.getState().setPaused(false)} />;
 }
-
-

@@ -83,7 +83,11 @@ describe('InteractionPrompt', () => {
 
 describe('KeyHints', () => {
   it('lists WASD, E, J, M and Esc with labels', () => {
-    const html = renderToString(<GameStoreProvider store={createGameStore({ caseDefinition })}><KeyHints strings={strings} /></GameStoreProvider>);
+    const html = renderToString(
+      <GameStoreProvider store={createGameStore({ caseDefinition })}>
+        <KeyHints strings={strings} />
+      </GameStoreProvider>,
+    );
     expect(html).toContain('WASD');
     expect(html).toContain(strings.move);
     expect(html).toContain('E');

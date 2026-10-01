@@ -333,17 +333,21 @@ test('minimap shows the player, follows movement and toggles with M', async ({ p
   await expect(minimap.getByText('Bản đồ nhỏ')).toBeVisible();
   const dot = minimap.locator('.minimap-player');
   await expect(dot).toHaveCount(1);
-  const initial = Number(await dot.getAttribute('cx'));
+  const initial = Number(await dot.getAttribute('data-world-x'));
   // The migrated default spawn faces furniture; verify movement in the clear doorway corridor.
   await page.evaluate(
     ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
     scenePoint('main_office', 'hallway_door', { u: 2, v: 0 }),
   );
-  await expect.poll(async () => Number(await dot.getAttribute('cx'))).toBeLessThan(initial);
-  const before = Number(await dot.getAttribute('cx'));
+  await expect
+    .poll(async () => Number(await dot.getAttribute('data-world-x')))
+    .toBeLessThan(initial);
+  const before = Number(await dot.getAttribute('data-world-x'));
   await page.keyboard.down('d');
   try {
-    await expect.poll(async () => Number(await dot.getAttribute('cx'))).toBeGreaterThan(before);
+    await expect
+      .poll(async () => Number(await dot.getAttribute('data-world-x')))
+      .toBeGreaterThan(before);
   } finally {
     await page.keyboard.up('d');
   }

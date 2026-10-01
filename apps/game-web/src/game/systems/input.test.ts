@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { mergeMovementKeys } from './input';
 
 it('merges paired keys without increasing force and cancels opposite directions', () => {
-  const up={up:true,down:false,left:false,right:false};
-  expect(mergeMovementKeys(up,up)).toEqual(up);
-  expect(resolveInputVector(mergeMovementKeys(up,{...up,up:false,down:true}),false)).toEqual({x:0,y:0});
+  const up = { up: true, down: false, left: false, right: false };
+  expect(mergeMovementKeys(up, up)).toEqual(up);
+  expect(
+    resolveInputVector(mergeMovementKeys(up, { ...up, up: false, down: true }), false),
+  ).toEqual({ x: 0, y: 0 });
 });
 import { isTypingTarget, resolveInputVector } from './input';
 

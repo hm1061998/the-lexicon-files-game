@@ -106,25 +106,16 @@ test('visible dialogue records only annotated contexts and persists mode/progres
   await expect(page.getByRole('dialog', { name: 'leave' })).not.toContainText('rời đi');
   await page.getByRole('button', { name: 'Hiện bản dịch' }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).toContainText('rời đi');
-  await page
-    .getByRole('group', { name: 'Chế độ dịch' })
-    .getByRole('button', { name: 'Cơ bản', exact: true })
-    .click();
+  await changeModeInSettings(page, 'Beginner');
   await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
   await expect.poll(async () => (await profile(page))?.vocabularyTutorialSeen).toBe(true);
   await page.getByRole('button', { name: /left\. Xem nghĩa từ/ }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).toContainText('rời đi');
-  await page
-    .getByRole('group', { name: 'Chế độ dịch' })
-    .getByRole('button', { name: 'Đắm chìm', exact: true })
-    .click();
+  await changeModeInSettings(page, 'Immersion');
   await expect.poll(async () => (await settings(page))?.translationMode).toBe('Immersion');
   await page.getByRole('button', { name: /left\. Xem nghĩa từ/ }).click();
   await expect(page.getByRole('dialog', { name: 'leave' })).not.toContainText('rời đi');
-  await page
-    .getByRole('group', { name: 'Chế độ dịch' })
-    .getByRole('button', { name: 'Cơ bản', exact: true })
-    .click();
+  await changeModeInSettings(page, 'Beginner');
   await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
   await page.reload();
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
@@ -184,3 +175,14 @@ test('confirmed learning reset preserves case evidence and keeps one canvas', as
   await expect(page.locator('canvas')).toHaveCount(1);
   expect(pageErrors).toEqual([]);
 });
+
+async function changeModeInSettings(page: import('@playwright/test').Page, mode: string) {
+  if (await page.getByRole('dialog', { name: 'leave', exact: true }).count())
+    await page.keyboard.press('Escape');
+  await page.locator('.dialogue-panel').getByRole('button', { name: 'Đóng', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await page.getByLabel('Chế độ dịch').selectOption(mode);
+  await page.getByRole('button', { name: 'Tiếp tục', exact: true }).click();
+  await page.keyboard.press('e');
+  await expect(page.locator('.dialogue-panel')).toBeVisible();
+}

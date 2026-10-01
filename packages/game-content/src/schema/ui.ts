@@ -72,6 +72,7 @@ const uiStringsSchema = z
     evidenceReview: z.string().min(1),
     openNotebook: z.string().min(1),
     minimapTitle: z.string().min(1),
+    minimapPlayer: z.string().min(1),
     toggleMap: z.string().min(1),
     collapseObjective: z.string().min(1),
     expandObjective: z.string().min(1),

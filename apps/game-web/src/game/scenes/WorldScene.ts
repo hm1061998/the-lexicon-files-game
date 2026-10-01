@@ -53,6 +53,7 @@ import { breathing } from '../systems/breathing';
 import { nameTagPosition } from '../systems/nameTagLayout';
 import { cameraFollowConfig } from '../systems/cameraFollow';
 import { createNavigationController } from '../systems/navigationController';
+import { createPortalPresentation } from '../systems/portalPresentation';
 import { findNavigationPath } from '../systems/navigation';
 import { pickWorldTarget, pointerToLogical, type PointerTarget } from '../systems/worldPointer';
 import { facingTextureKey } from '../assetManifest';
@@ -80,7 +81,10 @@ export type WorldOptions = {
   interactionAvailable?: (sceneId: string, interactableId: string) => boolean;
 };
 
-type MovementKeyMap = Record<'W' | 'A' | 'S' | 'D' | 'UP' | 'DOWN' | 'LEFT' | 'RIGHT', Phaser.Input.Keyboard.Key>;
+type MovementKeyMap = Record<
+  'W' | 'A' | 'S' | 'D' | 'UP' | 'DOWN' | 'LEFT' | 'RIGHT',
+  Phaser.Input.Keyboard.Key
+>;
 
 const MARKER_DEPTH = 10000;
 /** Red target outline: above the sprites, just under the marker. */
@@ -153,16 +157,23 @@ export class WorldScene extends Phaser.Scene {
   private logicalBounds: LogicalRect | null = null;
   private logicalSolids: LogicalRect[] = [];
   private navigation = createNavigationController();
+  private portals: ReturnType<typeof createPortalPresentation>[] = [];
   private lastPointerAt = -Infinity;
   private blockedIndicator: Phaser.GameObjects.Graphics | null = null;
   private indicatorTimer: Phaser.Time.TimerEvent | null = null;
   private cancelInput = () => {
     this.navigation.cancel();
-    if(this.keys) for(const key of Object.values(this.keys)) key.reset();
+    if (this.keys) for (const key of Object.values(this.keys)) key.reset();
     this.interactKey?.reset();
   };
   private preventGameplayArrows = (event: KeyboardEvent) => {
-    if(event.key.startsWith('Arrow') && !this.inputLock.isInputLocked() && !this.transitioning && !this.formHasFocus()) event.preventDefault();
+    if (
+      event.key.startsWith('Arrow') &&
+      !this.inputLock.isInputLocked() &&
+      !this.transitioning &&
+      !this.formHasFocus()
+    )
+      event.preventDefault();
   };
   private npcVisuals = new Map<
     string,
@@ -288,6 +299,10 @@ export class WorldScene extends Phaser.Scene {
         }
       }
       if (body) colliders.add(body);
+      if (asset.portal)
+        this.portals.push(
+          createPortalPresentation(this, floorPoint, options.motion.reducedMotion()),
+        );
       if (
         logicalMode &&
         resolved.collision &&
@@ -589,10 +604,7 @@ export class WorldScene extends Phaser.Scene {
     }
     const typing = this.formHasFocus();
     if (typing) this.cancelInput();
-    const direction = resolveInputVector(
-      this.movementKeys(),
-      typing,
-    );
+    const direction = resolveInputVector(this.movementKeys(), typing);
     if (this.logicalPosition && this.logicalBounds && this.options.scene.projection) {
       this.updateLogicalMovement(typing, delta);
       this.updateNearby();
@@ -703,6 +715,7 @@ export class WorldScene extends Phaser.Scene {
    * trigger against a scene that is about to be replaced.
    */
   private holdForTransition(): void {
+    this.cancelInput();
     this.playerFacing = movePlayer(
       this.player,
       { x: 0, y: 0 },
@@ -717,43 +730,126 @@ export class WorldScene extends Phaser.Scene {
   /** Logical collision and projection path used by migrated dimetric scenes. */
   private movementKeys() {
     const keys = this.keys!;
-    return mergeMovementKeys({ up:keys.W.isDown, down:keys.S.isDown, left:keys.A.isDown, right:keys.D.isDown }, {up:keys.UP.isDown,down:keys.DOWN.isDown,left:keys.LEFT.isDown,right:keys.RIGHT.isDown});
+    return mergeMovementKeys(
+      { up: keys.W.isDown, down: keys.S.isDown, left: keys.A.isDown, right: keys.D.isDown },
+      {
+        up: keys.UP.isDown,
+        down: keys.DOWN.isDown,
+        left: keys.LEFT.isDown,
+        right: keys.RIGHT.isDown,
+      },
+    );
   }
 
   private formHasFocus(): boolean {
-    const el=document.activeElement;
-    return isTypingTarget(el) || el?.tagName==='SELECT' || el?.tagName==='INPUT' || Boolean(el?.closest('[role="dialog"]'));
+    const el = document.activeElement;
+    return (
+      isTypingTarget(el) ||
+      el?.tagName === 'SELECT' ||
+      el?.tagName === 'INPUT' ||
+      Boolean(el?.closest('[role="dialog"]'))
+    );
   }
 
   private handleWorldPointer(pointer: Phaser.Input.Pointer): void {
-    if (!pointer.leftButtonDown() || this.inputLock.isInputLocked() || this.transitioning || this.pendingTransition || !this.logicalPosition || !this.logicalBounds || !this.options.scene.projection) return;
-    const event=pointer.event;
-    if(event.target !== this.game.canvas || event.detail > 1 || this.time.now-this.lastPointerAt<250) return;
-    this.lastPointerAt=this.time.now;
+    if (
+      !pointer.leftButtonDown() ||
+      this.inputLock.isInputLocked() ||
+      this.transitioning ||
+      this.pendingTransition ||
+      !this.logicalPosition ||
+      !this.logicalBounds ||
+      !this.options.scene.projection
+    )
+      return;
+    const event = pointer.event;
+    if (
+      event.target !== this.game.canvas ||
+      event.detail > 1 ||
+      this.time.now - this.lastPointerAt < 250
+    )
+      return;
+    this.lastPointerAt = this.time.now;
     // Phaser owns CSS/canvas/letterbox conversion; use the current camera exactly once.
     pointer.updateWorldPoint(this.cameras.main);
-    const worldPoint={x:pointer.worldX,y:pointer.worldY},projection=this.options.scene.projection;
-    const targets:PointerTarget[]=this.areas.filter(a=>!this.options.interactionAvailable || this.options.interactionAvailable(this.options.scene.id,a.id)).flatMap(a=>{
-      const visualBounds=this.targetBounds.get(a.id)?.();
-      return visualBounds?[{interactableId:a.id,visualBounds,depth:this.depths.get(a.id)??0,anchor:pointerToLogical(a,projection),radiusPx:a.radius}]:[];
-    });
-    const target=pickWorldTarget(worldPoint,targets,this.occluders.map(o=>({bounds:o.box,depth:o.sprite.depth,opaque:o.sprite.alpha>=.99})));
+    const worldPoint = { x: pointer.worldX, y: pointer.worldY },
+      projection = this.options.scene.projection;
+    const targets: PointerTarget[] = this.areas
+      .filter(
+        (a) =>
+          !this.options.interactionAvailable ||
+          this.options.interactionAvailable(this.options.scene.id, a.id),
+      )
+      .flatMap((a) => {
+        const visualBounds = this.targetBounds.get(a.id)?.();
+        return visualBounds
+          ? [
+              {
+                interactableId: a.id,
+                visualBounds,
+                depth: this.depths.get(a.id) ?? 0,
+                anchor: pointerToLogical(a, projection),
+                radiusPx: a.radius,
+              },
+            ]
+          : [];
+      });
+    const target = pickWorldTarget(
+      worldPoint,
+      targets,
+      this.occluders.map((o) => ({
+        bounds: o.box,
+        depth: o.sprite.depth,
+        opaque: o.sprite.alpha >= 0.99,
+      })),
+    );
     // An opaque wall consumes a click, including floor clicks, rather than selecting behind it.
-    if(!target && this.occluders.some(o=>o.sprite.alpha>=.99&&worldPoint.x>=o.box.x&&worldPoint.x<=o.box.x+o.box.width&&worldPoint.y>=o.box.y&&worldPoint.y<=o.box.y+o.box.height)) {this.navigation.cancel();return;}
-    if(target){
-      const a=this.areas.find(a=>a.id===target.interactableId)!;
-      if(Math.hypot(this.player.x-a.x,this.player.y-a.y)<=a.radius){
-        this.navigation.cancel();this.bus.emit('interaction:triggered',{interactableId:target.interactableId});return;
+    if (
+      !target &&
+      this.occluders.some(
+        (o) =>
+          o.sprite.alpha >= 0.99 &&
+          worldPoint.x >= o.box.x &&
+          worldPoint.x <= o.box.x + o.box.width &&
+          worldPoint.y >= o.box.y &&
+          worldPoint.y <= o.box.y + o.box.height,
+      )
+    ) {
+      this.navigation.cancel();
+      return;
+    }
+    if (target) {
+      const a = this.areas.find((a) => a.id === target.interactableId)!;
+      if (Math.hypot(this.player.x - a.x, this.player.y - a.y) <= a.radius) {
+        this.navigation.cancel();
+        this.bus.emit('interaction:triggered', { interactableId: target.interactableId });
+        return;
       }
     }
-    const goal=target?{kind:'interaction' as const,anchor:target.anchor,radiusPx:target.radiusPx-2}:{kind:'point' as const,point:pointerToLogical(worldPoint,projection)};
-    const result=findNavigationPath(this.logicalPosition,goal,{bounds:this.logicalBounds,solids:this.logicalSolids,body:{u:-.18,v:-.18,width:.36,height:.36},projection});
+    const goal = target
+      ? { kind: 'interaction' as const, anchor: target.anchor, radiusPx: target.radiusPx - 2 }
+      : { kind: 'point' as const, point: pointerToLogical(worldPoint, projection) };
+    const result = findNavigationPath(this.logicalPosition, goal, {
+      bounds: this.logicalBounds,
+      solids: this.logicalSolids,
+      body: { u: -0.18, v: -0.18, width: 0.36, height: 0.36 },
+      projection,
+    });
     this.navigation.cancel();
-    if(result.status==='found')this.navigation.replace(result.points);
+    if (result.status === 'found') this.navigation.replace(result.points);
     else {
-      this.blockedIndicator?.destroy();this.indicatorTimer?.remove();
-      this.blockedIndicator=this.add.graphics().lineStyle(2,0x493b2f,.7).strokeCircle(worldPoint.x,worldPoint.y,8).setDepth(MARKER_DEPTH);
-      this.indicatorTimer=this.time.delayedCall(700,()=>{this.blockedIndicator?.destroy();this.blockedIndicator=null;this.indicatorTimer=null;});
+      this.blockedIndicator?.destroy();
+      this.indicatorTimer?.remove();
+      this.blockedIndicator = this.add
+        .graphics()
+        .lineStyle(2, 0x493b2f, 0.7)
+        .strokeCircle(worldPoint.x, worldPoint.y, 8)
+        .setDepth(MARKER_DEPTH);
+      this.indicatorTimer = this.time.delayedCall(700, () => {
+        this.blockedIndicator?.destroy();
+        this.blockedIndicator = null;
+        this.indicatorTimer = null;
+      });
     }
   }
 
@@ -763,20 +859,22 @@ export class WorldScene extends Phaser.Scene {
     const projection = this.options.scene.projection;
     const keys = this.keys;
     if (!position || !bounds || !projection || !keys) return;
-    let input = resolveIsoInput(
-      this.movementKeys(),
-      typing,
-    );
-    if(input.u!==0 || input.v!==0) this.navigation.cancel();
-    const routeDirection = typing ? null : this.navigation.direction(position,deltaMs);
-    if(routeDirection) input=routeDirection;
+    let input = resolveIsoInput(this.movementKeys(), typing);
+    if (input.u !== 0 || input.v !== 0) this.navigation.cancel();
+    const routeDirection = typing ? null : this.navigation.direction(position, deltaMs);
+    if (routeDirection) input = routeDirection;
     const velocity = screenSpeedVector(input, projection, PLAYER_SPEED);
     const dt = Math.min(Math.max(deltaMs, 0), 50) / 1000;
-    const requested={u:velocity.u*dt,v:velocity.v*dt};
-    if(routeDirection){
-      const remaining=projectScenePoint(this.options.scene,{u:position.u+routeDirection.u,v:position.v+routeDirection.v});
-      const distance=Math.hypot(remaining.x-this.player.x,remaining.y-this.player.y);
-      const factor=Math.min(1,distance/(PLAYER_SPEED*dt || 1));requested.u*=factor;requested.v*=factor;
+    const requested = { u: velocity.u * dt, v: velocity.v * dt };
+    if (routeDirection) {
+      const remaining = projectScenePoint(this.options.scene, {
+        u: position.u + routeDirection.u,
+        v: position.v + routeDirection.v,
+      });
+      const distance = Math.hypot(remaining.x - this.player.x, remaining.y - this.player.y);
+      const factor = Math.min(1, distance / (PLAYER_SPEED * dt || 1));
+      requested.u *= factor;
+      requested.v *= factor;
     }
     const result = moveWithCollisions(
       position,
@@ -786,7 +884,7 @@ export class WorldScene extends Phaser.Scene {
       bounds,
     );
     this.logicalPosition = result.position;
-    this.navigation.observeMovement(position,result.position,deltaMs);
+    this.navigation.observeMovement(position, result.position, deltaMs);
     const screen = projectScenePoint(this.options.scene, result.position);
     this.player.setPosition(screen.x, screen.y);
     this.player.setDepth(computeIsoDepth(result.position, projection) + PLAYER_DEPTH_EPSILON);
@@ -970,6 +1068,7 @@ export class WorldScene extends Phaser.Scene {
   // functional movement feedback and keeps playing (Phase 11B ruling).
   private syncMarkerMotion(): void {
     const next = this.options.motion.reducedMotion();
+    for (const portal of this.portals) portal.setReducedMotion(next);
     const action = markerMotion(this.reducedMotion, next);
     this.reducedMotion = next;
     if (action === 'pause') {
@@ -1059,12 +1158,16 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private cleanup(): void {
+    for (const portal of this.portals) portal.destroy();
+    this.portals = [];
     this.cancelInput();
-    window.removeEventListener('blur',this.cancelInput);
-    window.removeEventListener('keydown',this.preventGameplayArrows);
-    this.input.off('pointerdown',this.handleWorldPointer,this);
-    this.blockedIndicator?.destroy();this.blockedIndicator=null;
-    this.indicatorTimer?.remove();this.indicatorTimer=null;
+    window.removeEventListener('blur', this.cancelInput);
+    window.removeEventListener('keydown', this.preventGameplayArrows);
+    this.input.off('pointerdown', this.handleWorldPointer, this);
+    this.blockedIndicator?.destroy();
+    this.blockedIndicator = null;
+    this.indicatorTimer?.remove();
+    this.indicatorTimer = null;
     // A load that settles after shutdown must not restart this scene again.
     this.pendingTransition = null;
     if (this.fadeOutHandler) {
@@ -1118,4 +1221,3 @@ export class WorldScene extends Phaser.Scene {
     this.events.off(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
   }
 }
-

@@ -33,7 +33,10 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
   }
   if (!model || !scene) return null;
   const [vx, vy, vw, vh] = model.viewBox.split(' ').map(Number) as [number, number, number, number];
-  const placement = (point: {x:number;y:number}) => ({ left: `${((point.x-vx)/vw)*100}%`, top: `${((point.y-vy)/vh)*100}%` });
+  const placement = (point: { x: number; y: number }) => ({
+    left: `${((point.x - vx) / vw) * 100}%`,
+    top: `${((point.y - vy) / vh) * 100}%`,
+  });
   return (
     <PaperPanel className="hud-minimap">
       <button
@@ -46,54 +49,72 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
         −
       </button>
       <div className="minimap-drawing">
-      <svg
-        className="minimap-svg"
-        viewBox={model.viewBox}
-        role="img"
-        aria-label={
-          model.currentRoomName
-            ? `${strings.minimapTitle} — ${model.currentRoomName}`
-            : strings.minimapTitle
-        }
-      >
-        <polygon className="minimap-floor" points={model.floorPoints} />
-        {model.solids.map((r, index) => (
-          <rect
-            key={index}
-            className="minimap-solid"
-            x={r.x}
-            y={r.y}
-            width={r.width}
-            height={r.height}
-          />
-        ))}
-        {model.partitions.map((r, index) => (
-          <rect
-            key={index}
-            className="minimap-partition"
-            x={r.x}
-            y={r.y}
-            width={r.width}
-            height={r.height}
-          />
-        ))}
-        {model.labels.map((label) => (
-          <circle
-            key={label.id}
-            className="minimap-room"
-            cx={label.x}
-            cy={label.y}
-            r={ROOM_DOT_R}
-          />
-        ))}
-      </svg>
-      <div className="minimap-overlay" aria-hidden="true">
-        {model.markers.map(marker => <span key={marker.id} className={`minimap-marker minimap-marker-${marker.kind}`} style={placement(marker)} />)}
-        {model.player && <span className="minimap-player" data-world-x={model.player.x} data-world-y={model.player.y} style={placement(model.player)} />}
-      </div>
+        <svg
+          className="minimap-svg"
+          viewBox={model.viewBox}
+          role="img"
+          aria-label={
+            model.currentRoomName
+              ? `${strings.minimapTitle} — ${model.currentRoomName}`
+              : strings.minimapTitle
+          }
+        >
+          <polygon className="minimap-floor" points={model.floorPoints} />
+          {model.solids.map((r, index) => (
+            <rect
+              key={index}
+              className="minimap-solid"
+              x={r.x}
+              y={r.y}
+              width={r.width}
+              height={r.height}
+            />
+          ))}
+          {model.partitions.map((r, index) => (
+            <rect
+              key={index}
+              className="minimap-partition"
+              x={r.x}
+              y={r.y}
+              width={r.width}
+              height={r.height}
+            />
+          ))}
+          {model.labels.map((label) => (
+            <circle
+              key={label.id}
+              className="minimap-room"
+              cx={label.x}
+              cy={label.y}
+              r={ROOM_DOT_R}
+            />
+          ))}
+        </svg>
+        <div className="minimap-overlay" aria-hidden="true">
+          {model.markers.map((marker) => (
+            <span
+              key={marker.id}
+              className={`minimap-marker minimap-marker-${marker.kind}`}
+              style={placement(marker)}
+            />
+          ))}
+          {model.player && (
+            <span
+              className="minimap-player"
+              data-world-x={model.player.x}
+              data-world-y={model.player.y}
+              style={placement(model.player)}
+            />
+          )}
+        </div>
       </div>
       <p className="minimap-label">{strings.minimapTitle}</p>
+      {model.player && (
+        <p className="minimap-legend">
+          <span aria-hidden="true" />
+          {strings.minimapPlayer}
+        </p>
+      )}
     </PaperPanel>
   );
 }
-

@@ -45,10 +45,6 @@
       "url": "/assets/characters/anna/chr_anna_idle_se.png"
     },
     {
-      "key": "tex_door_hallway",
-      "url": "/assets/environment/office/door_frame_v.png"
-    },
-    {
       "key": "tex_leo_se",
       "url": "/assets/characters/leo/chr_leo_idle_se.png"
     },
@@ -127,6 +123,10 @@
     {
       "key": "tex_office_chair_ne",
       "url": "/assets/environment/props/dimetric/prop_office_chair_01_ne.png"
+    },
+    {
+      "key": "tex_brass_portal",
+      "url": "/assets/environment/common/brass_portal.png"
     }
   ],
   "assets": [
@@ -288,32 +288,36 @@
     {
       "id": "hallway_door",
       "type": "interactable",
-      "texture": "tex_door_hallway",
+      "texture": "tex_brass_portal",
       "depthBias": 0,
       "interaction": {
-        "x": 0.575,
+        "x": 0,
         "y": 0,
         "radius": 80,
-        "prompt": "Ra hành lang",
+        "prompt": "Đến phòng lưu trữ",
         "transition": {
           "targetSceneId": "archive",
           "targetSpawnId": "from_office"
         }
       },
-      "origin": [0.5, 0.7922077922077922],
+      "origin": [0.5, 0.71875],
       "scale": 1,
       "position": {
-        "u": 0.125,
+        "u": 1.5,
         "v": 5
       },
       "footprint": {
-        "u": -0.125,
-        "v": -1,
-        "width": 0.25,
-        "height": 2
+        "u": -0.65,
+        "v": -0.65,
+        "width": 1.3,
+        "height": 1.3
       },
       "cue": {
         "kind": "door"
+      },
+      "portal": {
+        "style": "aged-brass",
+        "radius": 0.65
       }
     },
     {

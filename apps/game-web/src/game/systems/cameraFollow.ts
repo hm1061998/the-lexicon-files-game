@@ -33,4 +33,3 @@ export function cameraFollowConfig(
     deadZoneHeight: Math.round(viewport.height * 0.1),
   };
 }
-

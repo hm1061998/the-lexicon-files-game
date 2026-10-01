@@ -6,7 +6,13 @@ import { InteractionPrompt } from './InteractionPrompt';
 import { KeyHints } from './KeyHints';
 import './hud.css';
 
-export function Hud({ strings, bus }: { strings: UiStrings; bus?: EventBus<GameEventMap> }): JSX.Element {
+export function Hud({
+  strings,
+  bus,
+}: {
+  strings: UiStrings;
+  bus?: EventBus<GameEventMap>;
+}): JSX.Element {
   return (
     <div className="hud">
       <ObjectivePanel strings={strings} />
@@ -17,4 +23,3 @@ export function Hud({ strings, bus }: { strings: UiStrings; bus?: EventBus<GameE
     </div>
   );
 }
-

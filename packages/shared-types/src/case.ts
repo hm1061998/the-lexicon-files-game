@@ -67,6 +67,7 @@ export interface UiStrings {
   readonly evidenceReview: string;
   readonly openNotebook: string;
   readonly minimapTitle: string;
+  readonly minimapPlayer: string;
   readonly toggleMap: string;
   readonly collapseObjective: string;
   readonly expandObjective: string;

@@ -136,6 +136,10 @@ const sceneAssetDefinitionSchema = z
     depth: z.number().finite().optional(),
     angle: z.number().finite().optional(),
     depthBias: z.number().finite().default(0),
+    portal: z
+      .object({ style: z.literal('aged-brass'), radius: z.number().positive().finite() })
+      .strict()
+      .optional(),
     elevationPx: z.number().finite().optional(),
     collision: z.union([rectCollisionSchema, logicalCollisionSchema]).optional(),
     footprint: footprintSchema.optional(),

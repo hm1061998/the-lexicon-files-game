@@ -124,5 +124,3 @@ test('camera remains clamped on compact viewport and reapplies the world-fit zoo
   await page.setViewportSize({ width: 1280, height: 720 });
   await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBeGreaterThanOrEqual(1.8);
 });
-
-

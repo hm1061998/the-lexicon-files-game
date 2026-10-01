@@ -27,7 +27,13 @@ function relativeRect(el: Element, origin: DOMRect): Rect {
   };
 }
 
-export function InteractionPrompt({ strings, bus }: { strings: UiStrings; bus?: EventBus<GameEventMap> | undefined }): JSX.Element | null {
+export function InteractionPrompt({
+  strings,
+  bus,
+}: {
+  strings: UiStrings;
+  bus?: EventBus<GameEventMap> | undefined;
+}): JSX.Element | null {
   const nearby = useGameStore((state) => state.nearby);
   const anchor = useGameStore((state) => state.interactionAnchor);
   const locked = useGameStore((state) => state.inputLocked);
@@ -125,12 +131,18 @@ export function InteractionPrompt({ strings, bus }: { strings: UiStrings; bus?: 
     >
       <PaperPanel as="div" className="hud-interaction-paper">
         <div role="status" aria-live="polite">
-        <button type="button" className="hud-interact-button" onClick={() => { if (!locked) bus?.emit('interaction:triggered', { interactableId: nearby.id }); }}>
-          <Keycap>E</Keycap>
-          <span className="hud-interaction-prompt-text" aria-label={strings.interact}>
-            {nearby.prompt}
-          </span>
-        </button>
+          <button
+            type="button"
+            className="hud-interact-button"
+            onClick={() => {
+              if (!locked) bus?.emit('interaction:triggered', { interactableId: nearby.id });
+            }}
+          >
+            <Keycap>E</Keycap>
+            <span className="hud-interaction-prompt-text" aria-label={strings.interact}>
+              {nearby.prompt}
+            </span>
+          </button>
         </div>
       </PaperPanel>
     </div>

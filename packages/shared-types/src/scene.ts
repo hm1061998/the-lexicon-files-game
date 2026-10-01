@@ -100,6 +100,7 @@ export interface SceneTransitionDefinition {
 export type SpawnPointDefinition = { readonly x: number; readonly y: number } | LogicalPoint;
 
 interface SceneAssetCommon {
+  readonly portal?: { readonly style: 'aged-brass'; readonly radius: number } | undefined;
   readonly footprint?: LogicalRectFootprint | undefined;
   /** Original segment span, for classifying expanded wall modules as occluders. */
   readonly wallSpan?: number | undefined;

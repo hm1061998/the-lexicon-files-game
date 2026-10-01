@@ -290,6 +290,3 @@ describe('NotebookPanel', () => {
     expect(html.split(`>${strings.evidenceReview}</button>`).length - 1).toBe(2);
   });
 });
-
-
-

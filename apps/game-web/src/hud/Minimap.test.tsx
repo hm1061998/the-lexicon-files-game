@@ -57,6 +57,7 @@ describe('Minimap', () => {
     expect(html).toContain('<span class="minimap-player"');
     expect(html.indexOf('minimap-player')).toBeGreaterThan(html.lastIndexOf('minimap-marker'));
     expect(html).toContain('data-world-x="400"');
+    expect(html).toContain('Bạn đang ở đây');
   });
 
   it('announces the room nearest to the player in the map accessible name', () => {

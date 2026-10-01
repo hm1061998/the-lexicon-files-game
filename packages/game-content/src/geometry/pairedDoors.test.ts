@@ -11,9 +11,16 @@ it('pairs exits on opposite edges with safe reachable arrival points', () => {
     targetSpawnId: 'from_office',
   });
   const door = archive.assets.find((a) => a.id === 'PLACEHOLDER_archive_door')!;
-  expect('position' in door ? door.position : null).toEqual({ u: 15.875, v: 5 });
+  expect('position' in door ? door.position : null).toEqual({ u: 14.5, v: 5 });
   expect(archive.spawnPoints.from_office).toEqual({ u: 14.85, v: 5 });
   expect(office.spawnPoints.from_archive).toEqual({ u: 0.9, v: 5 });
+  for (const scene of [office, archive]) {
+    const pad = scene.assets.find((a) => a.interaction?.transition)!;
+    expect(pad).toHaveProperty('portal.style', 'aged-brass');
+    expect(pad.collision).toBeUndefined();
+    expect(pad.footprint?.width).toBe(1.3);
+    expect(pad.interaction?.x).toBe(0);
+  }
   expect(archive.walls?.find(({ id }) => id === 'archive_west_wall_upper')?.openings).toEqual([]);
   expect(archive.walls?.find(({ id }) => id === 'archive_west_wall_lower')?.openings).toEqual([]);
   expect(

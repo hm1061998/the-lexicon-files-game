@@ -7,6 +7,19 @@ WALL_HEIGHT_PX = 90
 OFFICE_RUG = (6, 6, 3, 2)
 INK = '#3E342B'
 
+def brass_portal():
+    """Illustrated brass podium, floor pivot (64,92); ellipse ratio 2:1."""
+    image=Image.new('RGBA',(128,128))
+    d=ImageDraw.Draw(image)
+    d.ellipse((8,68,120,124),fill='#786345',outline=INK,width=2)
+    d.ellipse((8,64,120,120),fill='#B39A68',outline=INK,width=2)
+    for inset,color in [(6,'#D0B981'),(12,'#786345'),(18,'#C4AE7E')]:
+        d.ellipse((8+inset,64+inset/2,120-inset,120-inset/2),outline=color,width=2)
+    for x,y in [(23,92),(105,92),(64,71),(64,113)]:
+        d.ellipse((x-2,y-1,x+2,y+1),fill=INK)
+    d.ellipse((40,80,88,104),fill='#8A8469',outline='#DAC594',width=1)
+    return _grain(image)
+
 def project(u, v, z=0):
     return ((u-v)*64, (u+v)*32-z)
 

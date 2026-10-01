@@ -309,12 +309,28 @@
   }
 }
 
-.hud-key-hints button, .hud-interact-button {
- min-width:44px; min-height:44px; background:var(--lexicon-paper); color:var(--lexicon-ink); border:1px solid var(--lexicon-border); font:inherit; cursor:pointer;
+.hud-key-hints button,
+.hud-interact-button {
+  min-width: 44px;
+  min-height: 44px;
+  background: var(--lexicon-paper);
+  color: var(--lexicon-ink);
+  border: 1px solid var(--lexicon-border);
+  font: inherit;
+  cursor: pointer;
 }
-.hud-key-hints { gap:8px; }
-@media (max-width:959px), (max-height:639px) {
- .hud-key-hints { display:flex; padding:4px; }
- .hud-movement-hint { display:none; }
- .hud-interaction-prompt:not(.hud-interaction-bubble) { bottom:64px; }
+.hud-key-hints {
+  gap: 8px;
+}
+@media (max-width: 959px), (max-height: 639px) {
+  .hud-key-hints {
+    display: flex;
+    padding: 4px;
+  }
+  .hud-movement-hint {
+    display: none;
+  }
+  .hud-interaction-prompt:not(.hud-interaction-bubble) {
+    bottom: 64px;
+  }
 }

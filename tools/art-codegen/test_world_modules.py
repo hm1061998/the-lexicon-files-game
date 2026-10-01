@@ -6,6 +6,14 @@ from iso import Cam
 from world_modules import floor_diamond, wall_module, door_frame, WALL_HEIGHT_PX
 
 class WorldModuleTests(unittest.TestCase):
+    def test_portal_is_brass_dimetric_with_clean_alpha(self):
+        from world_modules import brass_portal
+        img=brass_portal()
+        self.assertEqual(img.size, (128, 128))
+        self.assertEqual(img.getpixel((0,0))[3],0)
+        self.assertGreater(img.getpixel((64,92))[3],0)
+        rgb=np.asarray(img)[...,:3][np.asarray(img)[...,3]>0]
+        self.assertGreater(float(rgb[:,0].mean()),float(rgb[:,2].mean()))
     def test_dimetric_axes_have_2_to_1_slope(self):
         p = Cam('dimetric').proj([[1, 0, 0], [0, 1, 0]])
         for row in p:
@@ -50,7 +58,7 @@ class WorldModuleTests(unittest.TestCase):
         from PIL import Image
         root = Path(__file__).resolve().parents[2]
         catalog = json.loads((root/'packages/game-content/cases/case-001/environment-models.json').read_text())
-        self.assertEqual(len(catalog), 19)
+        self.assertEqual(len(catalog), 20)
         for name, model in catalog.items():
             with self.subTest(name=name):
                 self.assertEqual(model['camera'], 'dimetric-2:1')

@@ -51,6 +51,12 @@ describe('camera follow config', () => {
   });
 });
 
-it.each([{width:959,height:720},{width:1280,height:639},{width:960,height:640}])('uses compact breakpoints %o', viewport => {
-  expect(cameraFollowConfig(viewport,{width:1920,height:1080},{width:1920,height:1080}).zoom).toBe(viewport.width < 960 || viewport.height < 640 ? 1.6 : 1.8);
+it.each([
+  { width: 959, height: 720 },
+  { width: 1280, height: 639 },
+  { width: 960, height: 640 },
+])('uses compact breakpoints %o', (viewport) => {
+  expect(
+    cameraFollowConfig(viewport, { width: 1920, height: 1080 }, { width: 1920, height: 1080 }).zoom,
+  ).toBe(viewport.width < 960 || viewport.height < 640 ? 1.6 : 1.8);
 });
