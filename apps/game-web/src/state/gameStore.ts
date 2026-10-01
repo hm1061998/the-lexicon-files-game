@@ -42,6 +42,7 @@ export type GameStoreState = {
   paused: boolean;
   activeEvidenceId: string | null;
   notebookOpen: boolean;
+  deductionOpen: boolean;
   notebookTab: NotebookTab;
   dialogueSession: DialogueSession | null;
   dialogueError: string | null;
@@ -60,6 +61,10 @@ export type GameStoreState = {
   /** Reopens an already-collected evidence from the notebook; never changes case state. */
   reviewEvidence(id: string): void;
   toggleNotebook(): void;
+  openNotebook(): void;
+  openDeduction(): void;
+  toggleDeduction(): void;
+  closeDeduction(): void;
   setNotebookTab(tab: NotebookTab): void;
   startDialogue(npcId: string): boolean;
   chooseDialogue(action: DialogueAction): void;
@@ -80,13 +85,14 @@ function caseClosed(s: Pick<GameStoreState, 'caseState'>): boolean {
 function inputLocked(
   s: Pick<
     GameStoreState,
-    'paused' | 'activeEvidenceId' | 'notebookOpen' | 'dialogueSession' | 'caseState'
+    'paused' | 'activeEvidenceId' | 'notebookOpen' | 'deductionOpen' | 'dialogueSession' | 'caseState'
   >,
 ): boolean {
   return (
     s.paused ||
     s.activeEvidenceId !== null ||
     s.notebookOpen ||
+    s.deductionOpen ||
     s.dialogueSession !== null ||
     caseClosed(s)
   );
@@ -117,6 +123,7 @@ export function createGameStore(init: {
     paused: false,
     activeEvidenceId: null,
     notebookOpen: false,
+    deductionOpen: false,
     notebookTab: 'evidence',
     dialogueSession: null,
     dialogueError: null,
@@ -143,7 +150,7 @@ export function createGameStore(init: {
     },
     setPaused(paused) {
       set((s) => {
-        if (paused && (s.dialogueSession || s.activeEvidenceId || s.notebookOpen || caseClosed(s)))
+        if (paused && (s.dialogueSession || s.activeEvidenceId || s.notebookOpen || s.deductionOpen || caseClosed(s)))
           return s;
         return { paused, inputLocked: inputLocked({ ...s, paused }) };
       });
@@ -158,7 +165,7 @@ export function createGameStore(init: {
       set((s) => {
         if (!s.caseState.evidenceIds.includes(id) || caseClosed(s)) return s;
         if (s.paused || s.dialogueSession || s.activeEvidenceId) return s;
-        return { notebookOpen: false, activeEvidenceId: id, inputLocked: true };
+        return { notebookOpen: false, deductionOpen: false, activeEvidenceId: id, inputLocked: true };
       });
     },
     closeEvidence() {
@@ -167,17 +174,27 @@ export function createGameStore(init: {
         inputLocked: inputLocked({ ...s, activeEvidenceId: null }),
       }));
     },
+    openNotebook() {
+      const s=get();
+      if(s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
+      set({notebookOpen:true,deductionOpen:false,notebookTab:'evidence',inputLocked:true});
+    },
+    openDeduction() {
+      const s=get();
+      if(s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
+      set({deductionOpen:true,notebookOpen:false,inputLocked:true});
+    },
     toggleNotebook() {
-      set((s) => {
-        if (s.paused || s.activeEvidenceId || s.dialogueSession) return s;
-        if (caseClosed(s) && !s.notebookOpen) return s;
-        const notebookOpen = !s.notebookOpen;
-        return {
-          notebookOpen,
-          ...(notebookOpen ? { notebookTab: 'evidence' as const } : {}),
-          inputLocked: inputLocked({ ...s, notebookOpen }),
-        };
-      });
+      const s=get();
+      if(s.notebookOpen) set({notebookOpen:false,inputLocked:inputLocked({...s,notebookOpen:false})});
+      else s.openNotebook();
+    },
+    toggleDeduction() {
+      const s=get();
+      if(s.deductionOpen) s.closeDeduction(); else s.openDeduction();
+    },
+    closeDeduction() {
+      set(s=>({deductionOpen:false,inputLocked:inputLocked({...s,deductionOpen:false})}));
     },
     setNotebookTab(notebookTab) {
       set((s) => (s.notebookTab === notebookTab ? s : { notebookTab }));
@@ -255,8 +272,9 @@ export function createGameStore(init: {
         set({
           caseState: result.state,
           notebookOpen: false,
+          deductionOpen: false,
           notebookTab: 'evidence',
-          inputLocked: inputLocked({ ...s, notebookOpen: false, caseState: result.state }),
+          inputLocked: inputLocked({ ...s, notebookOpen: false, deductionOpen: false, caseState: result.state }),
         });
       }
       return result;

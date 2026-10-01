@@ -18,6 +18,7 @@ export function handleEscapeShortcut(store: GameStore, event: EscapeEvent): void
   if (state.dialogueSession !== null) state.closeDialogue();
   else if (state.activeEvidenceId !== null) state.closeEvidence();
   else if (state.notebookOpen) state.toggleNotebook();
+  else if (state.deductionOpen) state.closeDeduction();
   else state.togglePause();
 }
 
