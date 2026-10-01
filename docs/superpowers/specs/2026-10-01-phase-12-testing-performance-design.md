@@ -29,9 +29,10 @@ Ngoài phạm vi:
 
 - Thêm devDependency `@vitest/coverage-v8` đúng phiên bản vitest 2.1.9 (`npm install -D -w`). Lý do: vitest không đo coverage native; cần để đo trước khi viết test. Đây là dependency duy nhất của phase.
 - Đo baseline coverage cho `game-core` và `learning-engine`, rồi đặt ngưỡng theo baseline trong plan.
-- Test mới theo TDD cho module chưa có test riêng:
-  - `game-core`: `condition`, `objective`, `effect`, `evidence`, `fact`, `save`.
-  - `learning-engine`: `hints`, `review`, `progress`, `profile`, `telemetry`.
+- Test mới theo TDD cho code thật chưa có test riêng, xác định bằng báo cáo coverage:
+  - `game-core`: `evaluateCondition`, `applyEffects` (đường lỗi), `transitionObjective`, `createCaseState`, `reconcileDialogueProgress`.
+  - `learning-engine`: các nhánh chưa phủ của `learningReducer`.
+  - Các thư mục `game-core/src/{evidence,fact,save,deduction,events}` và `learning-engine/src/{hints,review,progress,profile,telemetry}` hiện **rỗng** (chưa có code), nên không có gì để test; engine lưu thật nằm ở `apps/game-web/src/persistence` và đã có test. (Hiệu chỉnh 2026-10-01 sau khi rà code; không đổi phạm vi.)
 - Giữ bất biến: Condition/Effect là discriminated union, không `eval`; `game-core`/`learning-engine` không import React/Phaser/Zustand/DOM/IndexedDB.
 - Test lộ lỗi sản phẩm → sửa theo `systematic-debugging` (tìm root cause trước), không đổi product rule.
 
