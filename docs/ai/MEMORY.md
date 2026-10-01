@@ -1,39 +1,37 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T15:13:00+07:00
+updated_at: 2026-10-01T15:39:00+07:00
 phase: phase-11e
-status: proposed
-result_commit: 0ebdaec
-active_spec: docs/superpowers/specs/2026-10-01-phase-11e-navigation-portals-design.md
-active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
+status: complete
+result_commit: cb18871
+active_spec: docs/ai/2026-10-01-player-playtest-feedback.md
+active_plan: none
 ---
 
 ## Metadata
 
-- Phase 12 đã được người dùng chấp nhận; theo yêu cầu tiếp tục đóng nợ Phase 11. Cổng đồng/ánh vàng nhẹ và nhạc Mystical Piano cũng được chấp nhận riêng. Đã push origin/dev tới e4f5780 theo yêu cầu người dùng; commit memory cập nhật trạng thái push được gửi tiếp.
-- Báo cáo cuối: docs/ai/2026-10-01-phase-11-debt-closure-verification.md. Báo cáo Phase 12: docs/superpowers/specs/2026-10-01-phase-12-verification.md và 2026-10-01-phase-12-performance-report.md.
+- Phase11E/12 đã được người dùng chấp nhận; nợPhase11 đã đóng. Gói bounded viewport/focus sau playtest được duyệt và đã sửa trong cb18871. Báo cáo docs/ai/2026-10-01-viewport-focus-verification.md.
+- Origin/dev ở9cff732; báo cáo playtest0ebdaec, memory497cb85 và fix cb18871 hiện local, chưa push. Không tự push việc mới.
 
 ## Current Phase
 
-- Phase 11E complete sau đóng nợ; Phase 12 complete sau acceptance. Không tự mở phase/tính năng tiếp theo.
+- Phase11E/12 complete theo acceptance trước. Gói viewport/focus complete; không tự mở phase hoặc cải thiện khác.
 
 ## Active Goal
 
-- Hai agent đã chơi thử độc lập bản9cff732 theo yêu cầu. Báo cáo docs/ai/2026-10-01-player-playtest-feedback.md; đề xuất gói bounded sửa viewport/focus, chờ duyệt thiết kế trước code.
+- Không có việc đang chạy; chờ yêu cầu tiếp theo. TabPeople/onboarding chưa được duyệt triển khai.
 
 ## Current Status
 
-- Playtest mới: chuột desktop1/5evidence và ba nhánh Anna; keyboardcompact0/5, gặp game-root scrollTop86 làm header/Đóng ngoài viewport. TabPeople trống vô điều kiện được parent xác minh source. Không debug/teleport, chưa đánh giá fullcase/portal/audio. Persona AI, không người dùng thật.
-
-- Browser regression cho minimap consume-click, held/native repeat qua pause, native form arrows, alpha PNG wall và resize desktop/compact đã đạt.
-- Unit kiểm mọi spawn→mọi interactable của hai scene và từng segment clear; passage hẹp lệch grid và frame remainder/speed có regression.
-- Resize lệch khoảng18px không tái hiện trên code hiện tại; 12 lần resize có command error≤2worldpx, arrival≤3worldpx. Không sửa runtime dựa giả thuyết.
+- Viewport fixed/clip không cuộn theo focus; notebook/evidence border-box và max-height vừa viewport; Settings dài cuộn nội bộ. Notices learning/settings recovery đặt trong viewport, không theo sau canvas trong flow.
+- Native Tab/Shift+Tab đưa control vào panel nhìn thấy, Enter đóng evidence; không dùng preventScroll hàng loạt hoặc reset scroll bằng timer.
+- Playtest hai persona AI bản9cff732: chuột1/5evidence, ba nhánhAnna; keyboard0/5 và lỗi cuộn86px. Đây không phải dữ liệu người dùng thật, chưa đánh giá fullcase/portal/audio. Lỗi viewport đã sửa riêng; People vẫn render empty vô điều kiện, cần thiết kế mapping dữ kiện đã khám phá.
 
 ## Completed
 
-- Phase 0A–12 theo mức người dùng chốt. Phase12 code d4fd681..c9cfafe, báo cáo2946e55; acceptance cập nhật trong bb109fe.
-- Nợ Phase11: bb109fe thêm regression/diagnostic dev chỉ đọc; a5c1822 tăng oracle minimap, đóng báo cáo/spec/plan. Lỗi bubble/ghế/oracle handoff cũ đã sửa trước lượt này trong b6503ca/a031ec3/40ef0bc.
-- Review độc lập không Critical/Important gameplay; oracle minimap tăng assertion pointerState null, chứng minh mutation RED rồi GREEN. Review/rulings đầy đủ ở báo cáo cuối.
+- Phase0A–12 theo mức người dùng chốt. Debtclosure bb109fe/a5c1822/e4f5780; acceptance cổng đồng/nhạc Mystical Piano. Báo cáo docs/ai/2026-10-01-phase-11-debt-closure-verification.md và các báo cáoPhase12.
+- Playtest report/ảnh: docs/ai/2026-10-01-player-playtest-feedback.md và docs/ai/playtests/2026-10-01/.
+- Viewport fix cb18871:4CSS, browser regression và báo cáo. REDroot86, notebookbottom748>720, evidencetop−8; GREEN các trường hợp này. Review độc lập không Critical/Important source, Important oracle evidence đã tăng native keyboard traversal và đạt GREEN.
 
 ## In Progress
 
@@ -41,38 +39,34 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11-debt-closure.md
 
 ## Active Decisions
 
-- Native inline trên dev; npm + Nx; không dependency/backend mới ở debt closure; push origin/dev đã được người dùng yêu cầu.
-- Nhạc đã chấp nhận: apps/game-web/public/audio/case-001/music/mystical-piano-loop.ogg. Cổng Office/Archive đồng/ánh vàng nhẹ; artifact ở .superpowers/sdd/2026-10-01-phase-11e-navigation-portals/.
-- Click xa đi tới rồi click lần nữa tương tác, không auto trigger; keyboard/mouse song song. Translation selector chỉ Settings.
-- Node22 verification dùng .superpowers/runtime/node-v22.23.3-win-x64 prepend PATH, npm10.9.9, NX_DAEMON=false; official ZIP kiểm SHA256. Không dùng npm-shim cũ vì hardcode Node24; không đổi Node hệ thống.
-- Giữ hai debug.log untracked, chỉ git add đường dẫn cụ thể. Git cần -c safe.directory=F:/work/the-lexicon-files-game.
-- Resize regression chờ camera ổn định1.5s; chưa chứng minh mọi timing khi resize/camera đang chuyển động. Bundle advisory>500kB và performance đo một máy Windows/Vite dev.
-- Minor Phase12 ngoài phạm vi lượt này: readyMs<5000 dev server, biên heap mỏng, E2E chưa type-check, save sau sai suspect có thể pass sớm, guard window ở InteractionPrompt/test riêng fix prompt, coverage không nằm trong npm run test. Xem báo cáo Phase12.
+- Native inline trên dev; npm + Nx; không dependency/backend mới, không tự push hoặc mở gói People/onboarding.
+- Nhạc mystical-piano-loop.ogg và cổng đồng/ánh vàng nhẹ đã accepted. Click xa đi tới, click lại tương tác; chuột/phím song song. Translation selector chỉ Settings.
+- Node22 verification dùng .superpowers/runtime/node-v22.23.3-win-x64 prepend PATH, npm10.9.9, NX_DAEMON=false. OfficialZIP đã kiểmSHA256; không dùng npm-shim cũ hardcodeNode24, không đổi Node hệ thống.
+- Giữ hai debug.log untracked; git add đường dẫn cụ thể. Git cần -c safe.directory=F:/work/the-lexicon-files-game.
+- Resize lệch18px trước đây không tái hiện; regression camera ổn định1.5s, chưa chứng minh mọi timing đang resize/follow.
+- Viewport/focus verification Chromium Windows. File regression mới budget90s cho chuỗi đa-panel dài47.8s; assertion scroll0/focus trong panel không nới. Không chạy lại full E2E toàn repo trong gói này.
+- Các MinorPhase12 ngoài phạm vi giữ theo docs/superpowers/specs/2026-10-01-phase-12-verification.md; bundle advisory>500kB giữ nguyên.
 
 ## Blockers
 
-- Không có.
+- Không có trong gói viewport/focus đã duyệt.
 
 ## Next Actions
 
-1. Người dùng duyệt gói viewport/focus bounded trong báo cáo playtest; sau đó RED/GREEN regression compact rồi code.
-2. Sau viewport, thiết kế tabPeople từ dữ kiện đã khám phá; chưa tự triển khai các cải thiện còn lại.
-3. Báo cáo playtest và memory mới local; chỉ push phân tích khi người dùng xác nhận.
+1. Khi người dùng yêu cầu: thiết kế tabPeople từ NPC/lời khai/dữ kiện đã khám phá trước triển khai.
+2. Các đề xuất còn lại: cue mục tiêu/hướng dẫn chuột, feedback click bị chặn, copy toggleminimap; chưa tự triển khai. Chơi lại tiếp cận bàn compact sau fix trước kết luận collider/pathfinding lỗi.
+3. Chỉ push khi người dùng yêu cầu; báo cáo phân tích phải được xác nhận trước push theo protocol.
 
 ## Verification
 
-- Lượt playtest chỉ thêm docs/ảnh: format:check và diff --check pass; memory:check chạy trước commit handoff. Không chạy lại quality gates sản phẩm vì không thay source/test. Các kết quả dưới là verification trước playtest.
-
-- Node22.23.3/npm10.9.9: lint/test/build fresh --skip-nx-cache pass; frontend499, content166, core57, learning17, ui18, shared1, memory30. Typecheck/format/coverage pass, core lines96.7/branches91.4, learning100/96.72.
-- Full E2E138/138(11.0m) trên bb109fe; sau đó chỉ tăng assertion test minimap, không đổi runtime/source; mutation pointer-events:none RED rồi CSS khôi phục, nhóm ảnh hưởng chạy lại10/10(1.5m). Unit navigation/input/pointer15/15.
-- Leak10laps: textures70→70, listeners80→80, DOM166→166; heap ratio1.0469. Load ready1488ms,253requests,13,198,245bytes. Không thay đổi backend.
+- Node22: npm run lint/test/build/typecheck/format pass; Nx lint/test7projects (6cache, frontend chạy), frontend499/76files; các package không đổi dùng cache. Build25.39kBCSS/1946.25kBJS, gzip5.41/474.44. Không backend nên không dotnet.
+- Nhóm E2E rộng36/38(5.6m) trước chỉnh recovery và oracle; journey đến caseclosed/reload, navigation/cổng/dialogue/viewport pass. Hai failure đã xử lý; chạy lại toàn bộ nhóm ảnh hưởng viewport-focus/learning/settings8/8(2.4m) trên source cuối. Không cộng hai lượt thành fullsuite.
+- Recovery notice ngoài viewport được CSS đưa vào viewport; native focus evidence360px/Settings240px đạt. Test thứ nhất chạm budget30s trước đây, sau90s đạt với assertion nguyên trạng. Format/memory/diff check trước commit handoff.
 
 ## Latest Handoff
 
-- Kết quả playtest0ebdaec, memory commit kế tiếp; Phase11/12 acceptance giữ nguyên. Origin/dev ở9cff732; báo cáo mới chưa push. Ảnh chính và report riêng hai persona được lưu docs/ai/playtests/2026-10-01/. Gói cải thiện đầu tiên mới proposed, chưa fix gameplay.
-
-- Kết quả a5c1822 commit trước memory; scratch riêng debt-closure được dọn theo executing-plans sau khi output/rulings lưu trong báo cáo. Giữ runtime Node22 và artifact các phase trước. Đã push kết quả lên origin/dev theo yêu cầu.
+- Result cb18871 đã commit trước memory. Báo cáo đầy đủ output/limitations/review: docs/ai/2026-10-01-viewport-focus-verification.md. Scratch logs .superpowers/verification/viewport-focus/ ignored; không push.
 
 ## Required Reading
 
-- AGENTS.md, docs/ai/README.md, active spec/plan và báo cáo debt closure ở trên; báo cáo Phase12 nếu làm Minor còn lại; docs/04_CODEX_IMPLEMENTATION_ROADMAP.md.
+- AGENTS.md, apps/game-web/AGENTS.md, docs/ai/README.md, report playtest và viewport verification ở trên; docs01–03/art06/ARCHITECTURE nếu mở cải thiện khác. Navspec và debtclosure/Phase12 report để giữ quyết định đã chốt.
