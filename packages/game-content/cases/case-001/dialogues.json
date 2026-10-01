@@ -151,7 +151,56 @@
             "value": true
           }
         ]
-      }
+      },
+      "notebookStatements": [
+        {
+          "nodeId": "entry",
+          "recordedCondition": {
+            "type": "any",
+            "conditions": [
+              {
+                "type": "flag",
+                "key": "anna_q1_read",
+                "value": true
+              },
+              {
+                "type": "flag",
+                "key": "anna_q2_read",
+                "value": true
+              },
+              {
+                "type": "flag",
+                "key": "anna_q3_read",
+                "value": true
+              }
+            ]
+          }
+        },
+        {
+          "nodeId": "answer1",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "anna_q1_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer2",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "anna_q2_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer3",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "anna_q3_read",
+            "value": true
+          }
+        }
+      ]
     },
     {
       "id": "leo_initial",
@@ -278,7 +327,56 @@
             "value": true
           }
         ]
-      }
+      },
+      "notebookStatements": [
+        {
+          "nodeId": "entry",
+          "recordedCondition": {
+            "type": "any",
+            "conditions": [
+              {
+                "type": "flag",
+                "key": "leo_q1_read",
+                "value": true
+              },
+              {
+                "type": "flag",
+                "key": "leo_q2_read",
+                "value": true
+              },
+              {
+                "type": "flag",
+                "key": "leo_q3_read",
+                "value": true
+              }
+            ]
+          }
+        },
+        {
+          "nodeId": "answer1",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "leo_q1_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer2",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "leo_q2_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer3",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "leo_q3_read",
+            "value": true
+          }
+        }
+      ]
     },
     {
       "id": "david_initial",
@@ -407,6 +505,11 @@
                   "type": "setFlag",
                   "key": "david_q3_read",
                   "value": true
+                },
+                {
+                  "type": "setFlag",
+                  "key": "david_answer3_recorded",
+                  "value": true
                 }
               ]
             }
@@ -435,6 +538,11 @@
                 {
                   "type": "setFlag",
                   "key": "david_q3_read",
+                  "value": true
+                },
+                {
+                  "type": "setFlag",
+                  "key": "david_answer3_unlocked_recorded",
                   "value": true
                 }
               ]
@@ -523,7 +631,65 @@
             "value": true
           }
         ]
-      }
+      },
+      "notebookStatements": [
+        {
+          "nodeId": "entry",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_statement_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer1",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_q1_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer2",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_q2_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer3",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_answer3_recorded",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "answer3_unlocked",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_answer3_unlocked_recorded",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "collect_folder",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_folder_statement_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "confession",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_confession_read",
+            "value": true
+          }
+        }
+      ]
     }
   ]
 }
