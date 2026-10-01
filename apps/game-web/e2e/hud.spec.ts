@@ -20,13 +20,7 @@ async function openWorld(page: Page): Promise<void> {
   await page.waitForFunction(
     () => (window as unknown as { __lexiconDebug?: DebugApi }).__lexiconDebug !== undefined,
   );
-  const viewport = page.viewportSize();
-  const keyHints = page.locator('.hud-key-hints');
-  if (viewport && (viewport.width < 960 || viewport.height < 640)) {
-    await expect(keyHints).toBeHidden();
-  } else {
-    await expect(keyHints).toBeVisible();
-  }
+  await expect(page.locator('.hud-key-hints')).toBeVisible();
 }
 
 /** Retry Esc until the pause dialog shows; the key can be lost before shortcuts are wired. */
@@ -204,7 +198,7 @@ test('collecting evidence opens modal, locks movement, and adds it to the notebo
   await page.keyboard.press('j');
   await expect(page.getByRole('heading', { name: 'Sổ tay điều tra' })).toBeVisible();
   await expect(page.getByText('Meeting Minutes')).toBeVisible();
-  await expect(page.getByLabel('Chế độ dịch')).toBeVisible();
+  await expect(page.getByLabel('Chế độ dịch')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /meeting\. Xem nghĩa từ/ })).toBeVisible();
   await page.getByRole('button', { name: 'Nhân vật' }).click();
   await expect(page.getByText('Chưa có nhân vật nào được ghi nhận.')).toBeVisible();
@@ -400,7 +394,6 @@ test('minimap does not overlap the other HUD elements', async ({ page }) => {
       '.hud-key-hints',
     ]) {
       const box = await page.locator(selector).boundingBox();
-      if (box === null && (viewport.width < 960 || viewport.height < 640)) continue;
       expect(box, `${viewport.width}x${viewport.height} ${selector}`).not.toBeNull();
       expect(overlaps(minimap, box!), `${viewport.width}x${viewport.height} ${selector}`).toBe(
         false,
@@ -439,7 +432,7 @@ test('HUD chrome follows the concept: red objective heading, clip, case badge, m
   await expect(badge.locator('svg')).toHaveCount(1);
 
   const keys = await page.locator('.hud-key-hints .keycap').allTextContents();
-  expect(keys).toEqual(['WASD', 'E', 'J', 'M', 'Esc']);
+  expect(keys).toEqual(['WASD / ↑↓←→', 'E', 'J', 'M', 'Esc']);
   await expect(page.locator('.hud-key-hints')).not.toContainText('Space');
 });
 
@@ -495,10 +488,13 @@ test('notebook buttons keep a >=3px focus ring and hover skips disabled buttons'
   expect(outline.o).toBeGreaterThanOrEqual(3);
 });
 
-test('compact viewports hide the key bar to preserve game space', async ({ page }) => {
+test('compact viewports keep the mouse controls and hide only the movement hints', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 760, height: 720 });
   await openWorld(page);
-  await expect(page.locator('.hud-key-hints')).toBeHidden();
+  await expect(page.locator('.hud-key-hints .hud-movement-hint').first()).toBeHidden();
+  await expect(page.locator('.hud-key-hints button')).toHaveCount(3);
 });
 
 type Rect = { left: number; top: number; right: number; bottom: number };

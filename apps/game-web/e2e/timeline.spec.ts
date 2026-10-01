@@ -108,10 +108,10 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     page,
     scenePoint('main_office', 'hallway_door').x,
     scenePoint('main_office', 'hallway_door').y,
-    'Ra hành lang',
+    'Đến phòng lưu trữ',
     true,
   );
-  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect(page.getByText('Quay lại văn phòng', { exact: true })).toBeVisible();
   await interactAt(
     page,
     scenePoint('archive', 'PLACEHOLDER_security_terminal').x,
@@ -130,7 +130,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     page,
     scenePoint('archive', 'PLACEHOLDER_archive_door').x,
     scenePoint('archive', 'PLACEHOLDER_archive_door').y,
-    'Quay lại Main Office',
+    'Quay lại văn phòng',
     true,
   );
   await expect(page.getByText('Nói chuyện với David', { exact: true })).toHaveCount(0);
@@ -204,10 +204,10 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     page,
     scenePoint('main_office', 'hallway_door').x,
     scenePoint('main_office', 'hallway_door').y,
-    'Ra hành lang',
+    'Đến phòng lưu trữ',
     true,
   );
-  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect(page.getByText('Quay lại văn phòng', { exact: true })).toBeVisible();
   const recordBeforeReload = await saved(page);
   expect(recordBeforeReload).toMatchObject({
     schemaVersion: 4,
@@ -242,7 +242,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     page,
     scenePoint('archive', 'PLACEHOLDER_archive_door').x,
     scenePoint('archive', 'PLACEHOLDER_archive_door').y,
-    'Quay lại Main Office',
+    'Quay lại văn phòng',
     true,
   );
   await page.evaluate(

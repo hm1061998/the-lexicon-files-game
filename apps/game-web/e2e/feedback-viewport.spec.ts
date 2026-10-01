@@ -11,9 +11,7 @@ for (const size of [
   test(`shell fits ${size.width}x${size.height} including letterbox`, async ({ page }) => {
     await page.setViewportSize(size);
     await page.goto('/');
-    if (size.width < 960 || size.height < 640)
-      await expect(page.locator('.hud-key-hints')).toBeHidden();
-    else await expect(page.locator('.hud-key-hints')).toBeVisible();
+    await expect(page.locator('.hud-key-hints')).toBeVisible();
     const check = async () => {
       const bounds = await page.evaluate(() => {
         const root = document.querySelector('.game-root')!;

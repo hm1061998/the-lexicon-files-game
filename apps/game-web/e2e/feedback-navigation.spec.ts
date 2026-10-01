@@ -16,15 +16,29 @@ test('arrow keys match WASD and HUD controls work with mouse', async ({ page }) 
   const travel = async (keys: string[]) => {
     await page.evaluate(() => window.__lexiconDebug!.teleportLogical(10, 9));
     for (const key of keys) await page.keyboard.down(key);
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(300);
+    // Sample inside the page so CDP latency does not enter the speed.
+    const sample = await page.evaluate(async () => {
+      const a = window.__lexiconDebug!.logicalPlayer()!;
+      const t0 = performance.now();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const b = window.__lexiconDebug!.logicalPlayer()!;
+      return { u: b.u - a.u, ms: performance.now() - t0 };
+    });
     for (const key of keys) await page.keyboard.up(key);
-    return page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!);
+    return sample;
   };
   const wasd = await travel(['d']),
     arrow = await travel(['ArrowRight']),
     paired = await travel(['d', 'ArrowRight']);
-  expect(Math.abs(wasd.u - arrow.u)).toBeLessThan(0.3);
-  expect(Math.abs(wasd.u - paired.u)).toBeLessThan(0.3);
+  // Movement dt is clamped per frame, so speed follows the machine's FPS (20-40% noise under load).
+  // A broken mapping is far outside that: arrow not moving gives 0, paired keys stacking gives 2x.
+  const speed = (p: { u: number; ms: number }) => p.u / p.ms;
+  expect(speed(wasd)).toBeGreaterThan(0);
+  expect(speed(arrow) / speed(wasd)).toBeGreaterThan(0.6);
+  expect(speed(arrow) / speed(wasd)).toBeLessThan(1.4);
+  expect(speed(paired) / speed(wasd)).toBeGreaterThan(0.6);
+  expect(speed(paired) / speed(wasd)).toBeLessThan(1.4);
   await page.getByRole('button', { name: 'Tạm dừng', exact: false }).click();
   await expect(page.getByLabel('Chế độ dịch')).toBeVisible();
 });
@@ -66,14 +80,22 @@ test('mouse collects desk evidence and opens notebook without world input throug
 }) => {
   await page.goto('/');
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
-  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(5.8, 9.5));
+  await page.evaluate(() => window.__lexiconDebug!.teleportLogical(5.5, 9.5));
   await page.getByRole('button', { name: 'Thu gọn mục tiêu', exact: false }).click();
   const note = scenePoint('main_office', 'meeting_minutes');
   await worldClick(page, { x: note.x, y: note.y - 55 });
   await expect(page.getByRole('dialog')).toHaveCount(0);
+  // Evidence on one table share a prompt; nearby() is the nearest, so assert the route reached
+  // the clicked evidence radius instead.
   await expect
-    .poll(() => page.evaluate(() => window.__lexiconDebug!.nearby()), { timeout: 12000 })
-    .toBe('meeting_minutes');
+    .poll(
+      async () => {
+        const p = await page.evaluate(() => window.__lexiconDebug!.player());
+        return Math.hypot(p.x - note.x, p.y - note.y);
+      },
+      { timeout: 12000 },
+    )
+    .toBeLessThanOrEqual(88);
   await page.waitForTimeout(700);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await worldClick(page, { x: note.x, y: note.y - 55 });

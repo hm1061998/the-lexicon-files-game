@@ -420,10 +420,10 @@ test('scene transition fades and lands at the spawn; repeated requests restart o
 }) => {
   await openWorld(page);
   await teleportTo(page, officePositions, 'hallway_door');
-  await expect(page.getByText('Ra hành lang', { exact: true })).toBeVisible();
+  await expect(page.getByText('Đến phòng lưu trữ', { exact: true })).toBeVisible();
   await page.keyboard.press('e');
   await page.keyboard.press('e');
-  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect(page.getByText('Quay lại văn phòng', { exact: true })).toBeVisible();
   await expect
     .poll(() => page.evaluate(() => window.__lexiconDebug?.player() ?? null), { timeout: 1000 })
     .not.toBeNull();
@@ -473,7 +473,7 @@ test('real textures load without missing-texture or loader warnings', async ({ p
   await openWorld(page);
   expect(await page.evaluate(() => window.__lexiconDebug!.playerTexture())).toBe('tex_player_se');
   await page.evaluate(() => window.__lexiconDebug!.requestTransition('archive', 'from_office'));
-  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect(page.getByText('Quay lại văn phòng', { exact: true })).toBeVisible();
   expect(warnings).toEqual([]);
 });
 
@@ -602,7 +602,7 @@ test('a destination texture that fails to load warns and the transition still co
   page.on('pageerror', (err) => pageErrors.push(err.message));
   await openWorld(page);
   await transitionAndWait(page, 'archive', 'from_office');
-  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect(page.getByText('Quay lại văn phòng', { exact: true })).toBeVisible();
   expect(warnings).toContain(`[Assets] failed to load ${failed.key}`);
   const failedAssetId = archiveAssets.find(({ texture }) => texture === failed.key)?.id;
   expect(failedAssetId).toBeDefined();
@@ -673,7 +673,7 @@ test('input is locked while a scene transition waits for its textures', async ({
     office,
     { timeout: 10_000 },
   );
-  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect(page.getByText('Quay lại văn phòng', { exact: true })).toBeVisible();
 });
 
 test('the dev transition hook goes through the store so it matches the shown scene', async ({

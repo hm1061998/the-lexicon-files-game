@@ -40,6 +40,16 @@ export function InteractionPrompt({
   const bubbleRef = useRef<HTMLDivElement>(null);
   const [placement, setPlacement] = useState<Placement | null>(null);
   const [resizeTick, setResizeTick] = useState(0);
+  // The first measurements after a cold load can find no free spot while the HUD is still settling;
+  // wide screens hold the fixed-position fallback back briefly so it is never flashed.
+  const [fallbackAllowed, setFallbackAllowed] = useState(false);
+  const nearbyId = nearby?.id ?? null;
+  useEffect(() => {
+    setFallbackAllowed(false);
+    if (nearbyId === null) return;
+    const timer = window.setTimeout(() => setFallbackAllowed(true), 250);
+    return () => window.clearTimeout(timer);
+  }, [nearbyId]);
 
   useIsoLayoutEffect(() => {
     const onResize = () => setResizeTick((tick) => tick + 1);
@@ -124,7 +134,13 @@ export function InteractionPrompt({
       className={
         anchored ? 'hud-interaction-prompt hud-interaction-bubble' : 'hud-interaction-prompt'
       }
-      style={anchored ? { left: placement.pos.x, top: placement.pos.y } : undefined}
+      style={
+        anchored
+          ? { left: placement.pos.x, top: placement.pos.y }
+          : !fallbackAllowed && anchor && canAnchorBubble(window.innerWidth, window.innerHeight)
+            ? { visibility: 'hidden' }
+            : undefined
+      }
       data-anchor-x={anchored ? Math.round(placement.anchor.x) : undefined}
       data-anchor-y={anchored ? Math.round(placement.anchor.y) : undefined}
       data-avoid-rect-count={anchor?.avoidRects?.length ?? 0}

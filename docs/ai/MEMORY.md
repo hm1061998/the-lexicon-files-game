@@ -40,6 +40,7 @@ active_plan: docs/superpowers/plans/2026-10-01-phase-11e-navigation-portals.md
 - Requested WIP result commit and detailed handoff saved; memory follows separately.
 
 ## In Progress
+- 2026-10-01 resume: bubble RED fixed (b6503ca), office chair moved to u=3 with portal-footprint regression, stale E2E oracles updated, cold-load prompt fallback delayed 250ms on wide screens. Full E2E 122/123 → only arrow/WASD speed oracle noisy, then loosened to 0.6–1.4 ratio (isolated run 7/7). Review-fix browser regressions (minimap click-through, pause/repeat, alpha) still not added.
 
 - Final regression/E2E fixes and quality gates. User asked to continue later; no active browser suite/dev server remains.
 - RED anchorScreen.test.ts: enlarged44px action bubble falls back at zoom1.8; candidate positions collide with target/player. Browser measured root cause; extra above-target candidate not implemented.

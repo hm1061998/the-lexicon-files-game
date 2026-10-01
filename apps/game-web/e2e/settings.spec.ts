@@ -127,9 +127,9 @@ test('settings and progress survive reload', async ({ page }) => {
     ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
     scenePoint('main_office', 'hallway_door'),
   );
-  await expect(page.getByText('Ra hành lang', { exact: true })).toBeVisible();
+  await expect(page.getByText('Đến phòng lưu trữ', { exact: true })).toBeVisible();
   await page.keyboard.press('e');
-  await expect(page.getByText('Quay lại Main Office', { exact: true })).toBeVisible();
+  await expect(page.getByText('Quay lại văn phòng', { exact: true })).toBeVisible();
   await expect
     .poll(
       async () =>
@@ -222,7 +222,7 @@ test('corrupt settings recover to defaults', async ({ page }) => {
     ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
     scenePoint('main_office', 'hallway_door'),
   );
-  await expect(page.getByText('Ra hành lang', { exact: true })).toBeVisible();
+  await expect(page.getByText('Đến phòng lưu trữ', { exact: true })).toBeVisible();
   await expect(page.locator('canvas')).toHaveCount(1);
   expect(errors).toEqual([]);
 });
