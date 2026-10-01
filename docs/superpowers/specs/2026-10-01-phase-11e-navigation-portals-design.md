@@ -1,6 +1,6 @@
 # Phase 11E — Camera gần, điều khiển chuột/phím và cổng chuyển scene
 
-**Trạng thái:** Người dùng đã duyệt hướng thiết kế trong chat ngày 2026-10-01. Đây là spec được viết từ hướng đã duyệt, cần người dùng review trước bước lập implementation plan. Chưa triển khai phạm vi mới.
+**Trạng thái:** Người dùng đã duyệt hướng thiết kế và spec trong chat ngày 2026-10-01. Implementation plan được lập từ spec này và chờ review trước coding. Chưa triển khai phạm vi mới.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -150,6 +150,6 @@ Chạy và lưu output `npm run lint`, `npm run test`, `npm run build`, typechec
 
 ## 11. Đầu ra và bước tiếp theo
 
-Sau người dùng review spec này: viết implementation plan tiếng Việt, chia task theo camera/Settings/minimap, keyboard/navigation, click interaction, portal content/presentation, integration/verification. Người dùng review plan và chọn execution method trước coding theo workflow.
+Sau người dùng review spec này: viết implementation plan tiếng Việt, chia task theo camera/Settings/minimap, keyboard/navigation, click interaction, portal content/presentation, integration/verification. Người dùng review plan trước coding; giữ phương thức Native inline đã chọn theo workflow.
 
 Spec chỉ ghi phạm vi thiết kế đã duyệt; không đánh dấu Phase 11E complete và không chứng nhận các thay đổi chưa triển khai.
