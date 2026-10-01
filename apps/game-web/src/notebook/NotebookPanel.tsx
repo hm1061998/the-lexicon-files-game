@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { PaperPanel } from '@lexicon/ui';
 import type {
   CaseDefinition,
@@ -16,6 +16,10 @@ import { AccusationPanel } from '../conclusion/AccusationPanel';
 import './notebook.css';
 import { NotebookPeoplePanel } from './NotebookPeoplePanel';
 import { selectNotebookPeople } from './selectNotebookPeople';
+import { getFocusTrapTarget } from '../pause/focusTrap';
+
+const FOCUSABLE_SELECTOR =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 const TABS: readonly {
   id: NotebookTab;
@@ -62,6 +66,39 @@ export function NotebookPanel({
   onReviewEvidence?(evidenceId: string): void;
 }): JSX.Element {
   const headingId = useId();
+  const dialogRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const fallback = dialog
+      .closest('.game-root')
+      ?.querySelector<HTMLElement>(':scope > [tabindex="-1"]');
+    function focusables(): HTMLElement[] {
+      return Array.from(dialog!.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+        (element) =>
+          !element.matches(':disabled') &&
+          element.tabIndex >= 0 &&
+          element.getClientRects().length > 0,
+      );
+    }
+    focusables()[0]?.focus();
+    function handleTab(event: KeyboardEvent): void {
+      if (event.key !== 'Tab') return;
+      const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      const target = getFocusTrapTarget(focusables(), active, event.shiftKey);
+      if (target) {
+        event.preventDefault();
+        target.focus();
+      }
+    }
+    dialog.addEventListener('keydown', handleTab);
+    return () => {
+      dialog.removeEventListener('keydown', handleTab);
+      if (previous?.isConnected && previous !== document.body) previous.focus();
+      else if (fallback?.isConnected) fallback.focus();
+    };
+  }, []);
   const [revealedVocabularyId, setRevealedVocabularyId] = useState<string | null>(null);
   const [selectedTimelineEventId, setSelectedTimelineEventId] = useState<string | null>(null);
   const [selectedTimelineSlotId, setSelectedTimelineSlotId] = useState<string | null>(null);
@@ -131,7 +168,7 @@ export function NotebookPanel({
   return (
     <div className="notebook-overlay">
       <PaperPanel as="div" className="notebook-panel">
-        <section aria-labelledby={headingId}>
+        <section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={headingId}>
           <header className="notebook-header">
             <h2 id={headingId}>{strings.notebook}</h2>
             <button type="button" onClick={onClose} aria-label={strings.close}>

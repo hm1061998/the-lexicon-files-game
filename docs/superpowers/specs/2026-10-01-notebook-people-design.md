@@ -1,6 +1,6 @@
 # Sổ tay Nhân vật — hồ sơ và lời khai đã ghi nhận
 
-**Trạng thái:** Người dùng đồng ý đi tiếp ngày2026-10-01 qua phản hồi “duyệt plan” sau khi nhận spec. Hướng và spec được dùng để lập plan cụ thể; plan mới cần review trên file trước triển khai. Chưa có code triển khai.
+**Trạng thái:** Người dùng đồng ý đi tiếp ngày2026-10-01 qua phản hồi “duyệt plan” sau khi nhận spec. Hướng/spec đã dùng để lập plan cụ thể; người dùng đã duyệt file plan và yêu cầu triển khai trong phiên tiếp nối cùng ngày. Đã triển khai inline trên dev và verification cuối đạt; xem docs/ai/2026-10-01-notebook-people-verification.md.
 
 ## 1. Mục tiêu và phạm vi
 
