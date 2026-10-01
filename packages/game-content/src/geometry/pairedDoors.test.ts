@@ -29,3 +29,35 @@ it('pairs exits on opposite edges with safe reachable arrival points', () => {
   expect(validateSceneGeometry(archive)).toEqual([]);
   expect(validateSceneGeometry(office)).toEqual([]);
 });
+
+it('keeps portal pad footprints and spawns free of other colliders', () => {
+  for (const [raw, id] of [
+    [officeRaw, 'office'],
+    [archiveRaw, 'archive'],
+  ] as const) {
+    const scene = parseSceneDefinition(raw, id);
+    const pad = scene.assets.find((a) => a.interaction?.transition)!;
+    if (!('position' in pad) || !pad.footprint) throw new Error('pad needs position and footprint');
+    const area = {
+      u0: pad.position.u + pad.footprint.u,
+      u1: pad.position.u + pad.footprint.u + pad.footprint.width,
+      v0: pad.position.v + pad.footprint.v,
+      v1: pad.position.v + pad.footprint.v + pad.footprint.height,
+    };
+    const blockers = scene.assets
+      .filter((a) => a.id !== pad.id && a.collision && 'position' in a)
+      .filter((a) => {
+        const c = a.collision!;
+        const p = (a as { position: { u: number; v: number } }).position;
+        if (c.type !== 'rect') return false;
+        return (
+          p.u + c.u < area.u1 &&
+          p.u + c.u + c.width > area.u0 &&
+          p.v + c.v < area.v1 &&
+          p.v + c.v + c.height > area.v0
+        );
+      })
+      .map((a) => a.id);
+    expect(blockers, `${id} blockers`).toEqual([]);
+  }
+});

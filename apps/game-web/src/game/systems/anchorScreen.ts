@@ -84,7 +84,12 @@ export function placeBubble(
   avoid: readonly Rect[],
 ): Point | null {
   const xs = [anchor.x + BUBBLE_GAP, anchor.x - BUBBLE_GAP - size.width];
-  const ys = [anchor.y - 4, anchor.y - size.height + 4, anchor.y + 28];
+  const ys = [
+    anchor.y - 4,
+    anchor.y - size.height + 4,
+    anchor.y + 28,
+    anchor.y - size.height - BUBBLE_GAP,
+  ];
   for (const y of ys) {
     for (const x of xs) {
       const pos = clampBubble({ x, y }, size, viewport, margin);
