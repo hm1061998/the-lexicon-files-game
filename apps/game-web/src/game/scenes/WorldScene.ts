@@ -53,9 +53,16 @@ import { breathing } from '../systems/breathing';
 import { nameTagPosition } from '../systems/nameTagLayout';
 import { cameraFollowConfig } from '../systems/cameraFollow';
 import { createNavigationController } from '../systems/navigationController';
+import { createGameInputGate } from '../systems/gameInputGate';
+import { advanceNavigationMovement } from '../systems/navigationMovement';
 import { createPortalPresentation } from '../systems/portalPresentation';
 import { findNavigationPath } from '../systems/navigation';
-import { pickWorldTarget, pointerToLogical, type PointerTarget } from '../systems/worldPointer';
+import {
+  isPointOccluded,
+  pickWorldTarget,
+  pointerToLogical,
+  type PointerTarget,
+} from '../systems/worldPointer';
 import { facingTextureKey } from '../assetManifest';
 import { registerCharacterAnimations, walkAnimKey } from '../entities/characterAnimations';
 
@@ -157,16 +164,28 @@ export class WorldScene extends Phaser.Scene {
   private logicalBounds: LogicalRect | null = null;
   private logicalSolids: LogicalRect[] = [];
   private navigation = createNavigationController();
+  private keyGate = createGameInputGate();
   private portals: ReturnType<typeof createPortalPresentation>[] = [];
   private lastPointerAt = -Infinity;
   private blockedIndicator: Phaser.GameObjects.Graphics | null = null;
   private indicatorTimer: Phaser.Time.TimerEvent | null = null;
   private cancelInput = () => {
     this.navigation.cancel();
+    this.keyGate.suppressHeld();
     if (this.keys) for (const key of Object.values(this.keys)) key.reset();
     this.interactKey?.reset();
   };
+  private blurInput = () => {
+    this.cancelInput();
+    this.keyGate.blur();
+  };
+  private releaseInput = (event: KeyboardEvent) => this.keyGate.up(event.keyCode);
   private preventGameplayArrows = (event: KeyboardEvent) => {
+    this.keyGate.down(
+      event.keyCode,
+      event.repeat,
+      this.inputLock.isInputLocked() || this.transitioning || this.formHasFocus(),
+    );
     if (
       event.key.startsWith('Arrow') &&
       !this.inputLock.isInputLocked() &&
@@ -419,8 +438,9 @@ export class WorldScene extends Phaser.Scene {
       this.interactKey = keyboard.addKey('E', false);
     }
     this.input.on('pointerdown', this.handleWorldPointer, this);
-    window.addEventListener('blur', this.cancelInput);
+    window.addEventListener('blur', this.blurInput);
     window.addEventListener('keydown', this.preventGameplayArrows);
+    window.addEventListener('keyup', this.releaseInput);
 
     this.refreshCanvasSize();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.refreshCanvasSize, this);
@@ -591,6 +611,7 @@ export class WorldScene extends Phaser.Scene {
     }
     if (this.inputLock.isInputLocked()) {
       this.navigation.cancel();
+      this.keyGate.suppressHeld();
       this.playerFacing = movePlayer(
         this.player,
         { x: 0, y: 0 },
@@ -730,13 +751,14 @@ export class WorldScene extends Phaser.Scene {
   /** Logical collision and projection path used by migrated dimetric scenes. */
   private movementKeys() {
     const keys = this.keys!;
+    const down = (key: Phaser.Input.Keyboard.Key) => key.isDown && this.keyGate.allows(key.keyCode);
     return mergeMovementKeys(
-      { up: keys.W.isDown, down: keys.S.isDown, left: keys.A.isDown, right: keys.D.isDown },
+      { up: down(keys.W), down: down(keys.S), left: down(keys.A), right: down(keys.D) },
       {
-        up: keys.UP.isDown,
-        down: keys.DOWN.isDown,
-        left: keys.LEFT.isDown,
-        right: keys.RIGHT.isDown,
+        up: down(keys.UP),
+        down: down(keys.DOWN),
+        left: down(keys.LEFT),
+        right: down(keys.RIGHT),
       },
     );
   }
@@ -794,27 +816,25 @@ export class WorldScene extends Phaser.Scene {
             ]
           : [];
       });
-    const target = pickWorldTarget(
-      worldPoint,
-      targets,
-      this.occluders.map((o) => ({
-        bounds: o.box,
-        depth: o.sprite.depth,
-        opaque: o.sprite.alpha >= 0.99,
-      })),
-    );
+    const occluders = this.occluders.map((o) => ({
+      bounds: o.box,
+      depth: o.sprite.depth,
+      opaque: o.sprite.alpha >= 0.99,
+      opaqueAt: (point: { x: number; y: number }) => {
+        const local = o.sprite.getLocalPoint(point.x, point.y);
+        return (
+          (this.textures.getPixelAlpha(
+            Math.floor(local.x),
+            Math.floor(local.y),
+            o.sprite.texture.key,
+            o.sprite.frame.name,
+          ) ?? 0) >= 128
+        );
+      },
+    }));
+    const target = pickWorldTarget(worldPoint, targets, occluders);
     // An opaque wall consumes a click, including floor clicks, rather than selecting behind it.
-    if (
-      !target &&
-      this.occluders.some(
-        (o) =>
-          o.sprite.alpha >= 0.99 &&
-          worldPoint.x >= o.box.x &&
-          worldPoint.x <= o.box.x + o.box.width &&
-          worldPoint.y >= o.box.y &&
-          worldPoint.y <= o.box.y + o.box.height,
-      )
-    ) {
+    if (!target && occluders.some((o) => isPointOccluded(worldPoint, o))) {
       this.navigation.cancel();
       return;
     }
@@ -861,30 +881,35 @@ export class WorldScene extends Phaser.Scene {
     if (!position || !bounds || !projection || !keys) return;
     let input = resolveIsoInput(this.movementKeys(), typing);
     if (input.u !== 0 || input.v !== 0) this.navigation.cancel();
-    const routeDirection = typing ? null : this.navigation.direction(position, deltaMs);
-    if (routeDirection) input = routeDirection;
+    const routeActive = !typing && this.navigation.isActive();
+    const routeResult = routeActive
+      ? advanceNavigationMovement(
+          this.navigation,
+          position,
+          {
+            bounds,
+            projection,
+            solids: this.logicalSolids,
+            body: { u: -0.18, v: -0.18, width: 0.36, height: 0.36 },
+          },
+          deltaMs,
+          PLAYER_SPEED,
+        )
+      : null;
+    if (routeResult) input = routeResult.direction;
     const velocity = screenSpeedVector(input, projection, PLAYER_SPEED);
     const dt = Math.min(Math.max(deltaMs, 0), 50) / 1000;
     const requested = { u: velocity.u * dt, v: velocity.v * dt };
-    if (routeDirection) {
-      const remaining = projectScenePoint(this.options.scene, {
-        u: position.u + routeDirection.u,
-        v: position.v + routeDirection.v,
-      });
-      const distance = Math.hypot(remaining.x - this.player.x, remaining.y - this.player.y);
-      const factor = Math.min(1, distance / (PLAYER_SPEED * dt || 1));
-      requested.u *= factor;
-      requested.v *= factor;
-    }
-    const result = moveWithCollisions(
-      position,
-      requested,
-      { u: -0.18, v: -0.18, width: 0.36, height: 0.36 },
-      this.logicalSolids,
-      bounds,
-    );
+    const result =
+      routeResult ??
+      moveWithCollisions(
+        position,
+        requested,
+        { u: -0.18, v: -0.18, width: 0.36, height: 0.36 },
+        this.logicalSolids,
+        bounds,
+      );
     this.logicalPosition = result.position;
-    this.navigation.observeMovement(position, result.position, deltaMs);
     const screen = projectScenePoint(this.options.scene, result.position);
     this.player.setPosition(screen.x, screen.y);
     this.player.setDepth(computeIsoDepth(result.position, projection) + PLAYER_DEPTH_EPSILON);
@@ -1088,6 +1113,7 @@ export class WorldScene extends Phaser.Scene {
 
   private updateInteract(typing: boolean): void {
     if (!this.interactKey || !Phaser.Input.Keyboard.JustDown(this.interactKey)) return;
+    if (!this.keyGate.allows(this.interactKey.keyCode)) return;
     const id = this.interactionTracker.current;
     if (id === null || typing) return;
     this.bus.emit('interaction:triggered', { interactableId: id });
@@ -1161,8 +1187,9 @@ export class WorldScene extends Phaser.Scene {
     for (const portal of this.portals) portal.destroy();
     this.portals = [];
     this.cancelInput();
-    window.removeEventListener('blur', this.cancelInput);
+    window.removeEventListener('blur', this.blurInput);
     window.removeEventListener('keydown', this.preventGameplayArrows);
+    window.removeEventListener('keyup', this.releaseInput);
     this.input.off('pointerdown', this.handleWorldPointer, this);
     this.blockedIndicator?.destroy();
     this.blockedIndicator = null;

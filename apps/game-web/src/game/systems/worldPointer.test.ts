@@ -22,6 +22,16 @@ it('cannot select through an opaque occluder but permits faded walls', () => {
   expect(pickWorldTarget({ x: 5, y: 5 }, [target], [wall])).toBeNull();
   expect(pickWorldTarget({ x: 5, y: 5 }, [target], [{ ...wall, opaque: false }])).toEqual(target);
 });
+it('allows clicks through transparent texture corners while opaque pixels block', () => {
+  const wall = {
+    bounds: target.visualBounds,
+    depth: 2,
+    opaque: true,
+    opaqueAt: (p: { x: number; y: number }) => p.x >= 10,
+  };
+  expect(pickWorldTarget({ x: 5, y: 5 }, [target], [wall])).toEqual(target);
+  expect(pickWorldTarget({ x: 15, y: 5 }, [target], [wall])).toBeNull();
+});
 it('inverse projects camera world coordinates without applying scroll twice', () => {
   expect(
     pointerToLogical(

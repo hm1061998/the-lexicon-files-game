@@ -11,9 +11,15 @@ export type PointerOccluder = {
   bounds: PointerTarget['visualBounds'];
   depth: number;
   opaque: boolean;
+  opaqueAt?: (point: ScreenPoint) => boolean;
 };
 const contains = (p: ScreenPoint, b: PointerTarget['visualBounds']) =>
   p.x >= b.x && p.x <= b.x + b.width && p.y >= b.y && p.y <= b.y + b.height;
+export function isPointOccluded(point: ScreenPoint, occluder: PointerOccluder): boolean {
+  return (
+    occluder.opaque && contains(point, occluder.bounds) && (occluder.opaqueAt?.(point) ?? true)
+  );
+}
 export function pickWorldTarget(
   point: ScreenPoint,
   targets: readonly PointerTarget[],
@@ -24,7 +30,7 @@ export function pickWorldTarget(
       .filter(
         (t) =>
           contains(point, t.visualBounds) &&
-          !occluders.some((o) => o.opaque && o.depth > t.depth && contains(point, o.bounds)),
+          !occluders.some((o) => o.depth > t.depth && isPointOccluded(point, o)),
       )
       .sort((a, b) => b.depth - a.depth || a.interactableId.localeCompare(b.interactableId))[0] ??
     null

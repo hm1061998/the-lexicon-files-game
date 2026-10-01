@@ -117,8 +117,27 @@ export function findNavigationPath(
     }
     return first;
   };
-  const key = (p: LogicalPoint) =>
-    `${Math.round((p.u - w.bounds.u) / STEP)},${Math.round((p.v - w.bounds.v) / STEP)}`;
+  // Add clearance boundaries and exact endpoints to the lattice so narrow off-grid
+  // corridors and their turns remain connected without reducing a global fixed step.
+  const axis = (name: 'u' | 'v', size: 'width' | 'height') => {
+    const min = w.bounds[name] - w.body[name];
+    const max = w.bounds[name] + w.bounds[size] - w.body[name] - w.body[size];
+    const values = [min, max, start[name], target[name]];
+    for (let value = min; value <= max; value += STEP) values.push(value);
+    for (const solid of w.solids)
+      values.push(
+        solid[name] - w.body[name] - w.body[size],
+        solid[name] + solid[size] - w.body[name],
+      );
+    return [...new Set(values.filter((v) => v >= min - EPS && v <= max + EPS))].sort(
+      (a, b) => a - b,
+    );
+  };
+  const us = axis('u', 'width'),
+    vs = axis('v', 'height');
+  const ui = new Map(us.map((u, i) => [u, i])),
+    vi = new Map(vs.map((v, i) => [v, i]));
+  const key = (p: LogicalPoint) => `${ui.get(p.u)},${vi.get(p.v)}`;
   const costs = new Map<string, number>();
   const add = (p: LogicalPoint, parent: Node | null, g: number) => {
     const k = key(p);
@@ -126,18 +145,7 @@ export function findNavigationPath(
     costs.set(k, g);
     push({ point: p, parent, g, f: g + heuristic(p), key: k });
   };
-  // Connect exact start to surrounding lattice points, rather than snapping through a solid.
-  const su = (start.u - w.bounds.u) / STEP,
-    sv = (start.v - w.bounds.v) / STEP;
-  for (const u of new Set([Math.floor(su), Math.ceil(su)]))
-    for (const v of new Set([Math.floor(sv), Math.ceil(sv)])) {
-      const p = { u: w.bounds.u + u * STEP, v: w.bounds.v + v * STEP };
-      if (navigationSegmentClear(start, p, w)) {
-        const a = projectIso(start, w.projection),
-          b = projectIso(p, w.projection);
-        add(p, null, Math.hypot(a.x - b.x, a.y - b.y));
-      }
-    }
+  add(start, null, 0);
   let expanded = 0;
   while (heap.length) {
     const node = pop();
@@ -157,7 +165,10 @@ export function findNavigationPath(
     for (let du = -1; du <= 1; du++)
       for (let dv = -1; dv <= 1; dv++) {
         if (!du && !dv) continue;
-        const p = { u: node.point.u + du * STEP, v: node.point.v + dv * STEP };
+        const u = us[ui.get(node.point.u)! + du],
+          v = vs[vi.get(node.point.v)! + dv];
+        if (u === undefined || v === undefined) continue;
+        const p = { u, v };
         if (!navigationSegmentClear(node.point, p, w)) continue;
         if (
           du &&

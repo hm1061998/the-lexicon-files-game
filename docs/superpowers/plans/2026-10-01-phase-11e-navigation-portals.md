@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-01-phase-11e-navigation-portals-design.md` (người dùng duyệt ngày 2026-10-01).
 
+**Trạng thái thực thi:** Người dùng duyệt plan và Native inline ngày 2026-10-01. Task 1–7 đã triển khai; Task 8 còn regression E2E, xác nhận các sửa review và kiểm tra cuối. Người dùng yêu cầu dừng, commit và lưu memory. Chi tiết snapshot: `docs/ai/2026-10-01-phase-11e-navigation-portals-handoff.md`. Các checkbox bên dưới là checklist gốc; dùng handoff/Git để đối chiếu tiến độ thực tế, không suy ra phase đã complete.
+
 ## Global Constraints
 
 - Chỉ Phase 11E; không backend, dependency mới, scene thứ ba hoặc thay luật điều tra/học/save.

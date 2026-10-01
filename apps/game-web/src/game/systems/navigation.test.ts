@@ -11,6 +11,22 @@ const world: NavigationWorld = {
   projection: { type: 'dimetric-2:1', originX: 0, originY: 0, tileWidth: 128, tileHeight: 64 },
 };
 describe('navigation', () => {
+  it('preserves an off-grid narrow passage and its turn into a room', () => {
+    const fixture = {
+      ...world,
+      solids: [
+        { u: 0, v: 0, width: 8, height: 3.86 },
+        { u: 0, v: 4.26, width: 5, height: 3.74 },
+      ],
+    };
+    for (const point of [
+      { u: 7, v: 4.06 },
+      { u: 6, v: 6 },
+    ]) {
+      const result = findNavigationPath({ u: 1, v: 4.06 }, { kind: 'point', point }, fixture);
+      expect(result.status).toBe('found');
+    }
+  });
   it('reaches all authored interactables from both scene spawns', () => {
     for (const scene of loadCaseDefinition('case-001').scenes) {
       if (!scene.projection || !('u' in scene.worldBounds)) continue;

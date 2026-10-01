@@ -86,6 +86,19 @@ describe('clampBubble', () => {
 });
 
 describe('placeBubble', () => {
+  it('keeps a 44px action bubble above a zoomed target and player', () => {
+    const pos = placeBubble(
+      { x: 534, y: 132 },
+      { width: 138, height: 58 },
+      { width: 1280, height: 720 },
+      8,
+      [
+        { left: 467, top: 126, right: 540, bottom: 180 },
+        { left: 569, top: 132, right: 621, bottom: 269 },
+      ],
+    );
+    expect(pos).not.toBeNull();
+  });
   const size = { width: 100, height: 40 };
   const viewport = { width: 800, height: 600 };
 
