@@ -128,17 +128,25 @@ export function InteractionPrompt({
   }
 
   const anchored = placement !== null;
+  // Still measuring on a wide screen: keep the bubble class (never the fixed fallback one) and hide it.
+  const measuring =
+    !anchored &&
+    !fallbackAllowed &&
+    anchor !== null &&
+    canAnchorBubble(window.innerWidth, window.innerHeight);
   return (
     <div
       ref={bubbleRef}
       className={
-        anchored ? 'hud-interaction-prompt hud-interaction-bubble' : 'hud-interaction-prompt'
+        anchored || measuring
+          ? 'hud-interaction-prompt hud-interaction-bubble'
+          : 'hud-interaction-prompt'
       }
       style={
         anchored
           ? { left: placement.pos.x, top: placement.pos.y }
-          : !fallbackAllowed && anchor && canAnchorBubble(window.innerWidth, window.innerHeight)
-            ? { visibility: 'hidden' }
+          : measuring
+            ? { left: 0, top: 0, visibility: 'hidden' }
             : undefined
       }
       data-anchor-x={anchored ? Math.round(placement.anchor.x) : undefined}
