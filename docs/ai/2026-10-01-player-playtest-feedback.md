@@ -79,6 +79,6 @@ Verification dự kiến: browser regression760×600 tái hiện chuỗi trên p
 
 Sau gói này: thiết kế tabNhân vật từ dữ kiện đã khám phá; sau đó mới cue mở đầu/hướng dẫn và copy/feedback. Không tự triển khai tất cả đề xuất trong một lượt hoặc tự mở phase mới.
 
-**Trạng thái:** Playtest/đối chiếu hoàn tất; chưa sửa source, gói viewport/focus chờ người dùng duyệt thiết kế bounded theo skill brainstorming. Báo cáo này không phải bằng chứng các lỗi đã được sửa. Không push báo cáo phân tích khi chưa được người dùng xác nhận.
+**Trạng thái:** Playtest/đối chiếu hoàn tất. Người dùng đã duyệt gói viewport/focus và gói này được sửa/kiểm chứng riêng trong [báo cáo viewport/focus](2026-10-01-viewport-focus-verification.md). Những finding People/onboarding/click feedback/map copy vẫn là đề xuất chưa triển khai. Feedback gốc không tự chứng minh lỗi đã được sửa. Không push báo cáo phân tích khi chưa được người dùng xác nhận.
 
 Kiểm tra tài liệu: `npm run format:check` → `All matched files use Prettier code style!`; `git diff --check` không lỗi. Không chạy lại lint/test/build vì lượt này chỉ thêm báo cáo/ảnh, không thay source/tests hay tuyên bố gameplay đã được sửa. Verification sản phẩm trước đó giữ lịch sử trong memory, không tính là kết quả playtest mới.
