@@ -18,7 +18,7 @@ export function cameraFollowConfig(
   sceneBounds: ViewportSize,
 ): CameraFollowConfig {
   const compact = viewport.width < COMPACT_WIDTH || viewport.height < COMPACT_HEIGHT;
-  const preferredZoom = compact ? 1.1 : 1.2;
+  const preferredZoom = compact ? 1.6 : 1.8;
   const minimumFitZoom = Math.max(
     cameraSize.width / sceneBounds.width,
     cameraSize.height / sceneBounds.height,
@@ -33,3 +33,4 @@ export function cameraFollowConfig(
     deadZoneHeight: Math.round(viewport.height * 0.1),
   };
 }
+

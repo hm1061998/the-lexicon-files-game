@@ -13,7 +13,7 @@ describe('camera follow config', () => {
         },
       ),
     ).toEqual({
-      zoom: 1.2,
+      zoom: 1.8,
       lerpX: 0.08,
       lerpY: 0.08,
       deadZoneWidth: 128,
@@ -32,7 +32,7 @@ describe('camera follow config', () => {
         },
       ),
     ).toEqual({
-      zoom: 1.1,
+      zoom: 1.6,
       lerpX: 0.08,
       lerpY: 0.08,
       deadZoneWidth: 76,
@@ -44,9 +44,13 @@ describe('camera follow config', () => {
     const config = cameraFollowConfig(
       { width: 1280, height: 720 },
       { width: 1920, height: 1080 },
-      { width: 1792, height: 896 },
+      { width: 896, height: 448 },
     );
 
-    expect(config.zoom).toBeCloseTo(1080 / 896 + 0.005);
+    expect(config.zoom).toBeCloseTo(1080 / 448 + 0.005);
   });
+});
+
+it.each([{width:959,height:720},{width:1280,height:639},{width:960,height:640}])('uses compact breakpoints %o', viewport => {
+  expect(cameraFollowConfig(viewport,{width:1920,height:1080},{width:1920,height:1080}).zoom).toBe(viewport.width < 960 || viewport.height < 640 ? 1.6 : 1.8);
 });

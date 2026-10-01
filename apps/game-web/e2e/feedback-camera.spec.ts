@@ -77,11 +77,11 @@ test('camera zooms closer, follows the player, and stays inside the scene bounds
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBeGreaterThanOrEqual(1.2);
-  expect((await cameraState(page))!.zoom).toBeLessThan(1.22);
+  await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBeGreaterThanOrEqual(1.8);
+  expect((await cameraState(page))!.zoom).toBeLessThan(1.82);
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(8, 8));
   await page.waitForTimeout(250);
-  const output = '../../.superpowers/sdd/2026-10-01-phase-11e-camera-audio-ui-addendum';
+  const output = '../../.superpowers/sdd/2026-10-01-phase-11e-navigation-portals';
   mkdirSync(output, { recursive: true });
   await page.screenshot({ path: `${output}/camera-desktop-1280x720.png` });
 
@@ -117,10 +117,12 @@ test('camera remains clamped on compact viewport and reapplies the world-fit zoo
 }) => {
   await page.setViewportSize({ width: 760, height: 600 });
   await page.goto('/');
-  await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBeGreaterThanOrEqual(1.2);
-  const output = '../../.superpowers/sdd/2026-10-01-phase-11e-camera-audio-ui-addendum';
+  await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBe(1.6);
+  const output = '../../.superpowers/sdd/2026-10-01-phase-11e-navigation-portals';
   mkdirSync(output, { recursive: true });
   await page.screenshot({ path: `${output}/camera-compact-760x600.png` });
   await page.setViewportSize({ width: 1280, height: 720 });
-  await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBeGreaterThanOrEqual(1.2);
+  await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBeGreaterThanOrEqual(1.8);
 });
+
+
