@@ -31,6 +31,13 @@ export async function openWorld(page: Page): Promise<void> {
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 
+/** Hold E across a few frames: an instant keyup can clear JustDown before the scene reads it. */
+export async function pressInteract(page: Page): Promise<void> {
+  await page.keyboard.down('e');
+  await page.waitForTimeout(120);
+  await page.keyboard.up('e');
+}
+
 export async function interactAt(
   page: Page,
   x: number,
@@ -41,7 +48,7 @@ export async function interactAt(
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), { x, y });
   await expect(page.getByText(prompt, { exact: true })).toBeVisible();
   const previous = await page.evaluateHandle(() => window.__lexiconDebug);
-  await page.keyboard.press('e');
+  await pressInteract(page);
   // Scene transitions fade out first; wait until the new scene has installed its debug hook.
   if (sceneSwap) {
     await page.waitForFunction(
@@ -77,5 +84,5 @@ export async function talkToDavid(page: Page): Promise<void> {
   );
   await expect(page.getByText('Nói chuyện với David', { exact: true })).toBeVisible();
   await page.locator('canvas').click({ position: { x: 400, y: 300 } });
-  await page.keyboard.press('e');
+  await pressInteract(page);
 }
