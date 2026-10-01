@@ -1,17 +1,17 @@
 ---
 schema_version: 1
-updated_at: 2026-10-01T15:39:00+07:00
+updated_at: 2026-10-01T15:46:40+07:00
 phase: phase-11e
-status: complete
-result_commit: cb18871
-active_spec: docs/ai/2026-10-01-player-playtest-feedback.md
+status: proposed
+result_commit: d2b6541
+active_spec: docs/ai/2026-10-01-notebook-people-analysis.md
 active_plan: none
 ---
 
 ## Metadata
 
 - Phase11E/12 đã được người dùng chấp nhận; nợPhase11 đã đóng. Gói bounded viewport/focus sau playtest được duyệt và đã sửa trong cb18871. Báo cáo docs/ai/2026-10-01-viewport-focus-verification.md.
-- Origin/dev ở9cff732; báo cáo playtest0ebdaec, memory497cb85 và fix cb18871 hiện local, chưa push. Không tự push việc mới.
+- Người dùng yêu cầu tiếp tục và push; đã push origin/dev tới2b97bc8, gồm playtest/viewport/memory. Phân tích People mới d2b6541 và memory kế tiếp local, chưa push trước xác nhận.
 
 ## Current Phase
 
@@ -19,7 +19,7 @@ active_plan: none
 
 ## Active Goal
 
-- Không có việc đang chạy; chờ yêu cầu tiếp theo. TabPeople/onboarding chưa được duyệt triển khai.
+- Tiếp tục tabPeople theo yêu cầu; đã phân tích options và đề xuất metadata nodeId/unlockCondition dùng flags hiện có, không thêm engine/save state. Hướng trong docs/ai/2026-10-01-notebook-people-analysis.md chờ duyệt rồi viết spec; chưa triển khai code.
 
 ## Current Status
 
@@ -53,9 +53,9 @@ active_plan: none
 
 ## Next Actions
 
-1. Khi người dùng yêu cầu: thiết kế tabPeople từ NPC/lời khai/dữ kiện đã khám phá trước triển khai.
+1. Duyệt hướng People trong phân tích mới, rồi lập spec tiếng Việt; tiếp tục gate spec/plan trước code.
 2. Các đề xuất còn lại: cue mục tiêu/hướng dẫn chuột, feedback click bị chặn, copy toggleminimap; chưa tự triển khai. Chơi lại tiếp cận bàn compact sau fix trước kết luận collider/pathfinding lỗi.
-3. Chỉ push khi người dùng yêu cầu; báo cáo phân tích phải được xác nhận trước push theo protocol.
+3. Phân tích/spec/plan People mới phải được xác nhận trước push; phần viewport đã push theo yêu cầu.
 
 ## Verification
 
@@ -65,7 +65,9 @@ active_plan: none
 
 ## Latest Handoff
 
-- Result cb18871 đã commit trước memory. Báo cáo đầy đủ output/limitations/review: docs/ai/2026-10-01-viewport-focus-verification.md. Scratch logs .superpowers/verification/viewport-focus/ ignored; không push.
+- Push completed2b97bc8. Analysis result d2b6541, memory commit kế tiếp; People chọn hướng architectural vì chạm metadata contract shared-types/game-content, cần duyệt hướng/spec/plan theo brainstorming trước code.
+
+- Result cb18871 đã commit trước memory. Báo cáo đầy đủ output/limitations/review: docs/ai/2026-10-01-viewport-focus-verification.md. Scratch logs .superpowers/verification/viewport-focus/ ignored; kết quả viewport đã push.
 
 ## Required Reading
 
