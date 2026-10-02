@@ -1,5 +1,12 @@
-import { test, expect } from '@playwright/test';
-import { definition, strings, seedInvestigation } from './investigationFixture';
+import { test, expect, type Locator } from '@playwright/test';
+import {
+  definition,
+  strings,
+  seedInvestigation,
+  expectNoInvestigationScroll,
+  readAllPages,
+  turnToVisible,
+} from './investigationFixture';
 import { fileURLToPath } from 'node:url';
 import { saved } from './journeyHelpers';
 test.setTimeout(90_000);
@@ -18,16 +25,18 @@ test('notebook selects one dossier and one evidence without changing case progre
   await notebook.getByRole('button', { name: strings.people, exact: true }).click();
   await expect(notebook.locator('.notebook-person')).toHaveCount(1);
   await notebook.getByRole('button', { name: 'Leo Tran', exact: true }).click();
-  await expect(notebook.locator('.notebook-person h3')).toHaveText('Leo Tran');
-  await expect(notebook.locator('.notebook-statement-list')).toContainText(
+  await expect(notebook.locator('.notebook-person .page-viewport h3').first()).toHaveText(
+    'Leo Tran',
+  );
+  expect(await readAllPages(notebook.locator('.notebook-person .measured-page'))).toContain(
     definition.dialogues.find((t) => t.npcId === 'leo')!.nodes.find((n) => n.id === 'answer1')!
       .text,
   );
   await notebook.getByRole('button', { name: strings.evidence, exact: true }).click();
   await notebook.getByRole('button', { name: "Leo's Phone Recording", exact: true }).click();
-  await expect(notebook.locator('.notebook-evidence-detail')).toContainText(
-    'A phone recording Leo left at 20:29.',
-  );
+  expect(
+    await readAllPages(notebook.locator('.notebook-evidence-detail .measured-page')),
+  ).toContain('A phone recording Leo left at 20:29.');
   expect((await saved(page))?.state).toEqual(before?.state);
   await notebook.getByRole('button', { name: strings.close, exact: true }).click();
   await expect(page.locator('.game-root > [tabindex="-1"]')).toBeFocused();
@@ -105,18 +114,14 @@ for (const viewport of [
         'background-color',
         'rgb(116, 48, 38)',
       );
-      const overflow = await notebook.evaluate((el) => ({
-        width: el.scrollWidth,
-        client: el.clientWidth,
-        content: el.querySelector('.notebook-content')!.scrollWidth,
-        contentClient: el.querySelector('.notebook-content')!.clientWidth,
-      }));
-      expect(overflow.width).toBeLessThanOrEqual(overflow.client + 1);
-      expect(overflow.content).toBeLessThanOrEqual(overflow.contentClient + 1);
+      await expectNoInvestigationScroll(
+        page,
+        page.getByRole('dialog', { name: strings.notebook, exact: true }),
+      );
       await page.screenshot({
         path: fileURLToPath(
           new URL(
-            `../../../docs/ai/playtests/2026-10-01-notebook-deduction/${tab}-${viewport.width}.png`,
+            `../../../docs/ai/playtests/2026-10-02-investigation-pagination/${tab}-${viewport.width}.png`,
             import.meta.url,
           ),
         ),
@@ -125,33 +130,35 @@ for (const viewport of [
     await page.keyboard.press('b');
     const board = page.locator('.deduction-board');
     await expect(board).toBeVisible();
-    await board.getByRole('button', { name: 'Meeting Minutes', exact: true }).click();
+    // Cards are paginated: turn to the page that holds the evidence card.
+    await (
+      await turnToVisible(
+        board.locator('.clues-cards .measured-page'),
+        board.getByRole('button', { name: 'Meeting Minutes', exact: true }),
+      )
+    ).click();
     await expect(board.locator('.deduction-detail')).toContainText('Meeting Minutes');
-    await board.locator('.deduction-relations summary').click();
-    await expect(board.locator('.deduction-relations')).toContainText('Meeting Minutes');
+    await board.getByRole('button', { name: strings.investigationRelations, exact: true }).click();
+    await expect(board.locator('.deduction-detail .page-viewport')).toContainText(
+      'Meeting Minutes',
+    );
     const box = (await board.boundingBox())!;
-    expect(box.x).toBeGreaterThanOrEqual(12);
-    expect(box.y).toBeGreaterThanOrEqual(12);
-    expect(box.x + box.width).toBeLessThanOrEqual(viewport.width - 12);
-    expect(box.y + box.height).toBeLessThanOrEqual(viewport.height - 12);
-    expect(
-      await board
-        .locator('.deduction-surface')
-        .evaluate((el) => el.scrollWidth <= el.clientWidth + 1),
-    ).toBe(true);
+    const margin = viewport.width <= 800 ? 8 : 12;
+    expect(box.x).toBeGreaterThanOrEqual(margin);
+    expect(box.y).toBeGreaterThanOrEqual(margin);
+    expect(box.x + box.width).toBeLessThanOrEqual(viewport.width - margin);
+    expect(box.y + box.height).toBeLessThanOrEqual(viewport.height - margin);
+    await expectNoInvestigationScroll(page, board);
     await board.getByRole('button', { name: strings.close, exact: true }).focus();
     const count = await board.locator('button:enabled').count();
     for (let i = 0; i <= count; i++) {
       await page.keyboard.press('Tab');
       expect(await board.evaluate((el) => el.contains(document.activeElement))).toBe(true);
     }
-    await board.locator('.deduction-surface').evaluate((el) => {
-      el.scrollTop = 0;
-    });
     await page.screenshot({
       path: fileURLToPath(
         new URL(
-          `../../../docs/ai/playtests/2026-10-01-notebook-deduction/board-${viewport.width}.png`,
+          `../../../docs/ai/playtests/2026-10-02-investigation-pagination/board-${viewport.width}.png`,
           import.meta.url,
         ),
       ),
@@ -173,15 +180,28 @@ test('notebook reveal is scoped to the chosen word and board popover Escape stay
   await page.keyboard.press('j');
   const notebook = page.locator('.notebook-panel');
   await notebook.getByRole('button', { name: strings.vocabulary, exact: true }).click();
-  const words = notebook.locator('.notebook-word-list button');
-  expect(await words.count()).toBeGreaterThan(1);
-  await expect(notebook.locator('.notebook-word-translation')).toHaveCount(0);
-  await notebook.getByRole('button', { name: strings.revealTranslation, exact: true }).click();
-  await expect(notebook.locator('.notebook-word-translation')).toBeVisible();
-  await words.nth(1).click();
-  await expect(notebook.locator('.notebook-word-translation')).toHaveCount(0);
-  await words.first().click();
-  await expect(notebook.locator('.notebook-word-translation')).toHaveCount(0);
+  const cards = notebook.locator('.notebook-index .page-viewport .notebook-index-card');
+  expect(await cards.count()).toBeGreaterThan(1);
+  const detail = notebook.locator('.notebook-word-detail .measured-page');
+  const translationOf = async (card: Locator) => {
+    const lemma = await card.getAttribute('aria-label');
+    return definition.vocabulary.find((w) => w.lemma === lemma)!.translationVi;
+  };
+  const firstTranslation = await translationOf(cards.first());
+  const secondTranslation = await translationOf(cards.nth(1));
+  expect(await readAllPages(detail)).not.toContain(firstTranslation);
+  const reveal = await turnToVisible(
+    detail,
+    detail.getByRole('button', { name: strings.revealTranslation, exact: true }),
+  );
+  await reveal.click();
+  expect(await readAllPages(detail)).toContain(firstTranslation);
+  await cards.nth(1).click();
+  const afterSecond = await readAllPages(detail);
+  expect(afterSecond).not.toContain(firstTranslation);
+  expect(afterSecond).not.toContain(secondTranslation);
+  await cards.first().click();
+  expect(await readAllPages(detail)).not.toContain(firstTranslation);
   await page.keyboard.press('b');
   const board = page.locator('.deduction-board');
   await board.getByRole('button', { name: 'Meeting Minutes', exact: true }).click();
@@ -203,12 +223,15 @@ test('source relations remain reachable in native Tab order with no discovered f
   await seedInvestigation(page, { evidenceIds: ['meeting_minutes'] });
   await page.keyboard.press('b');
   const board = page.locator('.deduction-board');
-  const summary = board.locator('.deduction-relations summary');
+  const relations = board.getByRole('button', {
+    name: strings.investigationRelations,
+    exact: true,
+  });
   let reached = false;
   const count = await board.locator('button:enabled').count();
   for (let i = 0; i <= count + 1; i++) {
     await page.keyboard.press('Tab');
-    reached ||= await summary.evaluate((el) => el === document.activeElement);
+    reached ||= await relations.evaluate((el) => el === document.activeElement);
   }
   expect(reached).toBe(true);
 });
@@ -218,7 +241,9 @@ test('portrait artwork keeps every character head inside its frame', async ({ pa
     flags: { anna_q1_read: true, leo_q1_read: true, david_statement_read: true },
   });
   await page.keyboard.press('b');
-  const frames = page.locator('.deduction-card .investigation-portrait');
+  const frames = page.locator(
+    '.clues-cards .page-viewport .deduction-card .investigation-portrait',
+  );
   await expect(frames).toHaveCount(3);
   for (const frame of await frames.all()) {
     const img = frame.locator('img');

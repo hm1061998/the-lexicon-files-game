@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import type { Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import type { CaseDefinition, GameState, UiStrings } from '@lexicon/shared-types';
 import { createCaseState } from '../../../packages/game-core/src/case/createCaseState';
 import { createInitialLanguageProfile } from '../../../packages/learning-engine/src/vocabulary/learningReducer';
@@ -111,4 +111,84 @@ export async function seedInvestigation(
     }, profile);
   }
   await openWorld(page);
+}
+
+/** Wheel/scroll never moves anything inside the dialog and no visible page content leaves its frame. */
+export async function expectNoInvestigationScroll(page: Page, dialog: Locator): Promise<void> {
+  const offsets = () =>
+    dialog.evaluate((el) =>
+      Array.from(el.querySelectorAll('*')).map((n) => ({ top: n.scrollTop, left: n.scrollLeft })),
+    );
+  const before = await offsets();
+  await dialog.hover();
+  await page.mouse.wheel(0, 900);
+  await page.waitForTimeout(100);
+  expect(await offsets()).toEqual(before);
+  const overflow = await dialog.evaluate((el) => {
+    const frame = el.getBoundingClientRect();
+    return Array.from(
+      el.querySelectorAll<HTMLElement>(
+        '.page-viewport .page-fragment,header button,.page-controls button',
+      ),
+    )
+      .filter((n) => n.getClientRects().length && !n.closest('.page-measurement'))
+      .map((n) => ({ box: n.getBoundingClientRect(), text: n.textContent }))
+      .filter(
+        ({ box }) =>
+          box.bottom > frame.bottom + 1 ||
+          box.right > frame.right + 1 ||
+          box.top < frame.top - 1 ||
+          box.left < frame.left - 1,
+      )
+      .map(({ text }) => text);
+  });
+  expect(overflow).toEqual([]);
+}
+
+/** Turns every page of one `.measured-page` from the first to the last and joins the visible text. */
+export async function readAllPages(scope: Locator): Promise<string> {
+  const previous = scope.getByRole('button', { name: /Trang trước/ });
+  const next = scope.getByRole('button', { name: /Trang sau/ });
+  for (let i = 0; i < 40 && (await previous.isEnabled()); i += 1) await previous.click();
+  const pages: string[] = [];
+  for (let i = 0; i < 40; i += 1) {
+    pages.push(await scope.locator('.page-viewport').innerText());
+    if (!(await next.isEnabled())) break;
+    await next.click();
+  }
+  return pages.join(' ');
+}
+
+/** Turns pages of one `.measured-page` forward until `target` is on screen, then returns it. */
+export async function turnToVisible(scope: Locator, target: Locator): Promise<Locator> {
+  const next = scope.getByRole('button', { name: /Trang sau/ });
+  for (let i = 0; i < 40; i += 1) {
+    if (await target.isVisible()) return target;
+    if (!(await next.count()) || !(await next.first().isEnabled())) break;
+    await next.first().click();
+  }
+  await expect(target).toBeVisible();
+  return target;
+}
+
+const normalize = (text: string) => text.replace(/\s+/g, ' ').trim();
+export { normalize as normalizeText };
+
+/** Recorded statements of one person, in order, merged across page fragments and pages. */
+export async function readStatements(scope: Locator): Promise<string[]> {
+  const previous = scope.getByRole('button', { name: /Trang trước/ });
+  const next = scope.getByRole('button', { name: /Trang sau/ });
+  for (let i = 0; i < 40 && (await previous.isEnabled()); i += 1) await previous.click();
+  const parts = new Map<string, string[]>();
+  for (let i = 0; i < 40; i += 1) {
+    const found = await scope
+      .locator('.page-viewport .page-fragment[data-block-id*=":statement:"]')
+      .evaluateAll((nodes) =>
+        nodes.map((n) => ({ id: n.getAttribute('data-block-id')!, text: n.textContent ?? '' })),
+      );
+    for (const { id, text } of found) parts.set(id, [...(parts.get(id) ?? []), text]);
+    if (!(await next.isEnabled())) break;
+    await next.click();
+  }
+  return [...parts.values()].map((chunks) => normalize(chunks.join(' ')));
 }

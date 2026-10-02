@@ -5,8 +5,16 @@ import type { CaseDefinition, GameState, LanguageProfile, UiStrings } from '@lex
 import { createCaseState } from '../../../packages/game-core/src/case/createCaseState';
 import { interactAt, openWorld, saved } from './journeyHelpers';
 import { scenePoint } from './sceneTestData';
+import {
+  expectNoInvestigationScroll,
+  normalizeText,
+  readAllPages,
+  readStatements,
+  turnToVisible,
+} from './investigationFixture';
 
 test.setTimeout(90_000);
+const personPages = (panel: Locator) => panel.locator('.notebook-person .measured-page');
 function content(path: string): object {
   return JSON.parse(
     readFileSync(
@@ -146,19 +154,17 @@ test('records partial interview and survives reload', async ({ page }) => {
   await expect(
     panel.getByRole('heading', { name: definition.npcs[0]!.name, exact: true }),
   ).toBeVisible();
-  await expect(panel.locator('.notebook-statement-list li')).toHaveText([
-    node('anna', 'entry').text,
-    node('anna', 'answer1').text,
-  ]);
+  expect(await readStatements(personPages(panel))).toEqual(
+    [node('anna', 'entry').text, node('anna', 'answer1').text].map(normalizeText),
+  );
   await expect(panel).toContainText(strings.notebookInterviewInProgress);
   await expect.poll(async () => (await saved(page))?.state.flags.anna_q1_read).toBe(true);
   await page.reload();
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   panel = await people(page);
-  await expect(panel.locator('.notebook-statement-list li')).toHaveText([
-    node('anna', 'entry').text,
-    node('anna', 'answer1').text,
-  ]);
+  expect(await readStatements(personPages(panel))).toEqual(
+    [node('anna', 'entry').text, node('anna', 'answer1').text].map(normalizeText),
+  );
   await closePeople(page);
   await talk(page, 'anna');
   await ask(page, 'anna', 'q2');
@@ -166,7 +172,7 @@ test('records partial interview and survives reload', async ({ page }) => {
   await closeDialogue(page);
   panel = await people(page);
   await expect(panel).toContainText(strings.notebookInterviewComplete);
-  await expect(panel.locator('.notebook-statement-list li')).toHaveCount(4);
+  expect(await readStatements(personPages(panel))).toHaveLength(4);
   await expect(page.locator('canvas')).toHaveCount(1);
 });
 
@@ -194,8 +200,8 @@ test('keeps branch history and legacy progress', async ({ page }) => {
   await expect(
     panel.getByRole('heading', { name: definition.npcs[2]!.name, exact: true }),
   ).toBeVisible();
-  await expect(panel.locator('.notebook-statement-list li')).toHaveText(
-    ['entry', 'answer1', 'answer2'].map((id) => node('david', id).text),
+  expect(await readStatements(personPages(panel))).toEqual(
+    ['entry', 'answer1', 'answer2'].map((id) => normalizeText(node('david', id).text)),
   );
   await expect(panel).toContainText(strings.notebookInterviewComplete);
   const before = (await saved(page))!.state;
@@ -228,9 +234,9 @@ test('keeps branch history and legacy progress', async ({ page }) => {
     flags: { ...state.flags, david_answer3_recorded: true, david_answer3_unlocked_recorded: true },
   });
   panel = await people(page);
-  await expect(panel.locator('.notebook-statement-list li')).toHaveText(
-    ['entry', 'answer1', 'answer2', 'answer3', 'answer3_unlocked'].map(
-      (id) => node('david', id).text,
+  expect(await readStatements(personPages(panel))).toEqual(
+    ['entry', 'answer1', 'answer2', 'answer3', 'answer3_unlocked'].map((id) =>
+      normalizeText(node('david', id).text),
     ),
   );
   await expect(panel).not.toContainText(node('david', 'collect_folder').text);
@@ -262,7 +268,10 @@ test('reuses vocabulary context without encounter inflation', async ({ page }) =
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   let panel = await people(page);
   expect(await encounterSnapshot()).toEqual(initial);
-  const word = panel.getByRole('button', { name: /left\. Xem nghĩa từ/ });
+  const word = await turnToVisible(
+    personPages(panel),
+    panel.getByRole('button', { name: /left\. Xem nghĩa từ/ }),
+  );
   await word.click();
   await expect(panel.getByRole('dialog', { name: 'leave', exact: true })).toBeFocused();
   await panel.getByRole('button', { name: strings.revealTranslation, exact: true }).click();
@@ -284,11 +293,10 @@ test('reuses vocabulary context without encounter inflation', async ({ page }) =
       .click();
     panel = await people(page);
     await expect(panel.getByLabel(strings.vocabularyMode)).toHaveCount(0);
-    await expect(panel.locator('.vocabulary-translation')).toHaveCount(mode === 'Beginner' ? 1 : 0);
-    if (mode === 'Beginner')
-      await expect(panel.locator('.vocabulary-translation')).toHaveText(
-        node('anna', 'entry').translationVi!,
-      );
+    const pagesText = normalizeText(await readAllPages(personPages(panel)));
+    const entryTranslation = normalizeText(node('anna', 'entry').translationVi!);
+    if (mode === 'Beginner') expect(pagesText).toContain(entryTranslation);
+    else expect(pagesText).not.toContain(entryTranslation);
     expect(await encounterSnapshot()).toEqual(initial);
   }
 });
@@ -301,29 +309,28 @@ async function stableFocus(page: Page, panel: Locator): Promise<void> {
       root: document.querySelector('.game-root')!.scrollTop,
     })),
   ).toEqual({ y: 0, x: 0, root: 0 });
-  expect(
-    await panel.evaluate((element) => {
-      const focus = document.activeElement!;
-      const rect = focus.getBoundingClientRect();
-      const panelRect = element.getBoundingClientRect();
-      return {
-        active: focus.outerHTML.slice(0, 250),
-        contains: element.contains(focus),
-        topInside: rect.top >= panelRect.top + element.clientTop,
-        bottomInside: rect.bottom <= panelRect.top + element.clientTop + element.clientHeight,
-        leftInside: rect.left >= panelRect.left,
-        rightInside: rect.right <= panelRect.right,
-        viewportInside: rect.top >= 0 && rect.bottom <= innerHeight,
-        focusRect: { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right },
-        panelRect: {
-          top: panelRect.top,
-          bottom: panelRect.bottom,
-          left: panelRect.left,
-          right: panelRect.right,
-        },
-      };
-    }),
-  ).toMatchObject({
+  const focusInfo = await panel.evaluate((element) => {
+    const focus = document.activeElement!;
+    const rect = focus.getBoundingClientRect();
+    const panelRect = element.getBoundingClientRect();
+    return {
+      active: focus.outerHTML.slice(0, 250),
+      contains: element.contains(focus),
+      topInside: rect.top >= panelRect.top + element.clientTop,
+      bottomInside: rect.bottom <= panelRect.top + element.clientTop + element.clientHeight,
+      leftInside: rect.left >= panelRect.left,
+      rightInside: rect.right <= panelRect.right,
+      viewportInside: rect.top >= 0 && rect.bottom <= innerHeight,
+      focusRect: { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right },
+      panelRect: {
+        top: panelRect.top,
+        bottom: panelRect.bottom,
+        left: panelRect.left,
+        right: panelRect.right,
+      },
+    };
+  });
+  expect(focusInfo, JSON.stringify(focusInfo)).toMatchObject({
     contains: true,
     topInside: true,
     bottomInside: true,
@@ -370,21 +377,20 @@ for (const viewport of [
     await page.screenshot({
       path: fileURLToPath(
         new URL(
-          `../../../docs/ai/playtests/2026-10-01-notebook-deduction/people-${viewport.width}.png`,
+          `../../../docs/ai/playtests/2026-10-02-investigation-pagination/people-${viewport.width}.png`,
           import.meta.url,
         ),
       ),
     });
-    await panel.locator('.notebook-content').hover();
-    await page.mouse.wheel(0, 1200);
-    await expect
-      .poll(async () => panel.locator('.notebook-content').evaluate((el) => el.scrollTop))
-      .toBeGreaterThan(0);
+    await expectNoInvestigationScroll(
+      page,
+      page.getByRole('dialog', { name: strings.notebook, exact: true }),
+    );
     const close = panel
       .locator('.notebook-header')
       .getByRole('button', { name: strings.close, exact: true });
     await close.focus();
-    let scrolled = true;
+    let scrolled = false;
     let openedWord = false;
     const forward = new Set<string>();
     const backward = new Set<string>();
@@ -423,7 +429,7 @@ for (const viewport of [
       expect(forward.has(label)).toBe(true);
       expect(backward.has(label)).toBe(true);
     }
-    expect(scrolled).toBe(true);
+    expect(scrolled).toBe(false);
     expect(openedWord).toBe(true);
     await panel.getByRole('button', { name: strings.openDeductionBoard, exact: true }).click();
     const board = page.locator('.deduction-board');

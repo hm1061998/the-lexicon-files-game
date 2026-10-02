@@ -1,6 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { scenePoint, sceneSpawnPoint } from './sceneTestData';
 import { interactAt, openWorld, saved } from './journeyHelpers';
+
+const openFace = (page: Page, name: string) =>
+  page.getByRole('button', { name, exact: true }).click();
+
+// Board choices are paginated: turn pages forward until the named button is on screen.
+async function reveal(page: Page, name: string): Promise<Locator> {
+  const target = page.getByRole('button', { name, exact: true });
+  const next = page.getByRole('button', { name: /Trang sau/ });
+  for (let turns = 0; turns < 12; turns += 1) {
+    if (await target.isVisible()) return target;
+    if (!(await next.count()) || (await next.first().isDisabled())) break;
+    await next.first().click();
+  }
+  await expect(target).toBeVisible();
+  return target;
+}
 
 test('Archive, timeline, contradiction, conclusion and case report survive reload', async ({
   page,
@@ -15,17 +31,18 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await openWorld(page);
   await page.keyboard.press('b');
 
-  const missingReport = page.getByRole('button', { name: 'The report was discovered missing.' });
-  await expect(missingReport).toBeVisible();
+  await openFace(page, 'Dòng thời gian');
+  const missingReport = await reveal(page, 'The report was discovered missing.');
   await expect(page.getByRole('button', { name: 'Mốc 21:05' })).toHaveCount(0);
   await missingReport.click();
-  await expect(page.getByRole('button', { name: 'Mốc 21:05' })).toBeVisible();
-  await page.getByRole('button', { name: 'Mốc 20:45' }).click();
+  await expect(await reveal(page, 'Mốc 21:05')).toBeVisible();
+  await (await reveal(page, 'Mốc 20:45')).click();
   await page.getByRole('button', { name: 'Đặt sự kiện' }).click();
   await expect(
     page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
   ).toContainText('Something in the timeline is inconsistent.');
-  await page.getByRole('button', { name: 'Mốc 21:05' }).click();
+  await openFace(page, 'Chọn mốc thời gian');
+  await (await reveal(page, 'Mốc 21:05')).click();
   await page.getByRole('button', { name: 'Đặt sự kiện' }).click();
   await expect(
     page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
@@ -80,31 +97,28 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await page.keyboard.press('Escape');
 
   await page.keyboard.press('b');
-  const statementFact = page.getByRole('button', {
-    name: "David says he didn't enter the meeting room after eight.",
-  });
-  const annaFact = page.getByRole('button', { name: 'Anna Reed left the meeting room at 20:18.' });
-  await expect(statementFact).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'David Cole entered the meeting room at 20:32.' }),
-  ).toBeVisible();
-  await statementFact.focus();
+  await openFace(page, 'Đối chiếu');
+  const statementName = "David says he didn't enter the meeting room after eight.";
+  const annaName = 'Anna Reed left the meeting room at 20:18.';
+  const davidEntryName = 'David Cole entered the meeting room at 20:32.';
+  await expect(await reveal(page, statementName)).toBeVisible();
+  await expect(await reveal(page, davidEntryName)).toBeVisible();
+  await (await reveal(page, statementName)).focus();
   await page.keyboard.press('Enter');
-  await annaFact.focus();
+  await (await reveal(page, annaName)).focus();
   await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).focus();
   await page.keyboard.press('Enter');
   await expect(
     page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
   ).toContainText("This interpretation doesn't match the evidence.");
-  await annaFact.click();
-  await page.getByRole('button', { name: 'David Cole entered the meeting room at 20:32.' }).focus();
+  await openFace(page, 'Dữ kiện đã thu thập');
+  await (await reveal(page, annaName)).click();
+  await (await reveal(page, davidEntryName)).focus();
   await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('.contradiction-confirmed')).toContainText(
-    'Mâu thuẫn đã được xác nhận.',
-  );
+  await expect(page.locator('.notebook-feedback')).toContainText('Mâu thuẫn đã được xác nhận.');
   await expect
     .poll(async () => (await saved(page))?.state.contradictionIds)
     .toContain('david_statement_vs_access_log');
@@ -199,6 +213,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await page.keyboard.press('Escape');
 
   await page.keyboard.press('b');
+  await openFace(page, 'Kết luận');
   const submit = page.getByRole('button', { name: 'Nộp kết luận' });
   await expect(submit).toBeDisabled();
   const beforeWrong = await saved(page);
@@ -207,12 +222,15 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await page.keyboard.press('Enter');
   await expect(anna).toHaveAttribute('aria-pressed', 'true');
   await submit.click();
-  await expect(page.getByRole('status').filter({ hasText: 'Review the timeline.' })).toHaveText(
+  // The paged feedback also renders an aria-hidden measurement copy, so match on containment.
+  await expect(page.getByRole('status').filter({ hasText: 'Review the timeline.' })).toContainText(
     "The evidence doesn't fully support this conclusion. Review the timeline.",
   );
   expect(await saved(page)).toEqual(beforeWrong);
 
-  await page.locator('.accusation-panel').getByRole('button', { name: 'David Cole' }).click();
+  // Feedback replaces the choice pages; go back to the suspects before choosing again.
+  await page.locator('.accusation-panel').getByRole('button', { name: 'Quay lại' }).click();
+  await (await reveal(page, 'David Cole')).click();
   await submit.click();
   await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
   await expect(page.getByText('toàn hồ sơ', { exact: false })).toBeVisible();
