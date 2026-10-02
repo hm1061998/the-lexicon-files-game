@@ -1,8 +1,8 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T07:27:40+07:00
+updated_at: 2026-10-02T07:43:24+07:00
 phase: phase-11e
-status: complete
+status: in_progress
 result_commit: 8c734b59f20417b1321c578af4ad4f5dec5249b3
 active_spec: docs/superpowers/specs/2026-10-01-notebook-deduction-ui-design.md
 active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
@@ -15,15 +15,15 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## Current Phase
 
-- Gói chỉnh UI notebook/deduction sau các acceptance Phase11E/12 trước đó đã hoàn tất; chưa mở phase mới.
+- Gói UI notebook/deduction trước đã hoàn tất. Đang thiết kế bổ sung trải nghiệm game không cuộn cho cả hai giao diện; chưa sửa code.
 
 ## Active Goal
 
-- Yêu cầu đã duyệt: sổ tay theo ảnh đầu và bảng suy luận tách riêng theo ảnh thứ hai, dùng logic điều tra hiện có. Mục tiêu đã thực hiện và kiểm chứng.
+- Yêu cầu mới: sổ tay và bảng suy luận không có scroll; nội dung dài chia trang, hiệu ứng tự nhiên, có thể dùng thư viện phù hợp. Giữ logic điều tra hiện có và phong cách diegetic.
 
 ## Current Status
 
-- Hoàn thành cả 7 task: sổ tay bốn tab đọc lại (J), bảng suy luận riêng (B), selectors/content labels, modal routing, HUD/audio, keyboard/focus, responsive và regression.
+- Gói trước hoàn thành cả 7 task: sổ tay bốn tab đọc lại (J), bảng suy luận riêng (B), selectors/content labels, modal routing, HUD/audio, keyboard/focus, responsive và regression.
 - Code/report/plan/ảnh ở result_commit phía trên; memory commit riêng kế tiếp theo README.md. Gói UI này chưa push.
 - Báo cáo đầy đủ file, tests, lệnh/output, RED/GREEN, review, rulings và hạn chế: docs/ai/2026-10-01-notebook-deduction-verification.md. Ảnh và raw output: docs/ai/playtests/2026-10-01-notebook-deduction/.
 
@@ -36,7 +36,7 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## In Progress
 
-- Không còn implementation dang dở trong gói notebook/deduction đã duyệt.
+- Đã đọc Git/memory/component/CSS và khảo sát tài liệu chính thức StPageFlip/react-pageflip. Đề xuất sổ tay lật giấy, board cố định chuyển mặt làm việc và hồ sơ chi tiết phân trang; chờ duyệt hướng thiết kế mới trước spec/plan/code. Approval spec/plan cũ không bao gồm thiết kế mới này.
 
 ## Active Decisions
 
@@ -53,12 +53,13 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## Blockers
 
-- Không còn blocker kỹ thuật. Commit mới hiện ở dev local, chờ authorization riêng nếu muốn push.
+- Không có blocker kỹ thuật. Chưa cài dependency hoặc sửa code trong yêu cầu mới. Commit gói cũ vẫn local.
 
 ## Next Actions
 
-1. Người dùng xem UI/ảnh và báo cáo notebook-deduction; phản hồi nếu cần điều chỉnh trong scope đã triển khai.
-2. Nếu người dùng yêu cầu push gói UI, reconcile Git rồi push đúng dev/origin đã xác minh; không dùng approval People cũ.
+1. Người dùng duyệt hướng thiết kế không scroll: notebook lật trang, board chuyển mặt làm việc và hồ sơ chi tiết phân trang.
+2. Sau duyệt hướng: viết spec tiếng Việt bổ sung thay quy tắc cuộn/xếp dọc và xem xét StPageFlip cho animation; người dùng duyệt spec rồi plan theo brainstorming.
+3. Sau duyệt plan: thực thi inline trên dev, kiểm chứng nội dung dài/viewport/thao tác game và cập nhật memory. Không dùng approval push People cũ.
 
 ## Verification
 
@@ -70,7 +71,7 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## Latest Handoff
 
-- Result8c734b5 chứa code/tests/spec/plan/report/15ảnh và output. Memory commit riêng sau result theo protocol; giữ dev local, debug.log untracked.
+- Result8c734b5 là gói UI trước đã verified; chưa có implementation mới. Đang brainstorming no-scroll theo yêu cầu trực tiếp của người dùng. Giữ dev local và debug.log untracked.
 - Các ruling/cost, review và failures/reruns đầy đủ trong report hiện tại; không còn implementation phải làm trong plan này.
 
 ## Required Reading
