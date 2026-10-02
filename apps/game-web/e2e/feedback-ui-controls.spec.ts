@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 import { scenePoint } from './sceneTestData';
+import { openWorld, reopenWorld } from './journeyHelpers';
 
 test('dialogue and notebook controls stay accessible and fit a compact viewport', async ({
   page,
@@ -8,7 +9,7 @@ test('dialogue and notebook controls stay accessible and fit a compact viewport'
   const output = '../../.superpowers/sdd/2026-10-01-phase-11e-navigation-portals';
   mkdirSync(output, { recursive: true });
   await page.setViewportSize({ width: 760, height: 600 });
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await page.evaluate(
     ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
@@ -40,7 +41,7 @@ test('dialogue and notebook controls stay accessible and fit a compact viewport'
 
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 760, height: 600 });
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await page.keyboard.press('j');
   const notebook = page.locator('.notebook-panel');

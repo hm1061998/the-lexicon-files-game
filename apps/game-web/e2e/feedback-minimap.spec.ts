@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { openWorld } from './journeyHelpers';
 
 test('minimap follows short movement in all four directions and resets on scene change', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto('/');
+  await openWorld(page);
   await expect(page.locator('.minimap-player')).toBeVisible();
   for (const key of ['w', 'a', 's', 'd']) {
     await page.evaluate(() => window.__lexiconDebug!.teleportLogical(10, 9));
@@ -60,7 +61,7 @@ test('minimap follows short movement in all four directions and resets on scene 
 });
 
 test('player has visible CSS size on desktop and compact', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   for (const viewport of [
     { width: 1280, height: 720 },
     { width: 760, height: 600 },

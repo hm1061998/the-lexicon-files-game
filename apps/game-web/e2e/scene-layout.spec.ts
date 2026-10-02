@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { expandWalls } from '../../../packages/game-content/src/geometry/wallSegments';
 import type { WallSegmentDefinition } from '../../../packages/shared-types/src/scene';
+import { openWorld } from './journeyHelpers';
 
 type Point = { u: number; v: number };
 type Rect = Point & { width: number; height: number; id?: string };
@@ -311,7 +312,7 @@ declare global {
   }
 }
 async function open(page: Page): Promise<void> {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 async function drive(page: Page, route: readonly Point[], targetId: string): Promise<void> {

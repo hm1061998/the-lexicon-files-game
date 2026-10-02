@@ -81,7 +81,7 @@ test('cold load stays within the load budget', async ({ page }) => {
   // Chromium keeps only 250 resource entries by default, which would undercount a larger load.
   await page.addInitScript(() => performance.setResourceTimingBufferSize(100_000));
   const start = Date.now();
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const readyMs = Date.now() - start;
   const resources = await page.evaluate(() =>

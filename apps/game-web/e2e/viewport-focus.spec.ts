@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { scenePoint } from './sceneTestData';
+import { openWorld } from './journeyHelpers';
 
 // Multi-panel keyboard traversal includes geometry checks at every focus step.
 // Keep strict visibility/scroll assertions while allowing the full sequence on busy CI hosts.
@@ -42,7 +43,7 @@ for (const viewport of [
     page,
   }) => {
     await page.setViewportSize(viewport);
-    await page.goto('/');
+    await openWorld(page);
     await page.waitForFunction(() => window.__lexiconDebug !== undefined);
     await expect(page.locator('canvas')).toHaveCount(1);
     await expect(page.locator('canvas')).toBeVisible();
@@ -92,7 +93,7 @@ test('compact evidence scrolls internally and returns to a visible close control
   page,
 }) => {
   await page.setViewportSize({ width: 760, height: 360 });
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const point = scenePoint('main_office', 'meeting_minutes');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), point);

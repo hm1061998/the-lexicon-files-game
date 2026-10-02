@@ -1,8 +1,9 @@
 import { scenePoint } from './sceneTestData';
 import { expect, test, type Page } from '@playwright/test';
+import { openWorld, reopenWorld } from './journeyHelpers';
 
 async function open(page: Page): Promise<void> {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 
@@ -127,7 +128,7 @@ test('phone recording resolves the fact and persists playback telemetry after re
     .toContain('leo_outside_at_2029');
   await expect(page.locator('canvas')).toHaveCount(1);
 
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect
     .poll(async () => (await caseState(page))?.state?.discoveredFactIds)

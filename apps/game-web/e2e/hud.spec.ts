@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { scenePoint } from './sceneTestData';
+import { openWorld as enterWorld, reopenWorld } from './journeyHelpers';
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
@@ -16,7 +17,7 @@ declare global {
 }
 
 async function openWorld(page: Page): Promise<void> {
-  await page.goto('/');
+  await enterWorld(page);
   await page.waitForFunction(
     () => (window as unknown as { __lexiconDebug?: DebugApi }).__lexiconDebug !== undefined,
   );
@@ -234,7 +235,7 @@ test('discovered evidence survives reload without reopening its modal', async ({
   await collectMeetingMinutes(page);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.keyboard.press('j');

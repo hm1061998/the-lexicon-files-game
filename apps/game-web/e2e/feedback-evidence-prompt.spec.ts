@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { scenePoint } from './sceneTestData';
+import { openWorld } from './journeyHelpers';
 
 test('collected evidence no longer prompts for another E interaction', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const recording = scenePoint('main_office', 'phone_recording');
   await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), recording);

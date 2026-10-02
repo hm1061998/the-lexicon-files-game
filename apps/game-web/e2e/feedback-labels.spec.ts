@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
+import { openWorld } from './journeyHelpers';
 
 const office = JSON.parse(
   readFileSync(
@@ -25,7 +26,7 @@ test('investigation room label stays within the visible back-wall segment', () =
 });
 
 test('NPC nameplate uses the paper dossier style without covering the figure', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   await expect.poll(() => page.evaluate(() => Boolean(window.__lexiconDebug))).toBe(true);
   const nameplate = await page.evaluate(() => {
     const debug = window.__lexiconDebug as
@@ -46,7 +47,7 @@ test('NPC nameplate uses the paper dossier style without covering the figure', a
 });
 
 test('mounted label textures are released across scene restarts', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug?.labelTextureCount())).toBe(3);
   for (const [scene, spawn, count] of [
     ['archive', 'from_office', 2],

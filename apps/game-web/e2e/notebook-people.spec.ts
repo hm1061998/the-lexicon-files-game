@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import type { CaseDefinition, GameState, LanguageProfile, UiStrings } from '@lexicon/shared-types';
 import { createCaseState } from '../../../packages/game-core/src/case/createCaseState';
-import { interactAt, openWorld, saved } from './journeyHelpers';
+import { interactAt, openWorld, reopenWorld, saved } from './journeyHelpers';
 import { scenePoint } from './sceneTestData';
 import {
   expectNoInvestigationScroll,
@@ -159,7 +159,7 @@ test('records partial interview and survives reload', async ({ page }) => {
   );
   await expect(panel).toContainText(strings.notebookInterviewInProgress);
   await expect.poll(async () => (await saved(page))?.state.flags.anna_q1_read).toBe(true);
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   panel = await people(page);
   expect(await readStatements(personPages(panel))).toEqual(
@@ -264,7 +264,7 @@ test('reuses vocabulary context without encounter inflation', async ({ page }) =
     await people(page);
     await closePeople(page);
   }
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   let panel = await people(page);
   expect(await encounterSnapshot()).toEqual(initial);

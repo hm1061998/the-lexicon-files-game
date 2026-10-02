@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { openWorld } from './journeyHelpers';
 
 test('visible evidence and exits have one marker each across scene transitions', async ({
   page,
 }) => {
-  await page.goto('/');
+  await openWorld(page);
   await expect.poll(() => page.evaluate(() => window.__lexiconDebug?.worldCueCount())).toBe(3);
 
   for (const [scene, spawn, count] of [

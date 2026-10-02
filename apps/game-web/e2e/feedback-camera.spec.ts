@@ -1,5 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
+import { openWorld } from './journeyHelpers';
 
 type CameraState = {
   zoom: number;
@@ -45,7 +46,7 @@ async function expectCameraContainsPlayer(page: import('@playwright/test').Page)
 test('Office and Archive keep the player visible and clamp all four edges through resize', async ({
   page,
 }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   for (const sceneId of ['main_office', 'archive']) {
     if (sceneId === 'archive') {
@@ -76,7 +77,7 @@ test('camera zooms closer, follows the player, and stays inside the scene bounds
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto('/');
+  await openWorld(page);
   await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBeGreaterThanOrEqual(1.8);
   expect((await cameraState(page))!.zoom).toBeLessThan(1.82);
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(8, 8));
@@ -116,7 +117,7 @@ test('camera remains clamped on compact viewport and reapplies the world-fit zoo
   page,
 }) => {
   await page.setViewportSize({ width: 760, height: 600 });
-  await page.goto('/');
+  await openWorld(page);
   await expect.poll(async () => (await cameraState(page))?.zoom ?? 0).toBe(1.6);
   const output = '../../.superpowers/sdd/2026-10-01-phase-11e-navigation-portals';
   mkdirSync(output, { recursive: true });

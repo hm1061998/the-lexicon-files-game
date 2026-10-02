@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { scenePoint } from './sceneTestData';
 import { mkdirSync } from 'node:fs';
+import { openWorld } from './journeyHelpers';
 async function worldClick(page: Page, point: { x: number; y: number }) {
   await page.waitForTimeout(1500);
   const view = await page.evaluate(() => window.__lexiconDebug!.cameraState().view);
@@ -11,7 +12,7 @@ async function worldClick(page: Page, point: { x: number; y: number }) {
   );
 }
 test('arrow keys match WASD and HUD controls work with mouse', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const travel = async (keys: string[]) => {
     await page.evaluate(() => window.__lexiconDebug!.teleportLogical(10, 9));
@@ -43,7 +44,7 @@ test('arrow keys match WASD and HUD controls work with mouse', async ({ page }) 
   await expect(page.getByLabel('Chế độ dịch')).toBeVisible();
 });
 test('click floor navigates and keyboard interrupts without resuming', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(10, 9));
   await worldClick(page, { x: 832 + (11 - 9) * 64, y: 180 + (11 + 9) * 32 });
@@ -61,7 +62,7 @@ test('click floor navigates and keyboard interrupts without resuming', async ({ 
   expect(Math.hypot(after.u - p.u, after.v - p.v)).toBeLessThan(0.1);
 });
 test('distant NPC needs a second click after approach', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const anchor = scenePoint('main_office', 'anna');
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(8, 4.8));
@@ -78,7 +79,7 @@ test('distant NPC needs a second click after approach', async ({ page }) => {
 test('mouse collects desk evidence and opens notebook without world input through HUD', async ({
   page,
 }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(5.5, 9.5));
   await page.getByRole('button', { name: 'Thu gọn mục tiêu', exact: false }).click();
@@ -111,7 +112,7 @@ test('mouse collects desk evidence and opens notebook without world input throug
 });
 
 test('double click opens only one NPC interaction and does not skip dialogue', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const anchor = scenePoint('main_office', 'anna');
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(8, 6));
@@ -129,7 +130,7 @@ test('double click opens only one NPC interaction and does not skip dialogue', a
 });
 
 test('portals need explicit clicks and support both directions by mouse', async ({ page }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(5.5, 5.5));
   await page.getByRole('button', { name: 'Thu gọn mục tiêu', exact: false }).click();
@@ -166,7 +167,7 @@ test('portals need explicit clicks and support both directions by mouse', async 
 test('resized click coordinates and modal cancellation do not resume an old route', async ({
   page,
 }) => {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   for (const size of [
     { width: 1280, height: 720 },

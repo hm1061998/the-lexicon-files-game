@@ -1,11 +1,19 @@
 import { expect, test } from '@playwright/test';
+import { openWorld, reopenWorld } from './journeyHelpers';
 
 test('loads ambient music only after the first real browser gesture', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', (request) => {
     if (request.url().includes('mystical-piano-loop.ogg')) requests.push(request.url());
   });
-  await page.goto('/');
+  // Dismissing the briefing is the player's first in-game gesture and starts the music, so
+  // start over from a saved case: Continue mounts the world without any in-game gesture.
+  await openWorld(page);
+  await expect.poll(() => requests.length).toBe(1);
+  // Let the streaming request of this page settle so it is not mistaken for the next page's.
+  await page.waitForTimeout(1500);
+  requests.length = 0;
+  await reopenWorld(page);
   await expect.poll(() => page.evaluate(() => Boolean(window.__lexiconDebug))).toBe(true);
   expect(requests).toHaveLength(0);
   await page.locator('canvas').click({ position: { x: 300, y: 300 } });
@@ -13,7 +21,7 @@ test('loads ambient music only after the first real browser gesture', async ({ p
 });
 
 async function openAnnaDialogue(page: import('@playwright/test').Page) {
-  await page.goto('/');
+  await openWorld(page);
   await expect
     .poll(() => page.evaluate(() => Boolean(window.__lexiconDebug?.teleportLogical)))
     .toBe(true);
@@ -26,7 +34,7 @@ async function openAnnaDialogue(page: import('@playwright/test').Page) {
 test('plays the authored voice clip, permits the next choice, and exposes replay', async ({
   page,
 }) => {
-  await page.goto('/');
+  await openWorld(page);
   await expect
     .poll(() => page.evaluate(() => Boolean(window.__lexiconDebug?.teleportLogical)))
     .toBe(true);

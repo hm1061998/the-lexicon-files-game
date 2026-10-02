@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { scenePoint, sceneSpawnPoint } from './sceneTestData';
-import { interactAt, openWorld, saved, talkToDavid } from './journeyHelpers';
+import { interactAt, openWorld, reopenWorld, saved, talkToDavid } from './journeyHelpers';
 import { openFace, reveal } from './investigationFixture';
 
 // Roadmap §31 E2E, one test per step on a shared page so each step builds on the last save.
@@ -125,7 +125,7 @@ test.describe.serial('Case #001 journey', () => {
   test('accuse David', async () => {
     // Reload mid-journey: the save must come back identical and the case must stay playable.
     const beforeReload = await saved(page);
-    await page.reload();
+    await reopenWorld(page);
     await page.waitForFunction(() => window.__lexiconDebug !== undefined);
     expect(await saved(page)).toEqual(beforeReload);
     await talkToDavid(page);
@@ -175,7 +175,7 @@ test.describe.serial('Case #001 journey', () => {
       expect.arrayContaining(['meeting_minutes', 'security_access_log']),
     );
     expect(closed?.state.contradictionIds).toEqual(['david_statement_vs_access_log']);
-    await page.reload();
+    await reopenWorld(page);
     await page.waitForFunction(() => window.__lexiconDebug !== undefined);
     await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
     await expect

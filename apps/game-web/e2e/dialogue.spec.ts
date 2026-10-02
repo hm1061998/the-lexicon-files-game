@@ -3,6 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import type { CaseDefinition } from '@lexicon/shared-types';
 import { createCaseState } from '../../../packages/game-core/src/case/createCaseState';
+import { openWorld as enterWorld, reopenWorld } from './journeyHelpers';
 function content(path: string): unknown {
   return JSON.parse(
     readFileSync(
@@ -51,7 +52,7 @@ function prePhase8State(
   };
 }
 async function openWorld(page: Page) {
-  await page.goto('/');
+  await enterWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 async function saved(page: Page): Promise<RecordSave | undefined> {
@@ -91,7 +92,7 @@ async function seed(page: Page, record: SaveFixture) {
       db.close();
     }
   }, record);
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 async function talk(page: Page, npc: string) {
@@ -141,7 +142,7 @@ test('three interviews complete the objective and survive reload with one canvas
     .poll(async () => (await saved(page))?.state.objectiveStatuses.talk_to_everyone)
     .toBe('completed');
   await expect(page.locator('canvas[data-marker="dialogue"]')).toHaveCount(1);
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   expect((await saved(page))?.state.flags).toMatchObject({
@@ -278,7 +279,7 @@ test('closing an unread branch and reloading does not complete an interview', as
   await page.getByRole('button', { name: 'Where were you?', exact: true }).click();
   await page.keyboard.press('Escape');
   await expect.poll(async () => (await saved(page))?.state.flags.david_statement_read).toBe(true);
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   expect((await saved(page))?.state.flags.david_q1_read).toBeUndefined();
   expect((await saved(page))?.state.flags.david_interviewed).toBeUndefined();

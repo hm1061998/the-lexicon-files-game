@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { scenePoint, sceneSpawnPoint } from './sceneTestData';
-import { interactAt, openWorld, saved } from './journeyHelpers';
+import { interactAt, openWorld, reopenWorld, saved } from './journeyHelpers';
 import { openFace, reveal } from './investigationFixture';
 
 test('Archive, timeline, contradiction, conclusion and case report survive reload', async ({
@@ -165,7 +165,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     },
   });
 
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect(page.locator('canvas')).toHaveCount(1);
   await expect
@@ -233,7 +233,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   const closedRecord = await saved(page);
   expect(closedRecord?.state.objectiveStatuses.submit_your_conclusion).toBe('completed');
 
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Nộp kết luận' })).toHaveCount(0);

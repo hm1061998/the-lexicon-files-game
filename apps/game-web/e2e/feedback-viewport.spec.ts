@@ -1,6 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { scenePoint } from './sceneTestData';
+import { openWorld } from './journeyHelpers';
 
 for (const size of [
   { width: 760, height: 600 },
@@ -10,7 +11,7 @@ for (const size of [
 ]) {
   test(`shell fits ${size.width}x${size.height} including letterbox`, async ({ page }) => {
     await page.setViewportSize(size);
-    await page.goto('/');
+    await openWorld(page);
     await expect(page.locator('.hud-key-hints')).toBeVisible();
     const check = async () => {
       const bounds = await page.evaluate(() => {
@@ -66,7 +67,7 @@ test('compact HUD panels keep 44px launchers and preserve manual visibility thro
   page,
 }) => {
   await page.setViewportSize({ width: 760, height: 600 });
-  await page.goto('/');
+  await openWorld(page);
   const objective = page.getByRole('button', { name: 'Mở mục tiêu' });
   const map = page.getByRole('button', { name: 'Mở bản đồ' });
   await expect(objective).toBeVisible();
@@ -91,7 +92,7 @@ test('captures compact gameplay and a close interaction prompt for review', asyn
   const output = '../../.superpowers/sdd/2026-09-30-phase-11e-feedback-polish';
   mkdirSync(output, { recursive: true });
   await page.setViewportSize({ width: 760, height: 600 });
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await page.screenshot({ path: `${output}/compact-760x600.png` });
 

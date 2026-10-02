@@ -1,8 +1,9 @@
 import { scenePoint } from './sceneTestData';
 import { expect, test, type Page } from '@playwright/test';
+import { openWorld, reopenWorld } from './journeyHelpers';
 
 async function open(page: Page) {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 
@@ -117,7 +118,7 @@ test('visible dialogue records only annotated contexts and persists mode/progres
   await expect(page.getByRole('dialog', { name: 'leave' })).not.toContainText('rời đi');
   await changeModeInSettings(page, 'Beginner');
   await expect.poll(async () => (await settings(page))?.translationMode).toBe('Beginner');
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect
     .poll(async () => (await profile(page))?.profile.vocabulary.leave?.encounterCount)
@@ -169,7 +170,7 @@ test('confirmed learning reset preserves case evidence and keeps one canvas', as
     });
     db.close();
   });
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const recovery = page.getByRole('alert');
   await expect(recovery).toBeVisible();

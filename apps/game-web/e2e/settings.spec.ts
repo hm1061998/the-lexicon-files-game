@@ -1,5 +1,6 @@
 import { scenePoint } from './sceneTestData';
 import { expect, test, type Page } from '@playwright/test';
+import { openWorld, reopenWorld } from './journeyHelpers';
 
 type DebugApi = {
   player(): { x: number; y: number; depth: number };
@@ -22,7 +23,7 @@ function trackErrors(page: Page): string[] {
 }
 
 async function open(page: Page): Promise<void> {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
 }
 
@@ -137,7 +138,7 @@ test('settings and progress survive reload', async ({ page }) => {
     )
     .toBe('archive');
 
-  await page.reload();
+  await reopenWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await expect(page.locator('canvas')).toHaveCount(1);
   const pauseAfter = await openPause(page);

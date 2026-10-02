@@ -1,7 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openWorld } from './journeyHelpers';
 
 async function open(page: Page) {
-  await page.goto('/');
+  await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   await page.evaluate(() => window.__lexiconDebug!.teleportLogical(10, 9));
 }

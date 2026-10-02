@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+import { openWorld as enterWorld } from './journeyHelpers';
 
 type SceneTextures = { textures: Array<{ key: string; url: string }> };
 type SceneAssets = { assets: Array<{ id: string; texture: string }> };
@@ -85,7 +86,7 @@ declare global {
 }
 
 async function openWorld(page: Page): Promise<void> {
-  await page.goto('/');
+  await enterWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   // Key handlers attach with the HUD; wait for it before pressing keys.
   await expect(page.locator('.hud-key-hints')).toBeVisible();
