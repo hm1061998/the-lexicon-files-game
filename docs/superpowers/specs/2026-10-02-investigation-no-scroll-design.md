@@ -1,6 +1,6 @@
 # Sổ tay và bảng suy luận không cuộn, artwork SVG
 
-Ngày: 02/10/2026. Trạng thái: bản spec viết đã được người dùng duyệt trực tiếp; đang lập plan. Chưa triển khai.
+Ngày: 02/10/2026. Trạng thái: đã duyệt và đã triển khai (Task 1–8); kết quả và giới hạn ở `docs/ai/2026-10-02-investigation-pagination-verification.md`.
 
 ## 1. Mục tiêu và nguồn yêu cầu
 

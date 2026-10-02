@@ -87,6 +87,14 @@ for (const viewport of [
     await expect(popup).toBeVisible();
     await expect(popup).toBeFocused();
     await expect(popup.locator('.page-viewport')).not.toContainText(strings.pagePreparing);
+    await page.screenshot({
+      path: fileURLToPath(
+        new URL(
+          `../../../docs/ai/playtests/2026-10-02-investigation-pagination/popover-${viewport.width}x${viewport.height}.png`,
+          import.meta.url,
+        ),
+      ),
+    });
 
     const frame = (await dialog.boundingBox())!;
     const box = (await popup.boundingBox())!;

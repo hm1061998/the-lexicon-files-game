@@ -157,4 +157,4 @@ Các lệnh dưới chạy từ root. Wrapper npx.cmd từng lỗi trên máy n�
 - Coverage: spec§3→Task2/5/6/7/8; §4→5; §5→6; §6→1/2/5/7; §7→4/7; §8→3/5/6/8; §9→tất cả; §10→8 và tests theo từng task.
 - Types: PageAnchor/ReaderBlock/PageFragment/PageLayout ởTask1; consumer dùng cùng types. Controlled selection và UI reading chỉ một owner, không đổi game state boundary.
 - Review focus5mục đều có test/task. Không còn placeholder hoặc bước thay thế bằng “handle edge cases”. Dependency quyết định theo gate có fallback cụ thể trong spec, không cài trước approval.
-- Trạng thái: plan đã viết và self-review, chờ người dùng duyệt; chưa thực thi task hoặc cài dependency. Phương thức giữ Native inline dev.
+- Trạng thái: đã duyệt và thực thi Native inline trên dev (Task 1–8). Một review độc lập đã xử lý findings; chạy lại nhóm E2E 61/61. Kết quả, giới hạn và phần còn treo: `docs/ai/2026-10-02-investigation-pagination-verification.md`.

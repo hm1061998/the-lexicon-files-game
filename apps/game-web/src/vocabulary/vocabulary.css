@@ -104,3 +104,12 @@
 .investigation-vocabulary-close {
   justify-self: end;
 }
+
+/* Short landscape screens: give the definition card most of the dialog so each page holds more lines. */
+@media (max-height: 500px) {
+  .investigation-vocabulary-popover {
+    inset: auto 8px 8px;
+    height: min(86%, 24rem);
+    max-height: calc(100% - 16px);
+  }
+}
