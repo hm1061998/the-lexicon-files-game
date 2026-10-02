@@ -2,7 +2,7 @@
 schema_version: 1
 updated_at: 2026-10-02T21:30:00+07:00
 phase: ui-foundation-hud
-status: in_progress
+status: complete
 result_commit: dd7cb77
 active_spec: docs/superpowers/specs/2026-10-02-ui-foundation-hud-design.md
 active_plan: docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
@@ -15,11 +15,11 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 
 ## Current Phase
 
-- UI foundation + HUD (PR-02 làm lại UI, phần 1+2): Task 0–9 xong trên `dev`, đã push lên origin theo yêu cầu người dùng. Chờ người dùng duyệt ảnh trước/sau/concept (spec §9.4) trước khi đánh dấu hoàn tất. PR-03 Case #002 đã xong và đã push.
+- UI foundation + HUD (PR-02 làm lại UI, phần 1+2): Task 0–9 xong trên `dev`, đã push lên origin theo yêu cầu người dùng. Người dùng đã duyệt ảnh trước/sau (02/10/2026): phase hoàn tất. PR-03 Case #002 đã xong và đã push.
 
 ## Active Goal
 
-- Người dùng xem ảnh `docs/ai/playtests/2026-10-02-ui-foundation-hud/{before,after}` và báo `docs/ai/2026-10-02-ui-foundation-hud-verification.md`, duyệt hoặc yêu cầu chỉnh; sau đó mới chọn phần 3 (vỏ ngoài game) hay việc khác.
+- Chọn phase kế tiếp; không tự mở phase mới.
 
 ## Current Status
 
@@ -55,7 +55,7 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 
 ## Next Actions
 
-1. Người dùng duyệt ảnh UI trước/sau/concept; chỉnh nếu cần.
+1. Chọn việc kế tiếp (chờ người dùng): phần 3 UI (cần brainstorming → spec), sửa nợ E2E/minor, hoặc PR-04.
 2. `dev` đã push; không còn việc push treo.
 3. Phần 3 UI (màn tiêu đề, chọn case, pause, briefing, tổng kết) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 4. Tùy chọn: sửa nợ E2E có sẵn và minor review.
