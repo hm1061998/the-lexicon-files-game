@@ -1,0 +1,42 @@
+@import '../theme/palette.css';
+
+.key-hint-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 6px;
+  max-width: 100%;
+  font-family: var(--lexicon-font-label);
+  color: var(--lexicon-ink);
+}
+
+.key-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 6px;
+}
+
+.key-hint--dimmed {
+  opacity: 0.55;
+}
+
+.key-hint__label {
+  font-size: var(--lexicon-text-min);
+}
+
+.key-hint-line--compact {
+  flex-wrap: nowrap;
+  gap: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,0 +1,40 @@
+@import '../theme/palette.css';
+
+.stamp {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 72px;
+  min-height: 72px;
+  padding: 18px;
+  box-sizing: border-box;
+  color: var(--lexicon-investigation-red);
+  font-family: var(--lexicon-font-display);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  rotate: -6deg;
+}
+
+/* The ring is an alpha-only PNG, tinted with the text colour through a mask. */
+.stamp::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: currentcolor;
+  mask: url('/assets/ui/stamp_ring.png') center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+
+.stamp--animate {
+  animation: stamp-down 180ms ease-out;
+}
+
+@keyframes stamp-down {
+  from {
+    scale: 1.15;
+  }
+  to {
+    scale: 1;
+  }
+}

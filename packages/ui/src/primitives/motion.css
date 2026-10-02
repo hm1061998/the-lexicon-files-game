@@ -1,0 +1,28 @@
+/* Motion switch: `lexicon-motion-off` on a root (setting) or the OS preference turns it all off. */
+.lexicon-motion-off *,
+.lexicon-motion-off *::before,
+.lexicon-motion-off *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+.lexicon-motion-off .paper-sheet {
+  --paper-tilt: 0deg;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-sheet,
+  .paper-sheet *,
+  .ink-button,
+  .stamp,
+  .index-tab {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .paper-sheet {
+    --paper-tilt: 0deg;
+    transform: none;
+  }
+}

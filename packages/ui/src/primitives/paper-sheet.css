@@ -1,0 +1,72 @@
+@import '../theme/palette.css';
+
+.paper-sheet {
+  position: relative;
+  box-sizing: border-box;
+  color: var(--lexicon-ink);
+  font-family: var(--lexicon-font-body);
+  font-size: var(--lexicon-text-min);
+  background-color: var(--lexicon-paper);
+  background-image: url('/assets/ui/paper_sheet_fresh.png');
+  background-size: 256px 256px;
+  filter: drop-shadow(var(--lexicon-shadow-paper));
+  transform: rotate(var(--paper-tilt, 0deg));
+  animation: paper-sheet-in 200ms ease-out backwards;
+}
+
+.paper-sheet--aged {
+  background-color: var(--lexicon-beige);
+  background-image: url('/assets/ui/paper_sheet_aged.png');
+}
+
+/* Torn sides: the cut is part of the border image, so the paper must not paint under it. */
+.paper-sheet--torn {
+  border-style: solid;
+  border-width: 0 12px 12px 0;
+  border-image: url('/assets/ui/paper_torn_frame.png') 48 / 0 12px 12px 0 stretch;
+  background-clip: padding-box;
+}
+
+.paper-sheet--clean {
+  border: 1px solid rgb(62 52 43 / 35%);
+  border-radius: 2px;
+}
+
+.paper-clip {
+  position: absolute;
+  top: -14px;
+  left: 10px;
+  width: 20px;
+  height: auto;
+  pointer-events: none;
+}
+
+.paper-sheet__tape {
+  position: absolute;
+  top: -10px;
+  width: 48px;
+  height: 20px;
+  background: url('/assets/ui/tape_corner.png') center / contain no-repeat;
+  pointer-events: none;
+}
+
+.paper-sheet__tape--tl {
+  left: -12px;
+  rotate: -28deg;
+}
+
+.paper-sheet__tape--tr {
+  right: -12px;
+  rotate: 28deg;
+}
+
+@keyframes paper-sheet-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}

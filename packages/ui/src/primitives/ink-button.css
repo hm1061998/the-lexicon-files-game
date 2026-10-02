@@ -1,0 +1,30 @@
+@import '../theme/palette.css';
+
+.ink-button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline 1px transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 120ms ease-out;
+}
+
+.ink-button:hover:not(:disabled),
+.ink-button:focus-visible {
+  text-decoration-color: var(--lexicon-ink);
+}
+
+.ink-button:focus-visible {
+  outline: var(--lexicon-focus);
+  outline-offset: 3px;
+}
+
+.ink-button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}

@@ -1,0 +1,25 @@
+@import '../theme/palette.css';
+
+.index-tab {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  color: var(--lexicon-ink);
+  font-family: var(--lexicon-font-label);
+  font-size: var(--lexicon-text-min);
+  background-color: var(--lexicon-paper);
+  background-image: url('/assets/ui/paper_sheet_fresh.png');
+  background-size: 256px 256px;
+  border-style: solid;
+  border-width: 14px;
+  border-image: url('/assets/ui/index_tab_frame.png') 24 / 14px stretch;
+  background-clip: padding-box;
+  filter: drop-shadow(var(--lexicon-shadow-paper));
+}
+
+.index-tab--aged {
+  background-color: var(--lexicon-beige);
+  background-image: url('/assets/ui/paper_sheet_aged.png');
+}
