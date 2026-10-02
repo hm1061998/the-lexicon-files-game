@@ -227,4 +227,13 @@ describe('Case #002 spine', () => {
       expect(evaluate(condition!, owned), owned.join(',')).toBe(owned.length >= 3);
     }
   });
+
+  it('every case-002 evidence image exists on disk', () => {
+    for (const evidence of readEvidence()) {
+      const path = fileURLToPath(
+        new URL(`../../../../apps/game-web/public${evidence.image}`, import.meta.url),
+      );
+      expect(existsSync(path), `Missing image for ${evidence.id}: ${evidence.image}`).toBe(true);
+    }
+  });
 });
