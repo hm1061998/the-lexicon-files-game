@@ -4,8 +4,11 @@ import type { GameStore } from '../state/gameStore';
 import { completedNotes, type CoachProgress } from './selectCoachNote';
 import type { CoachNoteId, OnboardingSeen } from './onboardingTypes';
 
-/** Movement beyond this many units from the baseline counts as the player moving. */
-export const MOVE_THRESHOLD = 8;
+/**
+ * Movement beyond this distance from the baseline counts as the player moving. Screen positions
+ * are pixels; logical positions are tile units, so one pixel threshold cannot serve both.
+ */
+export const MOVE_THRESHOLD = { screen: 8, logical: 0.2 } as const;
 
 export interface OnboardingLearning {
   getState(): { onboardingSeen: OnboardingSeen; markOnboardingSeen(id: CoachNoteId): void };
@@ -83,7 +86,10 @@ export function createOnboardingSignals(
         baseline = position;
         return;
       }
-      if (Math.hypot(position.x - baseline.x, position.y - baseline.y) > MOVE_THRESHOLD) {
+      if (
+        Math.hypot(position.x - baseline.x, position.y - baseline.y) >
+        MOVE_THRESHOLD[position.coordinateSpace]
+      ) {
         flags.moved = true;
         refresh();
       }

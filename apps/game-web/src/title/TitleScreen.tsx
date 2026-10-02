@@ -1,3 +1,4 @@
+import { PaperPanel } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import type { TitleActions } from './titleModel';
 import './title.css';
@@ -19,7 +20,7 @@ export function TitleScreen({
 }): JSX.Element {
   return (
     <main className="title-screen">
-      <section className="title-card">
+      <PaperPanel as="section" className="title-card">
         <h1>{strings.titleGame}</h1>
         <p className="title-tagline">{strings.titleTagline}</p>
         <nav className="title-actions" aria-label={strings.titleGame}>
@@ -48,7 +49,7 @@ export function TitleScreen({
             {strings.titleSettings}
           </button>
         </nav>
-      </section>
+      </PaperPanel>
     </main>
   );
 }

@@ -52,6 +52,15 @@ describe('createOnboardingSignals', () => {
     bus.emit('player:moved', at(120));
     expect(signals.getSnapshot().moved).toBe(true);
   });
+  it('measures logical positions in tile units', () => {
+    const { bus, signals } = setup();
+    const logical = (x: number) => ({ coordinateSpace: 'logical' as const, x, y: 5 });
+    bus.emit('player:moved', logical(5));
+    bus.emit('player:moved', logical(5.1));
+    expect(signals.getSnapshot().moved).toBe(false);
+    bus.emit('player:moved', logical(5.5));
+    expect(signals.getSnapshot().moved).toBe(true);
+  });
   it('marks a performed move as seen so the note never appears late', () => {
     const { bus, marks } = setup();
     bus.emit('player:moved', at(0));

@@ -59,3 +59,10 @@
     padding: 8px 10px;
   }
 }
+
+/* On narrow screens the key hints wrap to two rows: sit above them rather than over them. */
+@media (max-width: 599px) {
+  .coach-note {
+    bottom: 120px;
+  }
+}

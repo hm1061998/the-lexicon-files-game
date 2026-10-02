@@ -1,3 +1,4 @@
+import { PaperPanel } from '@lexicon/ui';
 import type { TranslationMode, UiStrings } from '@lexicon/shared-types';
 import './title.css';
 
@@ -19,31 +20,28 @@ export function SupportPicker({
   ];
   return (
     <main className="title-screen">
-      <section
-        className="title-card"
-        role="dialog"
-        aria-modal="true"
-        aria-label={strings.supportTitle}
-      >
-        <h2>{strings.supportTitle}</h2>
-        <div className="title-actions support-options">
-          {options.map(({ mode, label, hint }) => (
-            <button
-              key={mode}
-              type="button"
-              className="support-option"
-              autoFocus={mode === 'Learning'}
-              onClick={() => onChoose(mode)}
-            >
-              <strong>{label}</strong>
-              <span>{hint}</span>
-            </button>
-          ))}
+      <PaperPanel as="div" className="title-card">
+        <div role="dialog" aria-modal="true" aria-label={strings.supportTitle}>
+          <h2>{strings.supportTitle}</h2>
+          <div className="title-actions support-options">
+            {options.map(({ mode, label, hint }) => (
+              <button
+                key={mode}
+                type="button"
+                className="support-option"
+                autoFocus={mode === 'Learning'}
+                onClick={() => onChoose(mode)}
+              >
+                <strong>{label}</strong>
+                <span>{hint}</span>
+              </button>
+            ))}
+          </div>
+          <button type="button" className="title-link" onClick={() => onChoose('Learning')}>
+            {strings.supportUseDefault}
+          </button>
         </div>
-        <button type="button" className="title-link" onClick={() => onChoose('Learning')}>
-          {strings.supportUseDefault}
-        </button>
-      </section>
+      </PaperPanel>
     </main>
   );
 }

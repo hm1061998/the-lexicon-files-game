@@ -1,3 +1,4 @@
+import { PaperPanel } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import './title.css';
 
@@ -12,23 +13,20 @@ export function NewCaseConfirm({
 }): JSX.Element {
   return (
     <main className="title-screen">
-      <section
-        className="title-card"
-        role="alertdialog"
-        aria-modal="true"
-        aria-label={strings.newCaseConfirmTitle}
-      >
-        <h2>{strings.newCaseConfirmTitle}</h2>
-        <p>{strings.newCaseConfirmBody}</p>
-        <div className="title-actions">
-          <button type="button" autoFocus onClick={onCancel}>
-            {strings.cancel}
-          </button>
-          <button type="button" onClick={onAccept}>
-            {strings.newCaseConfirmAccept}
-          </button>
+      <PaperPanel as="div" className="title-card">
+        <div role="alertdialog" aria-modal="true" aria-label={strings.newCaseConfirmTitle}>
+          <h2>{strings.newCaseConfirmTitle}</h2>
+          <p>{strings.newCaseConfirmBody}</p>
+          <div className="title-actions">
+            <button type="button" autoFocus onClick={onCancel}>
+              {strings.cancel}
+            </button>
+            <button type="button" onClick={onAccept}>
+              {strings.newCaseConfirmAccept}
+            </button>
+          </div>
         </div>
-      </section>
+      </PaperPanel>
     </main>
   );
 }
