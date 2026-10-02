@@ -15,11 +15,11 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Current Phase
 
-- PR-03 Case #002 "The Wrong Delivery": triển khai xong Task 1–9 trên `dev` (chưa push), plan hoàn tất; chờ người dùng duyệt kết quả và quyết định push. PR-01 (onboarding) còn nợ kiểm chứng, không mở rộng.
+- PR-03 Case #002 "The Wrong Delivery": triển khai xong Task 1–9, plan hoàn tất; đã push `dev` lên origin (d734b57) theo yêu cầu người dùng. PR-01 (onboarding) còn nợ kiểm chứng, không mở rộng.
 
 ## Active Goal
 
-- Người dùng xem báo cáo `docs/ai/2026-10-02-case-002-engine-generality.md` (F-1…F-7, review độc lập) rồi quyết định push và việc tiếp theo (PR-04 chỉ sau khi duyệt PR-03).
+- Người dùng xem báo cáo `docs/ai/2026-10-02-case-002-engine-generality.md` (F-1…F-7, review độc lập) rồi chọn việc tiếp theo (PR-04 chỉ sau khi duyệt PR-03).
 
 ## Current Status
 
@@ -55,7 +55,7 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Next Actions
 
-1. Người dùng duyệt PR-03 và quyết định push `dev`.
+1. Người dùng duyệt PR-03 và chọn việc tiếp theo (đã push `dev`).
 2. Đề xuất cho PR-04: reconcile objective sau `addEvidence`, namespace context id theo case, audio-codegen theo case, cờ `*_question_done` không phụ thuộc nút Continue.
 3. Tùy chọn: sửa nợ E2E (learning/notebook-people) bằng cập nhật kỳ vọng từ vựng bản tin.
 4. PR-02 vẫn tạm dừng.
