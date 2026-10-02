@@ -436,7 +436,7 @@ test('HUD chrome follows the concept: red objective heading, clip, case badge, m
   await expect(badge.locator('.index-tab')).toHaveCount(1);
 
   const keys = await page.locator('.hud-key-hints .keycap').allTextContents();
-  expect(keys).toEqual(['WASD / ↑↓←→', 'E', 'J', 'M', 'Esc']);
+  expect(keys).toEqual(['E', 'J', 'B', 'M', 'Esc']);
   await expect(page.locator('.hud-key-hints')).not.toContainText('Space');
 });
 
@@ -492,13 +492,27 @@ test('notebook buttons keep a >=3px focus ring and hover skips disabled buttons'
   expect(outline.o).toBeGreaterThanOrEqual(3);
 });
 
-test('compact viewports keep the mouse controls and hide only the movement hints', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 760, height: 720 });
+test('compact viewports keep four labelled key buttons and never overflow', async ({ page }) => {
   await openWorld(page);
-  await expect(page.locator('.hud-key-hints .hud-movement-hint').first()).toBeHidden();
-  await expect(page.locator('.hud-key-hints button')).toHaveCount(3);
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+  ]) {
+    await page.setViewportSize(viewport);
+    const buttons = page.locator('.hud-key-hints button');
+    await expect(buttons).toHaveCount(4);
+    for (const button of await buttons.all()) {
+      expect(await button.getAttribute('aria-label')).toBeTruthy();
+      const box = (await button.boundingBox())!;
+      expect(box.width).toBeGreaterThanOrEqual(43.5);
+      expect(box.height).toBeGreaterThanOrEqual(43.5);
+    }
+    await expect(page.locator('.hud-key-hints .key-hint__label')).toHaveCount(0);
+    const fits = await page
+      .locator('.hud-key-hints')
+      .evaluate((el) => el.scrollWidth <= el.clientWidth);
+    expect(fits, `${viewport.width}x${viewport.height}`).toBe(true);
+  }
 });
 
 type Rect = { left: number; top: number; right: number; bottom: number };

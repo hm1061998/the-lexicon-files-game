@@ -21,3 +21,12 @@ export function useGameStore<T>(selector: (state: GameStoreState) => T): T {
   }
   return useStore(store, selector);
 }
+
+/** The store itself, for effects that write to it without subscribing. */
+export function useGameStoreApi(): GameStore {
+  const store = useContext(GameStoreContext);
+  if (!store) {
+    throw new Error('useGameStoreApi must be used within a GameStoreProvider');
+  }
+  return store;
+}

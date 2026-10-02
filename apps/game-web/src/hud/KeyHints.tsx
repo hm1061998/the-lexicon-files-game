@@ -1,6 +1,24 @@
-import { useGameStore } from '../state/GameStoreContext';
-import { Keycap, PaperPanel } from '@lexicon/ui';
+import { useEffect, useState } from 'react';
+import { KeyHintLine, type KeyHintItem } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
+import { useGameStore } from '../state/GameStoreContext';
+
+/** Below this the line shows keys only; labels move into `aria-label` (spec D-1). */
+const COMPACT_WIDTH = 960;
+const COMPACT_HEIGHT = 640;
+
+function useCompact(): boolean {
+  const read = (): boolean =>
+    typeof window !== 'undefined' &&
+    (window.innerWidth < COMPACT_WIDTH || window.innerHeight < COMPACT_HEIGHT);
+  const [compact, setCompact] = useState(read);
+  useEffect(() => {
+    const onResize = (): void => setCompact(read());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return compact;
+}
 
 export function KeyHints({ strings }: { strings: UiStrings }): JSX.Element {
   const toggleNotebook = useGameStore((state) => state.toggleNotebook);
@@ -8,27 +26,15 @@ export function KeyHints({ strings }: { strings: UiStrings }): JSX.Element {
   const toggleMap = useGameStore((state) => state.toggleMinimap);
   const togglePause = useGameStore((state) => state.togglePause);
   const locked = useGameStore((state) => state.inputLocked);
-  return (
-    <PaperPanel className="hud-key-hints">
-      <span className="hud-key-hint hud-movement-hint">
-        <Keycap>WASD / ↑↓←→</Keycap> {strings.move}
-      </span>
-      <span className="hud-key-hint hud-movement-hint">
-        <Keycap>E</Keycap> {strings.interact}
-      </span>
-
-      <button type="button" className="hud-key-hint" disabled={locked} onClick={toggleNotebook}>
-        <Keycap>J</Keycap> {strings.openNotebook}
-      </button>
-      <button type="button" className="hud-key-hint" disabled={locked} onClick={toggleDeduction}>
-        <Keycap>B</Keycap> {strings.openDeductionBoard}
-      </button>
-      <button type="button" className="hud-key-hint" disabled={locked} onClick={toggleMap}>
-        <Keycap>M</Keycap> {strings.toggleMap}
-      </button>
-      <button type="button" className="hud-key-hint" disabled={locked} onClick={togglePause}>
-        <Keycap>Esc</Keycap> {strings.pause}
-      </button>
-    </PaperPanel>
-  );
+  const hasTarget = useGameStore((state) => state.nearby !== null);
+  const compact = useCompact();
+  // E has no click action: interacting stays on the prompt next to the target.
+  const items: KeyHintItem[] = [
+    { key: 'E', label: strings.interact, dimmed: !hasTarget },
+    { key: 'J', label: strings.openNotebook, onActivate: toggleNotebook, disabled: locked },
+    { key: 'B', label: strings.openDeductionBoard, onActivate: toggleDeduction, disabled: locked },
+    { key: 'M', label: strings.toggleMap, onActivate: toggleMap, disabled: locked },
+    { key: 'Esc', label: strings.pause, onActivate: togglePause, disabled: locked },
+  ];
+  return <KeyHintLine className="hud-key-hints" compact={compact} items={items} />;
 }

@@ -486,3 +486,15 @@ describe('minimap state', () => {
     });
   });
 });
+
+describe('hudInsets', () => {
+  it('starts at zero and keeps the same state object when the value does not change', () => {
+    const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });
+    expect(store.getState().hudInsets).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
+    store.getState().setHudInsets({ top: 110, right: 0, bottom: 40, left: 0 });
+    const before = store.getState();
+    store.getState().setHudInsets({ top: 110, right: 0, bottom: 40, left: 0 });
+    expect(store.getState()).toBe(before);
+    expect(store.getState().hudInsets.top).toBe(110);
+  });
+});

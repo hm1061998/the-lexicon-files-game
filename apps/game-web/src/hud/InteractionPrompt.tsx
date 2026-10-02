@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Keycap, PaperPanel } from '@lexicon/ui';
+import { Keycap, PaperSheet } from '@lexicon/ui';
 import type { EventBus, GameEventMap, UiStrings } from '@lexicon/shared-types';
 import { canAnchorBubble, placeBubble, type Point, type Rect } from '../game/systems/anchorScreen';
 import { useGameStore } from '../state/GameStoreContext';
@@ -153,7 +153,7 @@ export function InteractionPrompt({
       data-anchor-y={anchored ? Math.round(placement.anchor.y) : undefined}
       data-avoid-rect-count={anchor?.avoidRects?.length ?? 0}
     >
-      <PaperPanel as="div" className="hud-interaction-paper">
+      <PaperSheet as="div" className="hud-interaction-paper">
         <div role="status" aria-live="polite">
           <button
             type="button"
@@ -168,7 +168,7 @@ export function InteractionPrompt({
             </span>
           </button>
         </div>
-      </PaperPanel>
+      </PaperSheet>
     </div>
   );
 }

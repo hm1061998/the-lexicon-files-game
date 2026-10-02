@@ -199,10 +199,8 @@
 }
 
 .hud-interaction-paper {
-  padding: 5px 10px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgb(34 27 21 / 18%);
-  background: rgb(242 232 213 / 94%);
+  padding: 5px 12px;
+  font-size: 16px;
 }
 
 .hud-interaction-paper [role='status'] {
@@ -214,33 +212,20 @@
   margin-left: 8px;
 }
 
+/* One thin line of ink on a fading strip, not a panel. */
 .hud-key-hints {
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   box-sizing: border-box;
+  pointer-events: none;
+  padding: 18px 16px 8px;
+  background: linear-gradient(to top, rgb(216 197 164 / 88%) 40%, rgb(216 197 164 / 0%));
+}
+
+.hud-key-hints > * {
   pointer-events: auto;
-  padding: 10px 16px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  border-width: 2px 0 0;
-  border-radius: 0;
-  box-shadow: inset 0 1px 0 var(--lexicon-paper);
-}
-
-.hud-key-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 28px;
-  font-size: 16px;
-}
-
-.hud-key-hint + .hud-key-hint {
-  border-left: 1px solid var(--lexicon-border);
 }
 
 .hud-key-hints .keycap {
@@ -250,7 +235,7 @@
   border-width: 2px;
   border-radius: 6px;
   box-shadow: none;
-  font-family: var(--lexicon-font-body);
+  font-family: var(--lexicon-font-label);
   font-size: 16px;
 }
 
@@ -338,9 +323,6 @@
   .hud-case-progress-count {
     font-size: 22px;
   }
-  .hud-key-hints {
-    display: none;
-  }
   .hud-interaction-prompt {
     bottom: 20px;
   }
@@ -350,26 +332,19 @@
   }
 }
 
-.hud-key-hints button,
 .hud-interact-button {
   min-width: 44px;
   min-height: 44px;
-  background: var(--lexicon-paper);
+  background: transparent;
   color: var(--lexicon-ink);
-  border: 1px solid var(--lexicon-border);
+  border: 0;
   font: inherit;
   cursor: pointer;
-}
-.hud-key-hints {
-  gap: 8px;
 }
 @media (max-width: 959px), (max-height: 639px) {
   .hud-key-hints {
     display: flex;
     padding: 4px;
-  }
-  .hud-movement-hint {
-    display: none;
   }
   .hud-interaction-prompt:not(.hud-interaction-bubble) {
     bottom: 64px;

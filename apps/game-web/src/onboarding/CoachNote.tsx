@@ -1,3 +1,4 @@
+import { InkButton, PaperSheet } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import type { CoachNoteId } from './onboardingTypes';
 import './coach.css';
@@ -15,7 +16,7 @@ export function coachText(strings: UiStrings, noteId: CoachNoteId): string {
   }
 }
 
-/** A small paper note: announces itself politely, never takes focus. */
+/** A handwritten sticky note taped to the screen: announces itself politely, never takes focus. */
 export function CoachNote({
   strings,
   noteId,
@@ -26,11 +27,17 @@ export function CoachNote({
   onDismiss: () => void;
 }): JSX.Element {
   return (
-    <aside role="status" aria-live="polite" className="coach-note" data-note={noteId}>
+    <PaperSheet
+      as="aside"
+      tape="tr"
+      tilt={-0.8}
+      className="coach-note"
+      role="status"
+      aria-live="polite"
+      data-note={noteId}
+    >
       <p>{coachText(strings, noteId)}</p>
-      <button type="button" onClick={onDismiss}>
-        {strings.coachDismiss}
-      </button>
-    </aside>
+      <InkButton onClick={onDismiss}>{strings.coachDismiss}</InkButton>
+    </PaperSheet>
   );
 }

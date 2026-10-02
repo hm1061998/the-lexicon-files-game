@@ -1,9 +1,12 @@
-import type { CSSProperties, ElementType, ReactNode } from 'react';
+import type { CSSProperties, ElementType, HTMLAttributes, ReactNode } from 'react';
 import { PaperClip } from './PaperClip';
 import './paper-sheet.css';
 import './motion.css';
 
-export type PaperSheetProps = {
+export type PaperSheetProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  'className' | 'children' | 'style'
+> & {
   as?: ElementType;
   className?: string;
   edge?: 'clean' | 'torn';
@@ -26,6 +29,7 @@ export function PaperSheet({
   clip = false,
   tape,
   children,
+  ...rest
 }: PaperSheetProps): JSX.Element {
   const classes = ['paper-sheet', `paper-sheet--${edge}`, `paper-sheet--${tone}`, className]
     .filter(Boolean)
@@ -33,7 +37,7 @@ export function PaperSheet({
   const style =
     tilt === undefined ? undefined : ({ '--paper-tilt': `${clampTilt(tilt)}deg` } as CSSProperties);
   return (
-    <Component className={classes} style={style}>
+    <Component className={classes} style={style} {...rest}>
       {clip ? <PaperClip /> : null}
       {tape ? (
         <span className={`paper-sheet__tape paper-sheet__tape--${tape}`} aria-hidden="true" />

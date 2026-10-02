@@ -1,3 +1,4 @@
+import { ZERO_INSETS, sameInsets, type HudInsets } from '../hud/hudInsets';
 import {
   createNotebookReadingState,
   selectNotebookReading,
@@ -40,6 +41,9 @@ export type GameStoreState = {
   } | null;
   /** Published view of the Phaser player position (Phaser stays the source); null until known. */
   playerPosition: { x: number; y: number; coordinateSpace?: 'screen' | 'logical' } | null;
+  /** How far HUD blocks reach into the screen from each edge; Phaser reads it to keep cues clear. */
+  hudInsets: HudInsets;
+  setHudInsets(insets: HudInsets): void;
   /** HUD-only visibility of the minimap; deliberately not saved or in settings. */
   minimapVisible: boolean;
   /** HUD-only visibility of the active objective; deliberately not saved. */
@@ -137,6 +141,9 @@ export function createGameStore(init: {
     nearby: null,
     interactionAnchor: null,
     playerPosition: null,
+    hudInsets: ZERO_INSETS,
+    setHudInsets: (insets) =>
+      set((s) => (sameInsets(s.hudInsets, insets) ? s : { hudInsets: insets })),
     minimapVisible: init.initialHudVisibility?.minimapVisible ?? true,
     objectiveVisible: init.initialHudVisibility?.objectiveVisible ?? true,
     paused: false,
