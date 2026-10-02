@@ -321,51 +321,53 @@ function CaseFlow({
 
   if (bootstrap.status === 'confirmation-required') {
     return (
-      <SaveRecoveryScreen
-        strings={result.content.strings}
-        reason={bootstrap.reason}
-        onConfirm={() => {
-          setBootstrap({ status: 'loading' });
-          void repository
-            .createFreshSaveAfterConfirmation(
-              result.content.caseDefinition.id,
-              result.content.caseDefinition,
-            )
-            .then((initialState) => {
-              setBootstrap({
-                status: 'ready',
-                initialState,
-                activeSceneId: result.content.caseDefinition.startSceneId,
-                source: 'fresh',
-                saveAvailability: 'missing',
-                commerceConfig: bootstrap.commerceConfig,
-                autosaveEnabled: true,
+      <div {...rootAttributes(shellReducedMotion)}>
+        <SaveRecoveryScreen
+          strings={result.content.strings}
+          reason={bootstrap.reason}
+          onConfirm={() => {
+            setBootstrap({ status: 'loading' });
+            void repository
+              .createFreshSaveAfterConfirmation(
+                result.content.caseDefinition.id,
+                result.content.caseDefinition,
+              )
+              .then((initialState) => {
+                setBootstrap({
+                  status: 'ready',
+                  initialState,
+                  activeSceneId: result.content.caseDefinition.startSceneId,
+                  source: 'fresh',
+                  saveAvailability: 'missing',
+                  commerceConfig: bootstrap.commerceConfig,
+                  autosaveEnabled: true,
+                });
+              })
+              .catch((error: unknown) => {
+                setBootstrap({
+                  status: 'memory-only',
+                  initialState: createCaseState(result.content.caseDefinition),
+                  activeSceneId: result.content.caseDefinition.startSceneId,
+                  saveAvailability: 'memory-only',
+                  commerceConfig: bootstrap.commerceConfig,
+                  autosaveEnabled: false,
+                  error: error instanceof Error ? error.message : String(error),
+                });
               });
+          }}
+          onCancel={() =>
+            setBootstrap({
+              status: 'memory-only',
+              initialState: createCaseState(result.content.caseDefinition),
+              activeSceneId: result.content.caseDefinition.startSceneId,
+              saveAvailability: 'memory-only',
+              commerceConfig: bootstrap.commerceConfig,
+              autosaveEnabled: false,
+              error: result.content.strings.saveUnavailable,
             })
-            .catch((error: unknown) => {
-              setBootstrap({
-                status: 'memory-only',
-                initialState: createCaseState(result.content.caseDefinition),
-                activeSceneId: result.content.caseDefinition.startSceneId,
-                saveAvailability: 'memory-only',
-                commerceConfig: bootstrap.commerceConfig,
-                autosaveEnabled: false,
-                error: error instanceof Error ? error.message : String(error),
-              });
-            });
-        }}
-        onCancel={() =>
-          setBootstrap({
-            status: 'memory-only',
-            initialState: createCaseState(result.content.caseDefinition),
-            activeSceneId: result.content.caseDefinition.startSceneId,
-            saveAvailability: 'memory-only',
-            commerceConfig: bootstrap.commerceConfig,
-            autosaveEnabled: false,
-            error: result.content.strings.saveUnavailable,
-          })
-        }
-      />
+          }
+        />
+      </div>
     );
   }
 

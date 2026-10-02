@@ -116,7 +116,7 @@
 
 /* Plain definition card on a paper surface: buttons match the ink controls, and on a modal sheet the card
    sits in the text flow (pushing the lines below it down) instead of floating over them. */
-.vocabulary-popover button {
+.modal-sheet .vocabulary-popover:not(.investigation-vocabulary-popover) button {
   justify-self: start;
   min-width: 44px;
   min-height: 44px;
@@ -128,10 +128,10 @@
   font: inherit;
   cursor: pointer;
 }
-.vocabulary-popover button:hover {
+.modal-sheet .vocabulary-popover:not(.investigation-vocabulary-popover) button:hover {
   background: var(--lexicon-paper);
 }
-.vocabulary-popover button:focus-visible {
+.modal-sheet .vocabulary-popover:not(.investigation-vocabulary-popover) button:focus-visible {
   outline: 2px solid var(--lexicon-ink);
   outline-offset: 2px;
 }

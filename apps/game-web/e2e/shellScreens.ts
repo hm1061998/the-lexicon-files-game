@@ -37,6 +37,14 @@ export const shellScreens: readonly Screen[] = [
     reach: withSave,
   },
   {
+    name: 'settings',
+    reach: async (page) => {
+      await toTitle(page);
+      await page.getByRole('button', { name: 'Cài đặt', exact: true }).click();
+      await expect(page.locator('.folder-cover select').first()).toBeVisible();
+    },
+  },
+  {
     name: 'support',
     reach: async (page) => {
       await toTitle(page);

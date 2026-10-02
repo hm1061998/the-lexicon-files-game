@@ -6,6 +6,7 @@ const viewports = [
   { w: 1280, h: 720 },
   { w: 760, h: 600 },
   { w: 390, h: 844 },
+  { w: 844, h: 390 },
 ] as const;
 
 test.describe('UI shell screens', () => {
@@ -26,6 +27,14 @@ test.describe('UI shell screens', () => {
 
         // Shell controls only: the game HUD behind a modal is covered by its own specs.
         // Inline vocabulary words are text-sized by design; the case summary has no controls.
+        // The paper itself must stay on screen (or scroll inside itself) in short landscape too.
+        const paper = page.locator('.folder-cover, .modal-sheet').first();
+        if (await paper.count()) {
+          const pb = (await paper.boundingBox())!;
+          expect(pb.y, 'paper top').toBeGreaterThanOrEqual(-0.5);
+          expect(pb.y + pb.height, 'paper bottom').toBeLessThanOrEqual(h + 0.5);
+        }
+
         const buttons = await page
           .locator('main button:not(.vocabulary-word), .modal-sheet button:not(.vocabulary-word)')
           .all();

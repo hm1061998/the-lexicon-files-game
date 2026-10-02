@@ -14,7 +14,9 @@
 /* Shell paper never tilts or slides when motion is off. */
 .lexicon-motion-off .folder-cover,
 .lexicon-motion-off .modal-sheet,
-.lexicon-motion-off .case-card {
+.lexicon-motion-off .case-card,
+.lexicon-motion-off .case-card-flag,
+.lexicon-motion-off .support-option {
   transform: none !important;
   rotate: none !important;
   translate: none !important;
@@ -24,6 +26,10 @@
 @media (prefers-reduced-motion: reduce) {
   .paper-sheet,
   .paper-sheet *,
+  .folder-cover,
+  .modal-sheet,
+  .case-card,
+  .support-option,
   .ink-button,
   .stamp,
   .index-tab {
@@ -34,5 +40,14 @@
   .paper-sheet {
     --paper-tilt: 0deg;
     transform: none;
+  }
+
+  .folder-cover,
+  .modal-sheet,
+  .case-card,
+  .support-option {
+    transform: none !important;
+    rotate: none !important;
+    translate: none !important;
   }
 }
