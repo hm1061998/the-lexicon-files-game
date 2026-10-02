@@ -55,3 +55,24 @@
 .pause-menu label:has(> input[type='checkbox']) {
   justify-content: flex-start;
 }
+
+.pause-menu.howto {
+  width: min(560px, 100%);
+}
+
+.pause-menu [role='dialog'] > .howto-body {
+  display: block;
+  max-height: min(60dvh, 420px);
+  overflow-y: auto;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.howto-body h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.howto-body p {
+  margin: 0 0 14px;
+}
