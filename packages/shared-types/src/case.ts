@@ -1,4 +1,15 @@
 export interface UiStrings {
+  readonly titleChooseCase: string;
+  readonly titleChangeCase: string;
+  readonly caseTierEasy: string;
+  readonly caseTierMedium: string;
+  readonly caseTierHard: string;
+  readonly caseRecommended: string;
+  readonly caseStatSuspects: string;
+  readonly caseStatClues: string;
+  readonly caseStatContradictions: string;
+  readonly caseStatScenes: string;
+  readonly caseMinutes: string;
   readonly pagePrevious: string;
   readonly pageNext: string;
   readonly pagePosition: string;

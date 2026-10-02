@@ -1,7 +1,34 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { loadCaseDefinition } from '../loader/loadCaseDefinition';
 import { validateRegisteredContent } from './validateRegisteredContent';
+const registry = vi.hoisted(() => ({ ids: ['case-001'] }));
+vi.mock('../loader/loadCaseDefinition', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../loader/loadCaseDefinition')>()),
+  REGISTERED_CASE_IDS: registry.ids,
+}));
 describe('registered dialogue content', () => {
+  it('rejects two cases flagged recommendedForNewPlayers', () => {
+    const definition = loadCaseDefinition('case-001');
+    registry.ids.push('another-case');
+    try {
+      expect(() =>
+        validateRegisteredContent((id) => ({
+          ...definition,
+          id,
+          difficulty: { ...definition.difficulty, recommendedForNewPlayers: true },
+        })),
+      ).toThrow('recommendedForNewPlayers');
+      expect(() =>
+        validateRegisteredContent((id) => ({
+          ...definition,
+          id,
+          difficulty: { ...definition.difficulty, recommendedForNewPlayers: id === 'case-001' },
+        })),
+      ).not.toThrow();
+    } finally {
+      registry.ids.pop();
+    }
+  });
   it('authors three playable NPC trees with exact Case 001 copy', () => {
     const d = loadCaseDefinition('case-001');
     expect(d.npcs.map((n) => n.id)).toEqual(['anna', 'leo', 'david']);

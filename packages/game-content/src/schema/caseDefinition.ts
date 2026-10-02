@@ -52,10 +52,29 @@ const briefingSchema = z
       ctx.addIssue({ code: 'custom', path: ['lines'], message: 'duplicate briefing line id' });
   });
 
+const cefrLevels = ['A1', 'A2', 'B1', 'B2', 'C1'] as const;
+const difficultySchema = z
+  .object({
+    tier: z.enum(['easy', 'medium', 'hard']),
+    cefrRange: z
+      .object({ from: z.enum(cefrLevels), to: z.enum(cefrLevels) })
+      .strict()
+      .refine(
+        ({ from, to }) => cefrLevels.indexOf(from) <= cefrLevels.indexOf(to),
+        'from must not be above to',
+      ),
+    estimatedMinutes: z.number().int().positive(),
+    summaryVi: z.string().min(1),
+    recommendedForNewPlayers: z.boolean(),
+  })
+  .strict();
+
 const caseRawSchema = z
   .object({
     id: z.string().min(1),
     title: z.string().min(1),
+    difficulty: difficultySchema,
+    startSceneId: z.string().min(1).optional(),
     audio: caseAudioDefinitionSchema.optional(),
     evidenceTotal: z.number().int().min(0),
     initialObjectiveId: z.string().min(1),
@@ -449,6 +468,13 @@ export function parseCaseDefinition(
   const factIds = new Set(facts.map(({ id }) => id));
   const evidenceById = new Map(evidences.map((evidence) => [evidence.id, evidence]));
   const sceneById = new Map(scenes.map((scene) => [scene.id, scene]));
+  // sceneIds is non-empty after schema validation.
+  const startSceneId = caseData.startSceneId ?? caseData.sceneIds[0]!;
+  if (!caseData.sceneIds.includes(startSceneId)) {
+    issues.push(`case.json.startSceneId: unknown scene id "${startSceneId}"`);
+  } else if (!Object.hasOwn(sceneById.get(startSceneId)?.spawnPoints ?? {}, 'default')) {
+    issues.push(`case.json.startSceneId: scene "${startSceneId}" requires a default spawn`);
+  }
   const slotIds = new Set(caseData.timeline.slots.map(({ id }) => id));
 
   if (!objectiveIds.has(caseData.initialObjectiveId)) {
@@ -736,6 +762,8 @@ export function parseCaseDefinition(
   return {
     id: caseData.id,
     title: caseData.title,
+    difficulty: caseData.difficulty,
+    startSceneId,
     evidenceTotal: caseData.evidenceTotal,
     initialObjectiveId: caseData.initialObjectiveId,
     scenes: scenesInCaseOrder,

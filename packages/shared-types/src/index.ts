@@ -55,6 +55,8 @@ export type {
   Condition,
   Effect,
   CaseDefinition,
+  CefrLevel,
+  CaseDifficulty,
   ObjectiveStatus,
   GameState,
   CaseDomainEvent,

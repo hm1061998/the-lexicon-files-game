@@ -366,5 +366,16 @@
       "door": ["/audio/case-001/sfx/door.wav"],
       "dialogue": ["/audio/case-001/sfx/dialogue.wav"]
     }
-  }
+  },
+  "difficulty": {
+    "tier": "easy",
+    "cefrRange": {
+      "from": "A2",
+      "to": "B1"
+    },
+    "estimatedMinutes": 25,
+    "summaryVi": "Điều tra bản báo cáo bị mất qua lời khai và bằng chứng.",
+    "recommendedForNewPlayers": true
+  },
+  "startSceneId": "main_office"
 }

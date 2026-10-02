@@ -74,6 +74,14 @@ const listeningTask: ListeningTaskDefinition = {
 const definition = {
   id: 'case-001',
   title: 'The Missing Report',
+  startSceneId: 'main_office',
+  difficulty: {
+    tier: 'easy',
+    cefrRange: { from: 'A2', to: 'B1' },
+    estimatedMinutes: 25,
+    summaryVi: 'Điều tra qua lời khai và bằng chứng.',
+    recommendedForNewPlayers: true,
+  },
   evidenceTotal: 5,
   initialObjectiveId: objective.id,
   scenes: [],

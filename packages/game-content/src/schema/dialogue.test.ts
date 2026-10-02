@@ -19,6 +19,8 @@ const factsRaw = { facts: [fullFacts.facts.find((fact) => fact.id === 'meeting_s
 const dialogueCaseRaw = {
   id: caseRaw.id,
   title: caseRaw.title,
+  difficulty: caseRaw.difficulty,
+  startSceneId: caseRaw.startSceneId,
   evidenceTotal: caseRaw.evidenceTotal,
   initialObjectiveId: caseRaw.initialObjectiveId,
   sceneIds: ['main_office'],

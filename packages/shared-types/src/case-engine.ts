@@ -121,9 +121,21 @@ export type Effect =
   | { readonly type: 'activateObjective'; readonly objectiveId: string }
   | { readonly type: 'completeObjective'; readonly objectiveId: string };
 
+export type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
+
+export type CaseDifficulty = {
+  readonly tier: 'easy' | 'medium' | 'hard';
+  readonly cefrRange: { readonly from: CefrLevel; readonly to: CefrLevel };
+  readonly estimatedMinutes: number;
+  readonly summaryVi: string;
+  readonly recommendedForNewPlayers: boolean;
+};
+
 export interface CaseDefinition {
   readonly id: string;
   readonly title: string;
+  readonly difficulty: CaseDifficulty;
+  readonly startSceneId: string;
   readonly evidenceTotal: number;
   readonly initialObjectiveId: string;
   readonly scenes: readonly SceneDefinition[];

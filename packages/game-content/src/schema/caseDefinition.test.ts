@@ -6,6 +6,13 @@ import { parseCaseDefinition } from './caseDefinition';
 const caseRaw = {
   id: 'case-001',
   title: 'The Missing Report',
+  difficulty: {
+    tier: 'easy',
+    cefrRange: { from: 'A2', to: 'B1' },
+    estimatedMinutes: 25,
+    summaryVi: 'Điều tra bản báo cáo bị mất qua lời khai và bằng chứng.',
+    recommendedForNewPlayers: true,
+  },
   evidenceTotal: 5,
   initialObjectiveId: 'find_what_happened',
   sceneIds: ['main_office'],
@@ -173,6 +180,53 @@ function expectValidationIssue(changes: Partial<RawInput>, expected: string): vo
 }
 
 describe('parseCaseDefinition', () => {
+  it('requires a difficulty block', () => {
+    const { difficulty: _difficulty, ...withoutDifficulty } = caseRaw;
+    void _difficulty;
+    expectValidationIssue({ caseRaw: withoutDifficulty }, 'case.json.difficulty');
+  });
+  it('rejects cefrRange where from is above to', () => {
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          difficulty: {
+            ...caseRaw.difficulty,
+            cefrRange: { from: 'B1', to: 'A2' },
+          },
+        },
+      },
+      'difficulty.cefrRange',
+    );
+  });
+  it.each([0, -1, 1.5])('rejects non-positive estimatedMinutes (%s)', (estimatedMinutes) => {
+    expectValidationIssue(
+      {
+        caseRaw: {
+          ...caseRaw,
+          difficulty: {
+            ...caseRaw.difficulty,
+            estimatedMinutes,
+          },
+        },
+      },
+      'difficulty.estimatedMinutes',
+    );
+  });
+  it('defaults startSceneId to the first scene id', () => {
+    expect(parse().startSceneId).toBe('main_office');
+  });
+  it('rejects a startSceneId outside sceneIds', () => {
+    expectValidationIssue(
+      { caseRaw: { ...caseRaw, startSceneId: 'missing' } },
+      'case.json.startSceneId',
+    );
+  });
+  it('rejects a startScene without a default spawn', () => {
+    const scene = sceneWithEffects([]) as { spawnPoints: Record<string, unknown> };
+    delete scene.spawnPoints.default;
+    expectValidationIssue({ sceneRaws: [scene] }, 'spawnPoints.default');
+  });
   it('rejects a declared asset ID that collides with a wall module during case loading', () => {
     const scene = sceneWithEffects([]) as { assets: unknown[] };
     scene.assets.push({

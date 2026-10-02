@@ -184,5 +184,16 @@
   "howToWordsBody": "Bấm vào từ được gạch chân để xem nghĩa. Bạn có thể đổi mức hỗ trợ dịch bất cứ lúc nào trong Cài đặt.",
   "howToPrinciplesHeading": "Nguyên tắc",
   "howToPrinciplesBody": "Kết luận sai không làm mất tiến độ. Gợi ý giúp bạn hiểu nội dung, không giải hộ vụ án.",
-  "pauseHowTo": "Cách điều tra"
+  "pauseHowTo": "Cách điều tra",
+  "titleChooseCase": "Chọn hồ sơ",
+  "titleChangeCase": "Đổi hồ sơ",
+  "caseTierEasy": "Dễ",
+  "caseTierMedium": "Trung bình",
+  "caseTierHard": "Khó",
+  "caseRecommended": "Dành cho người chơi mới",
+  "caseStatSuspects": "Nghi phạm",
+  "caseStatClues": "Manh mối",
+  "caseStatContradictions": "Mâu thuẫn",
+  "caseStatScenes": "Địa điểm",
+  "caseMinutes": "Khoảng {minutes} phút"
 }
