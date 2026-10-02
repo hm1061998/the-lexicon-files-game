@@ -1,6 +1,6 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T07:43:24+07:00
+updated_at: 2026-10-02T08:02:00+07:00
 phase: phase-11e
 status: in_progress
 result_commit: 8c734b59f20417b1321c578af4ad4f5dec5249b3
@@ -19,7 +19,7 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## Active Goal
 
-- Yêu cầu mới: sổ tay và bảng suy luận không có scroll; nội dung dài chia trang, hiệu ứng tự nhiên, có thể dùng thư viện phù hợp. Giữ logic điều tra hiện có và phong cách diegetic.
+- Yêu cầu mới: sổ tay và bảng suy luận không có scroll; nội dung dài chia trang, hiệu ứng tự nhiên, có thể dùng thư viện phù hợp. Đinh ghim, vòng kim loại ở gáy và góc/khung sổ dùng artwork SVG chân thật theo ảnh, thay mô phỏng CSS/HTML hiện tại. Giữ logic điều tra hiện có và phong cách diegetic.
 
 ## Current Status
 
@@ -36,7 +36,7 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## In Progress
 
-- Đã đọc Git/memory/component/CSS và khảo sát tài liệu chính thức StPageFlip/react-pageflip. Đề xuất sổ tay lật giấy, board cố định chuyển mặt làm việc và hồ sơ chi tiết phân trang; chờ duyệt hướng thiết kế mới trước spec/plan/code. Approval spec/plan cũ không bao gồm thiết kế mới này.
+- Đã đọc Git/memory/component/CSS và khảo sát tài liệu chính thức StPageFlip/react-pageflip. Đề xuất sổ tay lật giấy, board cố định chuyển mặt làm việc và hồ sơ chi tiết phân trang; chờ duyệt hướng thiết kế mới trước spec/plan/code. Approval spec/plan cũ không bao gồm thiết kế mới này. Người dùng bổ sung SVG cho chi tiết vật thể; CSS hiện đang dựng gáy bằng gradient/pseudo-element, cần thay bằng vector có khối, highlight, bóng và độ mòn. Chưa coi bổ sung này là duyệt hướng thiết kế.
 
 ## Active Decisions
 
@@ -58,7 +58,7 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 ## Next Actions
 
 1. Người dùng duyệt hướng thiết kế không scroll: notebook lật trang, board chuyển mặt làm việc và hồ sơ chi tiết phân trang.
-2. Sau duyệt hướng: viết spec tiếng Việt bổ sung thay quy tắc cuộn/xếp dọc và xem xét StPageFlip cho animation; người dùng duyệt spec rồi plan theo brainstorming.
+2. Sau duyệt hướng: viết spec tiếng Việt bổ sung no-scroll và bộ artwork SVG (ghim/vòng gáy/góc sổ), xem xét StPageFlip cho animation; người dùng duyệt spec rồi plan theo brainstorming.
 3. Sau duyệt plan: thực thi inline trên dev, kiểm chứng nội dung dài/viewport/thao tác game và cập nhật memory. Không dùng approval push People cũ.
 
 ## Verification
