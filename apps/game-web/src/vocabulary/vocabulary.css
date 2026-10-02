@@ -79,3 +79,28 @@
   border: 1px solid var(--lexicon-border);
   box-shadow: 2px 2px 0 0 var(--lexicon-border);
 }
+
+/* Investigation reading surfaces: the definition card is a paged sheet inside the dialog. */
+.investigation-vocabulary-popover {
+  inset: auto 12px 12px;
+  width: auto;
+  min-width: 0;
+  height: min(62%, 24rem);
+  max-height: calc(100% - 24px);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 6px;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 30;
+}
+.investigation-vocabulary-pages {
+  min-height: 0;
+}
+.investigation-vocabulary-pages button,
+.investigation-vocabulary-close {
+  min-width: 44px;
+  min-height: 44px;
+}
+.investigation-vocabulary-close {
+  justify-self: end;
+}

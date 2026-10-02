@@ -1,10 +1,11 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type RefObject } from 'react';
 import type {
   TranslationMode,
   UiStrings,
   VocabularyEntry,
   VocabularySpan,
 } from '@lexicon/shared-types';
+import { InvestigationVocabularyPopover } from './InvestigationVocabularyPopover';
 import './vocabulary.css';
 
 export function VocabularyText({
@@ -20,6 +21,7 @@ export function VocabularyText({
   onRevealTranslation,
   tutorialSeen = true,
   onTutorialSeen,
+  presentation = 'default',
 }: {
   text: string;
   translationVi?: string | undefined;
@@ -33,13 +35,16 @@ export function VocabularyText({
   onRevealTranslation(id: string, contextId: string): void;
   tutorialSeen?: boolean;
   onTutorialSeen?: (() => void) | undefined;
+  /** `investigation` keeps the definition card paged and inside the surrounding dialog. */
+  presentation?: 'default' | 'investigation';
 }): JSX.Element {
   const [active, setActive] = useState<string | null>(null);
   const [translationRevealed, setTranslationRevealed] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const instanceId = useId();
   const trigger = useRef<HTMLButtonElement>(null);
-  const popup = useRef<HTMLSpanElement>(null);
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  const popup = useRef<HTMLElement>(null);
   const popupId = `${instanceId}-details`;
   const valid = useMemo(() => [...(spans ?? [])].sort((a, b) => a.start - b.start), [spans]);
   useEffect(() => {
@@ -83,7 +88,9 @@ export function VocabularyText({
         aria-expanded={active === span.vocabularyId}
         aria-controls={active === span.vocabularyId ? popupId : undefined}
         aria-label={`${text.slice(span.start, span.end)}. ${strings.inspectVocabulary}`}
-        onClick={() => {
+        onClick={(event) => {
+          if (presentation === 'investigation')
+            setHost(event.currentTarget.closest<HTMLElement>('[role="dialog"]'));
           onInspect(entry.id, contextId);
           if (!tutorialSeen) {
             setShowTutorial(true);
@@ -105,10 +112,31 @@ export function VocabularyText({
       {translationVi && mode === 'Beginner' && (
         <span className="vocabulary-translation">{translationVi}</span>
       )}
-      {entry && (
+      {entry && presentation === 'investigation' && (
+        <InvestigationVocabularyPopover
+          entry={entry}
+          mode={mode}
+          strings={strings}
+          popupId={popupId}
+          popupRef={popup as RefObject<HTMLDivElement>}
+          host={host}
+          revealed={translationRevealed}
+          showTutorial={showTutorial}
+          onReveal={() => {
+            onRevealTranslation(entry.id, contextId);
+            setTranslationRevealed(true);
+          }}
+          onClose={() => {
+            setActive(null);
+            setShowTutorial(false);
+            trigger.current?.focus();
+          }}
+        />
+      )}
+      {entry && presentation === 'default' && (
         <span
           id={popupId}
-          ref={popup}
+          ref={popup as RefObject<HTMLSpanElement>}
           className="vocabulary-popover"
           role="dialog"
           tabIndex={-1}

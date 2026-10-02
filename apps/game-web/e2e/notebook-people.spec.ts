@@ -345,6 +345,8 @@ for (const viewport of [
   { width: 760, height: 600 },
 ]) {
   test(`keeps focus and four tabs visible ${viewport.width}`, async ({ page }) => {
+    // Native Tab/Shift+Tab traversal of every control with a focus-bounds check each step is slow.
+    test.setTimeout(180_000);
     await page.setViewportSize(viewport);
     const initial = createCaseState(definition);
     const flags = {
@@ -394,7 +396,8 @@ for (const viewport of [
     let openedWord = false;
     const forward = new Set<string>();
     const backward = new Set<string>();
-    const steps = await panel.locator('button').count();
+    // Hidden measurement copies also contain buttons; only visible controls are tab stops.
+    const steps = await panel.locator('button:visible').count();
     for (const [key, visited] of [
       ['Tab', forward],
       ['Shift+Tab', backward],
@@ -433,10 +436,11 @@ for (const viewport of [
     expect(openedWord).toBe(true);
     await panel.getByRole('button', { name: strings.openDeductionBoard, exact: true }).click();
     const board = page.locator('.deduction-board');
+    await board.getByRole('button', { name: strings.deductionConclusionFace, exact: true }).click();
     await expect(
       board.getByRole('button', { name: strings.conclusionSubmit, exact: true }),
     ).toBeVisible();
-    const conclusionSteps = await board.locator('button:enabled').count();
+    const conclusionSteps = await board.locator('button:enabled:visible').count();
     for (let i = 0; i <= conclusionSteps; i++) {
       await page.keyboard.press('Tab');
       await stableFocus(page, board);
