@@ -4,6 +4,8 @@
  * truth, consumers should reference these variables instead of hardcoding
  * hex values.
  */
+@import './fonts.css';
+
 :root {
   --lexicon-paper: #d8c5a4;
   --lexicon-beige: #cdba97;
@@ -15,8 +17,16 @@
   --lexicon-muted-green: #737660;
   --lexicon-dark-red: #743026;
   /* prettier-ignore */
-  --lexicon-font-body: Cambria, "Times New Roman", Georgia, serif;
+  --lexicon-font-display: "Xanh Mono", ui-monospace, monospace;
   /* prettier-ignore */
-  --lexicon-font-mono: "Courier New", ui-monospace, monospace;
+  --lexicon-font-label: "IBM Plex Mono", ui-monospace, monospace;
+  /* prettier-ignore */
+  --lexicon-font-body: "Literata", Georgia, serif;
+  /* prettier-ignore */
+  --lexicon-font-hand: "Patrick Hand", "Segoe Print", cursive;
+  --lexicon-font-mono: var(--lexicon-font-label);
+  --lexicon-shadow-paper: 0 3px 6px rgb(42 37 33 / 25%);
+  --lexicon-shadow-lift: 0 5px 6px rgb(42 37 33 / 22%);
+  --lexicon-focus: 3px solid var(--lexicon-dark-red);
   --lexicon-text-min: 14px;
 }

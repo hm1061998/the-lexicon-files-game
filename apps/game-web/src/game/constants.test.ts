@@ -36,12 +36,12 @@ describe('character figure constants', () => {
 });
 
 describe('room label font', () => {
-  it('mirrors the --lexicon-font-body token of the UI theme', () => {
+  it('mirrors the --lexicon-font-label token of the UI theme', () => {
     const css = readFileSync(
       new URL('../../../../packages/ui/src/theme/palette.css', import.meta.url),
       'utf8',
     );
-    const token = /--lexicon-font-body:\s*([^;]+);/.exec(css)?.[1]?.trim();
+    const token = /--lexicon-font-label:\s*([^;]+);/.exec(css)?.[1]?.trim();
     expect(token).toBeDefined();
     expect(LABEL_FONT_FAMILY).toBe(token);
   });

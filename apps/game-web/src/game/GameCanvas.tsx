@@ -52,6 +52,7 @@ import { PresentationAudioProvider } from '../audio/PresentationAudioContext';
 import { connectPresentationAudio } from '../bridge/connectPresentationAudio';
 import { GameStoreProvider, useGameStore } from '../state/GameStoreContext';
 import { createGame } from './createGame';
+import { waitForFonts } from './fontReady';
 import {
   createLearningRepository,
   type LearningLoadResult,
@@ -655,22 +656,35 @@ function GameRoot({
           },
         )
       : undefined;
-    const game = createGame(container, {
-      caseDefinition,
-      scene,
-      spawnId: 'default',
-      bus,
-      input: { isInputLocked: () => store.getState().inputLocked },
-      transitions: {
-        request: (sceneId, spawnId) => requestSceneTransition(bus, store, sceneId, spawnId),
-        activeSceneId: () => store.getState().activeSceneId,
-      },
-      motion: { reducedMotion: () => settings.getState().settings.reducedMotion },
-      worldCueIds: () => worldCueSource.visibleIds(store.getState().activeSceneId),
-      interactionAvailable: interactionEligibility.isAvailable,
+    let cancelled = false;
+    let game: ReturnType<typeof createGame> | null = null;
+    // Canvas text is measured once, so wait (briefly) for the bundled fonts before booting Phaser.
+    void waitForFonts(
+      document.fonts,
+      ['500 20px "IBM Plex Mono"', '400 16px "Literata"'],
+      3000,
+    ).then((fontResult) => {
+      if (cancelled) return;
+      if (fontResult === 'timeout' && import.meta.env.DEV)
+        console.warn('[Assets] fonts not ready, using fallback');
+      game = createGame(container, {
+        caseDefinition,
+        scene,
+        spawnId: 'default',
+        bus,
+        input: { isInputLocked: () => store.getState().inputLocked },
+        transitions: {
+          request: (sceneId, spawnId) => requestSceneTransition(bus, store, sceneId, spawnId),
+          activeSceneId: () => store.getState().activeSceneId,
+        },
+        motion: { reducedMotion: () => settings.getState().settings.reducedMotion },
+        worldCueIds: () => worldCueSource.visibleIds(store.getState().activeSceneId),
+        interactionAvailable: interactionEligibility.isAvailable,
+      });
     });
     return () => {
-      game.destroy(true);
+      cancelled = true;
+      game?.destroy(true);
       disconnect();
       disconnectCaseEngine();
       disconnectPresentationAudio();

@@ -1,0 +1,16 @@
+/* Bundled OFL fonts (offline-safe). Only the latin, latin-ext and vietnamese subsets. */
+@import '@fontsource/xanh-mono/latin-400.css';
+@import '@fontsource/xanh-mono/latin-ext-400.css';
+@import '@fontsource/xanh-mono/vietnamese-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-mono/latin-ext-500.css';
+@import '@fontsource/ibm-plex-mono/vietnamese-500.css';
+@import '@fontsource/literata/latin-400.css';
+@import '@fontsource/literata/latin-ext-400.css';
+@import '@fontsource/literata/vietnamese-400.css';
+@import '@fontsource/literata/latin-600.css';
+@import '@fontsource/literata/latin-ext-600.css';
+@import '@fontsource/literata/vietnamese-600.css';
+@import '@fontsource/patrick-hand/latin-400.css';
+@import '@fontsource/patrick-hand/latin-ext-400.css';
+@import '@fontsource/patrick-hand/vietnamese-400.css';

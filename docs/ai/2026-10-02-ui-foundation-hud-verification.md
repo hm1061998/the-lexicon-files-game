@@ -38,3 +38,8 @@ Ngày: 02/10/2026. Plan: `docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 ## Nguồn dải giấy phía trên (1280×720)
 
 - Ẩn `.hud` thì dải biến mất; không có phần tử nào của `.game-root` rộng > 900px nằm ở đó; `camera.worldView` nằm trong biên scene. Kết luận: **UI (HUD)**, không phải camera/scene. Selector chính xác sẽ được xác định khi dựng lại khối mục tiêu ở Task 4/5 (xem ledger), gỡ ở Task 5.
+
+## Task 1 — font đóng gói
+
+- 15 file woff2 trong `dist/assets`, tổng 213.992 byte (~209 KB), bốn họ font `@fontsource` 5.3.0, đúng subset latin/latin-ext/vietnamese.
+- Phaser chờ `waitForFonts` tối đa 3 giây trước `createGame`, không bao giờ treo (test: load xong, treo mãi → `timeout`, reject → `timeout`).

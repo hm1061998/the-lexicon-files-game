@@ -29,10 +29,23 @@ describe('PALETTE <-> palette.css', () => {
     });
   }
 
-  it('defines typography tokens', () => {
-    expect(css).toContain('--lexicon-font-body: Cambria, "Times New Roman", Georgia, serif;');
-    expect(css).toContain('--lexicon-font-mono: "Courier New", ui-monospace, monospace;');
+  it('defines the four font tokens with system fallbacks', () => {
+    for (const [token, family] of [
+      ['display', 'Xanh Mono'],
+      ['label', 'IBM Plex Mono'],
+      ['body', 'Literata'],
+      ['hand', 'Patrick Hand'],
+    ] as const) {
+      expect(css).toMatch(new RegExp(`--lexicon-font-${token}:\\s*"${family}",\\s*[^;]+;`));
+    }
+    expect(css).toMatch(/--lexicon-font-mono:\s*var\(--lexicon-font-label\);/);
     expect(css).toMatch(/--lexicon-text-min:\s*14px/);
+  });
+
+  it('defines soft shadow and focus tokens', () => {
+    expect(css).toContain('--lexicon-shadow-paper: 0 3px 6px rgb(42 37 33 / 25%);');
+    expect(css).toContain('--lexicon-shadow-lift: 0 5px 6px rgb(42 37 33 / 22%);');
+    expect(css).toContain('--lexicon-focus: 3px solid var(--lexicon-dark-red);');
   });
 });
 
