@@ -17,33 +17,35 @@
   width: min(680px, 100%);
   max-height: min(90dvh, 900px, 100%);
   overflow-y: auto;
-  padding: 24px;
+  padding: 28px 28px 24px;
   line-height: 1.5;
+  text-align: left;
 }
 
-.evidence-modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+.evidence-modal .modal-sheet__heading {
+  margin: 0 56px 0 0;
+  text-align: left;
+  font-size: 22px;
 }
 
-.evidence-modal h2 {
-  margin: 0;
-  font-size: 20px;
+/* The close control sits in the top corner of the card, ahead of the content in tab order. */
+.evidence-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
 }
 
-.evidence-modal button,
-.evidence-modal a {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 4px;
-  background: var(--lexicon-beige);
-  color: var(--lexicon-ink);
-  font: inherit;
-  cursor: pointer;
+/* The evidence photo is stuck on the card like a print: white border, soft paper shadow, a slight tilt. */
+.evidence-photo {
+  display: block;
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px auto 0;
+  padding: 8px;
+  background: #f4efe2;
+  filter: drop-shadow(var(--lexicon-shadow-paper));
+  rotate: -1.2deg;
 }
 
 .evidence-art {
@@ -52,26 +54,49 @@
   max-width: 240px;
   height: auto;
   aspect-ratio: 1;
-  margin: 16px auto 0;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 4px;
   object-fit: cover;
 }
 
 .evidence-category {
   margin: 16px 0 4px;
+  color: var(--lexicon-investigation-red);
+  font-family: var(--lexicon-font-label);
   font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .evidence-modal p:last-child {
   margin-bottom: 0;
 }
 
+/* The listening task is a slip attached to the card. */
 .listening-task {
   margin-top: 20px;
   padding: 16px;
+  border: 1px solid rgb(62 52 43 / 40%);
+  background: #efe5cc url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
+}
+
+.listening-task button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
   border: 1px solid var(--lexicon-border);
-  background: rgba(245, 238, 222, 0.72);
+  border-radius: 3px;
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.listening-task button:hover:not(:disabled) {
+  background: var(--lexicon-paper);
+}
+
+.listening-task button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .listening-timestamp {
@@ -144,7 +169,7 @@
 
 @media (max-width: 520px) {
   .evidence-modal {
-    padding: 16px;
+    padding: 24px 16px 16px;
   }
 
   .evidence-art {

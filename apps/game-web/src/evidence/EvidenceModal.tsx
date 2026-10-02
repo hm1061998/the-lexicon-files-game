@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { PaperPanel } from '@lexicon/ui';
+import { InkButton, ModalSheet } from '@lexicon/ui';
 import type { EvidenceDefinition, UiStrings } from '@lexicon/shared-types';
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './evidence.css';
@@ -91,53 +91,54 @@ export function EvidenceModal({
   }, []);
 
   return (
-    <div className="evidence-overlay">
-      <PaperPanel as="div" className="evidence-modal">
-        <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={headingId}>
-          <div className="evidence-modal-header">
-            <h2 id={headingId}>{evidence.name}</h2>
-            <button type="button" autoFocus aria-label={strings.close} onClick={onClose}>
-              {strings.close}
-            </button>
-          </div>
-          {showImage && (
-            <img
-              className="evidence-art"
-              src={evidence.image}
-              alt=""
-              onError={() => setFailedImage(nextImageFailureState('error', evidence.image))}
-            />
-          )}
-          <p className="evidence-category">{strings.evidence}</p>
-          <p>
-            <VocabularyText
-              text={evidence.description}
-              translationVi={evidence.descriptionVi}
-              spans={evidence.vocabularySpans}
-              contextId={`evidence:${evidence.id}:description`}
-              catalogue={vocabulary}
-              mode={translationMode}
-              strings={strings}
-              onEncounter={onEncounter}
-              onInspect={onInspect}
-              onRevealTranslation={onRevealTranslation}
-              tutorialSeen={vocabularyTutorialSeen}
-              onTutorialSeen={onVocabularyTutorialSeen}
-            />
-          </p>
-          {evidence.category === 'audio' && listeningTask && onListeningAnswer && (
-            <ListeningTaskPanel
-              task={listeningTask}
-              mode={translationMode}
-              subtitles={subtitles}
-              completed={listeningCompleted}
-              onAnswer={(optionId) => onListeningAnswer(listeningTask.id, optionId)}
-              onTelemetry={(event, elapsedMs) => onListeningTelemetry?.(event, elapsedMs)}
-              strings={strings}
-            />
-          )}
-        </div>
-      </PaperPanel>
-    </div>
+    <ModalSheet
+      heading={evidence.name}
+      headingId={headingId}
+      overlayClassName="evidence-overlay"
+      className="evidence-modal"
+      dialogRef={dialogRef}
+    >
+      <InkButton className="evidence-close" autoFocus aria-label={strings.close} onClick={onClose}>
+        {strings.close}
+      </InkButton>
+      {showImage && (
+        <span className="evidence-photo">
+          <img
+            className="evidence-art"
+            src={evidence.image}
+            alt=""
+            onError={() => setFailedImage(nextImageFailureState('error', evidence.image))}
+          />
+        </span>
+      )}
+      <p className="evidence-category">{strings.evidence}</p>
+      <p>
+        <VocabularyText
+          text={evidence.description}
+          translationVi={evidence.descriptionVi}
+          spans={evidence.vocabularySpans}
+          contextId={`evidence:${evidence.id}:description`}
+          catalogue={vocabulary}
+          mode={translationMode}
+          strings={strings}
+          onEncounter={onEncounter}
+          onInspect={onInspect}
+          onRevealTranslation={onRevealTranslation}
+          tutorialSeen={vocabularyTutorialSeen}
+          onTutorialSeen={onVocabularyTutorialSeen}
+        />
+      </p>
+      {evidence.category === 'audio' && listeningTask && onListeningAnswer && (
+        <ListeningTaskPanel
+          task={listeningTask}
+          mode={translationMode}
+          subtitles={subtitles}
+          completed={listeningCompleted}
+          onAnswer={(optionId) => onListeningAnswer(listeningTask.id, optionId)}
+          onTelemetry={(event, elapsedMs) => onListeningTelemetry?.(event, elapsedMs)}
+          strings={strings}
+        />
+      )}
+    </ModalSheet>
   );
 }

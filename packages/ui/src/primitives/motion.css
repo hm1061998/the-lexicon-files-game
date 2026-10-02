@@ -17,7 +17,8 @@
 .lexicon-motion-off .case-card,
 .lexicon-motion-off .case-card-flag,
 .lexicon-motion-off .support-option,
-.lexicon-motion-off .dialogue-choice {
+.lexicon-motion-off .dialogue-choice,
+.lexicon-motion-off .evidence-photo {
   transform: none !important;
   rotate: none !important;
   translate: none !important;
@@ -32,6 +33,7 @@
   .case-card,
   .support-option,
   .dialogue-choice,
+  .evidence-photo,
   .ink-button,
   .stamp,
   .index-tab {
@@ -48,7 +50,8 @@
   .modal-sheet,
   .case-card,
   .support-option,
-  .dialogue-choice {
+  .dialogue-choice,
+  .evidence-photo {
     transform: none !important;
     rotate: none !important;
     translate: none !important;

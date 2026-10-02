@@ -43,4 +43,23 @@ describe('EvidenceModal', () => {
     expect(shouldShowEvidenceImage(image, failed)).toBe(false);
     expect(shouldShowEvidenceImage(image, null)).toBe(true);
   });
+
+  it('is a pinned card on a modal sheet with a photo frame and a labelled heading', () => {
+    const html = renderToString(
+      <EvidenceModal
+        evidence={{ ...evidence, image: '/assets/evidence/x.png' }}
+        strings={strings}
+        onClose={() => {}}
+      />,
+    );
+    expect(html).toContain('modal-sheet');
+    expect(html).toContain('evidence-modal');
+    expect(html).not.toContain('paper-panel');
+    expect(html).toMatch(/aria-labelledby="([^"]+)"/);
+    const id = /aria-labelledby="([^"]+)"/.exec(html)![1]!;
+    expect(html).toContain(`id="${id}"`);
+    expect(html).toMatch(/evidence-photo[^>]*><img[^>]*evidence-art/);
+    expect(html).toContain('ink-button evidence-close');
+    expect(html).toContain(`aria-label="${strings.close}"`);
+  });
 });
