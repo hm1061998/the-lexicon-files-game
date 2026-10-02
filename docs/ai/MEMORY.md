@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T08:02:00+07:00
+updated_at: 2026-10-02T08:08:13+07:00
 phase: phase-11e
 status: in_progress
-result_commit: 8c734b59f20417b1321c578af4ad4f5dec5249b3
-active_spec: docs/superpowers/specs/2026-10-01-notebook-deduction-ui-design.md
-active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
+result_commit: ad5e89b3898956d68864c66445c50e213be85a35
+active_spec: docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md
+active_plan: none
 ---
 
 ## Metadata
@@ -36,12 +36,13 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## In Progress
 
-- Đã đọc Git/memory/component/CSS và khảo sát tài liệu chính thức StPageFlip/react-pageflip. Đề xuất sổ tay lật giấy, board cố định chuyển mặt làm việc và hồ sơ chi tiết phân trang; chờ duyệt hướng thiết kế mới trước spec/plan/code. Approval spec/plan cũ không bao gồm thiết kế mới này. Người dùng bổ sung SVG cho chi tiết vật thể; CSS hiện đang dựng gáy bằng gradient/pseudo-element, cần thay bằng vector có khối, highlight, bóng và độ mòn. Chưa coi bổ sung này là duyệt hướng thiết kế.
+- Người dùng nói “duyệt spec” khi chỉ có hướng thiết kế trong chat. Đã chốt hướng và viết spec bổ sung ngày02/10, self-review và commit ad5e89b; bản viết chưa tồn tại trước approval nên cần người dùng xem duyệt file theo brainstorming. Chưa viết plan/cài dependency/sửa code.
+- Spec mới thay quy tắc scroll cũ; no-scroll, phân trang theo không gian thực tế, board4mặt, SVG vật thể, khảo sát StPageFlip với gate learning/focus. Gói UI cũ vẫn hoàn tất, report8c734b5 là baseline.
 
 ## Active Decisions
 
 - Native inline trên dev; một phase một lần; scope notebook + board riêng dùng engine hiện có. Không tự mở phase nội dung hoặc backend kế tiếp.
-- Không đổi case rules, transcript flags, save version hoặc thêm dependency; case text/ID nằm trong game-content. Spec/plan hiện tại là authoritative.
+- Không đổi case rules/transcript flags/save version; text/ID trong game-content. Spec bổ sung02/10 chờ duyệt, cho khảo sát dependency page-flip sau duyệt plan; chưa cài. Spec01/10 giữ hợp đồng baseline ngoài các quy tắc được thay.
 - People selector giữ metadata positive own-tree node/choice writer; condition hiện tại không ẩn lịch sử. Save David cũ thiếu khóa answer3 không được đoán lời khai.
 - Notebook timeline chỉ events đã đặt đúng; board dùng game-core cho timeline/contradiction/accusation. Quan hệ chỉ nguồn authored đã khám phá, có danh sách chữ; không free drag/link.
 - Vocabulary context dialogue:tree:node:text và evidence gốc; Settings sở hữu mode. Chỉ selected detail mount annotations; reveal reset khi đổi từ/mode, không tự đánh dấu mastery.
@@ -57,12 +58,13 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## Next Actions
 
-1. Người dùng duyệt hướng thiết kế không scroll: notebook lật trang, board chuyển mặt làm việc và hồ sơ chi tiết phân trang.
-2. Sau duyệt hướng: viết spec tiếng Việt bổ sung no-scroll và bộ artwork SVG (ghim/vòng gáy/góc sổ), xem xét StPageFlip cho animation; người dùng duyệt spec rồi plan theo brainstorming.
-3. Sau duyệt plan: thực thi inline trên dev, kiểm chứng nội dung dài/viewport/thao tác game và cập nhật memory. Không dùng approval push People cũ.
+1. Người dùng xem duyệt docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md.
+2. Sau duyệt spec: dùng writing-plans tạo plan tiếng Việt, giữ Native inline dev. Chưa có active plan cho yêu cầu mới.
+3. Sau duyệt plan: triển khai phân trang/SVG/effect adapter và regression, cập nhật memory. Không dùng authorization push People cũ.
 
 ## Verification
 
+- Spec mới: self-review scope/consistency/ambiguity và placeholder; git diff --check pass. memory:check PASS sau cập nhật. Không có code change nên không chạy lại lint/test/build; các kết quả dưới thuộc baseline cũ.
 - Node22: npm run format/lint/test/build/typecheck/memory:check exit0. Frontend536/83file chạy mới, content187/16file đã kiểm chứng và cache ở lượt cuối; npm test thành công7projects. Build CSS34.20kB/gzip7.12, JS1964.44kB/gzip478.89; advisory>500kB và NO_COLOR/FORCE_COLOR có sẵn. Không apps/api change nên không dotnet.
 - Nhóm8file E2E cuối38/38(11.0m), một worker: notebook-deduction/notebook-people/timeline/journey/viewport-focus/learning/settings/dialogue. Thêm native keyboard pair/submit sai→đúng trong timeline test, rerun1/1(45.2s), giữ engine/save/reload assertions.
 - Bốn tab + board tại1280×720,760×600,390×844:15ảnh đã xem, no horizontal overflow, target44×44, focus/trap/restore, source relations và word reveal. Alpha-bound portrait1/1, fallback2/2, scroll coordinates2/2.
@@ -71,13 +73,13 @@ active_plan: docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md
 
 ## Latest Handoff
 
-- Result8c734b5 là gói UI trước đã verified; chưa có implementation mới. Đang brainstorming no-scroll theo yêu cầu trực tiếp của người dùng. Giữ dev local và debug.log untracked.
-- Các ruling/cost, review và failures/reruns đầy đủ trong report hiện tại; không còn implementation phải làm trong plan này.
+- Resultad5e89b là spec bổ sung, chưa triển khai. Memory commit riêng kế tiếp; không push. Gói UI trước result8c734b5 đã verified.
+- Đã yêu cầu xem bản spec viết mới; đừng coi approval hướng chat là duyệt file chưa tồn tại. Không làm lại các task plan01/10 đã hoàn tất. debug.log vẫn untracked.
 
 ## Required Reading
 
 1. AGENTS.md và apps/game-web/AGENTS.md.
 2. docs/ai/README.md, docs/ai/MEMORY.md và reconcile Git.
-3. docs/superpowers/specs/2026-10-01-notebook-deduction-ui-design.md.
+3. docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md và spec baseline01/10.
 4. docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md và docs/ai/2026-10-01-notebook-deduction-verification.md.
 5. docs/architecture/ARCHITECTURE.md và docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md; product/learning/case docs theo root AGENTS.
