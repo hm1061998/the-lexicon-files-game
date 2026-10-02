@@ -113,3 +113,32 @@
     max-height: calc(100% - 16px);
   }
 }
+
+/* Plain definition card on a paper surface: buttons match the ink controls, and on a modal sheet the card
+   sits in the text flow (pushing the lines below it down) instead of floating over them. */
+.vocabulary-popover button {
+  justify-self: start;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 3px;
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.vocabulary-popover button:hover {
+  background: var(--lexicon-paper);
+}
+.vocabulary-popover button:focus-visible {
+  outline: 2px solid var(--lexicon-ink);
+  outline-offset: 2px;
+}
+.modal-sheet .vocabulary-popover:not(.investigation-vocabulary-popover) {
+  position: static;
+  margin: 8px 0;
+  box-sizing: border-box;
+  width: 100%;
+  background: var(--lexicon-beige);
+}

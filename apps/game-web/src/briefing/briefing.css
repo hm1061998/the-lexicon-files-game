@@ -41,3 +41,9 @@
 .briefing-line {
   margin: 0 0 12px;
 }
+
+.briefing-memo,
+.howto-body {
+  scrollbar-color: var(--lexicon-border) transparent;
+  scrollbar-width: thin;
+}

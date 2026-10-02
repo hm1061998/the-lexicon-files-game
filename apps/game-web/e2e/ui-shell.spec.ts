@@ -50,3 +50,23 @@ test.describe('UI shell screens', () => {
     });
   }
 });
+
+test('briefing definition card sits in the flow and never covers the memo text', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await shellScreens.find((s) => s.name === 'briefing')!.reach(page);
+  await page.locator('.briefing-memo .vocabulary-word').nth(2).click();
+  const card = page.locator('.briefing-memo .vocabulary-popover');
+  await expect(card).toBeVisible();
+  await expect(card).toHaveCSS('position', 'static');
+  const cardBox = (await card.boundingBox())!;
+  const lines = await page.locator('.briefing-memo .briefing-line').all();
+  for (const line of lines) {
+    // The card lives inside the line of the word that opened it.
+    if ((await line.locator('.vocabulary-popover').count()) > 0) continue;
+    const box = (await line.boundingBox())!;
+    const overlaps = box.y < cardBox.y + cardBox.height && box.y + box.height > cardBox.y;
+    expect(overlaps, await line.innerText()).toBe(false);
+  }
+});
