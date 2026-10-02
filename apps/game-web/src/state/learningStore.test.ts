@@ -3,6 +3,7 @@ import { createEventBus } from '../bridge/eventBus';
 import type { GameEventMap } from '@lexicon/shared-types';
 import { createDefaultLearningRecord } from '../persistence/learningMigration';
 import { createLearningStore } from './learningStore';
+import { allOnboardingSeen } from '../onboarding/onboardingTypes';
 
 const catalogue = [
   {
@@ -59,5 +60,29 @@ describe('learning store', () => {
     });
     expect(store.getState().profile).toBe(profile);
     expect(store.getState().error).toContain('Unknown vocabulary');
+  });
+
+  it('starts from the saved onboarding flags and marks a hint once', () => {
+    const bus = createEventBus<GameEventMap>();
+    const store = createLearningStore({
+      catalogue,
+      contexts,
+      initialRecord: createDefaultLearningRecord(),
+      bus,
+    });
+    expect(store.getState().onboardingSeen).toEqual(allOnboardingSeen(false));
+    let notifications = 0;
+    store.subscribe(() => (notifications += 1));
+    store.getState().markOnboardingSeen('move');
+    store.getState().markOnboardingSeen('move');
+    expect(notifications).toBe(1);
+    expect(store.getState().onboardingSeen).toEqual({ ...allOnboardingSeen(false), move: true });
+    const resumed = createLearningStore({
+      catalogue,
+      contexts,
+      initialRecord: { ...createDefaultLearningRecord(), onboardingSeen: allOnboardingSeen(true) },
+      bus,
+    });
+    expect(resumed.getState().onboardingSeen).toEqual(allOnboardingSeen(true));
   });
 });

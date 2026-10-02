@@ -1,14 +1,17 @@
 import { createContext, useContext, useSyncExternalStore, type ReactNode } from 'react';
 import type { LearningStore, LearningStoreState } from './learningStore';
 import { createInitialLanguageProfile } from '@lexicon/learning-engine';
+import { allOnboardingSeen } from '../onboarding/onboardingTypes';
 const Context = createContext<LearningStore | null>(null);
 const fallbackState: LearningStoreState = {
   profile: createInitialLanguageProfile(),
   vocabularyTutorialSeen: false,
+  onboardingSeen: allOnboardingSeen(false),
   activeWord: null,
   error: null,
   dispatchLearning() {},
   markVocabularyTutorialSeen() {},
+  markOnboardingSeen() {},
   setActiveWord() {},
 };
 export function LearningStoreProvider({

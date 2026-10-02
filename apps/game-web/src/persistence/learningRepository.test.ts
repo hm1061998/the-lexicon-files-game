@@ -2,6 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { createLearningRepository, type LearningDatabase } from './learningRepository';
 import { createDefaultLearningRecord, parseLearningRecord } from './learningMigration';
 
+function legacyBase() {
+  const { onboardingSeen: _onboardingSeen, ...rest } = createDefaultLearningRecord();
+  return rest;
+}
+
 function memory(raw?: unknown) {
   let saved = raw;
   const backups: unknown[] = [];
@@ -81,7 +86,7 @@ describe('separate learning repository', () => {
   });
 
   it('normalizes schema v1 profiles without listening counters and preserves saved settings', () => {
-    const record = createDefaultLearningRecord();
+    const record = legacyBase();
     const { listening, ...legacyProfile } = record.profile;
     expect(listening).toBeDefined();
     const legacy = {
@@ -109,7 +114,7 @@ describe('separate learning repository', () => {
       legacyTranslationMode: 'Beginner',
       migrated: true,
       record: {
-        schemaVersion: 2,
+        schemaVersion: 3,
         vocabularyTutorialSeen: true,
         profile: {
           vocabulary: { leave: { stage: 'seen' } },
@@ -167,7 +172,7 @@ describe('separate learning repository', () => {
   });
 
   it('migrates V1 to V2, backing up the raw V1 before writing V2', async () => {
-    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Immersion' };
+    const v1 = { ...legacyBase(), schemaVersion: 1, translationMode: 'Immersion' };
     const order: string[] = [];
     const backupsList: unknown[] = [];
     let saved: unknown = v1;
@@ -191,14 +196,14 @@ describe('separate learning repository', () => {
     expect(order).toEqual(['backup-v1', 'put']);
     expect(result).toMatchObject({ status: 'loaded', legacyTranslationMode: 'Immersion' });
     expect(saved).not.toHaveProperty('translationMode');
-    expect(saved).toMatchObject({ schemaVersion: 2 });
+    expect(saved).toMatchObject({ schemaVersion: 3 });
     const again = await createLearningRepository(async () => db).loadLearning([], []);
     expect(again).toMatchObject({ status: 'loaded', legacyTranslationMode: null });
     expect(order).toEqual(['backup-v1', 'put']);
   });
 
   it('keeps the V1 source and reports memory-only when the migration write fails', async () => {
-    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Beginner' };
+    const v1 = { ...legacyBase(), schemaVersion: 1, translationMode: 'Beginner' };
     const saved: unknown = v1;
     const db: LearningDatabase = {
       async get() {
@@ -222,7 +227,7 @@ describe('separate learning repository', () => {
   });
 
   it('keeps memory-only and does not put when the migration backup fails', async () => {
-    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Beginner' };
+    const v1 = { ...legacyBase(), schemaVersion: 1, translationMode: 'Beginner' };
     const put = vi.fn(async () => undefined);
     const db: LearningDatabase = {
       get: async () => v1,
@@ -242,7 +247,7 @@ describe('separate learning repository', () => {
   });
 
   it('returns the legacy mode again on a second load of the same repository', async () => {
-    const v1 = { ...createDefaultLearningRecord(), schemaVersion: 1, translationMode: 'Immersion' };
+    const v1 = { ...legacyBase(), schemaVersion: 1, translationMode: 'Immersion' };
     let saved: unknown = v1;
     const db: LearningDatabase = {
       get: async () => saved,

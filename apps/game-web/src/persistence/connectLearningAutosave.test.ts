@@ -26,7 +26,11 @@ describe('learning autosave', () => {
     disconnect();
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(saves).toHaveLength(1);
-    expect(saves[0]).toMatchObject({ schemaVersion: 2, vocabularyTutorialSeen: true });
+    expect(saves[0]).toMatchObject({
+      schemaVersion: 3,
+      vocabularyTutorialSeen: true,
+      onboardingSeen: { move: false, interact: false, notebook: false, board: false },
+    });
     expect(saves[0]).not.toHaveProperty('translationMode');
   });
 });

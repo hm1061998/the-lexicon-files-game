@@ -1,21 +1,28 @@
 import type { LanguageProfile, TranslationMode } from '@lexicon/shared-types';
 import { createInitialLanguageProfile } from '@lexicon/learning-engine';
+import {
+  COACH_NOTE_IDS,
+  allOnboardingSeen,
+  type OnboardingSeen,
+} from '../onboarding/onboardingTypes';
 
-export type LearningRecordV2 = {
-  schemaVersion: 2;
+export type LearningRecordV3 = {
+  schemaVersion: 3;
   profile: LanguageProfile;
   vocabularyTutorialSeen: boolean;
+  onboardingSeen: OnboardingSeen;
   updatedAt: number;
 };
 export type ParsedLearningRecord = {
-  record: LearningRecordV2;
+  record: LearningRecordV3;
   legacyTranslationMode: TranslationMode | null;
   migrated: boolean;
 };
-export const createDefaultLearningRecord = (): LearningRecordV2 => ({
-  schemaVersion: 2,
+export const createDefaultLearningRecord = (): LearningRecordV3 => ({
+  schemaVersion: 3,
   profile: createInitialLanguageProfile(),
   vocabularyTutorialSeen: false,
+  onboardingSeen: allOnboardingSeen(false),
   updatedAt: Date.now(),
 });
 const modes: readonly TranslationMode[] = ['Beginner', 'Learning', 'Immersion'];
@@ -31,7 +38,7 @@ export function parseLearningRecord(
   if (!raw || typeof raw !== 'object') throw new Error('Learning record is not an object');
   const record = raw as Record<string, unknown>;
   const version = record.schemaVersion;
-  if (version !== 1 && version !== 2)
+  if (version !== 1 && version !== 2 && version !== 3)
     throw new Error(`Unsupported learning schemaVersion: ${String(record.schemaVersion)}`);
   if (
     Object.keys(record).some(
@@ -40,6 +47,7 @@ export function parseLearningRecord(
           'schemaVersion',
           'profile',
           ...(version === 1 ? ['translationMode'] : []),
+          ...(version === 3 ? ['onboardingSeen'] : []),
           'vocabularyTutorialSeen',
           'updatedAt',
         ].includes(key),
@@ -54,6 +62,16 @@ export function parseLearningRecord(
     !Number.isFinite(record.updatedAt)
   )
     throw new Error('Invalid learning record metadata');
+  if (version === 3) {
+    const seen = record.onboardingSeen as Record<string, unknown> | null | undefined;
+    if (
+      !seen ||
+      typeof seen !== 'object' ||
+      Object.keys(seen).length !== COACH_NOTE_IDS.length ||
+      !COACH_NOTE_IDS.every((id) => typeof seen[id] === 'boolean')
+    )
+      throw new Error('Invalid onboarding flags');
+  }
   if (!record.profile || typeof record.profile !== 'object')
     throw new Error('Invalid language profile');
   const profile = record.profile as LanguageProfile;
@@ -111,14 +129,19 @@ export function parseLearningRecord(
     if (progress.nextReviewAt !== undefined && !Number.isFinite(Date.parse(progress.nextReviewAt)))
       throw new Error(`Invalid vocabulary review date: ${id}`);
   }
+  // Players who predate the hints have already learned the basics: show them nothing.
+  const experienced =
+    record.vocabularyTutorialSeen === true || Object.keys(profile.vocabulary).length > 0;
   return {
     record: {
-      schemaVersion: 2,
+      schemaVersion: 3,
       profile: { ...profile, listening },
       vocabularyTutorialSeen: record.vocabularyTutorialSeen,
+      onboardingSeen:
+        version === 3 ? (record.onboardingSeen as OnboardingSeen) : allOnboardingSeen(experienced),
       updatedAt: record.updatedAt,
     },
     legacyTranslationMode: version === 1 ? (record.translationMode as TranslationMode) : null,
-    migrated: version === 1,
+    migrated: version !== 3,
   };
 }

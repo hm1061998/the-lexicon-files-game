@@ -8,15 +8,18 @@ import type {
   VocabularyEntry,
 } from '@lexicon/shared-types';
 import { applyLearningAction } from '@lexicon/learning-engine';
-import type { LearningRecordV2 } from '../persistence/learningMigration';
+import type { LearningRecordV3 } from '../persistence/learningMigration';
+import type { CoachNoteId, OnboardingSeen } from '../onboarding/onboardingTypes';
 
 export type LearningStoreState = {
   profile: LanguageProfile;
   vocabularyTutorialSeen: boolean;
+  onboardingSeen: OnboardingSeen;
   activeWord: { vocabularyId: string; contextId: string } | null;
   error: string | null;
   dispatchLearning(action: LearningAction): void;
   markVocabularyTutorialSeen(): void;
+  markOnboardingSeen(id: CoachNoteId): void;
   setActiveWord(word: LearningStoreState['activeWord']): void;
 };
 export type LearningStore = StoreApi<LearningStoreState>;
@@ -29,13 +32,14 @@ export function createLearningStore({
 }: {
   catalogue: readonly VocabularyEntry[];
   contexts: readonly VocabularyContextDefinition[];
-  initialRecord: LearningRecordV2;
+  initialRecord: LearningRecordV3;
   bus: EventBus<GameEventMap>;
   now?: () => string;
 }): LearningStore {
   return createStore<LearningStoreState>((set, get) => ({
     profile: initialRecord.profile,
     vocabularyTutorialSeen: initialRecord.vocabularyTutorialSeen,
+    onboardingSeen: initialRecord.onboardingSeen,
     activeWord: null,
     error: null,
     dispatchLearning(action) {
@@ -62,6 +66,10 @@ export function createLearningStore({
     },
     markVocabularyTutorialSeen() {
       set({ vocabularyTutorialSeen: true });
+    },
+    markOnboardingSeen(id) {
+      if (get().onboardingSeen[id]) return;
+      set({ onboardingSeen: { ...get().onboardingSeen, [id]: true } });
     },
     setActiveWord(activeWord) {
       set({ activeWord });

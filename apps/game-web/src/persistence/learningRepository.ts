@@ -7,7 +7,7 @@ import type {
 import {
   createDefaultLearningRecord,
   parseLearningRecord,
-  type LearningRecordV2,
+  type LearningRecordV3,
 } from './learningMigration';
 
 interface LearningDbSchema extends DBSchema {
@@ -16,20 +16,20 @@ interface LearningDbSchema extends DBSchema {
 }
 export type LearningDatabase = {
   get(): Promise<unknown | undefined>;
-  put(record: LearningRecordV2): Promise<void>;
+  put(record: LearningRecordV3): Promise<void>;
   backup(raw: unknown): Promise<void>;
   listBackups(): Promise<unknown[]>;
 };
 export type LearningLoadResult =
   | {
       status: 'loaded' | 'missing';
-      record: LearningRecordV2;
+      record: LearningRecordV3;
       legacyTranslationMode: TranslationMode | null;
     }
   | { status: 'confirmation-required'; reason: string }
   | {
       status: 'memory-only';
-      record: LearningRecordV2;
+      record: LearningRecordV3;
       legacyTranslationMode: TranslationMode | null;
       error: string;
     };
@@ -38,8 +38,8 @@ export type LearningRepository = {
     catalogue: readonly VocabularyEntry[],
     contexts: readonly VocabularyContextDefinition[],
   ): Promise<LearningLoadResult>;
-  saveLearning(record: LearningRecordV2): Promise<void>;
-  createFreshLearningAfterConfirmation(): Promise<LearningRecordV2>;
+  saveLearning(record: LearningRecordV3): Promise<void>;
+  createFreshLearningAfterConfirmation(): Promise<LearningRecordV3>;
   findLegacyTranslationMode(): Promise<TranslationMode | null>;
 };
 async function openLearningDb(): Promise<LearningDatabase> {
