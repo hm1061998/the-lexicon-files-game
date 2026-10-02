@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-03T11:00:00+07:00
-phase: ui-shell
-status: complete
-result_commit: 3896c87
-active_spec: docs/superpowers/specs/2026-10-02-ui-shell-design.md
-active_plan: docs/superpowers/plans/2026-10-02-ui-shell.md
+updated_at: 2026-10-03T15:00:00+07:00
+phase: ui-dialogue-evidence
+status: in_progress
+result_commit: 904f6ff
+active_spec: docs/superpowers/specs/2026-10-03-ui-dialogue-evidence-design.md
+active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
 ---
 
 ## Metadata
@@ -15,16 +15,16 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-shell.md
 
 ## Current Phase
 
-- UI shell (PR-02 phần 3: vỏ ngoài game): Task 0–7 xong. Người dùng đã duyệt ảnh trước/sau (`docs/ai/playtests/2026-10-02-ui-shell/`, 03/10/2026): phase hoàn tất, đã push `dev`. Phần 1+2 (foundation + HUD) và PR-03 Case #002 đã xong và đã push.
+- UI phần 4 (hội thoại, vật chứng, bài nghe, thẻ từ vựng): Task 0–4 xong trên `dev`, chưa push. Chờ người dùng duyệt ảnh trước/sau (`docs/ai/playtests/2026-10-03-ui-dialogue-evidence/`). Phần 1–3 và PR-03 đã xong và đã push.
 
 ## Active Goal
 
-- Chọn phase kế tiếp; không tự mở phase mới.
+- Người dùng duyệt ảnh phần 4; không tự mở phase mới.
 
 ## Current Status
 
-- Shell: mặt bàn `DeskBackdrop`, bìa hồ sơ `FolderCover`/`FolderTabs`, `ModalSheet` cho các bước phụ/tạm dừng/briefing/tổng kết; con dấu đỏ duy nhất là CASE CLOSED. Commit cuối `3896c87`; báo cáo `docs/ai/2026-10-02-ui-shell-verification.md`. E2E đầy đủ: 220 pass, 17 đỏ đều thuộc danh sách đỏ có sẵn; sau review có sửa 3 Important và chạy lại 93 test liên quan, xanh. Unit: game-web 694, content 277, core 59, ui 49. FPS 12,8 trước và sau.
-- Review độc lập: không Critical; 3 Important đã sửa RED→GREEN (nút thẻ định nghĩa phạm vi, motion-off phủ mọi tilt, bìa không bị cắt ở 844×390). Minor chưa sửa (ledger): `aria-modal` trong SupportPicker, `ModalSheet` thiếu tên khi không có heading, `NewCaseConfirm` thiếu `aria-describedby` và Stamp trung tính, thiếu fallback forced-colors cho tab/thẻ, `aria-labelledby` section đầu của tổng kết.
+- Phần 4: hội thoại là tờ lời khai torn có kẹp giấy với lựa chọn là tờ ghi chú; vật chứng là `ModalSheet` với ảnh dán nghiêng, nhãn "Vật chứng" đỏ đậm `#743026`; bài nghe là phiếu trong thẻ; thẻ từ vựng nằm trong luồng ở hội thoại. Báo cáo `docs/ai/2026-10-03-ui-dialogue-evidence-verification.md`. E2E đầy đủ: 256 pass, 17 đỏ đều có sẵn; sau review sửa 2 Important (tương phản nhãn đỏ, kẹp giấy bị cắt) và các spec liên quan xanh. Unit game-web 704. FPS 12,2 so với 12,8 (nhiễu).
+- Minor chưa sửa (xem báo cáo): màu nền ghi chú bị texture che, CSS thẻ từ vựng lặp, specificity phụ thuộc thứ tự nạp, thiếu forced-colors cho nút đóng, thiếu ảnh 844×390.
 
 ## Completed
 
@@ -56,9 +56,9 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-shell.md
 
 ## Next Actions
 
-1. Chọn việc kế tiếp (chờ người dùng); `dev` đã push, không còn việc push treo.
-2. Phần 4–5 UI (hội thoại, bằng chứng, sổ tay) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
-3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor shell ở trên.
+1. Chờ người dùng duyệt ảnh phần 4; sau đó mới đánh dấu phase hoàn tất. Chưa push `dev`.
+2. Phần 5 UI (sổ tay, bảng suy luận, xóa alias `PaperPanel`) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
+3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor shell và phần 4.
 
 ## Verification
 
