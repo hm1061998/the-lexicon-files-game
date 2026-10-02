@@ -1,6 +1,5 @@
 import type { CaseDefinition } from '@lexicon/shared-types';
 import { createCaseState } from '@lexicon/game-core';
-import { DEFAULT_START } from '@lexicon/game-content';
 import type { SaveAvailability } from '../title/titleModel';
 import type { SaveRepository } from '../persistence/saveRepository';
 import {
@@ -36,9 +35,9 @@ export async function loadGameBootstrap(
   repository: SaveRepository,
   commerceConfigProvider: CommerceConfigProvider = defaultCommerceConfigProvider,
 ): Promise<GameBootstrapResult> {
-  const startScene = definition.scenes.find(({ id }) => id === DEFAULT_START.sceneId);
+  const startScene = definition.scenes.find(({ id }) => id === definition.startSceneId);
   if (!startScene?.spawnPoints.default)
-    throw new Error(`Default scene "${DEFAULT_START.sceneId}" or its default spawn is missing`);
+    throw new Error(`Start scene "${definition.startSceneId}" or its default spawn is missing`);
 
   const [result, commerceConfig] = await Promise.all([
     repository.loadSave(definition.id, definition),

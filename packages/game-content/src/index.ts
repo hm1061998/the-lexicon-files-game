@@ -10,7 +10,7 @@ export {
 } from './schema/learning';
 export { validateVocabularyReferences } from './validation/vocabularyReferences';
 export { parseUiStrings } from './schema/ui';
-export { loadSceneDefinition, DEFAULT_START } from './loader/loadScene';
+export { loadSceneDefinition } from './loader/loadScene';
 export { loadCaseDefinition, REGISTERED_CASE_IDS } from './loader/loadCaseDefinition';
 export { listCaseCatalogue } from './loader/caseCatalogue';
 export { loadAllVocabulary } from './loader/loadAllVocabulary';

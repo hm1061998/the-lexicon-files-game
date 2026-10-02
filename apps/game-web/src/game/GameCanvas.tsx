@@ -7,7 +7,8 @@ import type {
 } from '@lexicon/shared-types';
 import {
   ContentValidationError,
-  DEFAULT_START,
+  listCaseCatalogue,
+  loadAllVocabulary,
   loadCaseDefinition,
   loadUiStrings,
 } from '@lexicon/game-content';
@@ -30,6 +31,8 @@ import { HowToInvestigate } from '../onboarding/HowToInvestigate';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import { TitleScreen } from '../title/TitleScreen';
 import { SupportPicker } from '../title/SupportPicker';
+import { CasePicker } from '../title/CasePicker';
+import { selectCaseCards, type CaseCardModel } from '../title/caseCardModel';
 import { NewCaseConfirm } from '../title/NewCaseConfirm';
 import { nextTitleStage, selectTitleActions, type TitleStage } from '../title/titleModel';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
@@ -79,25 +82,49 @@ import {
 
 type StartContent = { caseDefinition: CaseDefinition; strings: UiStrings };
 type LoadResult = { ok: true; content: StartContent } | { ok: false; error: Error };
+type ShellContent = { strings: UiStrings; cards: CaseCardModel[] };
+type ShellResult = { ok: true; content: ShellContent } | { ok: false; error: Error };
 
-function loadStartContent(): LoadResult {
+function toError(err: unknown): Error {
+  return err instanceof Error ? err : new Error(String(err));
+}
+
+/** Content every case shares: UI strings and the case catalogue shown by the picker. */
+function loadShellContent(): ShellResult {
   try {
-    const caseDefinition = loadCaseDefinition(DEFAULT_START.caseId);
-    const scene = caseDefinition.scenes.find(({ id }) => id === DEFAULT_START.sceneId);
-    if (!scene?.spawnPoints.default)
-      throw new Error(`Start scene "${DEFAULT_START.sceneId}" or its default spawn is missing`);
-    return {
-      ok: true,
-      content: {
-        caseDefinition,
-        strings: loadUiStrings('vi'),
-      },
-    };
+    const strings = loadUiStrings('vi');
+    return { ok: true, content: { strings, cards: selectCaseCards(listCaseCatalogue(), strings) } };
   } catch (err) {
-    const error = err instanceof Error ? err : new Error(String(err));
-    console.error('[CaseEngine] failed to load start content', error);
+    const error = toError(err);
+    console.error('[CaseEngine] failed to load shared content', error);
     return { ok: false, error };
   }
+}
+
+function loadCaseContent(caseId: string, strings: UiStrings): LoadResult {
+  try {
+    const caseDefinition = loadCaseDefinition(caseId);
+    const scene = caseDefinition.scenes.find(({ id }) => id === caseDefinition.startSceneId);
+    if (!scene?.spawnPoints.default)
+      throw new Error(
+        `Start scene "${caseDefinition.startSceneId}" or its default spawn is missing`,
+      );
+    return { ok: true, content: { caseDefinition, strings } };
+  } catch (err) {
+    const error = toError(err);
+    console.error('[CaseEngine] failed to load case content', error);
+    return { ok: false, error };
+  }
+}
+
+function ContentError({ error }: { error: Error }): JSX.Element {
+  const issues = error instanceof ContentValidationError ? error.issues : [];
+  return (
+    <pre role="alert" className="game-load-error">
+      {error.message}
+      {issues.length > 0 ? `\n\nIssues:\n${issues.map((i) => `- ${i}`).join('\n')}` : ''}
+    </pre>
+  );
 }
 
 export function GameCanvas({
@@ -105,7 +132,7 @@ export function GameCanvas({
 }: {
   commerceConfigProvider?: CommerceConfigProvider;
 } = {}) {
-  const result = useMemo(loadStartContent, []);
+  const shell = useMemo(loadShellContent, []);
   const repository = useMemo(createSaveRepository, []);
   const learningRepository = useMemo(createLearningRepository, []);
   const settingsRepository = useMemo(createSettingsRepository, []);
@@ -115,19 +142,14 @@ export function GameCanvas({
   }> | null>(null);
   const [learningLoad, setLearningLoad] = useState<LearningLoadResult | null>(null);
   const [settingsLoad, setSettingsLoad] = useState<SettingsLoadResult | null>(null);
-  const [bootstrap, setBootstrap] = useState<GameBootstrapResult | { status: 'loading' }>({
-    status: 'loading',
-  });
-  const [stage, setStage] = useState<TitleStage>('title');
-  const [startMode, setStartMode] = useState<'continue' | 'new'>('continue');
-  const [runId, setRunId] = useState(0);
-  const [startError, setStartError] = useState<string | null>(null);
+  const [bootError, setBootError] = useState<Error | null>(null);
+  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const settings = useMemo(
     () => (settingsLoad ? createSettingsStore(settingsLoad.settings) : null),
     [settingsLoad],
   );
   const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
-  const settingsStrings = result.ok ? result.content.strings : null;
+  const settingsStrings = shell.ok ? shell.content.strings : null;
 
   useEffect(() => {
     if (!settings || !settingsLoad || !settingsStrings || settingsLoad.status === 'memory-only')
@@ -143,23 +165,30 @@ export function GameCanvas({
   }, [settings, settingsLoad, settingsRepository, settingsStrings]);
 
   useEffect(() => {
-    if (!result.ok) return;
+    if (!shell.ok) return;
     // One load per mount: StrictMode re-runs effects and a second settings load
-    // would hide the "recovered" status of the first.
-    bootPromiseRef.current ??= learningRepository
-      .loadLearning(
-        result.content.caseDefinition.vocabulary,
-        result.content.caseDefinition.vocabularyContexts,
-      )
-      .then(async (learning) => {
-        const legacy =
-          ('legacyTranslationMode' in learning ? learning.legacyTranslationMode : null) ??
-          (await learningRepository.findLegacyTranslationMode());
-        const settings = await settingsRepository.loadSettings(
-          legacy ? { translationMode: legacy } : {},
-        );
-        return { learning, settings };
-      });
+    // would hide the "recovered" status of the first. Learning progress is global,
+    // so the record is validated against the vocabulary of every registered case.
+    if (!bootPromiseRef.current) {
+      try {
+        const { catalogue, contexts } = loadAllVocabulary();
+        bootPromiseRef.current = learningRepository
+          .loadLearning(catalogue, contexts)
+          .then(async (learning) => {
+            const legacy =
+              ('legacyTranslationMode' in learning ? learning.legacyTranslationMode : null) ??
+              (await learningRepository.findLegacyTranslationMode());
+            const settings = await settingsRepository.loadSettings(
+              legacy ? { translationMode: legacy } : {},
+            );
+            return { learning, settings };
+          });
+      } catch (err) {
+        console.error('[Learning] failed to load shared vocabulary', err);
+        setBootError(toError(err));
+        return;
+      }
+    }
     let active = true;
     void bootPromiseRef.current.then(({ learning, settings }) => {
       if (!active) return;
@@ -169,7 +198,74 @@ export function GameCanvas({
     return () => {
       active = false;
     };
-  }, [result, learningRepository, settingsRepository]);
+  }, [shell, learningRepository, settingsRepository]);
+
+  if (!shell.ok) return <ContentError error={shell.error} />;
+  if (bootError) return <ContentError error={bootError} />;
+  if (!learningLoad || !settingsLoad || !settings)
+    return <div role="status">{shell.content.strings.loadingGame}</div>;
+
+  if (selectedCaseId === null) {
+    return (
+      <div className="game-root" data-reduced-motion="false">
+        <CasePicker
+          strings={shell.content.strings}
+          cards={shell.content.cards}
+          onSelect={setSelectedCaseId}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <CaseFlow
+      key={selectedCaseId}
+      caseId={selectedCaseId}
+      strings={shell.content.strings}
+      repository={repository}
+      learningRepository={learningRepository}
+      learningLoad={learningLoad}
+      settings={settings}
+      settingsLoad={settingsLoad}
+      settingsWriteError={settingsWriteError}
+      commerceConfigProvider={commerceConfigProvider}
+      onChangeCase={() => setSelectedCaseId(null)}
+    />
+  );
+}
+
+/** One chosen case: its own save bootstrap, title flow and game. Remounted per case. */
+function CaseFlow({
+  caseId,
+  strings: sharedStrings,
+  repository,
+  learningRepository,
+  learningLoad,
+  settings,
+  settingsLoad,
+  settingsWriteError,
+  commerceConfigProvider,
+  onChangeCase,
+}: {
+  caseId: string;
+  strings: UiStrings;
+  repository: SaveRepository;
+  learningRepository: ReturnType<typeof createLearningRepository>;
+  learningLoad: LearningLoadResult;
+  settings: SettingsStore;
+  settingsLoad: SettingsLoadResult;
+  settingsWriteError: string | null;
+  commerceConfigProvider: CommerceConfigProvider;
+  onChangeCase: () => void;
+}) {
+  const result = useMemo(() => loadCaseContent(caseId, sharedStrings), [caseId, sharedStrings]);
+  const [bootstrap, setBootstrap] = useState<GameBootstrapResult | { status: 'loading' }>({
+    status: 'loading',
+  });
+  const [stage, setStage] = useState<TitleStage>('title');
+  const [startMode, setStartMode] = useState<'continue' | 'new'>('continue');
+  const [runId, setRunId] = useState(0);
+  const [startError, setStartError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!result.ok) return;
@@ -183,7 +279,7 @@ export function GameCanvas({
         setBootstrap({
           status: 'memory-only',
           initialState: createCaseState(result.content.caseDefinition),
-          activeSceneId: DEFAULT_START.sceneId,
+          activeSceneId: result.content.caseDefinition.startSceneId,
           saveAvailability: 'memory-only',
           commerceConfig: FREE_COMMERCE_CONFIG,
           autosaveEnabled: false,
@@ -195,22 +291,11 @@ export function GameCanvas({
     };
   }, [result, repository, commerceConfigProvider]);
 
-  if (!result.ok) {
-    const issues = result.error instanceof ContentValidationError ? result.error.issues : [];
-    return (
-      <pre role="alert" className="game-load-error">
-        {result.error.message}
-        {issues.length > 0 ? `\n\nIssues:\n${issues.map((i) => `- ${i}`).join('\n')}` : ''}
-      </pre>
-    );
-  }
+  if (!result.ok) return <ContentError error={result.error} />;
 
   if (bootstrap.status === 'loading') {
     return <div role="status">{result.content.strings.loadingGame}</div>;
   }
-
-  if (!learningLoad || !settingsLoad || !settings)
-    return <div role="status">{result.content.strings.loadingGame}</div>;
 
   if (bootstrap.status === 'confirmation-required') {
     return (
@@ -228,7 +313,7 @@ export function GameCanvas({
               setBootstrap({
                 status: 'ready',
                 initialState,
-                activeSceneId: DEFAULT_START.sceneId,
+                activeSceneId: result.content.caseDefinition.startSceneId,
                 source: 'fresh',
                 saveAvailability: 'missing',
                 commerceConfig: bootstrap.commerceConfig,
@@ -239,7 +324,7 @@ export function GameCanvas({
               setBootstrap({
                 status: 'memory-only',
                 initialState: createCaseState(result.content.caseDefinition),
-                activeSceneId: DEFAULT_START.sceneId,
+                activeSceneId: result.content.caseDefinition.startSceneId,
                 saveAvailability: 'memory-only',
                 commerceConfig: bootstrap.commerceConfig,
                 autosaveEnabled: false,
@@ -251,7 +336,7 @@ export function GameCanvas({
           setBootstrap({
             status: 'memory-only',
             initialState: createCaseState(result.content.caseDefinition),
-            activeSceneId: DEFAULT_START.sceneId,
+            activeSceneId: result.content.caseDefinition.startSceneId,
             saveAvailability: 'memory-only',
             commerceConfig: bootstrap.commerceConfig,
             autosaveEnabled: false,
@@ -289,7 +374,7 @@ export function GameCanvas({
         setBootstrap({
           status: 'ready',
           initialState,
-          activeSceneId: DEFAULT_START.sceneId,
+          activeSceneId: result.content.caseDefinition.startSceneId,
           source: 'fresh',
           saveAvailability: 'missing',
           commerceConfig: bootstrap.commerceConfig,
@@ -330,6 +415,7 @@ export function GameCanvas({
                 }}
                 onHowTo={() => go('howTo')}
                 onSettings={() => go('settings')}
+                onChangeCase={onChangeCase}
               />
               {startError && (
                 <aside role="alert" className="learning-recovery-notice">

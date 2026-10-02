@@ -71,3 +71,45 @@
   border: none;
   text-decoration: underline;
 }
+
+.case-picker {
+  width: min(560px, 100%);
+}
+
+.case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.title-card .case-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.case-card-flag {
+  align-self: flex-start;
+  padding: 0 8px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+.case-card-meta,
+.case-card-stats {
+  font-size: 0.9em;
+}
+
+.case-card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+}

@@ -28,7 +28,9 @@ describe.each(REGISTERED_CASE_IDS)('registered case %s invariants', (caseId) => 
 
   it('names a suspect as the correct conclusion and gives every scene a default spawn', () => {
     const definition = loadCaseDefinition(caseId);
-    expect(definition.conclusion?.suspectNpcIds).toContain(definition.conclusion?.correctSuspectNpcId);
+    expect(definition.conclusion?.suspectNpcIds).toContain(
+      definition.conclusion?.correctSuspectNpcId,
+    );
     for (const scene of definition.scenes) expect(scene.spawnPoints.default).toBeDefined();
   });
 
@@ -40,16 +42,30 @@ describe.each(REGISTERED_CASE_IDS)('registered case %s invariants', (caseId) => 
       for (const id of contradiction.factIds) {
         const fact = definition.facts.find((item) => item.id === id)!;
         expect(fact).toBeDefined();
-        const trees = definition.dialogues.filter((tree) => fact.sourceDialogueIds?.includes(tree.id));
-        const effects = trees.flatMap((tree) => tree.nodes.flatMap((node) => [
-          ...(node.effects ?? []), ...node.choices.flatMap((choice) => choice.effects ?? []),
-        ]));
-        expect(leaves(fact.unlockCondition).some((condition) =>
-          (condition.type === 'hasEvidence' && fact.sourceEvidenceIds.includes(condition.evidenceId)
-            && definition.evidences.some((evidence) => evidence.id === condition.evidenceId))
-          || (condition.type === 'flag' && condition.value && effects.some((effect) =>
-            effect.type === 'setFlag' && effect.key === condition.key && effect.value)),
-        ), `${id} must have a source that unlocks it`).toBe(true);
+        const trees = definition.dialogues.filter((tree) =>
+          fact.sourceDialogueIds?.includes(tree.id),
+        );
+        const effects = trees.flatMap((tree) =>
+          tree.nodes.flatMap((node) => [
+            ...(node.effects ?? []),
+            ...node.choices.flatMap((choice) => choice.effects ?? []),
+          ]),
+        );
+        expect(
+          leaves(fact.unlockCondition).some(
+            (condition) =>
+              (condition.type === 'hasEvidence' &&
+                fact.sourceEvidenceIds.includes(condition.evidenceId) &&
+                definition.evidences.some((evidence) => evidence.id === condition.evidenceId)) ||
+              (condition.type === 'flag' &&
+                condition.value &&
+                effects.some(
+                  (effect) =>
+                    effect.type === 'setFlag' && effect.key === condition.key && effect.value,
+                )),
+          ),
+          `${id} must have a source that unlocks it`,
+        ).toBe(true);
       }
     }
   });

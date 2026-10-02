@@ -55,6 +55,18 @@ describe('loadGameBootstrap', () => {
     });
   });
 
+  it('starts a fresh case-002 in its own startSceneId', async () => {
+    const definition = loadCaseDefinition('case-002');
+    const repository = createRepository({ status: 'missing' });
+
+    await expect(loadGameBootstrap(definition, repository)).resolves.toMatchObject({
+      status: 'ready',
+      activeSceneId: definition.startSceneId,
+      source: 'fresh',
+    });
+    expect(repository.loadSave).toHaveBeenCalledWith('case-002', definition);
+  });
+
   it('requires confirmation for a save that cannot be recovered', async () => {
     const definition = loadCaseDefinition('case-001');
     const repository = createRepository({ status: 'confirmation-required', reason: 'bad data' });

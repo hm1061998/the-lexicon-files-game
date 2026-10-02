@@ -10,6 +10,7 @@ export function TitleScreen({
   onNewCase,
   onHowTo,
   onSettings,
+  onChangeCase,
 }: {
   strings: UiStrings;
   actions: TitleActions;
@@ -17,6 +18,7 @@ export function TitleScreen({
   onNewCase: () => void;
   onHowTo: () => void;
   onSettings: () => void;
+  onChangeCase?: () => void;
 }): JSX.Element {
   return (
     <main className="title-screen">
@@ -48,6 +50,11 @@ export function TitleScreen({
           <button type="button" onClick={onSettings}>
             {strings.titleSettings}
           </button>
+          {onChangeCase ? (
+            <button type="button" onClick={onChangeCase}>
+              {strings.titleChangeCase}
+            </button>
+          ) : null}
         </nav>
       </PaperPanel>
     </main>

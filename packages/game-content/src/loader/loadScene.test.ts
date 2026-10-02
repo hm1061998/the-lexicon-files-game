@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { loadSceneDefinition, DEFAULT_START } from './loadScene';
+import { loadSceneDefinition } from './loadScene';
+import { loadCaseDefinition, REGISTERED_CASE_IDS } from './loadCaseDefinition';
 import { ContentValidationError } from './ContentValidationError';
 
 describe('loadSceneDefinition', () => {
-  it('loads DEFAULT_START scene', () => {
-    const scene = loadSceneDefinition(DEFAULT_START.caseId, DEFAULT_START.sceneId);
-    expect(scene.id).toBe(DEFAULT_START.sceneId);
+  it("loads each registered case's start scene", () => {
+    for (const caseId of REGISTERED_CASE_IDS) {
+      const { startSceneId } = loadCaseDefinition(caseId);
+      expect(loadSceneDefinition(caseId, startSceneId).id).toBe(startSceneId);
+    }
   });
 
   it('unknown scene throws ContentValidationError mentioning case and scene id', () => {
