@@ -28,24 +28,25 @@ Với công việc có thể ảnh hưởng code, plan, tiến độ, quyết đ
 
 Kiểm tra skill phù hợp **trước** khi phản hồi hoặc hành động (`using-superpowers`).
 
-| Tình huống                            | Skill                                                                                                                                           |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Feature/hành vi mới, chưa rõ thiết kế | `brainstorming` → spec vào `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`                                                                |
-| Có spec, bắt đầu một phase            | `writing-plans` → plan vào `docs/superpowers/plans/YYYY-MM-DD-<phase>.md`                                                                       |
-| Thực thi plan                         | `subagent-driven-development` (có subagent) hoặc `executing-plans`                                                                              |
-| Các task độc lập                      | `dispatching-parallel-agents`                                                                                                                   |
-| Viết code logic                       | `test-driven-development` — test trước, đặc biệt cho `game-core`, `learning-engine`, content validation, Domain/Application                     |
-| Bug / test fail                       | `systematic-debugging` — tìm root cause trước khi sửa                                                                                           |
-| React HUD / notebook / modal          | `ui-ux-pro-max` (nhưng palette/typography theo docs/art/06, không theo gợi ý chung)                                                             |
-| Phaser scene, Arcade Physics, camera  | `phaser-core`, `phaser-arcade-physics`, `camera-systems` — skill viết cho Phaser 4; dự án **giữ Phaser 3.88**, đối chiếu API v3, không nâng cấp |
-| Hội thoại, suy luận, nội dung case    | `dialogue-systems`, `visual-novel`, `puzzle`, `level-design` — schema/ID vẫn theo `game-content` + docs/03                                      |
-| Save/migration, input, gamepad        | `save-systems`, `input-systems`                                                                                                                 |
-| Âm thanh, art, provenance             | `audio-design`, `create-game-assets` — mọi asset ghi `assets/PROVENANCE.md`, palette theo docs/art/06                                           |
-| Bundle/tối ưu, demo web, bản Steam    | `performance-optimization`, `itch-publish` (PR-07), `steam-publish` (PR-08)                                                                     |
-| HUD/notebook theo phong cách game     | `game-ui-ux` (kết hợp `ui-ux-pro-max`; guardrail §6 thắng gợi ý chung)                                                                          |
-| Trước khi báo "xong"                  | `verification-before-completion`                                                                                                                |
-| Review                                | `requesting-code-review` / `receiving-code-review`                                                                                              |
-| Tách nhánh / kết thúc nhánh           | `using-git-worktrees` / `finishing-a-development-branch`                                                                                        |
+| Tình huống                                        | Skill                                                                                                                                           |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Feature/hành vi mới, chưa rõ thiết kế             | `brainstorming` → spec vào `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`                                                                |
+| Có spec, bắt đầu một phase                        | `writing-plans` → plan vào `docs/superpowers/plans/YYYY-MM-DD-<phase>.md`                                                                       |
+| Thực thi plan                                     | `subagent-driven-development` (có subagent) hoặc `executing-plans`                                                                              |
+| Các task độc lập                                  | `dispatching-parallel-agents`                                                                                                                   |
+| Viết code logic                                   | `test-driven-development` — test trước, đặc biệt cho `game-core`, `learning-engine`, content validation, Domain/Application                     |
+| Bug / test fail                                   | `systematic-debugging` — tìm root cause trước khi sửa                                                                                           |
+| React HUD / notebook / modal                      | `ui-ux-pro-max` (nhưng palette/typography theo docs/art/06, không theo gợi ý chung)                                                             |
+| Soạn/sửa case trong `packages/game-content/cases` | `authoring-case-content` (chạy `check-case-flow.mjs`), rồi giao agent `case-solvability-checker` review trước khi báo xong                      |
+| Phaser scene, Arcade Physics, camera              | `phaser-core`, `phaser-arcade-physics`, `camera-systems` — skill viết cho Phaser 4; dự án **giữ Phaser 3.88**, đối chiếu API v3, không nâng cấp |
+| Hội thoại, suy luận, nội dung case                | `dialogue-systems`, `visual-novel`, `puzzle`, `level-design` — schema/ID vẫn theo `game-content` + docs/03                                      |
+| Save/migration, input, gamepad                    | `save-systems`, `input-systems`                                                                                                                 |
+| Âm thanh, art, provenance                         | `audio-design`, `create-game-assets` — mọi asset ghi `assets/PROVENANCE.md`, palette theo docs/art/06                                           |
+| Bundle/tối ưu, demo web, bản Steam                | `performance-optimization`, `itch-publish` (PR-07), `steam-publish` (PR-08)                                                                     |
+| HUD/notebook theo phong cách game                 | `game-ui-ux` (kết hợp `ui-ux-pro-max`; guardrail §6 thắng gợi ý chung)                                                                          |
+| Trước khi báo "xong"                              | `verification-before-completion`                                                                                                                |
+| Review                                            | `requesting-code-review` / `receiving-code-review`                                                                                              |
+| Tách nhánh / kết thúc nhánh                       | `using-git-worktrees` / `finishing-a-development-branch`                                                                                        |
 
 Nguồn skill game: `GAMEDEV-SKILLS-SOURCE.txt` trong thư mục skills (Apache-2.0). Không dùng hit-stop/screen shake/flash (`game-feel` cố ý không cài).
 

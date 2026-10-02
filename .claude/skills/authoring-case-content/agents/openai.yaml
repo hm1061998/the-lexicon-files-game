@@ -1,0 +1,3 @@
+interface:
+  display_name: "Authoring Case Content"
+  short_description: "Write and verify Lexicon Files case JSON so every case stays solvable"
