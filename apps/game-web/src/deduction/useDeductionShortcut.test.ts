@@ -46,4 +46,12 @@ describe('deduction keyboard routing', () => {
     handleDeductionShortcut(store, { ...key('b'), [modifier]: true });
     expect(store.getState().deductionOpen).toBe(false);
   });
+  it('B does nothing while the briefing is open', () => {
+    const store = createGameStore({
+      caseDefinition: loadCaseDefinition('case-001'),
+      initialBriefingOpen: true,
+    });
+    handleDeductionShortcut(store, key('b'));
+    expect(store.getState().deductionOpen).toBe(false);
+  });
 });

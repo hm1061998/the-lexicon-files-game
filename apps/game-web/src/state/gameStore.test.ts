@@ -455,4 +455,34 @@ describe('minimap state', () => {
     store.getState().toggleObjective();
     expect(store.getState().objectiveVisible).toBe(false);
   });
+
+  describe('briefing', () => {
+    const definition = loadCaseDefinition('case-001');
+    it('locks input while the briefing is open', () => {
+      const store = createGameStore({ caseDefinition: definition, initialBriefingOpen: true });
+      expect(store.getState()).toMatchObject({ briefingOpen: true, inputLocked: true });
+      store.getState().setPaused(true);
+      expect(store.getState().paused).toBe(false);
+      store.getState().openNotebook();
+      store.getState().openDeduction();
+      expect(store.getState()).toMatchObject({ notebookOpen: false, deductionOpen: false });
+    });
+    it('defaults to closed and unlocked', () => {
+      const store = createGameStore({ caseDefinition: definition });
+      expect(store.getState()).toMatchObject({ briefingOpen: false, inputLocked: false });
+    });
+    it('closing reveals the objective even on a compact HUD and unlocks input', () => {
+      const store = createGameStore({
+        caseDefinition: definition,
+        initialBriefingOpen: true,
+        initialHudVisibility: { minimapVisible: false, objectiveVisible: false },
+      });
+      store.getState().closeBriefing();
+      expect(store.getState()).toMatchObject({
+        briefingOpen: false,
+        objectiveVisible: true,
+        inputLocked: false,
+      });
+    });
+  });
 });

@@ -20,6 +20,7 @@ import { createSaveRepository, type SaveRepository } from '../persistence/saveRe
 import { loadGameBootstrap, type GameBootstrapResult } from './bootstrapGame';
 import { DialogueLayer } from '../dialogue/DialogueLayer';
 import { Hud } from '../hud/Hud';
+import { BriefingMemo } from '../briefing/BriefingMemo';
 import { PauseMenu } from '../pause/PauseMenu';
 import { SettingsFields } from '../pause/SettingsFields';
 import { HowToInvestigate } from '../onboarding/HowToInvestigate';
@@ -434,6 +435,7 @@ function SaveRecoveryScreen({
 
 function GameRoot({
   content,
+  startMode,
   initialState,
   initialSceneId,
   autosaveEnabled,
@@ -482,6 +484,7 @@ function GameRoot({
         caseDefinition,
         initialState,
         initialSceneId,
+        initialBriefingOpen: startMode === 'new' && Boolean(caseDefinition.briefing),
         initialHudVisibility: getInitialHudVisibility(
           typeof window === 'undefined' ? 1024 : window.innerWidth,
           typeof window === 'undefined' ? 768 : window.innerHeight,
@@ -490,7 +493,7 @@ function GameRoot({
       }),
       bus: createEventBus<GameEventMap>(),
     }),
-    [caseDefinition, initialState, initialSceneId, persistenceWarning],
+    [caseDefinition, initialState, initialSceneId, persistenceWarning, startMode],
   );
   const learning = useMemo(
     () =>
@@ -677,6 +680,9 @@ function GameRoot({
               <Hud strings={strings} bus={bus} />
               <PersistenceNotice strings={strings} />
               <DialogueLayer strings={strings} returnFocusRef={containerRef} />
+              <PaperCueContext.Provider value={paperCue}>
+                <BriefingLayer strings={strings} returnFocusRef={containerRef} />
+              </PaperCueContext.Provider>
               <PauseLayer strings={strings} store={store} />
               <EvidenceLayer strings={strings} />
               <PaperCueContext.Provider value={paperCue}>
@@ -696,6 +702,54 @@ function GameRoot({
 function SettingsEffects(): null {
   useMasterVolume(useSettingsStore((state) => state.settings.volume));
   return null;
+}
+
+function BriefingLayer({
+  strings,
+  returnFocusRef,
+}: {
+  strings: UiStrings;
+  returnFocusRef: React.RefObject<HTMLElement | null>;
+}): JSX.Element | null {
+  const briefingOpen = useGameStore((state) => state.briefingOpen);
+  const caseDefinition = useGameStore((state) => state.caseDefinition);
+  const closeBriefing = useGameStore((state) => state.closeBriefing);
+  const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
+  const vocabularyTutorialSeen = useLearningStore((state) => state.vocabularyTutorialSeen);
+  const markVocabularyTutorialSeen = useLearningStore((state) => state.markVocabularyTutorialSeen);
+  const [translationMode] = useTranslationMode();
+  const onEncounter = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onInspect = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'inspectVocabulary', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  const onRevealTranslation = useCallback(
+    (vocabularyId: string, contextId: string) =>
+      dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId }),
+    [dispatchLearning],
+  );
+  if (!briefingOpen || !caseDefinition.briefing) return null;
+  return (
+    <BriefingMemo
+      caseId={caseDefinition.id}
+      briefing={caseDefinition.briefing}
+      strings={strings}
+      vocabulary={caseDefinition.vocabulary}
+      translationMode={translationMode}
+      vocabularyTutorialSeen={vocabularyTutorialSeen}
+      onVocabularyTutorialSeen={markVocabularyTutorialSeen}
+      onEncounter={onEncounter}
+      onInspect={onInspect}
+      onRevealTranslation={onRevealTranslation}
+      onAccept={closeBriefing}
+      returnFocusRef={returnFocusRef}
+    />
+  );
 }
 
 function EvidenceLayer({ strings }: { strings: UiStrings }) {

@@ -9,6 +9,7 @@ export function handleDeductionShortcut(
   const state = store.getState();
   if (
     state.paused ||
+    state.briefingOpen ||
     state.activeEvidenceId ||
     state.dialogueSession ||
     state.caseState.flags.case_closed

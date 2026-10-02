@@ -58,4 +58,21 @@ describe('notebook and Escape keyboard routing', () => {
     handleEscapeShortcut(store, key('Escape'));
     expect(store.getState().inputLocked).toBe(false);
   });
+
+  it('briefing swallows J and Escape closes it without pausing', () => {
+    const store = createGameStore({
+      caseDefinition: loadCaseDefinition('case-001'),
+      initialBriefingOpen: true,
+    });
+    handleNotebookShortcut(store, key('j'));
+    expect(store.getState().notebookOpen).toBe(false);
+    const event = key('Escape');
+    handleEscapeShortcut(store, event);
+    expect(event.prevented).toBe(true);
+    expect(store.getState()).toMatchObject({
+      briefingOpen: false,
+      paused: false,
+      inputLocked: false,
+    });
+  });
 });

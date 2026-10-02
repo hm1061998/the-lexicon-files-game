@@ -45,6 +45,8 @@ export type GameStoreState = {
   /** HUD-only visibility of the active objective; deliberately not saved. */
   objectiveVisible: boolean;
   paused: boolean;
+  /** The case briefing memo is open: modal, locks input, closed only by accepting it. */
+  briefingOpen: boolean;
   activeEvidenceId: string | null;
   notebookOpen: boolean;
   deductionOpen: boolean;
@@ -63,6 +65,8 @@ export type GameStoreState = {
   toggleObjective(): void;
   togglePause(): void;
   setPaused(p: boolean): void;
+  /** Closes the briefing memo and reveals the objective (which a compact HUD hides at start). */
+  closeBriefing(): void;
   openEvidence(id: string): void;
   closeEvidence(): void;
   /** Reopens an already-collected evidence from the notebook; never changes case state. */
@@ -93,6 +97,7 @@ function inputLocked(
   s: Pick<
     GameStoreState,
     | 'paused'
+    | 'briefingOpen'
     | 'activeEvidenceId'
     | 'notebookOpen'
     | 'deductionOpen'
@@ -102,6 +107,7 @@ function inputLocked(
 ): boolean {
   return (
     s.paused ||
+    s.briefingOpen ||
     s.activeEvidenceId !== null ||
     s.notebookOpen ||
     s.deductionOpen ||
@@ -115,6 +121,7 @@ export function createGameStore(init: {
   initialPersistenceError?: string;
   initialSceneId?: string;
   initialHudVisibility?: { minimapVisible: boolean; objectiveVisible: boolean };
+  initialBriefingOpen?: boolean;
 }): GameStore {
   const initialSceneId = init.initialSceneId ?? init.caseDefinition.scenes[0]?.id;
   const initialScene = init.caseDefinition.scenes.find(({ id }) => id === initialSceneId);
@@ -133,6 +140,7 @@ export function createGameStore(init: {
     minimapVisible: init.initialHudVisibility?.minimapVisible ?? true,
     objectiveVisible: init.initialHudVisibility?.objectiveVisible ?? true,
     paused: false,
+    briefingOpen: init.initialBriefingOpen === true,
     activeEvidenceId: null,
     notebookOpen: false,
     deductionOpen: false,
@@ -145,7 +153,7 @@ export function createGameStore(init: {
     dialogueSession: null,
     dialogueError: null,
     // A closed case never resumes free movement; the report replaces play.
-    inputLocked: initialCaseState.flags.case_closed === true,
+    inputLocked: initialCaseState.flags.case_closed === true || init.initialBriefingOpen === true,
     persistenceError: init.initialPersistenceError ?? null,
     setNearby(nearby) {
       set({ nearby });
@@ -169,7 +177,8 @@ export function createGameStore(init: {
       set((s) => {
         if (
           paused &&
-          (s.dialogueSession ||
+          (s.briefingOpen ||
+            s.dialogueSession ||
             s.activeEvidenceId ||
             s.notebookOpen ||
             s.deductionOpen ||
@@ -178,6 +187,17 @@ export function createGameStore(init: {
           return s;
         return { paused, inputLocked: inputLocked({ ...s, paused }) };
       });
+    },
+    closeBriefing() {
+      set((s) =>
+        s.briefingOpen
+          ? {
+              briefingOpen: false,
+              objectiveVisible: true,
+              inputLocked: inputLocked({ ...s, briefingOpen: false }),
+            }
+          : s,
+      );
     },
     openEvidence(id) {
       set((s) => {
@@ -205,12 +225,14 @@ export function createGameStore(init: {
     },
     openNotebook() {
       const s = get();
-      if (s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
+      if (s.paused || s.briefingOpen || s.activeEvidenceId || s.dialogueSession || caseClosed(s))
+        return;
       set({ notebookOpen: true, deductionOpen: false, inputLocked: true });
     },
     openDeduction() {
       const s = get();
-      if (s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
+      if (s.paused || s.briefingOpen || s.activeEvidenceId || s.dialogueSession || caseClosed(s))
+        return;
       set({ deductionOpen: true, notebookOpen: false, inputLocked: true });
     },
     toggleNotebook() {
