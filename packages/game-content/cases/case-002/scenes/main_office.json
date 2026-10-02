@@ -1,0 +1,613 @@
+{
+  "id": "main_office",
+  "projection": {
+    "type": "dimetric-2:1",
+    "originX": 832,
+    "originY": 180,
+    "tileWidth": 128,
+    "tileHeight": 64
+  },
+  "size": {
+    "width": 1920,
+    "height": 1080
+  },
+  "worldBounds": {
+    "u": 0,
+    "v": 0,
+    "width": 16,
+    "height": 12
+  },
+  "spawnPoints": {
+    "default": {
+      "u": 8,
+      "v": 4.8
+    },
+    "from_mail_room": {
+      "u": 0.9,
+      "v": 5
+    },
+    "from_reception": {
+      "u": 14.85,
+      "v": 7
+    }
+  },
+  "textures": [
+    {
+      "key": "tex_office_desk",
+      "url": "/assets/environment/props/dimetric/prop_office_desk_01.png"
+    },
+    {
+      "key": "tex_note",
+      "url": "/assets/environment/props/prop_note_01.png"
+    },
+    {
+      "key": "tex_anna_se",
+      "url": "/assets/characters/anna/chr_anna_idle_se.png"
+    },
+    {
+      "key": "tex_leo_se",
+      "url": "/assets/characters/leo/chr_leo_idle_se.png"
+    },
+    {
+      "key": "tex_office_plant",
+      "url": "/assets/environment/props/dimetric/prop_office_plant_01.png"
+    },
+    {
+      "key": "tex_credenza",
+      "url": "/assets/environment/props/dimetric/prop_credenza_01.png"
+    },
+    {
+      "key": "tex_floor_office",
+      "url": "/assets/environment/common/tex_floor_office.png"
+    },
+    {
+      "key": "tex_wall_office_u",
+      "url": "/assets/environment/office/wall_u.png"
+    },
+    {
+      "key": "tex_wall_office_u_cap_start",
+      "url": "/assets/environment/office/wall_u_cap_start.png"
+    },
+    {
+      "key": "tex_wall_office_u_cap_end",
+      "url": "/assets/environment/office/wall_u_cap_end.png"
+    },
+    {
+      "key": "tex_wall_office_v",
+      "url": "/assets/environment/office/wall_v.png"
+    },
+    {
+      "key": "tex_wall_office_v_cap_start",
+      "url": "/assets/environment/office/wall_v_cap_start.png"
+    },
+    {
+      "key": "tex_wall_office_v_cap_end",
+      "url": "/assets/environment/office/wall_v_cap_end.png"
+    },
+    {
+      "key": "tex_office_chair_ne",
+      "url": "/assets/environment/props/dimetric/prop_office_chair_01_ne.png"
+    },
+    {
+      "key": "tex_brass_portal",
+      "url": "/assets/environment/common/brass_portal.png"
+    }
+  ],
+  "assets": [
+    {
+      "id": "floor",
+      "type": "background",
+      "texture": "tex_floor_office",
+      "origin": [0.42857142857142855, 0],
+      "depth": 0,
+      "depthBias": 0,
+      "position": {
+        "u": 0,
+        "v": 0
+      },
+      "scale": 1
+    },
+    {
+      "id": "delivery_desk",
+      "type": "prop",
+      "texture": "tex_office_desk",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
+      },
+      "origin": [0.5096296296296297, 0.7555253454340887],
+      "scale": 1,
+      "position": {
+        "u": 3.2,
+        "v": 2
+      },
+      "footprint": {
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
+      }
+    },
+    {
+      "id": "message_desk",
+      "type": "prop",
+      "texture": "tex_office_desk",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
+      },
+      "origin": [0.5096296296296297, 0.7555253454340887],
+      "scale": 1,
+      "position": {
+        "u": 9,
+        "v": 2
+      },
+      "footprint": {
+        "u": -0.8274999999999999,
+        "v": -0.4,
+        "width": 1.6549999999999998,
+        "height": 0.8
+      }
+    },
+    {
+      "id": "delivery_chair",
+      "type": "prop",
+      "texture": "tex_office_chair_ne",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
+      },
+      "origin": [0.5334865525907276, 0.8060806928046413],
+      "scale": 1,
+      "position": {
+        "u": 3.2,
+        "v": 3.2
+      },
+      "footprint": {
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
+      }
+    },
+    {
+      "id": "message_chair",
+      "type": "prop",
+      "texture": "tex_office_chair_ne",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
+      },
+      "origin": [0.5334865525907276, 0.8060806928046413],
+      "scale": 1,
+      "position": {
+        "u": 9,
+        "v": 3.2
+      },
+      "footprint": {
+        "u": -0.32019878739744734,
+        "v": -0.3374879469624692,
+        "width": 0.6403975747948947,
+        "height": 0.6749758939249384
+      }
+    },
+    {
+      "id": "office_plant",
+      "type": "prop",
+      "texture": "tex_office_plant",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
+      },
+      "origin": [0.5177641765058312, 0.8628205389282106],
+      "scale": 1,
+      "position": {
+        "u": 7.5,
+        "v": 1
+      },
+      "footprint": {
+        "u": -0.4477356963052207,
+        "v": -0.434725425465968,
+        "width": 0.8954713926104414,
+        "height": 0.869450850931936
+      }
+    },
+    {
+      "id": "office_credenza",
+      "type": "prop",
+      "texture": "tex_credenza",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.65,
+        "v": -0.23700000000000002,
+        "width": 1.3,
+        "height": 0.47400000000000003
+      },
+      "origin": [0.4936, 0.7685791620762259],
+      "scale": 1,
+      "position": {
+        "u": 2.6,
+        "v": 9.5
+      },
+      "footprint": {
+        "u": -0.65,
+        "v": -0.23700000000000002,
+        "width": 1.3,
+        "height": 0.47400000000000003
+      }
+    },
+    {
+      "id": "delivery_note",
+      "type": "interactable",
+      "texture": "tex_note",
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 80,
+        "prompt": "Đọc phiếu giao hàng",
+        "effects": [
+          {
+            "type": "addEvidence",
+            "evidenceId": "delivery_note"
+          }
+        ]
+      },
+      "origin": [0.5, 0.5],
+      "scale": 0.8,
+      "restsOn": "delivery_desk",
+      "surfaceOffset": {
+        "u": 0.12,
+        "v": 0.1,
+        "elevationPx": 52
+      },
+      "cue": {
+        "kind": "evidence",
+        "evidenceId": "delivery_note"
+      }
+    },
+    {
+      "id": "chat_messages",
+      "type": "interactable",
+      "texture": "tex_note",
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 80,
+        "prompt": "Đọc tin nhắn",
+        "effects": [
+          {
+            "type": "addEvidence",
+            "evidenceId": "chat_messages"
+          }
+        ]
+      },
+      "origin": [0.5, 0.5],
+      "scale": 0.8,
+      "restsOn": "message_desk",
+      "surfaceOffset": {
+        "u": 0.12,
+        "v": 0.1,
+        "elevationPx": 52
+      },
+      "cue": {
+        "kind": "evidence",
+        "evidenceId": "chat_messages"
+      }
+    },
+    {
+      "id": "anna",
+      "type": "npc",
+      "texture": "tex_anna_se",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.1,
+        "v": -0.075,
+        "width": 0.2,
+        "height": 0.15
+      },
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 90,
+        "prompt": "Nói chuyện với Anna",
+        "npcId": "anna"
+      },
+      "origin": [0.5, 0.88],
+      "position": {
+        "u": 8.4,
+        "v": 6.8
+      },
+      "footprint": {
+        "u": -0.18,
+        "v": -0.18,
+        "width": 0.36,
+        "height": 0.36
+      }
+    },
+    {
+      "id": "leo",
+      "type": "npc",
+      "texture": "tex_leo_se",
+      "depthBias": 0,
+      "collision": {
+        "type": "rect",
+        "u": -0.1,
+        "v": -0.075,
+        "width": 0.2,
+        "height": 0.15
+      },
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 90,
+        "prompt": "Nói chuyện với Leo",
+        "npcId": "leo"
+      },
+      "origin": [0.5, 0.88],
+      "position": {
+        "u": 10.4,
+        "v": 7.8
+      },
+      "footprint": {
+        "u": -0.18,
+        "v": -0.18,
+        "width": 0.36,
+        "height": 0.36
+      }
+    },
+    {
+      "id": "door_to_mail_room",
+      "type": "interactable",
+      "texture": "tex_brass_portal",
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 100,
+        "prompt": "Đến phòng thư",
+        "transition": {
+          "targetSceneId": "mail_room",
+          "targetSpawnId": "from_office"
+        }
+      },
+      "origin": [0.5, 0.71875],
+      "scale": 1,
+      "position": {
+        "u": 1.5,
+        "v": 5
+      },
+      "footprint": {
+        "u": -0.65,
+        "v": -0.65,
+        "width": 1.3,
+        "height": 1.3
+      },
+      "cue": {
+        "kind": "door"
+      },
+      "portal": {
+        "style": "aged-brass",
+        "radius": 0.65
+      }
+    },
+    {
+      "id": "door_to_reception",
+      "type": "interactable",
+      "texture": "tex_brass_portal",
+      "depthBias": 0,
+      "interaction": {
+        "x": 0,
+        "y": 0,
+        "radius": 100,
+        "prompt": "Đến quầy lễ tân",
+        "transition": {
+          "targetSceneId": "reception",
+          "targetSpawnId": "from_office"
+        }
+      },
+      "origin": [0.5, 0.71875],
+      "scale": 1,
+      "position": {
+        "u": 14.5,
+        "v": 7
+      },
+      "footprint": {
+        "u": -0.65,
+        "v": -0.65,
+        "width": 1.3,
+        "height": 1.3
+      },
+      "cue": {
+        "kind": "door"
+      },
+      "portal": {
+        "style": "aged-brass",
+        "radius": 0.65
+      }
+    }
+  ],
+  "walls": [
+    {
+      "id": "wall_back",
+      "kind": "office",
+      "axis": "u",
+      "line": 0,
+      "start": 0,
+      "end": 16,
+      "openings": []
+    },
+    {
+      "id": "west_wall_upper",
+      "kind": "office",
+      "axis": "v",
+      "line": 0,
+      "start": 0,
+      "end": 6,
+      "openings": [
+        {
+          "id": "hallway",
+          "start": 4,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "id": "west_wall_lower",
+      "kind": "office",
+      "axis": "v",
+      "line": 0,
+      "start": 6,
+      "end": 12,
+      "openings": []
+    },
+    {
+      "id": "partition_office_meeting_n",
+      "kind": "office",
+      "axis": "u",
+      "line": 7,
+      "start": 0,
+      "end": 6,
+      "openings": [
+        {
+          "id": "meeting_north",
+          "start": 4,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "id": "partition_office_meeting_e_n",
+      "kind": "office",
+      "axis": "v",
+      "line": 6,
+      "start": 7,
+      "end": 9,
+      "openings": [
+        {
+          "id": "meeting_entry",
+          "start": 7,
+          "end": 9
+        }
+      ]
+    },
+    {
+      "id": "partition_office_meeting_e_s",
+      "kind": "office",
+      "axis": "v",
+      "line": 6,
+      "start": 9,
+      "end": 12,
+      "openings": []
+    },
+    {
+      "id": "partition_office_invest_e",
+      "kind": "office",
+      "axis": "v",
+      "line": 6,
+      "start": 0,
+      "end": 4,
+      "openings": [
+        {
+          "id": "invest_entry",
+          "start": 2,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "id": "partition_office_hall_w",
+      "kind": "office",
+      "axis": "v",
+      "line": 12,
+      "start": 0,
+      "end": 4,
+      "openings": [
+        {
+          "id": "east_entry",
+          "start": 2,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "id": "partition_office_hall_n",
+      "kind": "office",
+      "axis": "u",
+      "line": 4,
+      "start": 12,
+      "end": 16,
+      "openings": [
+        {
+          "id": "east_hall_entry",
+          "start": 12,
+          "end": 14
+        }
+      ]
+    },
+    {
+      "id": "partition_office_east_n",
+      "kind": "office",
+      "axis": "u",
+      "line": 9,
+      "start": 11,
+      "end": 16,
+      "openings": [
+        {
+          "id": "east_lower_entry",
+          "start": 11,
+          "end": 13
+        }
+      ]
+    },
+    {
+      "id": "east_outer_wall",
+      "kind": "office",
+      "axis": "v",
+      "line": 15.75,
+      "start": 0,
+      "end": 12,
+      "openings": [
+        {
+          "id": "reception_entry",
+          "start": 6,
+          "end": 8
+        }
+      ]
+    }
+  ],
+  "labels": [
+    {
+      "id": "label_main_office",
+      "text": "VĂN PHÒNG",
+      "u": 8,
+      "v": 9,
+      "mount": {
+        "kind": "floor"
+      }
+    }
+  ]
+}
