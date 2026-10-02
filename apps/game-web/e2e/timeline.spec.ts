@@ -13,8 +13,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   });
 
   await openWorld(page);
-  await page.keyboard.press('j');
-  await page.getByRole('button', { name: 'Dòng thời gian' }).click();
+  await page.keyboard.press('b');
 
   const missingReport = page.getByRole('button', { name: 'The report was discovered missing.' });
   await expect(missingReport).toBeVisible();
@@ -23,14 +22,14 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(page.getByRole('button', { name: 'Mốc 21:05' })).toBeVisible();
   await page.getByRole('button', { name: 'Mốc 20:45' }).click();
   await page.getByRole('button', { name: 'Đặt sự kiện' }).click();
-  await expect(page.locator('.notebook-feedback')).toContainText(
-    'Something in the timeline is inconsistent.',
-  );
+  await expect(
+    page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
+  ).toContainText('Something in the timeline is inconsistent.');
   await page.getByRole('button', { name: 'Mốc 21:05' }).click();
   await page.getByRole('button', { name: 'Đặt sự kiện' }).click();
-  await expect(page.locator('.notebook-feedback')).toContainText(
-    'Sự kiện đã được ghi vào dòng thời gian.',
-  );
+  await expect(
+    page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
+  ).toContainText('Sự kiện đã được ghi vào dòng thời gian.');
   await expect
     .poll(async () => (await saved(page))?.state.timelineEventIds)
     .toEqual(['report_missing_21_05']);
@@ -80,8 +79,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     .toContain('david_statement_no_entry_after_20_00');
   await page.keyboard.press('Escape');
 
-  await page.keyboard.press('j');
-  await page.getByRole('button', { name: 'Dòng thời gian' }).click();
+  await page.keyboard.press('b');
   const statementFact = page.getByRole('button', {
     name: "David says he didn't enter the meeting room after eight.",
   });
@@ -90,15 +88,20 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(
     page.getByRole('button', { name: 'David Cole entered the meeting room at 20:32.' }),
   ).toBeVisible();
-  await statementFact.click();
+  await statementFact.focus();
+  await page.keyboard.press('Enter');
+  await annaFact.focus();
+  await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(
+    page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
+  ).toContainText("This interpretation doesn't match the evidence.");
   await annaFact.click();
-  await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).click();
-  await expect(page.locator('.notebook-feedback')).toContainText(
-    "This interpretation doesn't match the evidence.",
-  );
-  await annaFact.click();
-  await page.getByRole('button', { name: 'David Cole entered the meeting room at 20:32.' }).click();
-  await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).click();
+  await page.getByRole('button', { name: 'David Cole entered the meeting room at 20:32.' }).focus();
+  await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).focus();
+  await page.keyboard.press('Enter');
   await expect(page.locator('.contradiction-confirmed')).toContainText(
     'Mâu thuẫn đã được xác nhận.',
   );
@@ -195,12 +198,11 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
     .toBe('active');
   await page.keyboard.press('Escape');
 
-  await page.keyboard.press('j');
-  await page.getByRole('button', { name: 'Kết luận' }).click();
+  await page.keyboard.press('b');
   const submit = page.getByRole('button', { name: 'Nộp kết luận' });
   await expect(submit).toBeDisabled();
   const beforeWrong = await saved(page);
-  const anna = page.getByRole('button', { name: 'Anna Reed' });
+  const anna = page.locator('.accusation-panel').getByRole('button', { name: 'Anna Reed' });
   await anna.focus();
   await page.keyboard.press('Enter');
   await expect(anna).toHaveAttribute('aria-pressed', 'true');
@@ -210,7 +212,7 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   );
   expect(await saved(page)).toEqual(beforeWrong);
 
-  await page.getByRole('button', { name: 'David Cole' }).click();
+  await page.locator('.accusation-panel').getByRole('button', { name: 'David Cole' }).click();
   await submit.click();
   await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
   await expect(page.getByText('toàn hồ sơ', { exact: false })).toBeVisible();

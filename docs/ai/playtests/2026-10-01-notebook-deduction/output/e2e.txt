@@ -1,0 +1,66 @@
+
+> nx run @lexicon/game-web:"test:e2e" notebook-deduction.spec.ts notebook-people.spec.ts timeline.spec.ts journey.spec.ts viewport-focus.spec.ts learning.spec.ts settings.spec.ts dialogue.spec.ts
+
+(node:4732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+> @lexicon/game-web@0.0.0 test:e2e
+> node scripts/run-e2e.mjs notebook-deduction.spec.ts notebook-people.spec.ts timeline.spec.ts journey.spec.ts viewport-focus.spec.ts learning.spec.ts settings.spec.ts dialogue.spec.ts
+(node:14100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Forced re-optimization of dependencies
+  VITE v5.4.21  ready in 551 ms
+  ➜  Local:   http://127.0.0.1:5174/
+(node:12136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Running 38 tests using 1 worker
+(node:25532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 e2e\dialogue.spec.ts:116:1 › three interviews complete the objective and survive reload with one canvas (27.2s)
+  ok  2 e2e\dialogue.spec.ts:155:3 › David conditional branch with contradiction flag undefined (7.0s)
+  ok  3 e2e\dialogue.spec.ts:155:3 › David conditional branch with contradiction flag false (6.8s)
+  ok  4 e2e\dialogue.spec.ts:155:3 › David conditional branch with contradiction flag true (8.5s)
+  ok  5 e2e\dialogue.spec.ts:202:1 › legacy Phase 4 save migrates without losing evidence or objective progress (4.4s)
+  ok  6 e2e\dialogue.spec.ts:229:1 › dialogue traps focus, blocks gameplay, restores focus and fits desktop viewports (7.6s)
+  ok  7 e2e\dialogue.spec.ts:275:1 › closing an unread branch and reloading does not complete an interview (5.7s)
+  ok  8 e2e\dialogue.spec.ts:287:1 › physical double clicks cannot skip responses or select the next question (11.6s)
+  ok  9 e2e\journey.spec.ts:24:3 › Case #001 journey › start case (1.5s)
+  ok 10 e2e\journey.spec.ts:30:3 › Case #001 journey › collect evidence (1.5s)
+  ok 11 e2e\journey.spec.ts:45:3 › Case #001 journey › find security log (4.1s)
+  ok 12 e2e\journey.spec.ts:75:3 › Case #001 journey › talk to NPC (2.6s)
+  ok 13 e2e\journey.spec.ts:86:3 › Case #001 journey › find contradiction (12.2s)
+  ok 14 e2e\journey.spec.ts:127:3 › Case #001 journey › accuse David (10.4s)
+  ok 15 e2e\journey.spec.ts:160:3 › Case #001 journey › complete case (2.3s)
+  ok 16 e2e\journey.spec.ts:171:3 › Case #001 journey › reload preserves the save (1.9s)
+  ok 17 e2e\learning.spec.ts:75:1 › visible dialogue records only annotated contexts and persists mode/progress (23.3s)
+  ok 18 e2e\learning.spec.ts:138:1 › confirmed learning reset preserves case evidence and keeps one canvas (6.9s)
+  ok 19 e2e\notebook-deduction.spec.ts:6:1 › notebook selects one dossier and one evidence without changing case progress (8.5s)
+  ok 20 e2e\notebook-deduction.spec.ts:37:1 › board is separate and supports atomic switching with native keyboard focus (5.8s)
+  ok 21 e2e\notebook-deduction.spec.ts:77:3 › notebook and board fit with keyboard traversal 1280 (39.1s)
+  ok 22 e2e\notebook-deduction.spec.ts:77:3 › notebook and board fit with keyboard traversal 760 (38.3s)
+  ok 23 e2e\notebook-deduction.spec.ts:77:3 › notebook and board fit with keyboard traversal 390 (38.4s)
+  ok 24 e2e\notebook-deduction.spec.ts:165:1 › notebook reveal is scoped to the chosen word and board popover Escape stays on board (8.8s)
+  ok 25 e2e\notebook-deduction.spec.ts:200:1 › source relations remain reachable in native Tab order with no discovered facts (4.7s)
+  ok 26 e2e\notebook-deduction.spec.ts:216:1 › portrait artwork keeps every character head inside its frame (4.8s)
+  ok 27 e2e\notebook-people.spec.ts:135:1 › records partial interview and survives reload (20.6s)
+  ok 28 e2e\notebook-people.spec.ts:173:1 › keeps branch history and legacy progress (15.8s)
+  ok 29 e2e\notebook-people.spec.ts:240:1 › reuses vocabulary context without encounter inflation (27.8s)
+  ok 30 e2e\notebook-people.spec.ts:340:3 › keeps focus and four tabs visible 1280 (55.3s)
+  ok 31 e2e\notebook-people.spec.ts:340:3 › keeps focus and four tabs visible 760 (54.3s)
+  ok 32 e2e\settings.spec.ts:85:1 › settings and progress survive reload (15.7s)
+  ok 33 e2e\settings.spec.ts:171:1 › legacy learning V1 translation mode is preserved (2.8s)
+  ok 34 e2e\settings.spec.ts:213:1 › corrupt settings recover to defaults (3.4s)
+  ok 35 e2e\timeline.spec.ts:5:1 › Archive, timeline, contradiction, conclusion and case report survive reload (45.3s)
+  ok 36 e2e\viewport-focus.spec.ts:41:3 › keyboard vocabulary then notebook keeps viewport stable 760 (29.2s)
+  ok 37 e2e\viewport-focus.spec.ts:41:3 › keyboard vocabulary then notebook keeps viewport stable 1280 (28.9s)
+  ok 38 e2e\viewport-focus.spec.ts:91:1 › compact evidence scrolls internally and returns to a visible close control (1.1m)
+  38 passed (11.0m)
+
+
+
+ NX   Successfully ran target test:e2e for project @lexicon/game-web
+
+

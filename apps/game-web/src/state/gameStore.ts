@@ -85,7 +85,12 @@ function caseClosed(s: Pick<GameStoreState, 'caseState'>): boolean {
 function inputLocked(
   s: Pick<
     GameStoreState,
-    'paused' | 'activeEvidenceId' | 'notebookOpen' | 'deductionOpen' | 'dialogueSession' | 'caseState'
+    | 'paused'
+    | 'activeEvidenceId'
+    | 'notebookOpen'
+    | 'deductionOpen'
+    | 'dialogueSession'
+    | 'caseState'
   >,
 ): boolean {
   return (
@@ -150,7 +155,14 @@ export function createGameStore(init: {
     },
     setPaused(paused) {
       set((s) => {
-        if (paused && (s.dialogueSession || s.activeEvidenceId || s.notebookOpen || s.deductionOpen || caseClosed(s)))
+        if (
+          paused &&
+          (s.dialogueSession ||
+            s.activeEvidenceId ||
+            s.notebookOpen ||
+            s.deductionOpen ||
+            caseClosed(s))
+        )
           return s;
         return { paused, inputLocked: inputLocked({ ...s, paused }) };
       });
@@ -165,7 +177,12 @@ export function createGameStore(init: {
       set((s) => {
         if (!s.caseState.evidenceIds.includes(id) || caseClosed(s)) return s;
         if (s.paused || s.dialogueSession || s.activeEvidenceId) return s;
-        return { notebookOpen: false, deductionOpen: false, activeEvidenceId: id, inputLocked: true };
+        return {
+          notebookOpen: false,
+          deductionOpen: false,
+          activeEvidenceId: id,
+          inputLocked: true,
+        };
       });
     },
     closeEvidence() {
@@ -175,26 +192,31 @@ export function createGameStore(init: {
       }));
     },
     openNotebook() {
-      const s=get();
-      if(s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
-      set({notebookOpen:true,deductionOpen:false,notebookTab:'evidence',inputLocked:true});
+      const s = get();
+      if (s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
+      set({ notebookOpen: true, deductionOpen: false, notebookTab: 'evidence', inputLocked: true });
     },
     openDeduction() {
-      const s=get();
-      if(s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
-      set({deductionOpen:true,notebookOpen:false,inputLocked:true});
+      const s = get();
+      if (s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
+      set({ deductionOpen: true, notebookOpen: false, inputLocked: true });
     },
     toggleNotebook() {
-      const s=get();
-      if(s.notebookOpen) set({notebookOpen:false,inputLocked:inputLocked({...s,notebookOpen:false})});
+      const s = get();
+      if (s.notebookOpen)
+        set({ notebookOpen: false, inputLocked: inputLocked({ ...s, notebookOpen: false }) });
       else s.openNotebook();
     },
     toggleDeduction() {
-      const s=get();
-      if(s.deductionOpen) s.closeDeduction(); else s.openDeduction();
+      const s = get();
+      if (s.deductionOpen) s.closeDeduction();
+      else s.openDeduction();
     },
     closeDeduction() {
-      set(s=>({deductionOpen:false,inputLocked:inputLocked({...s,deductionOpen:false})}));
+      set((s) => ({
+        deductionOpen: false,
+        inputLocked: inputLocked({ ...s, deductionOpen: false }),
+      }));
     },
     setNotebookTab(notebookTab) {
       set((s) => (s.notebookTab === notebookTab ? s : { notebookTab }));
@@ -274,7 +296,12 @@ export function createGameStore(init: {
           notebookOpen: false,
           deductionOpen: false,
           notebookTab: 'evidence',
-          inputLocked: inputLocked({ ...s, notebookOpen: false, deductionOpen: false, caseState: result.state }),
+          inputLocked: inputLocked({
+            ...s,
+            notebookOpen: false,
+            deductionOpen: false,
+            caseState: result.state,
+          }),
         });
       }
       return result;

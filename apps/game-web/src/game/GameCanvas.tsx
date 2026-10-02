@@ -537,7 +537,7 @@ function GameRoot({
               <PauseLayer strings={strings} store={store} />
               <EvidenceLayer strings={strings} />
               <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
-                <DeductionLayer strings={strings} caseDefinition={caseDefinition} />
+              <DeductionLayer strings={strings} caseDefinition={caseDefinition} />
               <CaseSummaryLayer strings={strings} />
             </SettingsStoreProvider>
           </LearningStoreProvider>

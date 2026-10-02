@@ -84,8 +84,7 @@ test.describe.serial('Case #001 journey', () => {
   });
 
   test('find contradiction', async () => {
-    await page.keyboard.press('j');
-    await page.getByRole('button', { name: 'Dòng thời gian' }).click();
+    await page.keyboard.press('b');
     await page.getByRole('button', { name: 'The report was discovered missing.' }).click();
     await page.getByRole('button', { name: 'Mốc 21:05' }).click();
     await page.getByRole('button', { name: 'Đặt sự kiện' }).click();
@@ -146,12 +145,11 @@ test.describe.serial('Case #001 journey', () => {
       .toBe('active');
     await page.keyboard.press('Escape');
 
-    await page.keyboard.press('j');
-    await page.getByRole('button', { name: 'Kết luận' }).click();
+    await page.keyboard.press('b');
     const submit = page.getByRole('button', { name: 'Nộp kết luận' });
     await expect(submit).toBeDisabled();
     const beforeWrong = await saved(page);
-    await page.getByRole('button', { name: 'Anna Reed' }).click();
+    await page.locator('.accusation-panel').getByRole('button', { name: 'Anna Reed' }).click();
     await submit.click();
     await expect(
       page.getByRole('status').filter({ hasText: 'Review the timeline.' }),
@@ -160,7 +158,7 @@ test.describe.serial('Case #001 journey', () => {
   });
 
   test('complete case', async () => {
-    await page.getByRole('button', { name: 'David Cole' }).click();
+    await page.locator('.accusation-panel').getByRole('button', { name: 'David Cole' }).click();
     await page.getByRole('button', { name: 'Nộp kết luận' }).click();
     await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
     await expect.poll(async () => (await saved(page))?.state.flags.case_closed).toBe(true);

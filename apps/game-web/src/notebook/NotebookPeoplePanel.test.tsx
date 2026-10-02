@@ -80,9 +80,7 @@ describe('NotebookPeoplePanel', () => {
         strings={strings}
         onSelectTab={noop}
         onClose={noop}
-        onPlaceTimelineEvent={() => ({ ok: true, correct: false, state: progress })}
-        onSubmitContradiction={() => ({ ok: true, correct: false, state: progress, events: [] })}
-        onSubmitAccusation={() => ({ ok: true, correct: false, state: progress, events: [] })}
+        onOpenDeduction={noop}
       />,
     );
     expect(html).toContain(partial[0]!.npc.name);

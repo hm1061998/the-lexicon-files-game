@@ -117,7 +117,13 @@ describe('PauseMenu', () => {
   });
 });
 
-it('provides a B shortcut button for the separate deduction board',()=>{
- const store=createGameStore({caseDefinition});const html=renderToString(<GameStoreProvider store={store}><KeyHints strings={strings}/></GameStoreProvider>);
- expect(html).toContain(strings.openDeductionBoard);expect(html).toContain('>B<');
+it('provides a B shortcut button for the separate deduction board', () => {
+  const store = createGameStore({ caseDefinition });
+  const html = renderToString(
+    <GameStoreProvider store={store}>
+      <KeyHints strings={strings} />
+    </GameStoreProvider>,
+  );
+  expect(html).toContain(strings.openDeductionBoard);
+  expect(html).toContain('>B<');
 });

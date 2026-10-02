@@ -1,6 +1,6 @@
 # Thiết kế UI/UX sổ tay và bảng suy luận riêng
 
-Ngày: 2026-10-01. Trạng thái: người dùng đã duyệt file spec.
+Ngày: 2026-10-01. Trạng thái: đã được duyệt và triển khai, kiểm chứng ngày 02/10/2026.
 
 ## 1. Mục tiêu và phạm vi đã thống nhất
 
@@ -39,7 +39,7 @@ Màn hình desktop: modal lớn, căn giữa, chừa viền nhìn thấy thế g
 
 Khung sổ rộng tối đa 1160px, cách viewport ít nhất 12px; từ 720px trở lên dùng hai trang với danh sách khoảng 36% và chi tiết 64%, dưới 720px xếp dọc. Bảng rộng tối đa 1440px; từ 1100px trở lên dùng ba cột (hồ sơ khoảng 240px, manh mối linh hoạt, kết quả khoảng 320px), dưới 1100px xếp section dọc. Trên màn hình thấp, modal có max-height theo viewport và vùng nội dung cuộn, không cắt mất nút đóng/chuyển.
 
-Font nội dung tối thiểu 14px, ưu tiên 16px; nút tối thiểu 44×44px. Header/nút đóng luôn truy cập được. Khoảng cuộn chừa vùng focus, không cuộn trang web phía sau.
+Font nội dung tối thiểu 14px, ưu tiên 16px; nút tối thiểu 44 × 44px. Header/nút đóng luôn truy cập được. Khoảng cuộn chừa vùng focus, không cuộn trang web phía sau.
 
 ## 4. Sổ tay
 

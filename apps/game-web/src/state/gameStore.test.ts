@@ -5,35 +5,62 @@ import { createGameStore } from './gameStore';
 
 describe('createGameStore', () => {
   it('atomically switches between notebook and board without touching case state', () => {
-    const store=createGameStore({caseDefinition:loadCaseDefinition('case-001')});
-    const before=store.getState().caseState;
+    const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });
+    const before = store.getState().caseState;
     store.getState().openDeduction();
-    expect(store.getState()).toMatchObject({deductionOpen:true,notebookOpen:false,inputLocked:true});
+    expect(store.getState()).toMatchObject({
+      deductionOpen: true,
+      notebookOpen: false,
+      inputLocked: true,
+    });
     store.getState().openNotebook();
-    expect(store.getState()).toMatchObject({deductionOpen:false,notebookOpen:true,inputLocked:true});
+    expect(store.getState()).toMatchObject({
+      deductionOpen: false,
+      notebookOpen: true,
+      inputLocked: true,
+    });
     store.getState().toggleDeduction();
-    expect(store.getState()).toMatchObject({deductionOpen:true,notebookOpen:false,inputLocked:true});
+    expect(store.getState()).toMatchObject({
+      deductionOpen: true,
+      notebookOpen: false,
+      inputLocked: true,
+    });
     store.getState().closeDeduction();
-    expect(store.getState()).toMatchObject({deductionOpen:false,inputLocked:false});
+    expect(store.getState()).toMatchObject({ deductionOpen: false, inputLocked: false });
     expect(store.getState().caseState).toBe(before);
   });
-  it.each(['paused','evidence','dialogue','closed'])('does not open board during %s', (blocked) => {
-    const definition=loadCaseDefinition('case-001');
-    const store=createGameStore({caseDefinition:definition});
-    if(blocked==='paused')store.getState().setPaused(true);
-    if(blocked==='evidence')store.getState().openEvidence('meeting_minutes');
-    if(blocked==='dialogue')store.getState().startDialogue('anna');
-    if(blocked==='closed')store.setState({caseState:{...store.getState().caseState,flags:{case_closed:true}}});
-    store.getState().openDeduction();
-    expect(store.getState().deductionOpen).toBe(false);
-  });
+  it.each(['paused', 'evidence', 'dialogue', 'closed'])(
+    'does not open board during %s',
+    (blocked) => {
+      const definition = loadCaseDefinition('case-001');
+      const store = createGameStore({ caseDefinition: definition });
+      if (blocked === 'paused') store.getState().setPaused(true);
+      if (blocked === 'evidence') store.getState().openEvidence('meeting_minutes');
+      if (blocked === 'dialogue') store.getState().startDialogue('anna');
+      if (blocked === 'closed')
+        store.setState({
+          caseState: { ...store.getState().caseState, flags: { case_closed: true } },
+        });
+      store.getState().openDeduction();
+      expect(store.getState().deductionOpen).toBe(false);
+    },
+  );
   it('keeps pause blocked on board and closes board when reviewing collected evidence', () => {
-    const definition=loadCaseDefinition('case-001');
-    const store=createGameStore({caseDefinition:definition,initialState:{...createCaseState(definition),evidenceIds:['meeting_minutes']}});
-    store.getState().openDeduction();store.getState().setPaused(true);
+    const definition = loadCaseDefinition('case-001');
+    const store = createGameStore({
+      caseDefinition: definition,
+      initialState: { ...createCaseState(definition), evidenceIds: ['meeting_minutes'] },
+    });
+    store.getState().openDeduction();
+    store.getState().setPaused(true);
     expect(store.getState().paused).toBe(false);
     store.getState().reviewEvidence('meeting_minutes');
-    expect(store.getState()).toMatchObject({deductionOpen:false,notebookOpen:false,activeEvidenceId:'meeting_minutes',inputLocked:true});
+    expect(store.getState()).toMatchObject({
+      deductionOpen: false,
+      notebookOpen: false,
+      activeEvidenceId: 'meeting_minutes',
+      inputLocked: true,
+    });
   });
   it('holds the interaction anchor as a nullable view, cleared on scene change', () => {
     const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });

@@ -68,8 +68,14 @@ for (const viewport of [
     await expect(page.locator('.notebook-panel')).toBeVisible();
     await stableViewport(page);
     await insideViewport(page, page.locator('.notebook-panel'));
-    await insideViewport(page, page.locator('.notebook-header button'));
-    await page.locator('.notebook-header button').click();
+    await insideViewport(
+      page,
+      page.locator('.notebook-header').getByRole('button', { name: 'Đóng', exact: true }),
+    );
+    await page
+      .locator('.notebook-header')
+      .getByRole('button', { name: 'Đóng', exact: true })
+      .click();
     await page.keyboard.press('Escape');
     await expect(page.locator('.pause-menu')).toBeVisible();
     for (let i = 0; i < 10; i++) {

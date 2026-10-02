@@ -1,0 +1,795 @@
+
+> the-lexicon-files@0.0.0 test
+> nx run-many -t test
+
+
+ NX   Running target test for 7 projects:
+
+- @lexicon/learning-engine
+- @lexicon/game-content
+- @lexicon/shared-types
+- @lexicon/game-core
+- ai-memory
+- @lexicon/game-web
+- @lexicon/ui
+
+
+
+> nx run @lexicon/shared-types:test  [existing outputs match the cache, left as is]
+
+(node:3216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17896) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @lexicon/shared-types@0.0.0 test
+> vitest run
+
+(node:24756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v2.1.9 D:/Works/the-lexicon-files-game/packages/shared-types
+
+(node:24660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27092) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/index.test.ts (1 test) 5ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  06:38:47
+   Duration  3.65s (transform 1.07s, setup 0ms, collect 1.40s, tests 5ms, environment 0ms, prepare 536ms)
+
+
+> nx run @lexicon/game-core:test  [existing outputs match the cache, left as is]
+
+(node:20948) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @lexicon/game-core@0.0.0 test
+> vitest run
+
+(node:15208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v2.1.9 D:/Works/the-lexicon-files-game/packages/game-core
+
+(node:5672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15356) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/effect/applyEffects.test.ts (8 tests) 14ms
+ ✓ src/case-engine.test.ts (12 tests) 14ms
+(node:4320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/index.test.ts (2 tests) 10ms
+ ✓ src/contradiction/submitContradiction.test.ts (7 tests) 14ms
+ ✓ src/timeline/placeTimelineEvent.test.ts (6 tests) 22ms
+ ✓ src/conclusion/submitAccusation.test.ts (8 tests) 9ms
+ ✓ src/dialogue/dialogueRunner.test.ts (10 tests) 119ms
+ ✓ src/listening/answerListeningTask.test.ts (4 tests) 10ms
+
+ Test Files  8 passed (8)
+      Tests  57 passed (57)
+   Start at  06:38:47
+   Duration  9.26s (transform 13.59s, setup 0ms, collect 36.06s, tests 213ms, environment 3ms, prepare 6.50s)
+
+
+> nx run @lexicon/ui:test  [existing outputs match the cache, left as is]
+
+(node:19772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @lexicon/ui@0.0.0 test
+> vitest run
+
+(node:28508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v2.1.9 D:/Works/the-lexicon-files-game/packages/ui
+
+(node:7064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14140) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17608) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/theme/palette.test.ts (15 tests) 11ms
+ ✓ src/index.test.ts (1 test) 4ms
+ ✓ src/primitives/primitives.test.tsx (2 tests) 12ms
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  21:59:09
+   Duration  2.48s (transform 404ms, setup 0ms, collect 1.06s, tests 27ms, environment 1ms, prepare 3.22s)
+
+
+> nx run @lexicon/game-content:test  [existing outputs match the cache, left as is]
+
+(node:23020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @lexicon/game-content@0.0.0 test
+> vitest run
+
+(node:4448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v2.1.9 D:/Works/the-lexicon-files-game/packages/game-content
+
+(node:29016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/validation/vocabularyReferences.test.ts (8 tests) 9ms
+ ✓ src/schema/learning.test.ts (6 tests) 31ms
+ ✓ src/schema/ui.test.ts (12 tests) 90ms
+ ✓ src/geometry/sceneGeometry.test.ts (11 tests) 93ms
+ ✓ src/geometry/pairedDoors.test.ts (2 tests) 403ms
+(node:5112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17900) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/schema/scene.test.ts (48 tests) 1159ms
+(node:18780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/schema/audio.test.ts (3 tests) 13ms
+ ✓ src/geometry/wallSegments.test.ts (4 tests) 14ms
+ ✓ src/loader/loadScene.test.ts (2 tests) 218ms
+ ✓ src/schema/assetPath.test.ts (1 test) 7ms
+ ✓ src/loader/loadLegacySaveContract.test.ts (3 tests) 8ms
+(node:18068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/loader/loadCaseDefinition.test.ts (5 tests) 1165ms
+   ✓ loadCaseDefinition > loads the minimal case, including its scene, evidence, fact, and objective 389ms
+   ✓ loadCaseDefinition > Case #001 exposes the phone recording as a collectible audio interaction 326ms
+ ✓ src/validation/validateRegisteredContent.test.ts (2 tests) 920ms
+   ✓ registered dialogue content > authors three playable NPC trees with exact Case 001 copy 606ms
+   ✓ registered dialogue content > validates build content and propagates broken content failures 313ms
+ ✓ src/index.test.ts (3 tests) 7ms
+(node:16120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/schema/dialogue.test.ts (27 tests) 3057ms
+   ✓ dialogue graph validation > rejects entry conditions and ungrounded facts 343ms
+(node:6424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/schema/caseDefinition.test.ts (50 tests) 4669ms
+   ✓ parseCaseDefinition > requires a contradiction to reference two distinct known facts and a known objective 361ms
+
+ Test Files  16 passed (16)
+      Tests  187 passed (187)
+   Start at  06:38:47
+   Duration  10.35s (transform 9.14s, setup 0ms, collect 18.66s, tests 11.86s, environment 6ms, prepare 13.00s)
+
+
+> nx run @lexicon/learning-engine:test  [existing outputs match the cache, left as is]
+
+(node:26956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @lexicon/learning-engine@0.0.0 test
+> vitest run
+
+(node:18572) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v2.1.9 D:/Works/the-lexicon-files-game/packages/learning-engine
+
+(node:24732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/vocabulary/learningReducer.test.ts (15 tests) 17ms
+ ✓ src/index.test.ts (2 tests) 6ms
+
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Start at  06:38:59
+   Duration  1.54s (transform 352ms, setup 0ms, collect 581ms, tests 23ms, environment 1ms, prepare 880ms)
+
+
+> nx run ai-memory:test  [existing outputs match the cache, left as is]
+
+> node --test tools/ai-memory/test/memory-schema.test.mjs tools/ai-memory/test/cli.test.mjs
+
+(node:26032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:25640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: valid memory returns zero and one concise PASS line
+ok 1 - valid memory returns zero and one concise PASS line
+  ---
+  duration_ms: 5.6816
+  type: 'test'
+  ...
+# Subtest: invalid memory returns one and emits actionable errors only
+ok 2 - invalid memory returns one and emits actionable errors only
+  ---
+  duration_ms: 1.0601
+  type: 'test'
+  ...
+# Subtest: read failure returns one and names the memory path
+ok 3 - read failure returns one and names the memory path
+  ---
+  duration_ms: 0.4799
+  type: 'test'
+  ...
+# Subtest: Git adapter failure returns one with result_commit context
+ok 4 - Git adapter failure returns one with result_commit context
+  ---
+  duration_ms: 1.1522
+  type: 'test'
+  ...
+# Subtest: repository file adapter accepts files only within the repository
+ok 5 - repository file adapter accepts files only within the repository
+  ---
+  duration_ms: 3.0222
+  type: 'test'
+  ...
+# (node:9748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: parses valid LF memory and exposes summary fields
+ok 6 - parses valid LF memory and exposes summary fields
+  ---
+  duration_ms: 10.858
+  type: 'test'
+  ...
+# Subtest: parses UTF-8 BOM and CRLF without changing metadata
+ok 7 - parses UTF-8 BOM and CRLF without changing metadata
+  ---
+  duration_ms: 0.7742
+  type: 'test'
+  ...
+# Subtest: preserves metadata values containing colons
+ok 8 - preserves metadata values containing colons
+  ---
+  duration_ms: 0.3447
+  type: 'test'
+  ...
+# Subtest: ignores headings inside fenced code blocks
+ok 9 - ignores headings inside fenced code blocks
+  ---
+  duration_ms: 0.3483
+  type: 'test'
+  ...
+# Subtest: accepts valid memory and returns handoff summary fields
+ok 10 - accepts valid memory and returns handoff summary fields
+  ---
+  duration_ms: 2.8452
+  type: 'test'
+  ...
+# Subtest: rejects memory larger than 12 KB
+ok 11 - rejects memory larger than 12 KB
+  ---
+  duration_ms: 0.7601
+  type: 'test'
+  ...
+# Subtest: rejects missing metadata fields
+ok 12 - rejects missing metadata fields
+  ---
+  duration_ms: 0.8968
+  type: 'test'
+  ...
+# Subtest: rejects invalid status and lists allowed values
+ok 13 - rejects invalid status and lists allowed values
+  ---
+  duration_ms: 0.5348
+  type: 'test'
+  ...
+# Subtest: rejects missing, duplicate, and out-of-order required sections
+ok 14 - rejects missing, duplicate, and out-of-order required sections
+  ---
+  duration_ms: 1.7875
+  type: 'test'
+  ...
+# Subtest: skips path checks for literal none
+ok 15 - skips path checks for literal none
+  ---
+  duration_ms: 1.3521
+  type: 'test'
+  ...
+# Subtest: rejects linked spec or plan that does not exist
+ok 16 - rejects linked spec or plan that does not exist
+  ---
+  duration_ms: 1.0488
+  type: 'test'
+  ...
+# Subtest: rejects an unresolved result commit
+ok 17 - rejects an unresolved result commit
+  ---
+  duration_ms: 0.3906
+  type: 'test'
+  ...
+# Subtest: rejects unresolved placeholder TBD
+ok 18 - rejects unresolved placeholder TBD
+  ---
+  duration_ms: 0.3738
+  type: 'test'
+  ...
+# Subtest: rejects unresolved placeholder TODO
+ok 19 - rejects unresolved placeholder TODO
+  ---
+  duration_ms: 0.3055
+  type: 'test'
+  ...
+# Subtest: rejects unresolved placeholder FIXME
+ok 20 - rejects unresolved placeholder FIXME
+  ---
+  duration_ms: 0.2408
+  type: 'test'
+  ...
+# Subtest: rejects unresolved placeholder <commit-sha>
+ok 21 - rejects unresolved placeholder <commit-sha>
+  ---
+  duration_ms: 0.2351
+  type: 'test'
+  ...
+# Subtest: rejects more than five next actions
+ok 22 - rejects more than five next actions
+  ---
+  duration_ms: 0.4299
+  type: 'test'
+  ...
+# Subtest: rejects mixed ordered and unordered next actions over the limit
+ok 23 - rejects mixed ordered and unordered next actions over the limit
+  ---
+  duration_ms: 0.349
+  type: 'test'
+  ...
+# Subtest: ignores list-shaped lines inside fenced blocks when enforcing budgets
+ok 24 - ignores list-shaped lines inside fenced blocks when enforcing budgets
+  ---
+  duration_ms: 0.4293
+  type: 'test'
+  ...
+# Subtest: rejects more than ten active decisions
+ok 25 - rejects more than ten active decisions
+  ---
+  duration_ms: 0.4394
+  type: 'test'
+  ...
+# Subtest: rejects non-repository-relative linked path /tmp/plan.md
+ok 26 - rejects non-repository-relative linked path /tmp/plan.md
+  ---
+  duration_ms: 0.3868
+  type: 'test'
+  ...
+# Subtest: rejects non-repository-relative linked path C:\\outside\\plan.md
+ok 27 - rejects non-repository-relative linked path C:\\outside\\plan.md
+  ---
+  duration_ms: 0.3859
+  type: 'test'
+  ...
+# Subtest: rejects non-repository-relative linked path ..\\outside\\plan.md
+ok 28 - rejects non-repository-relative linked path ..\\outside\\plan.md
+  ---
+  duration_ms: 0.7471
+  type: 'test'
+  ...
+# Subtest: rejects non-repository-relative linked path ../outside/plan.md
+ok 29 - rejects non-repository-relative linked path ../outside/plan.md
+  ---
+  duration_ms: 0.7733
+  type: 'test'
+  ...
+# Subtest: does not accept a required heading found only inside a fence
+ok 30 - does not accept a required heading found only inside a fence
+  ---
+  duration_ms: 0.3664
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 915.1479
+
+> nx run @lexicon/game-web:test
+
+(node:16060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @lexicon/game-web@0.0.0 test
+> vitest run
+
+(node:20296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v2.1.9 D:/Works/the-lexicon-files-game/apps/game-web
+
+(node:9044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/anchorScreen.test.ts (17 tests) 12ms
+ ✓ src/audio/presentationAudio.test.ts (5 tests) 22ms
+ ✓ src/persistence/learningRepository.test.ts (13 tests) 15ms
+(node:9592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/persistence/saveMigration.test.ts (18 tests) 45ms
+ ✓ src/hud/minimapModel.test.ts (13 tests) 21ms
+ ✓ src/game/assetManifest.test.ts (17 tests) 63ms
+ ✓ src/dialogue/dialogueStore.test.ts (12 tests) 32ms
+(node:14596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/bridge/connectCaseEngine.test.ts (7 tests) 944ms
+(node:19076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/bootstrapGame.test.ts (7 tests) 1013ms
+ ✓ src/notebook/NotebookPanel.test.tsx (9 tests) 45ms
+(node:26800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/persistence/connectAutosave.test.ts (10 tests) 1463ms
+ ✓ src/bridge/connectBusToStore.test.ts (9 tests) 16ms
+ ✓ src/notebook/selectNotebookPeople.test.ts (6 tests) 18ms
+ ✓ src/game/entities/characterAnimations.test.ts (9 tests) 17ms
+ ✓ src/hud/Minimap.test.tsx (11 tests) 60ms
+ ✓ src/game/systems/sceneAssetResolver.test.ts (7 tests) 14ms
+(node:12312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/navigation.test.ts (7 tests) 2080ms
+   ✓ navigation > reaches all authored interactables from both scene spawns 1943ms
+ ✓ src/hud/hud.test.tsx (7 tests) 39ms
+(node:1168) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/audio/audioController.test.ts (6 tests) 23ms
+ ✓ src/persistence/saveRepository.test.ts (22 tests) 2320ms
+(node:13600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/conclusion/buildCaseReport.test.ts (6 tests) 10ms
+ ✓ src/game/entities/createSceneAsset.test.ts (4 tests) 14ms
+(node:24244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/investigation/selectInvestigationView.test.ts (5 tests) 16ms
+(node:26724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/input.test.ts (25 tests) 15ms
+(node:19336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/notebook/NotebookPeoplePanel.test.tsx (5 tests) 49ms
+ ✓ src/persistence/settingsRepository.test.ts (6 tests) 15ms
+(node:18784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/InteractionTracker.test.ts (5 tests) 10ms
+ ✓ src/state/gameStore.test.ts (31 tests) 3060ms
+   ✓ createGameStore > atomically switches between notebook and board without touching case state 304ms
+ ✓ src/game/systems/occlusion.test.ts (7 tests) 9ms
+(node:7004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/evidence/ListeningTaskPanel.test.tsx (5 tests) 20ms
+(node:15976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/bridge/connectPresentationAudio.test.ts (5 tests) 602ms
+(node:29256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/evidence/transcriptVisibility.test.ts (12 tests) 10ms
+(node:30500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/isoInput.test.ts (10 tests) 10ms
+ ✓ src/game/systems/interaction.test.ts (7 tests) 31ms
+ ✓ src/conclusion/AccusationPanel.test.tsx (6 tests) 20ms
+(node:26560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/state/learningStore.test.ts (2 tests) 11ms
+ ✓ src/game/systems/labelPlane.test.ts (2 tests) 7ms
+ ✓ src/game/systems/navigationMovement.test.ts (2 tests) 70ms
+ ✓ src/conclusion/CaseSummaryScreen.test.tsx (3 tests) 17ms
+(node:4860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/deduction/DeductionBoard.test.tsx (3 tests) 29ms
+(node:16512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/notebook/useNotebookShortcut.test.ts (6 tests) 643ms
+(node:13584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/logicalCollision.test.ts (4 tests) 8ms
+(node:26756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/commerce/commerceConfig.test.ts (6 tests) 11ms
+ ✓ src/game/constants.test.ts (4 tests) 9ms
+(node:17156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/dialogue/DialogueView.test.tsx (3 tests) 23ms
+ ✓ src/game/systems/worldPointer.test.ts (4 tests) 27ms
+ ✓ src/game/systems/cameraFollow.test.ts (6 tests) 8ms
+(node:12352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/persistence/connectSettingsAutosave.test.ts (2 tests) 122ms
+ ✓ src/deduction/useDeductionShortcut.test.ts (7 tests) 732ms
+(node:25968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/evidence/EvidenceModal.test.tsx (3 tests) 19ms
+ ✓ src/bridge/worldCueSource.test.ts (2 tests) 307ms
+(node:3484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/sceneProjection.test.ts (4 tests) 8ms
+ ✓ src/bridge/eventBus.test.ts (5 tests) 12ms
+(node:14348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/markerFloat.test.ts (7 tests) 8ms
+(node:22784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/depth.test.ts (5 tests) 8ms
+ ✓ src/pause/PauseMenu.test.tsx (2 tests) 6ms
+(node:17616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/playerMoved.test.ts (5 tests) 10ms
+ ✓ src/state/settingsStore.test.ts (3 tests) 8ms
+(node:16028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/entities/WorldCueLayer.test.ts (1 test) 12ms
+(node:30336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/direction.test.ts (15 tests) 10ms
+ ✓ src/persistence/connectLearningAutosave.test.ts (1 test) 122ms
+ ✓ src/game/systems/isometricProjection.test.ts (3 tests) 7ms
+ ✓ src/game/systems/walkMotion.test.ts (5 tests) 6ms
+(node:27216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/portalPresentation.test.ts (1 test) 7ms
+(node:29452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/entities/shadow.test.ts (3 tests) 9ms
+ ✓ src/game/systems/breathing.test.ts (5 tests) 38ms
+(node:6388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/App.test.tsx (3 tests) 267ms
+ ✓ src/pause/shouldHandleShortcut.test.ts (7 tests) 7ms
+(node:18212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/persistence/settingsSchema.test.ts (10 tests) 16ms
+ ✓ src/game/systems/nameTagLayout.test.ts (2 tests) 6ms
+(node:26736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/audio/useMasterVolume.test.ts (7 tests) 9ms
+(node:648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/bridge/interactionEligibility.test.ts (2 tests) 310ms
+ ✓ src/game/systems/navigationController.test.ts (2 tests) 7ms
+ ✓ src/game/systems/footstepCadence.test.ts (2 tests) 7ms
+(node:14820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/deduction/DeductionConnections.test.ts (2 tests) 6ms
+ ✓ src/pause/focusTrap.test.ts (5 tests) 6ms
+(node:1660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/vocabulary/TranslationModeControl.test.tsx (1 test) 13ms
+ ✓ src/hud/initialHudVisibility.test.ts (3 tests) 6ms
+ ✓ src/game/systems/gameInputGate.test.ts (2 tests) 5ms
+(node:16364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/investigation/InvestigationArtwork.test.tsx (2 tests) 12ms
+ ✓ src/game/systems/facingToward.test.ts (6 tests) 7ms
+(node:22368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/game/systems/markerMotion.test.ts (4 tests) 4ms
+ ✓ src/game/sceneFade.test.ts (1 test) 3ms
+
+ Test Files  83 passed (83)
+      Tests  536 passed (536)
+   Start at  07:21:38
+   Duration  8.52s (transform 5.36s, setup 0ms, collect 27.63s, tests 15.16s, environment 29ms, prepare 15.08s)
+
+
+
+
+ NX   Successfully ran target test for 7 projects
+
+Nx read the output from the cache instead of running the command for 6 out of 7 tasks.
+

@@ -94,7 +94,9 @@ async function people(page: Page): Promise<Locator> {
   await page.keyboard.press('j');
   const panel = page.locator('.notebook-panel');
   await expect(panel).toBeVisible();
-  await expect(panel.locator('.notebook-header button')).toBeFocused();
+  await expect(
+    panel.locator('.notebook-header').getByRole('button', { name: strings.close, exact: true }),
+  ).toBeFocused();
   await panel.getByRole('button', { name: strings.people, exact: true }).click();
   return panel;
 }
@@ -335,7 +337,7 @@ for (const viewport of [
   { width: 1280, height: 720 },
   { width: 760, height: 600 },
 ]) {
-  test(`keeps focus and five tabs visible ${viewport.width}`, async ({ page }) => {
+  test(`keeps focus and four tabs visible ${viewport.width}`, async ({ page }) => {
     await page.setViewportSize(viewport);
     const initial = createCaseState(definition);
     const flags = {
@@ -363,20 +365,24 @@ for (const viewport of [
       objectiveStatuses: { ...initial.objectiveStatuses, submit_your_conclusion: 'active' },
     });
     const panel = await people(page);
-    await expect(panel.locator('.notebook-tabs button')).toHaveCount(5);
-    await expect(panel.locator('.notebook-person')).toHaveCount(3);
+    await expect(panel.locator('.notebook-tabs button')).toHaveCount(4);
+    await expect(panel.locator('.notebook-person')).toHaveCount(1);
     await page.screenshot({
       path: fileURLToPath(
         new URL(
-          `../../../docs/ai/playtests/2026-10-01-notebook-people/people-${viewport.width}.png`,
+          `../../../docs/ai/playtests/2026-10-01-notebook-deduction/people-${viewport.width}.png`,
           import.meta.url,
         ),
       ),
     });
-    await panel.hover();
+    await panel.locator('.notebook-content').hover();
     await page.mouse.wheel(0, 1200);
-    await expect.poll(async () => panel.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
-    const close = panel.locator('.notebook-header button');
+    await expect
+      .poll(async () => panel.locator('.notebook-content').evaluate((el) => el.scrollTop))
+      .toBeGreaterThan(0);
+    const close = panel
+      .locator('.notebook-header')
+      .getByRole('button', { name: strings.close, exact: true });
     await close.focus();
     let scrolled = true;
     let openedWord = false;
@@ -391,8 +397,8 @@ for (const viewport of [
         await page.keyboard.press(key);
         await stableFocus(page, panel);
         const focus = page.locator(':focus');
-        visited.add(await focus.innerText());
-        scrolled ||= (await panel.evaluate((el) => el.scrollTop)) > 0;
+        visited.add((await focus.getAttribute('aria-label')) ?? (await focus.innerText()));
+        scrolled ||= (await panel.locator('.notebook-content').evaluate((el) => el.scrollTop)) > 0;
         if (
           !openedWord &&
           (await focus.evaluate((el) => el.classList.contains('vocabulary-word')))
@@ -411,7 +417,7 @@ for (const viewport of [
       strings.evidence,
       strings.vocabulary,
       strings.timeline,
-      strings.conclusion,
+      strings.openDeductionBoard,
       strings.close,
     ]) {
       expect(forward.has(label)).toBe(true);
@@ -419,15 +425,17 @@ for (const viewport of [
     }
     expect(scrolled).toBe(true);
     expect(openedWord).toBe(true);
-    await panel.getByRole('button', { name: strings.conclusion, exact: true }).click();
+    await panel.getByRole('button', { name: strings.openDeductionBoard, exact: true }).click();
+    const board = page.locator('.deduction-board');
     await expect(
-      panel.getByRole('button', { name: strings.conclusionSubmit, exact: true }),
+      board.getByRole('button', { name: strings.conclusionSubmit, exact: true }),
     ).toBeVisible();
-    const conclusionSteps = await panel.locator('button:enabled').count();
+    const conclusionSteps = await board.locator('button:enabled').count();
     for (let i = 0; i <= conclusionSteps; i++) {
       await page.keyboard.press('Tab');
-      await stableFocus(page, panel);
+      await stableFocus(page, board);
     }
+    await board.getByRole('button', { name: strings.openNotebookFromBoard, exact: true }).click();
     await panel.getByRole('button', { name: strings.people, exact: true }).click();
     await closePeople(page);
     await people(page);

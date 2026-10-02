@@ -27,7 +27,11 @@ export function connectPresentationAudio(
   const unsubscribe = store.subscribe((next, previous) => {
     if (next.paused && !previous.paused) audio.stopVoice();
     if (next.paused !== previous.paused) audio.setPaused(next.paused);
-    if (previous.notebookOpen !== next.notebookOpen || previous.deductionOpen !== next.deductionOpen) bus.emit('audio:cue', { cue: 'paper' });
+    if (
+      previous.notebookOpen !== next.notebookOpen ||
+      previous.deductionOpen !== next.deductionOpen
+    )
+      bus.emit('audio:cue', { cue: 'paper' });
     if (
       previous.paused !== next.paused ||
       previous.minimapVisible !== next.minimapVisible ||
