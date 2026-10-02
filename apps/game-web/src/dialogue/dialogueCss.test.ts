@@ -23,4 +23,14 @@ describe('dialogue CSS guards', () => {
     );
     expect(css).not.toMatch(/^\.vocabulary-popover button/m);
   });
+
+  it('scrolls an inner wrapper so the paper clip on the sheet edge is never clipped', () => {
+    const css = read('./dialogue.css');
+    const panel = css.slice(
+      css.indexOf('.dialogue-panel {'),
+      css.indexOf('}', css.indexOf('.dialogue-panel {')),
+    );
+    expect(panel).not.toMatch(/overflow(-y)?:\s*auto/);
+    expect(css).toMatch(/\.dialogue-panel > \[role='dialog'\]\s*\{[^}]*overflow-y:\s*auto/);
+  });
 });

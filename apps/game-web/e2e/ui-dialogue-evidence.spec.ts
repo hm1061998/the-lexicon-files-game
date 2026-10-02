@@ -8,7 +8,8 @@ const viewports = [
   { w: 844, h: 390 },
 ] as const;
 
-const RED = 'rgb(164, 65, 45)';
+// Dark red (#743026): the investigation red that still reads as small text on paper.
+const RED = 'rgb(116, 48, 38)';
 const paperSelector = '.dialogue-panel, .evidence-modal';
 
 /** Elements inside the open paper whose text is the investigation red. */

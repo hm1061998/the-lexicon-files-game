@@ -24,4 +24,13 @@ describe('evidence CSS guards', () => {
   it('does not restyle every control in the evidence modal with a bare rule', () => {
     expect(read('./evidence.css')).not.toMatch(/^\.evidence-modal button/m);
   });
+
+  it('draws the evidence label in dark red, which reads on paper at small sizes', () => {
+    const css = read('./evidence.css');
+    const rule = css.slice(
+      css.indexOf('.evidence-category {'),
+      css.indexOf('}', css.indexOf('.evidence-category {')),
+    );
+    expect(rule).toContain('var(--lexicon-dark-red)');
+  });
 });

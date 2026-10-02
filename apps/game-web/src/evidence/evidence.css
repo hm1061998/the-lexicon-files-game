@@ -59,7 +59,7 @@
 
 .evidence-category {
   margin: 16px 0 4px;
-  color: var(--lexicon-investigation-red);
+  color: var(--lexicon-dark-red);
   font-family: var(--lexicon-font-label);
   font-size: 14px;
   letter-spacing: 0.08em;

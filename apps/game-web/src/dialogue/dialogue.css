@@ -13,11 +13,17 @@
 }
 .dialogue-panel {
   width: min(760px, 100%);
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
   padding: 36px 24px 24px;
   box-sizing: border-box;
   line-height: 1.6;
+}
+/* The inner dialog scrolls, not the sheet: the paper clip hangs over the sheet edge and must not be clipped. */
+.dialogue-panel > [role='dialog'] {
+  max-height: calc(100vh - 120px - 60px);
+  overflow-y: auto;
+  /* Room inside the scroll box for focus rings and the note shadows. */
+  padding: 4px 4px 10px;
+  margin: -4px -4px 0;
 }
 .dialogue-header {
   display: flex;
@@ -110,7 +116,9 @@
   }
   .dialogue-panel {
     padding: 32px 16px 16px;
-    max-height: calc(100vh - 32px);
+  }
+  .dialogue-panel > [role='dialog'] {
+    max-height: calc(100vh - 32px - 48px);
   }
 }
 .dialogue-voice-controls {
