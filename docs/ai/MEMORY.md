@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T08:16:34+07:00
+updated_at: 2026-10-02T09:04:42+07:00
 phase: phase-11e
 status: in_progress
-result_commit: de1e6980ccd384e6c5418232600a6a46e574b011
+result_commit: 13ea769
 active_spec: docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md
 active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 ---
@@ -11,11 +11,11 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 ## Metadata
 
 - Repo D:/Works/the-lexicon-files-game, branch dev, npm + Nx; implementation Native inline theo lựa chọn đã duyệt.
-- Gói mới: investigation no-scroll + SVG artwork. Người dùng đã duyệt spec viết02/10; plan mới chờ duyệt. Native inline dev được giữ theo preference.
+- Gói mới: investigation no-scroll + SVG artwork. Người dùng đã duyệt spec và plan ngày02/10, chọn làm cả sổ tay và bảng suy luận theo logic hiện có; triển khai Native inline trên dev.
 
 ## Current Phase
 
-- Gói UI notebook/deduction trước đã hoàn tất. Đang thiết kế bổ sung trải nghiệm game không cuộn cho cả hai giao diện; chưa sửa code.
+- Đang triển khai cải tiến UI notebook và bảng suy luận không cuộn, chia trang và có hiệu ứng lật giấy.
 
 ## Active Goal
 
@@ -23,8 +23,8 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Current Status
 
-- Spec02/10 đã duyệt trực tiếp; đã viết/self-review plan8task, commit de1e698. Chờ người dùng duyệt plan trước code/dependency.
-- Result metadata trỏ commit plan/spec mới. Baseline UI cũ result8c734b5 vẫn hoàn tất và verified; không làm lại plan01/10.
+- Spec và plan02/10 đã được duyệt. Task1–5 hoàn tất; Task6 có phần triển khai được commit nhưng còn kiểm thử browser cũ và acceptance; Task7–8 chưa làm.
+- Result commit code gần nhất13ea769. Baseline UI cũ result8c734b5 vẫn hoàn tất và verified; không làm lại plan01/10.
 - Report baseline: docs/ai/2026-10-01-notebook-deduction-verification.md; ảnh/raw output trong docs/ai/playtests/2026-10-01-notebook-deduction/. Gói mới chưa triển khai/push.
 
 ## Completed
@@ -36,13 +36,13 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## In Progress
 
-- Plan8task: contracts/text fragments → measured pagination → SVG artwork → page-turn adapter/library gate → notebook → board4faces → popover/focus/audio → browser acceptance/review/handoff. Các bước chưa tick; chờ review plan.
+- Plan8task: contracts/text fragments → measured pagination → SVG artwork → page-turn adapter/library gate → notebook → board4faces → popover/focus/audio → browser acceptance/review/handoff. Task1–5 xong; Task6 đang dở; Task7–8 còn lại.
 - Scope theo spec02/10:5viewport, nội dung dài không mất, giữ UI selections, learning chỉ visible pages, engine/discovery/save giữ nguyên.
 
 ## Active Decisions
 
 - Native inline trên dev; một phase một lần; scope notebook + board riêng dùng engine hiện có. Không tự mở phase nội dung hoặc backend kế tiếp.
-- Không đổi case rules/transcript flags/save version; text/ID trong game-content. Spec bổ sung02/10 đã duyệt, plan chờ duyệt; khảo sát dependency page-flip sau duyệt plan, có fallback nếu gate fail; chưa cài. Spec01/10 giữ hợp đồng baseline ngoài các quy tắc được thay.
+- Không đổi case rules/transcript flags/save version; text/ID trong game-content. Spec/plan02/10 đã duyệt. Page-flip2.0.7 bị loại sau Chromium cleanup probe; dùng SVG/CSS fallback, dependency đã gỡ. Spec01/10 giữ hợp đồng baseline ngoài các quy tắc được thay.
 - People selector giữ metadata positive own-tree node/choice writer; condition hiện tại không ẩn lịch sử. Save David cũ thiếu khóa answer3 không được đoán lời khai.
 - Notebook timeline chỉ events đã đặt đúng; board dùng game-core cho timeline/contradiction/accusation. Quan hệ chỉ nguồn authored đã khám phá, có danh sách chữ; không free drag/link.
 - Vocabulary context dialogue:tree:node:text và evidence gốc; Settings sở hữu mode. Chỉ selected detail mount annotations; reveal reset khi đổi từ/mode, không tự đánh dấu mastery.
@@ -54,17 +54,21 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Blockers
 
-- Không có blocker kỹ thuật. Chưa cài dependency hoặc sửa code trong yêu cầu mới. Commit gói cũ vẫn local.
+- Không có blocker kỹ thuật. Task6 chưa có regression run cho timeline.spec; board browser acceptance rộng và Task7–8 còn pending. Chưa push gói UI này.
 
 ## Next Actions
 
-1. Người dùng review/duyệt docs/superpowers/plans/2026-10-02-investigation-no-scroll.md, phương thức Native inline dev đã có.
-2. Sau duyệt plan: đọc executing-plans/TDD và triển khai8task tuần tự, một reviewer cuối theo skill; không tự dispatch nhiều implementer.
-3. Kiểm chứng5viewport/full-content/learning/engine, commit report rồi memory riêng. Không dùng authorization push People cũ.
+1. Hoàn thiện Task6: chạy/sửa `timeline.spec.ts` browser regression, bảo toàn assertion engine.
+2. Thực hiện Task7: popover, focus/input/audio và tích hợp điều khiển trang.
+3. Thực hiện Task8: 5 viewport, fixture dài, luồng đầy đủ, kiểm tra/review cuối và handoff.
+4. Cập nhật plan/verification/memory với kết quả thực tế; gói UI này chưa được cho phép push.
 
 ## Verification
 
-- Spec/plan mới: self-review coverage/types/review-focus/ambiguity; git diff --check pass; memory:check PASS sau cập nhật. Không có code change nên không chạy lại lint/test/build; các kết quả dưới thuộc baseline cũ.
+- Task6 partial: deduction/conclusion unit subset28/28 pass; `npm run typecheck` exit0; `investigation-pagination.spec.ts`2/2 pass, gồm ghép fact qua đổi mặt và no-scroll. Timeline browser regression và full acceptance chưa chạy.
+- Task5: reading/session unit66/66 pass; typecheck exit0; notebook browser regression tại760×600 pass. Task8 sẽ xác nhận mọi 5 viewport.
+- Page-flip gate: package2.0.7 MIT, nhưng Chromium probe còn12 RAF sau destroy/200ms; loại dependency và dùng SVG/CSS fallback.
+- Các verification nền trước đó vẫn ghi bên dưới để tham chiếu; không hàm ý lượt triển khai hiện tại đã chạy toàn bộ lint/test/build.
 - Node22: npm run format/lint/test/build/typecheck/memory:check exit0. Frontend536/83file chạy mới, content187/16file đã kiểm chứng và cache ở lượt cuối; npm test thành công7projects. Build CSS34.20kB/gzip7.12, JS1964.44kB/gzip478.89; advisory>500kB và NO_COLOR/FORCE_COLOR có sẵn. Không apps/api change nên không dotnet.
 - Nhóm8file E2E cuối38/38(11.0m), một worker: notebook-deduction/notebook-people/timeline/journey/viewport-focus/learning/settings/dialogue. Thêm native keyboard pair/submit sai→đúng trong timeline test, rerun1/1(45.2s), giữ engine/save/reload assertions.
 - Bốn tab + board tại1280×720,760×600,390×844:15ảnh đã xem, no horizontal overflow, target44×44, focus/trap/restore, source relations và word reveal. Alpha-bound portrait1/1, fallback2/2, scroll coordinates2/2.
@@ -73,8 +77,8 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Latest Handoff
 
-- Resultde1e698 chứa spec đã duyệt và plan8task chờ duyệt; memory commit riêng kế tiếp. Chưa code/dependency/push. Gói cũ8c734b5 là baseline verified.
-- Plan có interfaces/tests/commands và fallbacklibrary; giữ Native inline dev, debug.log untracked. Tiếp tục từ review plan, không hỏi lại spec/execution method.
+- Commit code mới nhất13ea769 chứa phần Task6 hiện có. Tiếp tục Task6 từ timeline browser regression; sau đó Task7 và Task8. Plan đã duyệt, không hỏi lại approval hay cách thực thi.
+- `apps/game-web/debug.log` vẫn untracked, giữ nguyên và không đưa vào commit. Không push theo authorization cũ dành cho People.
 
 ## Required Reading
 
