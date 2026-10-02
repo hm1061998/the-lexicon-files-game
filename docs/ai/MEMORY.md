@@ -1,17 +1,17 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T08:08:13+07:00
+updated_at: 2026-10-02T08:16:34+07:00
 phase: phase-11e
 status: in_progress
-result_commit: ad5e89b3898956d68864c66445c50e213be85a35
+result_commit: de1e6980ccd384e6c5418232600a6a46e574b011
 active_spec: docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 ---
 
 ## Metadata
 
 - Repo D:/Works/the-lexicon-files-game, branch dev, npm + Nx; implementation Native inline theo lựa chọn đã duyệt.
-- Gói hiện tại: notebook UI và bảng suy luận riêng, cùng logic điều tra hiện có. Người dùng đã duyệt spec và plan trực tiếp.
+- Gói mới: investigation no-scroll + SVG artwork. Người dùng đã duyệt spec viết02/10; plan mới chờ duyệt. Native inline dev được giữ theo preference.
 
 ## Current Phase
 
@@ -23,9 +23,9 @@ active_plan: none
 
 ## Current Status
 
-- Gói trước hoàn thành cả 7 task: sổ tay bốn tab đọc lại (J), bảng suy luận riêng (B), selectors/content labels, modal routing, HUD/audio, keyboard/focus, responsive và regression.
-- Code/report/plan/ảnh ở result_commit phía trên; memory commit riêng kế tiếp theo README.md. Gói UI này chưa push.
-- Báo cáo đầy đủ file, tests, lệnh/output, RED/GREEN, review, rulings và hạn chế: docs/ai/2026-10-01-notebook-deduction-verification.md. Ảnh và raw output: docs/ai/playtests/2026-10-01-notebook-deduction/.
+- Spec02/10 đã duyệt trực tiếp; đã viết/self-review plan8task, commit de1e698. Chờ người dùng duyệt plan trước code/dependency.
+- Result metadata trỏ commit plan/spec mới. Baseline UI cũ result8c734b5 vẫn hoàn tất và verified; không làm lại plan01/10.
+- Report baseline: docs/ai/2026-10-01-notebook-deduction-verification.md; ảnh/raw output trong docs/ai/playtests/2026-10-01-notebook-deduction/. Gói mới chưa triển khai/push.
 
 ## Completed
 
@@ -36,13 +36,13 @@ active_plan: none
 
 ## In Progress
 
-- Người dùng nói “duyệt spec” khi chỉ có hướng thiết kế trong chat. Đã chốt hướng và viết spec bổ sung ngày02/10, self-review và commit ad5e89b; bản viết chưa tồn tại trước approval nên cần người dùng xem duyệt file theo brainstorming. Chưa viết plan/cài dependency/sửa code.
-- Spec mới thay quy tắc scroll cũ; no-scroll, phân trang theo không gian thực tế, board4mặt, SVG vật thể, khảo sát StPageFlip với gate learning/focus. Gói UI cũ vẫn hoàn tất, report8c734b5 là baseline.
+- Plan8task: contracts/text fragments → measured pagination → SVG artwork → page-turn adapter/library gate → notebook → board4faces → popover/focus/audio → browser acceptance/review/handoff. Các bước chưa tick; chờ review plan.
+- Scope theo spec02/10:5viewport, nội dung dài không mất, giữ UI selections, learning chỉ visible pages, engine/discovery/save giữ nguyên.
 
 ## Active Decisions
 
 - Native inline trên dev; một phase một lần; scope notebook + board riêng dùng engine hiện có. Không tự mở phase nội dung hoặc backend kế tiếp.
-- Không đổi case rules/transcript flags/save version; text/ID trong game-content. Spec bổ sung02/10 chờ duyệt, cho khảo sát dependency page-flip sau duyệt plan; chưa cài. Spec01/10 giữ hợp đồng baseline ngoài các quy tắc được thay.
+- Không đổi case rules/transcript flags/save version; text/ID trong game-content. Spec bổ sung02/10 đã duyệt, plan chờ duyệt; khảo sát dependency page-flip sau duyệt plan, có fallback nếu gate fail; chưa cài. Spec01/10 giữ hợp đồng baseline ngoài các quy tắc được thay.
 - People selector giữ metadata positive own-tree node/choice writer; condition hiện tại không ẩn lịch sử. Save David cũ thiếu khóa answer3 không được đoán lời khai.
 - Notebook timeline chỉ events đã đặt đúng; board dùng game-core cho timeline/contradiction/accusation. Quan hệ chỉ nguồn authored đã khám phá, có danh sách chữ; không free drag/link.
 - Vocabulary context dialogue:tree:node:text và evidence gốc; Settings sở hữu mode. Chỉ selected detail mount annotations; reveal reset khi đổi từ/mode, không tự đánh dấu mastery.
@@ -58,13 +58,13 @@ active_plan: none
 
 ## Next Actions
 
-1. Người dùng xem duyệt docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md.
-2. Sau duyệt spec: dùng writing-plans tạo plan tiếng Việt, giữ Native inline dev. Chưa có active plan cho yêu cầu mới.
-3. Sau duyệt plan: triển khai phân trang/SVG/effect adapter và regression, cập nhật memory. Không dùng authorization push People cũ.
+1. Người dùng review/duyệt docs/superpowers/plans/2026-10-02-investigation-no-scroll.md, phương thức Native inline dev đã có.
+2. Sau duyệt plan: đọc executing-plans/TDD và triển khai8task tuần tự, một reviewer cuối theo skill; không tự dispatch nhiều implementer.
+3. Kiểm chứng5viewport/full-content/learning/engine, commit report rồi memory riêng. Không dùng authorization push People cũ.
 
 ## Verification
 
-- Spec mới: self-review scope/consistency/ambiguity và placeholder; git diff --check pass. memory:check PASS sau cập nhật. Không có code change nên không chạy lại lint/test/build; các kết quả dưới thuộc baseline cũ.
+- Spec/plan mới: self-review coverage/types/review-focus/ambiguity; git diff --check pass; memory:check PASS sau cập nhật. Không có code change nên không chạy lại lint/test/build; các kết quả dưới thuộc baseline cũ.
 - Node22: npm run format/lint/test/build/typecheck/memory:check exit0. Frontend536/83file chạy mới, content187/16file đã kiểm chứng và cache ở lượt cuối; npm test thành công7projects. Build CSS34.20kB/gzip7.12, JS1964.44kB/gzip478.89; advisory>500kB và NO_COLOR/FORCE_COLOR có sẵn. Không apps/api change nên không dotnet.
 - Nhóm8file E2E cuối38/38(11.0m), một worker: notebook-deduction/notebook-people/timeline/journey/viewport-focus/learning/settings/dialogue. Thêm native keyboard pair/submit sai→đúng trong timeline test, rerun1/1(45.2s), giữ engine/save/reload assertions.
 - Bốn tab + board tại1280×720,760×600,390×844:15ảnh đã xem, no horizontal overflow, target44×44, focus/trap/restore, source relations và word reveal. Alpha-bound portrait1/1, fallback2/2, scroll coordinates2/2.
@@ -73,13 +73,13 @@ active_plan: none
 
 ## Latest Handoff
 
-- Resultad5e89b là spec bổ sung, chưa triển khai. Memory commit riêng kế tiếp; không push. Gói UI trước result8c734b5 đã verified.
-- Đã yêu cầu xem bản spec viết mới; đừng coi approval hướng chat là duyệt file chưa tồn tại. Không làm lại các task plan01/10 đã hoàn tất. debug.log vẫn untracked.
+- Resultde1e698 chứa spec đã duyệt và plan8task chờ duyệt; memory commit riêng kế tiếp. Chưa code/dependency/push. Gói cũ8c734b5 là baseline verified.
+- Plan có interfaces/tests/commands và fallbacklibrary; giữ Native inline dev, debug.log untracked. Tiếp tục từ review plan, không hỏi lại spec/execution method.
 
 ## Required Reading
 
 1. AGENTS.md và apps/game-web/AGENTS.md.
 2. docs/ai/README.md, docs/ai/MEMORY.md và reconcile Git.
 3. docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md và spec baseline01/10.
-4. docs/superpowers/plans/2026-10-01-notebook-deduction-ui.md và docs/ai/2026-10-01-notebook-deduction-verification.md.
+4. docs/superpowers/plans/2026-10-02-investigation-no-scroll.md; plan01/10/report01/10 chỉ là baseline đã hoàn tất.
 5. docs/architecture/ARCHITECTURE.md và docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md; product/learning/case docs theo root AGENTS.
