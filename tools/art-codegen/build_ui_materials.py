@@ -22,7 +22,13 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "apps/game-web/public/assets/ui"
 
 SEED = 20261002
-SLICES = {"paper_torn_frame": 48, "index_tab_frame": 24, "keycap_plate": 10}
+SLICES = {
+    "paper_torn_frame": 48,
+    "index_tab_frame": 24,
+    "keycap_plate": 10,
+    "folder_cover": 48,
+    "folder_tab": 20,
+}
 
 PAPER_FRESH = (0xD8, 0xC5, 0xA4)
 PAPER_AGED = (0xCD, 0xBA, 0x97)
@@ -233,6 +239,96 @@ def render_evidence_ripple(seed: int) -> Image.Image:
     return to_image(np.concatenate([rgb, alpha[:, :, None]], axis=2))
 
 
+def render_desk_wood(seed: int) -> Image.Image:
+    """Dark desk planks (vertical grain), seamless on both axes."""
+    size = 512
+    g = rng(seed)
+    noise = g.standard_normal((size, size))
+    for _ in range(2):  # long vertical streaks: strong blur along y, light along x
+        acc = np.zeros_like(noise)
+        for shift in range(-40, 41):
+            acc += np.roll(noise, shift, axis=0)
+        noise = acc / 81
+        noise = (np.roll(noise, 1, axis=1) + noise + np.roll(noise, -1, axis=1)) / 3
+    noise = noise / (np.abs(noise).max() or 1.0)
+    plank = (np.arange(size) // 128) % 4
+    tone = np.array([-3.0, 3.0, -1.0, -3.0])[plank][None, :]
+    base = np.array([46.0, 38.0, 31.0])
+    shade = noise * 16 + tone
+    rgb = base[None, None, :] + shade[:, :, None] * np.array([1.0, 0.9, 0.78])
+    seam = np.isin(np.arange(size) % 128, (0, 1, 127))  # plank joints, symmetric so the tile stays seamless
+    rgb[:, seam, :] -= 14
+    scratches = Image.new("L", (size, size), 0)
+    d = ImageDraw.Draw(scratches)
+    for _ in range(40):
+        x, y = int(g.integers(0, size - 60)), int(g.integers(0, size - 60))
+        d.line((x, y, x + int(g.integers(8, 50)), y + int(g.integers(-6, 7))), fill=int(g.integers(30, 70)), width=1)
+    rgb += np.asarray(scratches, float)[:, :, None] * 0.25
+    alpha = np.full((size, size, 1), 255.0)
+    return to_image(np.concatenate([rgb, alpha], axis=2))
+
+
+def worn_alpha(w: int, h: int, radius: int, g: np.random.Generator, depth: float = 2.5) -> np.ndarray:
+    """Rounded-rectangle alpha with a slightly ragged edge (worn paper)."""
+    mask = Image.new("L", (w * 4, h * 4), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, w * 4 - 1, h * 4 - 1), radius=radius * 4, fill=255)
+    arr = np.asarray(mask.resize((w, h), Image.LANCZOS), float)
+    yy, xx = np.mgrid[0:h, 0:w]
+    edge = np.minimum(np.minimum(xx, w - 1 - xx), np.minimum(yy, h - 1 - yy))
+    ragged = (g.random((h, w)) < 0.35) & (edge < depth)
+    arr[ragged] = 0
+    arr[edge >= depth] = np.maximum(arr[edge >= depth], 0)
+    return np.where(arr > 127, 255.0, 0.0)
+
+
+def render_folder_cover(seed: int) -> Image.Image:
+    """Manila folder cover 320x240 for a 48px 9-slice: worn edge, soft fold line down the middle."""
+    g = rng(seed)
+    w, h = 320, 240
+    sheet = np.asarray(render_paper_sheet("aged", seed + 100), float)[:h, :w, :3]
+    manila = np.array([210.0, 188.0, 138.0])
+    rgb = manila[None, None, :] + (sheet - np.array(PAPER_AGED)[None, None, :]) * 0.9
+    yy, xx = np.mgrid[0:h, 0:w]
+    fold = np.exp(-(((xx - w / 2) / 3.0) ** 2)) * 14.0
+    rgb -= fold[:, :, None]
+    edge = np.minimum(np.minimum(xx, w - 1 - xx), np.minimum(yy, h - 1 - yy))
+    rgb -= (np.clip(1 - edge / 14.0, 0, 1) * 18.0)[:, :, None]
+    alpha = worn_alpha(w, h, 10, g)
+    rim = (alpha > 0) & (edge < 2)
+    rgb[rim] = np.array(INK, float)  # thin ink edge keeps the cover readable on the dark desk
+    return to_image(np.concatenate([rgb, alpha[:, :, None]], axis=2))
+
+
+def render_folder_tab(seed: int) -> Image.Image:
+    """Index tab 160x64 for a 20px 9-slice: straight left edge (glued to the cover), rounded right."""
+    g = rng(seed)
+    w, h = 160, 64
+    sheet = np.asarray(render_paper_sheet("fresh", seed + 100), float)[:h, :w, :3]
+    manila = np.array([214.0, 192.0, 142.0])
+    rgb = manila[None, None, :] + (sheet - np.array(PAPER_FRESH)[None, None, :]) * 0.9
+    mask = Image.new("L", (w * 4, h * 4), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((-60 * 4, 0, w * 4 - 1, h * 4 - 1), radius=18 * 4, fill=255)
+    alpha = np.where(np.asarray(mask.resize((w, h), Image.LANCZOS), float) > 127, 255.0, 0.0)
+    alpha[0, 0] = 0
+    inner = np.asarray(Image.fromarray(alpha.astype(np.uint8)).filter(ImageFilter.MinFilter(3)), float)
+    rgb[(alpha > 0) & (inner == 0)] = np.array(INK, float)
+    rgb += g.uniform(-2, 2, (h, w, 1))
+    return to_image(np.concatenate([rgb, alpha[:, :, None]], axis=2))
+
+
+def render_scrim_vignette() -> Image.Image:
+    """Alpha-only vignette: nearly clear in the middle, dark at the corners."""
+    size = 256
+    yy, xx = np.mgrid[0:size, 0:size].astype(float)
+    r = np.hypot(xx - (size - 1) / 2, yy - (size - 1) / 2) / np.hypot(size / 2, size / 2)
+    t = np.clip((r - 0.15) / 0.85, 0, 1)
+    smooth = t * t * (3 - 2 * t)
+    alpha = 8 + 200 * smooth
+    rgb = np.empty((size, size, 3))
+    rgb[:] = np.array([20.0, 16.0, 13.0])
+    return to_image(np.concatenate([rgb, alpha[:, :, None]], axis=2))
+
+
 def build(out_dir: Path) -> list[Path]:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -246,6 +342,10 @@ def build(out_dir: Path) -> list[Path]:
         "stamp_ring": render_stamp_ring(6),
         "keycap_plate": render_keycap_plate(),
         "cork_board": render_cork_board(7),
+        "desk_wood": render_desk_wood(11),
+        "folder_cover": render_folder_cover(12),
+        "folder_tab": render_folder_tab(13),
+        "scrim_vignette": render_scrim_vignette(),
     }
     paths = []
     for name, image in images.items():

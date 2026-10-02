@@ -17,6 +17,10 @@ EXPECTED = {
     "stamp_ring.png",
     "keycap_plate.png",
     "cork_board.png",
+    "desk_wood.png",
+    "folder_cover.png",
+    "folder_tab.png",
+    "scrim_vignette.png",
 }
 
 
@@ -38,7 +42,7 @@ class UiMaterialTests(unittest.TestCase):
     def load(self, name):
         return np.asarray(Image.open(self.out / name).convert("RGBA"), float)
 
-    def test_builds_exactly_the_nine_files(self):
+    def test_builds_exactly_the_thirteen_files(self):
         self.assertEqual({p.name for p in self.paths if p.parent == self.out}, EXPECTED)
         self.assertEqual({p.name for p in self.out.glob("*.png")}, EXPECTED)
 
@@ -101,6 +105,47 @@ class UiMaterialTests(unittest.TestCase):
             a = self.load(name)
             self.assertEqual(a[0, 0, 3], 0, name)
             self.assertEqual(a[a.shape[0] // 2, a.shape[1] // 2, 3], 255, name)
+
+
+class ShellMaterialTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.out = Path(cls.tmp.name)
+        b.build(cls.out)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def load(self, name):
+        return np.asarray(Image.open(self.out / name).convert("RGBA"), float)
+
+    def test_desk_wood_tiles_and_stays_dark(self):
+        a = self.load("desk_wood.png")
+        self.assertEqual(a.shape[:2], (512, 512))
+        self.assertLess(np.abs(a[:, 0, :3] - a[:, -1, :3]).mean(), 4)
+        self.assertLess(np.abs(a[0, :, :3] - a[-1, :, :3]).mean(), 4)
+        self.assertTrue(np.all(a[:, :, :3].reshape(-1, 3).mean(axis=0) < 90))
+        self.assertTrue(np.all(a[:, :, 3] == 255))
+
+    def test_folder_cover_and_tab_have_transparent_corners_and_solid_centre(self):
+        for name, size in (("folder_cover.png", (240, 320)), ("folder_tab.png", (64, 160))):
+            a = self.load(name)
+            self.assertEqual(a.shape[:2], size, name)
+            self.assertEqual(a[0, 0, 3], 0, name)
+            self.assertEqual(a[a.shape[0] // 2, a.shape[1] // 2, 3], 255, name)
+            slice_px = b.SLICES[name.replace(".png", "")]
+            self.assertGreater(a.shape[0], slice_px * 2, name)
+            self.assertGreater(a.shape[1], slice_px * 2, name)
+
+    def test_scrim_vignette_only_changes_alpha(self):
+        a = self.load("scrim_vignette.png")
+        self.assertEqual(a.shape[:2], (256, 256))
+        rgb = a[:, :, :3].reshape(-1, 3)
+        self.assertTrue(np.all(rgb == rgb[0]))
+        self.assertLess(a[128, 128, 3], 30)
+        self.assertGreater(a[0, 0, 3], 150)
 
 
 class WorldMaterialTests(unittest.TestCase):
