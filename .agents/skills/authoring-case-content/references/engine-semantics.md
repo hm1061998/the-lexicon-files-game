@@ -31,7 +31,9 @@
 2. Objective `locked` có `activationCondition` đúng → `active`.
 3. Objective `active` có `completionCondition` đúng → `completed`.
 
-Không chạy sau: interaction scene (`applyCaseEffects`), `answerListeningTask`, `submitContradiction`, `placeTimelineEvent`, `submitAccusation`.
+Cũng chạy trong `submitContradiction`: trước batch (để mở objective so sánh) và sau batch (từ commit `4ffcd3b`, F-7).
+
+Không chạy sau: interaction scene (`applyCaseEffects`), `answerListeningTask`, `placeTimelineEvent`, `submitAccusation`.
 
 ## Interaction scene (apps/game-web/src/bridge/connectCaseEngine.ts)
 
@@ -45,7 +47,7 @@ Không chạy sau: interaction scene (`applyCaseEffects`), `answerListeningTask`
 
 ## Contradiction (`submitContradiction`)
 
-- Cần cả hai fact đã mở. Đúng → batch `[setFlag david_contradiction_found, completeObjective objectiveId]`; objective phải `active`.
+- Cần cả hai fact đã mở. Đúng → reconcile, rồi batch `[setFlag david_contradiction_found, completeObjective objectiveId]` (objective phải `active` sau bước reconcile), rồi reconcile lần nữa.
 - Chọn sai → `correct: false`, state không đổi (không phạt).
 
 ## Timeline (`placeTimelineEvent`)

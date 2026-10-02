@@ -39,8 +39,8 @@ Case là **dữ liệu**, engine là **chung**. Zod và validator đã bắt l�
 | Bẫy | Hệ quả | Cách tránh |
 | --- | --- | --- |
 | `completeObjective` khi objective còn `locked` hoặc đã `completed` | **Cả batch** (kể cả `addEvidence`, `setFlag` cùng cụm) bị bỏ; choice báo `effectFailed` mãi | Chỉ complete objective chắc chắn `active`; tách effect, hoặc dùng `completionCondition` |
-| `activationCondition` / `completionCondition` của objective | Chỉ được đánh giá **sau một bước hội thoại**, khi nộp contradiction, hoặc khi load save, không sau khi nhặt evidence, trả lời listening hay nộp contradiction | Để bước cuối cùng mở objective là một node/choice hội thoại, hoặc chấp nhận và ghi rõ; `check-case-flow` báo `delayed-reconcile` |
-| Contradiction nộp đúng | Engine `completeObjective(contradiction.objectiveId)`; objective đó phải `active` lúc nộp, nếu không bị từ chối | `activationCondition` của objective so sánh phải thỏa trước khi cả hai fact có mặt |
+| `activationCondition` / `completionCondition` của objective | Chỉ được đánh giá **sau một bước hội thoại**, khi nộp contradiction, hoặc khi load save; **không** sau khi nhặt evidence hay trả lời listening | Để bước cuối cùng mở objective là một node/choice hội thoại, hoặc chấp nhận và ghi rõ; `check-case-flow` báo `delayed-reconcile` |
+| Contradiction nộp đúng | Engine reconcile, rồi `completeObjective(contradiction.objectiveId)`, rồi reconcile lần nữa; objective phải `active` sau bước reconcile đầu, nếu không bị từ chối | `activationCondition` của objective so sánh phải thỏa khi cả hai fact đã có |
 | Accusation | Cần `conclusion.objectiveId` đang `active` | Mở objective kết luận bằng điều kiện đạt được qua hội thoại |
 | `flag` với `value: false` | Trong objective/fact: `undefined !== false` nên **không bao giờ đúng** nếu chưa có `setFlag false`. Trong hội thoại: flag chưa đặt được coi là `false` | Không dùng `value: false` ngoài điều kiện node/choice hội thoại |
 | Fact | Tự mở ngay khi `unlockCondition` đúng sau bất kỳ batch nào; `unlockFact` chỉ là cổng phụ | Viết `unlockCondition` chính xác; fact phải có nguồn (`sourceEvidenceIds`/`sourceDialogueIds`) |

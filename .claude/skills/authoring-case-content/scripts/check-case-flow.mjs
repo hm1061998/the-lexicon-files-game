@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Static playthrough simulator for a Lexicon Files case (no dependencies).
 // Mirrors game-core semantics (applyEffects, reconcileDialogueProgress, dialogueRunner,
-// submitContradiction, submitAccusation) as of 2026-10-02 and explores every action a
+// submitContradiction, submitAccusation) as of 2026-10-02 (commit 4ffcd3b) and explores every action a
 // player could take, monotonically, until nothing new happens.
 //
 // Usage: node .claude/skills/authoring-case-content/scripts/check-case-flow.mjs <case-id> [--json] [--cases-dir <dir>]
@@ -231,13 +231,18 @@ do {
     if (state.ev.has(t.evidenceId)) nonDialogueAction(t.correctEffects ?? [], `listening:${t.id}`);
   for (const c of def.contradictions)
     if (!state.contra.has(c.id) && c.factIds.every((f) => state.facts.has(f))) {
+      // submitContradiction reconciles before and after its batch (game-core, commit 4ffcd3b).
+      reconcile();
       if (
-        nonDialogueAction(
+        applyBatch(
           [{ type: 'setFlag', key: 'david_contradiction_found', value: true }, { type: 'completeObjective', objectiveId: c.objectiveId }],
           `contradiction:${c.id}`,
         )
-      )
-        (state.contra.add(c.id), (changed = true));
+      ) {
+        state.contra.add(c.id);
+        changed = true;
+        reconcile();
+      }
     }
   for (const ev of kase.timeline?.events ?? [])
     if (!state.timeline.has(ev.id) && (ev.availability.type === 'availableFromStart' || ev.availability.factIds.every((f) => state.facts.has(f))))
