@@ -1,6 +1,6 @@
 # Vỏ ngoài game: tiêu đề, chọn hồ sơ, các bước phụ, tạm dừng, briefing, tổng kết
 
-Ngày: 02/10/2026. Trạng thái: **chờ người dùng duyệt spec**. Plan: chưa viết. Chưa sửa code.
+Ngày: 02/10/2026. Trạng thái: **đã duyệt (02/10/2026)**. Plan: `docs/superpowers/plans/2026-10-02-ui-shell.md`. Chưa sửa code.
 
 Phân loại theo `brainstorming`: **architectural** — thêm primitive dùng chung trong `packages/ui`, thêm texture sinh bằng code, đổi trình bày của chín màn ngoài lúc chơi. Sau khi spec được duyệt mới chuyển sang `writing-plans`.
 
