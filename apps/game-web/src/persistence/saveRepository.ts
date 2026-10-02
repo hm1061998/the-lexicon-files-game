@@ -42,6 +42,7 @@ export type SaveRepository = {
   loadSave(caseId: string, definition: CaseDefinition): Promise<LoadSaveResult>;
   saveGameState(state: GameState, activeSceneId: string): Promise<void>;
   createFreshSaveAfterConfirmation(caseId: string, definition: CaseDefinition): Promise<GameState>;
+  startNewCase(caseId: string, definition: CaseDefinition): Promise<GameState>;
 };
 
 const DATABASE_NAME = 'lexicon-game-saves';
@@ -154,6 +155,25 @@ export function createSaveRepository(
       const activeSceneId = definition.scenes.find(({ id }) => id === 'main_office')?.id;
       if (!activeSceneId) throw new Error('Default scene "main_office" is missing from case');
       await this.saveGameState(state, activeSceneId);
+      return state;
+    },
+    async startNewCase(caseId, definition) {
+      if (caseId !== definition.id) throw new Error('Save caseId does not match its definition');
+      const state = createCaseState(definition);
+      const activeSceneId = definition.scenes.find(({ id }) => id === 'main_office')?.id;
+      if (!activeSceneId) throw new Error('Default scene "main_office" is missing from case');
+      const database = await openDatabase();
+      const existing = await database.getSave(caseId);
+      if (existing !== undefined) {
+        await database.addBackup({ caseId, createdAt: Date.now(), raw: existing });
+      }
+      await database.putSave({
+        schemaVersion: CURRENT_SAVE_SCHEMA_VERSION,
+        caseId: state.caseId,
+        activeSceneId,
+        state,
+        updatedAt: Date.now(),
+      });
       return state;
     },
   };

@@ -280,4 +280,69 @@ describe('saveRepository', () => {
       repository.saveGameState(createCaseState(definition), 'main_office'),
     ).rejects.toThrow('IndexedDB unavailable');
   });
+
+  describe('startNewCase', () => {
+    function recording() {
+      const calls: string[] = [];
+      const db = new MemorySaveDatabase();
+      const wrapped: SaveDatabase = {
+        async getSave(id) {
+          calls.push('getSave');
+          return db.getSave(id);
+        },
+        async putSave(record) {
+          calls.push('putSave');
+          return db.putSave(record);
+        },
+        async addBackup(backup) {
+          calls.push('addBackup');
+          return db.addBackup(backup);
+        },
+      };
+      return { calls, db, wrapped };
+    }
+    const definition = loadCaseDefinition('case-001');
+
+    it('backs up the existing save before writing the new state', async () => {
+      const { calls, db, wrapped } = recording();
+      const previous = { schemaVersion: 4, caseId: definition.id, marker: 'old' };
+      db.saves.set(definition.id, previous);
+      const repository = createSaveRepository(async () => wrapped);
+      const state = await repository.startNewCase(definition.id, definition);
+      expect(calls).toEqual(['getSave', 'addBackup', 'putSave']);
+      expect(db.backups[0]?.raw).toBe(previous);
+      expect(state).toEqual(createCaseState(definition));
+      expect(db.saves.get(definition.id)).toMatchObject({ schemaVersion: 4, state });
+    });
+
+    it('does not back up when there is no previous save', async () => {
+      const { calls, wrapped } = recording();
+      const repository = createSaveRepository(async () => wrapped);
+      await repository.startNewCase(definition.id, definition);
+      expect(calls).toEqual(['getSave', 'putSave']);
+    });
+
+    it('rejects without writing when the backup fails', async () => {
+      const { calls, db, wrapped } = recording();
+      const previous = { schemaVersion: 4, caseId: definition.id };
+      db.saves.set(definition.id, previous);
+      wrapped.addBackup = async () => {
+        calls.push('addBackup');
+        throw new Error('quota');
+      };
+      const repository = createSaveRepository(async () => wrapped);
+      await expect(repository.startNewCase(definition.id, definition)).rejects.toThrow('quota');
+      expect(calls).toEqual(['getSave', 'addBackup']);
+      expect(db.saves.get(definition.id)).toBe(previous);
+    });
+
+    it('rejects a case id that does not match the definition', async () => {
+      const { calls, wrapped } = recording();
+      const repository = createSaveRepository(async () => wrapped);
+      await expect(repository.startNewCase('case-999', definition)).rejects.toThrow(
+        'does not match',
+      );
+      expect(calls).toEqual([]);
+    });
+  });
 });
