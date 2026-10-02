@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { loadCaseDefinition } from '@lexicon/game-content';
 import { createCaseState } from '../case/createCaseState';
+import { reconcileDialogueProgress } from '../dialogue/reconcileDialogueProgress';
 import { submitContradiction } from './submitContradiction';
 
 const definition = loadCaseDefinition('case-001');
@@ -128,6 +129,41 @@ describe('submitContradiction', () => {
       correct: true,
       state: first.state,
       events: [],
+    });
+  });
+
+  it('unlocks objectives that depend on the completed comparison without another dialogue', () => {
+    const second = loadCaseDefinition('case-002');
+    const facts = [
+      'leo_statement_at_desk_all_afternoon',
+      'leo_entry_16_40',
+      'leo_blames_anna_wrong_number',
+      'label_reprinted_16_44',
+    ];
+    // As in play: the facts were learned in dialogue and evidence, and the last dialogue reconciled.
+    const reconciled = reconcileDialogueProgress(second, {
+      ...createCaseState(second),
+      discoveredFactIds: facts,
+    });
+    if (!reconciled.ok) throw new Error('reconcile failed');
+    const start = reconciled.state;
+    expect(start.objectiveStatuses.compare_leo_desk_statement).toBe('active');
+    expect(start.objectiveStatuses.submit_your_conclusion).toBe('locked');
+
+    const first = submitContradiction(second, start, 'leo_desk_vs_access_log', facts.slice(0, 2));
+    if (!first.ok) throw new Error('first comparison failed');
+    expect(first.state.objectiveStatuses.submit_your_conclusion).toBe('locked');
+    const done = submitContradiction(second, first.state, 'leo_blame_vs_label_log', facts.slice(2));
+    if (!done.ok) throw new Error('second comparison failed');
+
+    expect(done.state.objectiveStatuses).toMatchObject({
+      compare_leo_desk_statement: 'completed',
+      compare_leo_blame_statement: 'completed',
+      submit_your_conclusion: 'active',
+    });
+    expect(done.events).toContainEqual({
+      type: 'objectiveActivated',
+      objectiveId: 'submit_your_conclusion',
     });
   });
 });

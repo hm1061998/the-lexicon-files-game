@@ -5,6 +5,7 @@ import type { InvestigationLearningProps } from '../investigation/RecordedStatem
 import type { DeductionUi, DeductionUiAction } from './deductionUiReducer';
 import { ChoicePages } from '../investigation/pagination/ChoicePages';
 import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
+import { pickContradiction } from './pickContradiction';
 export function ContradictionWorkspace({
   view,
   learning,
@@ -91,13 +92,14 @@ export function ContradictionWorkspace({
         >
           {s.deductionClearSelection}
         </button>
-        {view.availableContradictions.map((c) => (
+        {view.availableContradictions.length > 0 ? (
           <button
             type="button"
-            key={c.id}
             disabled={selected.length !== 2}
             onClick={() => {
-              const r = onSubmit(c.id, ui.selectedFactIds);
+              const target = pickContradiction(view.availableContradictions, ui.selectedFactIds);
+              if (!target) return;
+              const r = onSubmit(target.id, ui.selectedFactIds);
               if (r.ok && r.correct) dispatch({ type: 'clearFacts' });
               dispatch({
                 type: 'setFeedback',
@@ -111,7 +113,7 @@ export function ContradictionWorkspace({
           >
             {s.contradictionSubmit}
           </button>
-        ))}
+        ) : null}
       </footer>
     </section>
   );

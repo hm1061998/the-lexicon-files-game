@@ -52,7 +52,7 @@ export function selectInvestigationView(definition: CaseDefinition, state: GameS
         !state.contradictionIds.includes(c.id) &&
         c.factIds.every((id) => state.discoveredFactIds.includes(id)),
     )
-    .map(({ id }) => ({ id }));
+    .map(({ id, factIds }) => ({ id, factIds }));
   const confirmedContradictions = definition.contradictions.filter((c) =>
     state.contradictionIds.includes(c.id),
   );

@@ -1,5 +1,6 @@
 import type { CaseDefinition, ContradictionResult, GameState } from '@lexicon/shared-types';
 import { applyEffects } from '../effect/applyEffects';
+import { reconcileDialogueProgress } from '../dialogue/reconcileDialogueProgress';
 
 export function submitContradiction(
   definition: CaseDefinition,
@@ -45,10 +46,15 @@ export function submitContradiction(
   ]);
   if (!applied.ok) return { ok: false, state, error: applied.error };
 
+  // A finished comparison can be the last thing an objective was waiting for (for example the
+  // conclusion). Objective activation is otherwise reconciled only after dialogue choices.
+  const reconciled = reconcileDialogueProgress(definition, applied.state);
+  if (!reconciled.ok) return { ok: false, state, error: reconciled.error };
+
   return {
     ok: true,
     correct: true,
-    state: { ...applied.state, contradictionIds: [...state.contradictionIds, contradictionId] },
-    events: applied.events,
+    state: { ...reconciled.state, contradictionIds: [...state.contradictionIds, contradictionId] },
+    events: [...applied.events, ...reconciled.events],
   };
 }
