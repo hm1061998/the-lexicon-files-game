@@ -1,11 +1,59 @@
 import { describe, expect, it, vi } from 'vitest';
-import { loadCaseDefinition } from '../loader/loadCaseDefinition';
+import { loadCaseDefinition, REGISTERED_CASE_IDS } from '../loader/loadCaseDefinition';
+import type { Condition } from '@lexicon/shared-types';
 import { validateRegisteredContent } from './validateRegisteredContent';
-const registry = vi.hoisted(() => ({ ids: ['case-001'] }));
-vi.mock('../loader/loadCaseDefinition', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../loader/loadCaseDefinition')>()),
-  REGISTERED_CASE_IDS: registry.ids,
-}));
+const registry = vi.hoisted(() => ({ ids: [] as string[] }));
+vi.mock('../loader/loadCaseDefinition', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../loader/loadCaseDefinition')>();
+  registry.ids.push(...original.REGISTERED_CASE_IDS);
+  return { ...original, REGISTERED_CASE_IDS: registry.ids };
+});
+
+function leaves(condition: Condition): readonly Condition[] {
+  return condition.type === 'all' || condition.type === 'any'
+    ? condition.conditions.flatMap(leaves)
+    : [condition];
+}
+
+describe.each(REGISTERED_CASE_IDS)('registered case %s invariants', (caseId) => {
+  it('references real facts from evidence and timeline availability', () => {
+    const definition = loadCaseDefinition(caseId);
+    const factIds = definition.facts.map(({ id }) => id);
+    for (const evidence of definition.evidences)
+      for (const id of evidence.relatedFactIds) expect(factIds).toContain(id);
+    for (const event of definition.timeline.events)
+      if (event.availability.type === 'requiresFacts')
+        for (const id of event.availability.factIds) expect(factIds).toContain(id);
+  });
+
+  it('names a suspect as the correct conclusion and gives every scene a default spawn', () => {
+    const definition = loadCaseDefinition(caseId);
+    expect(definition.conclusion?.suspectNpcIds).toContain(definition.conclusion?.correctSuspectNpcId);
+    for (const scene of definition.scenes) expect(scene.spawnPoints.default).toBeDefined();
+  });
+
+  it('pairs two distinct facts unlocked by an authored evidence or dialogue', () => {
+    const definition = loadCaseDefinition(caseId);
+    for (const contradiction of definition.contradictions) {
+      expect(contradiction.factIds).toHaveLength(2);
+      expect(new Set(contradiction.factIds).size).toBe(2);
+      for (const id of contradiction.factIds) {
+        const fact = definition.facts.find((item) => item.id === id)!;
+        expect(fact).toBeDefined();
+        const trees = definition.dialogues.filter((tree) => fact.sourceDialogueIds?.includes(tree.id));
+        const effects = trees.flatMap((tree) => tree.nodes.flatMap((node) => [
+          ...(node.effects ?? []), ...node.choices.flatMap((choice) => choice.effects ?? []),
+        ]));
+        expect(leaves(fact.unlockCondition).some((condition) =>
+          (condition.type === 'hasEvidence' && fact.sourceEvidenceIds.includes(condition.evidenceId)
+            && definition.evidences.some((evidence) => evidence.id === condition.evidenceId))
+          || (condition.type === 'flag' && condition.value && effects.some((effect) =>
+            effect.type === 'setFlag' && effect.key === condition.key && effect.value)),
+        ), `${id} must have a source that unlocks it`).toBe(true);
+      }
+    }
+  });
+});
 describe('registered dialogue content', () => {
   it('rejects two cases flagged recommendedForNewPlayers', () => {
     const definition = loadCaseDefinition('case-001');

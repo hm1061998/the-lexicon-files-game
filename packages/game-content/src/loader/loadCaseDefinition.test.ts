@@ -1,8 +1,71 @@
 import { describe, expect, it } from 'vitest';
 import { ContentValidationError } from './ContentValidationError';
-import { loadCaseDefinition } from './loadCaseDefinition';
+import { loadCaseDefinition, REGISTERED_CASE_IDS } from './loadCaseDefinition';
+import { loadSceneDefinition } from './loadScene';
 
 describe('loadCaseDefinition', () => {
+  it('loads case-002 with three scenes, six evidences, two contradictions and no listening tasks', () => {
+    const definition = loadCaseDefinition('case-002');
+    expect(definition.scenes.map(({ id }) => id)).toEqual(['main_office', 'mail_room', 'reception']);
+    expect(definition.evidences).toHaveLength(6);
+    expect(definition.contradictions).toHaveLength(2);
+    expect(definition.listeningTasks).toEqual([]);
+    expect(definition.npcs.map(({ dialogueTreeId }) => dialogueTreeId)).toEqual([
+      'anna_delivery', 'leo_delivery', 'david_delivery',
+    ]);
+    for (const scene of definition.scenes)
+      expect(loadSceneDefinition('case-002', scene.id)).toEqual(scene);
+  });
+
+  it('registers both cases', () => {
+    expect(REGISTERED_CASE_IDS).toEqual(['case-001', 'case-002']);
+  });
+
+  it('case-002 has no audio and no dialogue voice', () => {
+    const definition = loadCaseDefinition('case-002');
+    expect(definition.audio).toBeUndefined();
+    for (const node of definition.dialogues.flatMap(({ nodes }) => nodes))
+      expect(node.audio).toBeUndefined();
+  });
+
+  it('gates Leo confrontation on the access log and his earlier desk statement', () => {
+    const tree = loadCaseDefinition('case-002').dialogues.find(({ id }) => id === 'leo_delivery')!;
+    const blame = tree.nodes.find((node) => node.effects?.some((effect) =>
+      effect.type === 'setFlag' && effect.key === 'leo_blame_statement_read' && effect.value,
+    ))!;
+    const gate = { type: 'all', conditions: [
+      { type: 'hasEvidence', evidenceId: 'mailroom_access_log' },
+      { type: 'flag', key: 'leo_desk_statement_read', value: true },
+    ] };
+    expect(blame.condition).toEqual(gate);
+    const challenge = tree.nodes.flatMap(({ choices }) => choices)
+      .find(({ nextNodeId }) => nextNodeId === blame.id)!;
+    expect(challenge.condition).toEqual(gate);
+    expect(tree.notebookStatements).toContainEqual({ nodeId: blame.id,
+      recordedCondition: { type: 'flag', key: 'leo_blame_statement_read', value: true } });
+  });
+
+  it('records Anna and David statements and gates Anna confirmation on the chat', () => {
+    const definition = loadCaseDefinition('case-002');
+    for (const [treeId, flag] of [['anna_delivery', 'anna_address_checked_read'],
+      ['david_delivery', 'david_early_request_read']]) {
+      const tree = definition.dialogues.find(({ id }) => id === treeId)!;
+      const node = tree.nodes.find((item) => item.effects?.some((effect) =>
+        effect.type === 'setFlag' && effect.key === flag && effect.value,
+      ))!;
+      expect(node).toBeDefined();
+      expect(tree.notebookStatements).toContainEqual({ nodeId: node.id,
+        recordedCondition: { type: 'flag', key: flag, value: true } });
+    }
+    const anna = definition.dialogues.find(({ id }) => id === 'anna_delivery')!;
+    const gated = anna.nodes.find((node) => node.condition?.type === 'hasEvidence'
+      && node.condition.evidenceId === 'chat_messages')!;
+    expect(gated).toBeDefined();
+    expect(gated.text).toContain('14 Bridge Street');
+    expect(anna.nodes.flatMap(({ choices }) => choices).find(({ nextNodeId }) => nextNodeId === gated.id)?.condition)
+      .toEqual({ type: 'hasEvidence', evidenceId: 'chat_messages' });
+  });
+
   it('loads the minimal case, including its scene, evidence, fact, and objective', () => {
     const definition = loadCaseDefinition('case-001');
     expect(definition.scenes.map((scene) => scene.id)).toEqual(['main_office', 'archive']);

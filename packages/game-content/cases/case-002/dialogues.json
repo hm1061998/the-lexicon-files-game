@@ -1,0 +1,606 @@
+{
+  "dialogues": [
+    {
+      "id": "anna_delivery",
+      "npcId": "anna",
+      "entryNodeId": "entry",
+      "nodes": [
+        {
+          "id": "entry",
+          "speakerId": "anna",
+          "text": "I prepared the delivery for Harper & Co. What would you like to check?",
+          "translationVi": "Tôi chuẩn bị chuyến giao hàng cho Harper & Co. Bạn muốn kiểm tra điều gì?",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "check_address",
+              "text": "What address did you check at 16:10?",
+              "translationVi": "Bạn kiểm tra địa chỉ nào lúc 16:10?",
+              "nextNodeId": "checked_address"
+            },
+            {
+              "id": "ask_schedule",
+              "text": "What was the delivery schedule?",
+              "translationVi": "Lịch trình giao hàng thế nào?",
+              "nextNodeId": "delivery_schedule"
+            },
+            {
+              "id": "confirm_chat",
+              "text": "Your message says 14. Can you confirm that?",
+              "translationVi": "Tin nhắn của bạn ghi số 14. Bạn xác nhận được không?",
+              "nextNodeId": "chat_confirmation",
+              "condition": {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            }
+          ]
+        },
+        {
+          "id": "checked_address",
+          "speakerId": "anna",
+          "text": "I checked the address when I signed the package into the mail room at 16:10. It was 14 Bridge Street.",
+          "translationVi": "Tôi kiểm tra địa chỉ khi ký nhận gói hàng vào phòng thư lúc 16:10. Địa chỉ là 14 Bridge Street.",
+          "vocabularySpans": [
+            {
+              "start": 14,
+              "end": 21,
+              "vocabularyId": "address"
+            },
+            {
+              "start": 29,
+              "end": 35,
+              "vocabularyId": "sign"
+            },
+            {
+              "start": 40,
+              "end": 47,
+              "vocabularyId": "package"
+            }
+          ],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "anna_address_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "anna_address_checked_read",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "delivery_schedule",
+          "speakerId": "anna",
+          "text": "The courier was due at 17:00. The client needed the package before 17:30. It was urgent, so I checked the number carefully.",
+          "translationVi": "Người chuyển phát dự kiến đến lúc 17:00. Khách hàng cần gói hàng trước 17:30. Việc này gấp nên tôi kiểm tra số nhà cẩn thận.",
+          "vocabularySpans": [
+            {
+              "start": 4,
+              "end": 11,
+              "vocabularyId": "courier"
+            },
+            {
+              "start": 34,
+              "end": 40,
+              "vocabularyId": "client"
+            },
+            {
+              "start": 52,
+              "end": 59,
+              "vocabularyId": "package"
+            },
+            {
+              "start": 81,
+              "end": 87,
+              "vocabularyId": "urgent"
+            }
+          ],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "anna_schedule_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "anna_schedule_read",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "chat_confirmation",
+          "speakerId": "anna",
+          "text": "Yes, I confirmed 14 Bridge Street in the chat. Leo asked me to check the address, and I replied before the courier arrived.",
+          "translationVi": "Đúng, tôi xác nhận 14 Bridge Street trong tin nhắn. Leo nhờ tôi kiểm tra địa chỉ và tôi trả lời trước khi người chuyển phát đến.",
+          "vocabularySpans": [
+            {
+              "start": 73,
+              "end": 80,
+              "vocabularyId": "address"
+            },
+            {
+              "start": 107,
+              "end": 114,
+              "vocabularyId": "courier"
+            }
+          ],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "anna_chat_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "anna_chat_confirmation_read",
+              "value": true
+            }
+          ],
+          "condition": {
+            "type": "hasEvidence",
+            "evidenceId": "chat_messages"
+          }
+        }
+      ],
+      "completionFlag": "anna_interviewed",
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "anna_address_question_done",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "anna_schedule_question_done",
+            "value": true
+          }
+        ]
+      },
+      "notebookStatements": [
+        {
+          "nodeId": "checked_address",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "anna_address_checked_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "delivery_schedule",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "anna_schedule_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "chat_confirmation",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "anna_chat_confirmation_read",
+            "value": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "leo_delivery",
+      "npcId": "leo",
+      "entryNodeId": "entry",
+      "nodes": [
+        {
+          "id": "entry",
+          "speakerId": "leo",
+          "text": "I worked on the sample for this delivery. What do you want to know?",
+          "translationVi": "Tôi làm phần mẫu cho chuyến giao hàng này. Bạn muốn biết điều gì?",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "ask_whereabouts",
+              "text": "Where were you this afternoon?",
+              "translationVi": "Chiều nay bạn ở đâu?",
+              "nextNodeId": "desk_statement"
+            },
+            {
+              "id": "ask_work",
+              "text": "Was your sample ready for the client?",
+              "translationVi": "Phần mẫu của bạn đã sẵn sàng cho khách hàng chưa?",
+              "nextNodeId": "unfinished_sample"
+            },
+            {
+              "id": "challenge_log",
+              "text": "The access log shows you entered the mail room at 16:40. Why?",
+              "translationVi": "Nhật ký ghi bạn vào phòng thư lúc 16:40. Vì sao?",
+              "nextNodeId": "blame_anna",
+              "condition": {
+                "type": "all",
+                "conditions": [
+                  {
+                    "type": "hasEvidence",
+                    "evidenceId": "mailroom_access_log"
+                  },
+                  {
+                    "type": "flag",
+                    "key": "leo_desk_statement_read",
+                    "value": true
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "desk_statement",
+          "speakerId": "leo",
+          "text": "I was at my desk all afternoon. I did not go into the mail room.",
+          "translationVi": "Tôi ở bàn làm việc cả chiều. Tôi không vào phòng thư.",
+          "vocabularySpans": [],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "leo_whereabouts_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "leo_desk_statement_read",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "unfinished_sample",
+          "speakerId": "leo",
+          "text": "The client wanted the sample today. I still had some work to finish, but the courier schedule had already been agreed.",
+          "translationVi": "Khách hàng muốn phần mẫu trong hôm nay. Tôi vẫn còn việc phải làm cho xong, nhưng lịch trình chuyển phát đã được thống nhất.",
+          "vocabularySpans": [
+            {
+              "start": 4,
+              "end": 10,
+              "vocabularyId": "client"
+            },
+            {
+              "start": 77,
+              "end": 84,
+              "vocabularyId": "courier"
+            },
+            {
+              "start": 85,
+              "end": 93,
+              "vocabularyId": "schedule"
+            }
+          ],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "leo_work_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "leo_sample_read",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "blame_anna",
+          "speakerId": "leo",
+          "text": "All right, I went in briefly. Anna wrote the wrong house number on the label. The address was her responsibility.",
+          "translationVi": "Được rồi, tôi có vào một lúc. Anna viết sai số nhà trên nhãn. Địa chỉ là trách nhiệm của cô ấy.",
+          "vocabularySpans": [
+            {
+              "start": 71,
+              "end": 76,
+              "vocabularyId": "label"
+            },
+            {
+              "start": 82,
+              "end": 89,
+              "vocabularyId": "address"
+            }
+          ],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "leo_challenge_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "leo_blame_statement_read",
+              "value": true
+            }
+          ],
+          "condition": {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "flag",
+                "key": "leo_desk_statement_read",
+                "value": true
+              }
+            ]
+          }
+        }
+      ],
+      "completionFlag": "leo_interviewed",
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "leo_whereabouts_question_done",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "leo_work_question_done",
+            "value": true
+          }
+        ]
+      },
+      "notebookStatements": [
+        {
+          "nodeId": "desk_statement",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "leo_desk_statement_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "unfinished_sample",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "leo_sample_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "blame_anna",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "leo_blame_statement_read",
+            "value": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "david_delivery",
+      "npcId": "david",
+      "entryNodeId": "entry",
+      "nodes": [
+        {
+          "id": "entry",
+          "speakerId": "david",
+          "text": "I was at reception when we were waiting for the delivery. Please ask what you need.",
+          "translationVi": "Tôi ở quầy tiếp tân khi chúng tôi chờ chuyến giao hàng. Bạn cứ hỏi điều cần biết.",
+          "terminal": false,
+          "choices": [
+            {
+              "id": "ask_early",
+              "text": "When did you ask for the package?",
+              "translationVi": "Bạn hỏi lấy gói hàng lúc nào?",
+              "nextNodeId": "early_request"
+            },
+            {
+              "id": "ask_reason",
+              "text": "Why did you want it early?",
+              "translationVi": "Vì sao bạn muốn lấy sớm?",
+              "nextNodeId": "request_reason"
+            }
+          ]
+        },
+        {
+          "id": "early_request",
+          "speakerId": "david",
+          "text": "I asked for the package early, at 16:25. Anna told me to wait for the courier at 17:00. I stayed at reception; I did not enter the mail room.",
+          "translationVi": "Tôi hỏi lấy gói hàng sớm, lúc 16:25. Anna bảo tôi chờ người chuyển phát đến lúc 17:00. Tôi ở quầy tiếp tân, không vào phòng thư.",
+          "vocabularySpans": [
+            {
+              "start": 16,
+              "end": 23,
+              "vocabularyId": "package"
+            },
+            {
+              "start": 24,
+              "end": 29,
+              "vocabularyId": "early"
+            },
+            {
+              "start": 70,
+              "end": 77,
+              "vocabularyId": "courier"
+            }
+          ],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "david_request_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "david_early_request_read",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "request_reason",
+          "speakerId": "david",
+          "text": "It was an urgent delivery for the client. I wanted to check that the package was ready. I waited instead of changing the schedule.",
+          "translationVi": "Đó là chuyến giao hàng gấp cho khách hàng. Tôi muốn kiểm tra gói hàng đã sẵn sàng. Tôi chờ thay vì đổi lịch trình.",
+          "vocabularySpans": [
+            {
+              "start": 10,
+              "end": 16,
+              "vocabularyId": "urgent"
+            },
+            {
+              "start": 34,
+              "end": 40,
+              "vocabularyId": "client"
+            },
+            {
+              "start": 69,
+              "end": 76,
+              "vocabularyId": "package"
+            },
+            {
+              "start": 121,
+              "end": 129,
+              "vocabularyId": "schedule"
+            }
+          ],
+          "terminal": false,
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Continue asking",
+              "translationVi": "Tiếp tục hỏi",
+              "nextNodeId": "entry",
+              "effects": [
+                {
+                  "type": "setFlag",
+                  "key": "david_reason_question_done",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "david_request_reason_read",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "completionFlag": "david_interviewed",
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "david_request_question_done",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "david_reason_question_done",
+            "value": true
+          }
+        ]
+      },
+      "notebookStatements": [
+        {
+          "nodeId": "early_request",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_early_request_read",
+            "value": true
+          }
+        },
+        {
+          "nodeId": "request_reason",
+          "recordedCondition": {
+            "type": "flag",
+            "key": "david_request_reason_read",
+            "value": true
+          }
+        }
+      ]
+    }
+  ]
+}

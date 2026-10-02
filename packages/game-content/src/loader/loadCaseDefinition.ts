@@ -13,6 +13,18 @@ import case001Archive from '../../cases/case-001/scenes/archive.json';
 import case001Npcs from '../../cases/case-001/npcs.json';
 import case001Dialogues from '../../cases/case-001/dialogues.json';
 import case001Vocabulary from '../../cases/case-001/vocabulary.json';
+import case002 from '../../cases/case-002/case.json';
+import case002Objectives from '../../cases/case-002/objectives.json';
+import case002Evidences from '../../cases/case-002/evidences.json';
+import case002Facts from '../../cases/case-002/facts.json';
+import case002Contradictions from '../../cases/case-002/contradictions.json';
+import case002ListeningTasks from '../../cases/case-002/listening-tasks.json';
+import case002Npcs from '../../cases/case-002/npcs.json';
+import case002Dialogues from '../../cases/case-002/dialogues.json';
+import case002Vocabulary from '../../cases/case-002/vocabulary.json';
+import case002MainOffice from '../../cases/case-002/scenes/main_office.json';
+import case002MailRoom from '../../cases/case-002/scenes/mail_room.json';
+import case002Reception from '../../cases/case-002/scenes/reception.json';
 
 type RegisteredCase = {
   case: unknown;
@@ -39,6 +51,18 @@ const caseRegistry: Record<string, RegisteredCase> = {
     dialogues: case001Dialogues,
     vocabulary: case001Vocabulary,
     scenes: [case001MainOffice, case001Archive],
+  },
+  'case-002': {
+    case: case002,
+    objectives: case002Objectives,
+    evidences: case002Evidences,
+    facts: case002Facts,
+    contradictions: case002Contradictions,
+    listeningTasks: case002ListeningTasks,
+    npcs: case002Npcs,
+    dialogues: case002Dialogues,
+    vocabulary: case002Vocabulary,
+    scenes: [case002MainOffice, case002MailRoom, case002Reception],
   },
 };
 

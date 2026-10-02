@@ -1,0 +1,22 @@
+{
+  "npcs": [
+    {
+      "id": "anna",
+      "name": "Anna Reed",
+      "role": "Project Coordinator",
+      "dialogueTreeId": "anna_delivery"
+    },
+    {
+      "id": "leo",
+      "name": "Leo Tran",
+      "role": "Operations Analyst",
+      "dialogueTreeId": "leo_delivery"
+    },
+    {
+      "id": "david",
+      "name": "David Cole",
+      "role": "Office Manager",
+      "dialogueTreeId": "david_delivery"
+    }
+  ]
+}
