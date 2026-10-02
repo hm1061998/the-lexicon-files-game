@@ -54,3 +54,23 @@ Ngày: 02/10/2026. Plan: `docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 - Sáu cổng (5 scene JSON) dời vào đúng giữa `opening` của tường ngoài, `portal.style: 'arch'`; điểm tương tác 0,75 ô vào trong phòng; footprint 0,25 ô (bằng bề dày tường) × bề dài opening; spawn `from_*` về u 1,5 / 14,5.
 - Validator `validatePortalPlacement` chạy trong `validateSceneGeometry`; cả hai case qua; `check-case-flow` cả hai case `closable=true`.
 - Lệch plan có ghi: veil 128×256 (plan ghi 192) vì vòm cao hơn nhân vật sau phép nghiêng 2:1; footprint 0,25 thay vì 0,3 để nằm trong bề dày tường.
+
+## Task 9 — kiểm chứng cuối
+
+### FPS (GL phần mềm, `main_office` đứng yên, 3 lượt × 5 giây)
+
+| Mốc | FPS |
+| --- | --- |
+| Baseline đo đầu phiên (Task 0) | 12,1 (máy ít tải) |
+| Cùng commit baseline `4643bd2`, đo lại ngay trước/sau khi hoàn thành | 8,9 |
+| Sau Task 8 (`6213a5d`) | 8,9 |
+| Các commit T1, T3, T4, T6, T7 | 8,9–9,1 |
+
+Chênh 12,1 → 8,9 là do tải máy, không do thay đổi: cùng commit baseline đo lại cũng 8,9, và mọi commit trung gian nằm trong 8,9–9,1. Kết luận: không giảm > 10% so với baseline cùng điều kiện; không cần thay veil bằng frame tĩnh (R-3). Thử tắt riêng `filter` của HUD, ẩn HUD và ẩn lớp giấy: không đổi FPS (9,0–9,4).
+
+### Definition of Done
+
+- `npm run lint`, `npm run test` (669 test game-web, 276 content, 59 game-core, 34 ui…), `npm run build`, `npm run typecheck`, `npm run format:check`, `npm run memory:check`: PASS.
+- `python -m pytest tools/art-codegen -q`: 61 pass, 1 đỏ có sẵn (`test_chair_directions`, đỏ giống hệt ở `0750ce6`).
+- `npm run test:e2e` đầy đủ: 181 pass, 20 đỏ. Đỏ có sẵn ở baseline Task 0 (19 test): 17 còn đỏ, 2 đã xanh nhờ cập nhật dải phím (`hud.spec` chrome và compact). Ba test đỏ mới trong lần chạy đầy đủ: `world.spec` WASD (flake, xanh khi chạy riêng), `listening` ghi âm (vượt 30 giây mặc định do khởi động chậm hơn: thêm `test.setTimeout(90s)`), `notebook-people` 760 (font Literata đẩy lời khai sang trang 2: tìm từ vựng theo trang). Cả ba xanh sau sửa.
+- Danh sách đỏ có sẵn còn lại: `feedback-audio`, `feedback-navigation(-review)` ×3, `feedback-ui-controls`, `feedback-viewport` ×5, `hud` (collecting evidence, reload, storage warning, minimap narrow), `learning`, `notebook-people` (vocabulary context), `settings` (V1 translation).
