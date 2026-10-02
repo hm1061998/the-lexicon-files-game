@@ -58,4 +58,28 @@ describe('CaseSummaryScreen', () => {
     expect(html).toContain(strings.keyContradictionMissing);
     expect(html).toContain(strings.listeningTaskIncomplete);
   });
+
+  it('is a paper modal sheet whose dialog is named by the case title', () => {
+    const html = render(report);
+    const labelled = /aria-labelledby="([^"]+)"/.exec(html)?.[1];
+    expect(labelled).toBeTruthy();
+    expect(html).toMatch(new RegExp(`id="${labelled}"[^>]*>The Missing Report<`));
+    expect(html).toContain('modal-sheet');
+    expect(html).toContain('case-summary');
+    expect(html).not.toContain('paper-panel');
+    expect(html).toContain('tabindex="-1"');
+  });
+
+  it('stamps CASE CLOSED in the one red stamp, with the stamp-down animation', () => {
+    const html = render(report);
+    expect(html.match(/stamp--red/g)).toHaveLength(1);
+    expect(html).toMatch(
+      /class="stamp stamp--red stamp--animate[^"]*"[^>]*role="status"|role="status"[^>]*class="stamp stamp--red stamp--animate/,
+    );
+    expect(html).toContain(strings.caseClosed);
+  });
+
+  it('has no score, rank or countdown wording', () => {
+    expect(render(report)).not.toMatch(/điểm số|xếp hạng|đếm ngược|score|rank|timer/i);
+  });
 });
