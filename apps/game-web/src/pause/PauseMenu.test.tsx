@@ -30,4 +30,14 @@ describe('PauseMenu settings', () => {
     expect(html).toContain(strings.settingsReducedMotion);
     expect(html).toContain(strings.vocabularyModeBeginner);
   });
+  it('shows the how-to button only when a handler is given', () => {
+    const render = (onOpenHowTo?: () => void) =>
+      renderToString(
+        <SettingsStoreProvider store={store}>
+          <PauseMenu strings={strings} onResume={() => undefined} onOpenHowTo={onOpenHowTo} />
+        </SettingsStoreProvider>,
+      );
+    expect(render(() => undefined)).toContain(strings.pauseHowTo);
+    expect(render()).not.toContain(strings.pauseHowTo);
+  });
 });
