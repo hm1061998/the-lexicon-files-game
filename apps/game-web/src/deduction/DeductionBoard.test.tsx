@@ -31,6 +31,7 @@ describe('DeductionBoard disclosure', () => {
     const html = renderToStaticMarkup(
       <DeductionBoard
         {...props}
+        initialFace="compare"
         caseState={{ ...state, discoveredFactIds: definition.facts.map((f) => f.id) }}
       />,
     );
@@ -44,6 +45,7 @@ describe('DeductionBoard disclosure', () => {
     const html = renderToStaticMarkup(
       <DeductionBoard
         {...props}
+        initialFace="compare"
         caseState={{
           ...state,
           contradictionIds: [c.id],
@@ -55,6 +57,7 @@ describe('DeductionBoard disclosure', () => {
       />,
     );
     expect(html).toContain(c.explanation);
-    expect(html).toContain(strings.conclusionSubmit);
+    const conclusion=renderToStaticMarkup(<DeductionBoard {...props} initialFace="conclusion" caseState={{...state,objectiveStatuses:{...state.objectiveStatuses,[definition.conclusion!.objectiveId]:'active'}}}/>);
+    expect(conclusion).toContain(strings.conclusionSubmit);
   });
 });

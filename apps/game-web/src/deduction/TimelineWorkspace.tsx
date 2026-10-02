@@ -1,95 +1,10 @@
-import { useState } from 'react';
-import type { CaseDefinition, TimelinePlacementResult, UiStrings } from '@lexicon/shared-types';
-import type { InvestigationView } from '../investigation/selectInvestigationView';
-export function TimelineWorkspace({
-  definition,
-  view,
-  strings,
-  onPlace,
-}: {
-  definition: CaseDefinition;
-  view: InvestigationView;
-  strings: UiStrings;
-  onPlace: (eventId: string, slotId: string) => TimelinePlacementResult;
-}) {
-  const [eventId, setEventId] = useState<string | null>(null);
-  const [slotId, setSlotId] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState('');
-  return (
-    <section className="timeline-workspace">
-      <h3>{strings.timeline}</h3>
-      <p>{strings.timelineSelectEvent}</p>
-      <div className="deduction-choices">
-        {view.availableEvents.map((e) => (
-          <button
-            type="button"
-            key={e.id}
-            aria-pressed={eventId === e.id}
-            onClick={() => {
-              setEventId(e.id);
-              setFeedback('');
-            }}
-          >
-            {e.text}
-            <small>{e.source}</small>
-          </button>
-        ))}
-      </div>
-      {view.availableEvents.length === 0 && <p>{strings.timelineEmpty}</p>}
-      {eventId && (
-        <>
-          <p>{strings.timelineSelectSlot}</p>
-          <div className="deduction-choices">
-            {definition.timeline.slots.map((s) => (
-              <button
-                type="button"
-                key={s.id}
-                aria-pressed={slotId === s.id}
-                onClick={() => {
-                  setSlotId(s.id);
-                  setFeedback('');
-                }}
-              >
-                {strings.timelineSlotLabel} {s.time}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            disabled={!slotId}
-            onClick={() => {
-              if (!slotId) return;
-              const result = onPlace(eventId, slotId);
-              setFeedback(
-                result.ok && result.correct
-                  ? strings.timelinePlaced
-                  : `${strings.timelineMismatch} ${strings.timelineMismatchHint}`,
-              );
-              if (result.ok && result.correct) {
-                setEventId(null);
-                setSlotId(null);
-              }
-            }}
-          >
-            {strings.timelinePlace}
-          </button>
-        </>
-      )}
-      <p className="notebook-feedback" role="status">
-        {feedback}
-      </p>
-      <ol className="timeline-recorded">
-        {view.placedEvents.map((e) => (
-          <li key={e.id}>
-            <time>{e.time}</time>
-            <div>
-              {e.text}
-              <small>{e.location}</small>
-            </div>
-            <span>{e.source}</span>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
+import {useState} from 'react';import type {CaseDefinition,TimelinePlacementResult} from '@lexicon/shared-types';import type {InvestigationView} from '../investigation/selectInvestigationView';import type {InvestigationLearningProps} from '../investigation/RecordedStatements';import type {DeductionUi,DeductionUiAction} from './deductionUiReducer';import {ChoicePages} from '../investigation/pagination/ChoicePages';import {ReadDocument,textBlock} from '../investigation/pagination/ReadDocument';
+export function TimelineWorkspace({definition,view,learning,ui,dispatch,onPlace}:{definition:CaseDefinition;view:InvestigationView;learning:InvestigationLearningProps;ui:DeductionUi;dispatch:(a:DeductionUiAction)=>void;onPlace:(eventId:string,slotId:string)=>TimelinePlacementResult}) {
+ const [step,setStep]=useState<'events'|'slots'|'confirm'|'recorded'|'feedback'>(ui.eventId?'slots':'events');const strings=learning.strings;const event=view.availableEvents.find(e=>e.id===ui.eventId),slot=definition.timeline.slots.find(s=>s.id===ui.slotId);
+ const current=step==='slots'&&!event?'events':step==='confirm'&&(!event||!slot)?'slots':step;
+ const recorded=view.placedEvents.flatMap(e=>[textBlock(e.id+':title',e.time+' — '+e.text),textBlock(e.id+':source',e.location+' · '+e.source)]);
+ const onSubmit=()=>{if(!event||!slot)return;const r=onPlace(event.id,slot.id);if(r.ok&&r.correct)dispatch({type:'selectEvent',id:null});dispatch({type:'setFeedback',text:r.ok&&r.correct?strings.timelinePlaced:strings.timelineMismatch+' '+strings.timelineMismatchHint});setStep('feedback');};
+ return <section className="timeline-workspace paginated-workspace"><nav className="workspace-steps"><button type="button" onClick={()=>setStep('events')}>{strings.timelineSelectEvent}</button><button type="button" disabled={!event} onClick={()=>setStep('slots')}>{strings.timelineSelectSlot}</button><button type="button" onClick={()=>setStep('recorded')}>{strings.investigationResults}</button></nav>
+ <div className="workspace-reading">{current==='events'?<ChoicePages choices={view.availableEvents.map(e=>({id:e.id,label:e.text,secondary:e.source}))} selected={ui.eventId?[ui.eventId]:[]} strings={strings} label={strings.timelineSelectEvent} anchor={ui.anchors.events} onAnchorChange={a=>dispatch({type:'anchor',key:'events',anchor:a})} onSelect={id=>{dispatch({type:'selectEvent',id});setStep('slots');}}/>:current==='slots'?<ChoicePages choices={definition.timeline.slots.map(s=>({id:s.id,label:strings.timelineSlotLabel+' '+s.time}))} selected={ui.slotId?[ui.slotId]:[]} strings={strings} label={strings.timelineSelectSlot} onSelect={id=>{dispatch({type:'selectSlot',id});setStep('confirm');}}/>:current==='confirm'?<ReadDocument blocks={[textBlock('event:title',event!.text),textBlock('event:slot',strings.timelineSlotLabel+' '+slot!.time)]} learning={learning} label={strings.timelineConfirmSelection}/>:current==='recorded'?<ReadDocument blocks={recorded} learning={learning} label={strings.timeline} empty={<p>{strings.timelineEmpty}</p>}/>:<div className="notebook-feedback" role="status"><ReadDocument blocks={[textBlock('timeline:feedback',ui.feedback)]} learning={learning} label={strings.investigationResults}/></div>}</div>
+ {current==='confirm'&&<button type="button" className="workspace-submit" onClick={onSubmit}>{strings.timelinePlace}</button>}</section>;
 }
