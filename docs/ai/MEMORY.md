@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-03T00:30:00+07:00
+updated_at: 2026-10-02T17:45:00+07:00
 phase: case-002
 status: in_progress
-result_commit: 0ed6649
+result_commit: 4ffcd3b
 active_spec: docs/superpowers/specs/2026-10-02-case-002-design.md
 active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 ---
@@ -15,15 +15,15 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Current Phase
 
-- PR-03 Case #002 "The Wrong Delivery": spec đã duyệt (`3140dc0`), plan 9 task đã viết (`0ed6649`), chờ người dùng duyệt plan và chọn cách thực thi; chưa có code. PR-01 (onboarding) còn nợ kiểm chứng, không mở rộng.
+- PR-03 Case #002 "The Wrong Delivery": triển khai xong Task 1–9 trên `dev` (chưa push), plan hoàn tất; chờ người dùng duyệt kết quả và quyết định push. PR-01 (onboarding) còn nợ kiểm chứng, không mở rộng.
 
 ## Active Goal
 
-- Duyệt plan Case #002, chọn subagent-driven/Native (khuyến nghị subagent-driven), rồi thực thi theo thứ tự Task 1→9. Mục tiêu chính: bằng chứng tính tổng quát của engine, báo cáo `docs/ai/2026-10-02-case-002-engine-generality.md`.
+- Người dùng xem báo cáo `docs/ai/2026-10-02-case-002-engine-generality.md` (F-1…F-7, review độc lập) rồi quyết định push và việc tiếp theo (PR-04 chỉ sau khi duyệt PR-03).
 
 ## Current Status
 
-- Spec/plan commit cục bộ, chưa push (chờ người dùng). Plan phát hiện sớm F-1 (learning record kiểm tra theo catalogue một case → có thể backup+reset), F-2 (context id không gắn caseId), F-3 (khai báo `audio` ép voice cho mọi node NPC), F-4 (`DEFAULT_START`/`GameCanvas` một case). Onboarding: code xong, `onboarding.spec.ts` 8/8; full E2E 17 fail (~9 có sẵn ở baseline `08e115f`), báo cáo `docs/ai/2026-10-02-intro-onboarding-verification.md`.
+- Commit: picker/boot `0981ade`, fix deduction `be59dc1`, E2E `27b7da1`, fix reconcile + docs `4ffcd3b`. Engine phải sửa: F-1/F-2 (từ vựng toàn cục `loadAllVocabulary`), F-4 (`DEFAULT_START`, boot theo case), F-6 (một nút so sánh), F-7 (reconcile trong `submitContradiction`). Case #002 không `audio` (F-3, đã duyệt).
 
 ## Completed
 
@@ -34,7 +34,7 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## In Progress
 
-- Chờ xác nhận plan: (1) Case #002 không `audio` (không nhạc/voice), lệch spec §6.8; (2) sáu evidence. Nợ onboarding: phân loại fail E2E (`feedback-navigation(-review)`, `feedback-audio`) và review độc lập, gộp vào Task 8–9 nếu người dùng đồng ý.
+- Không có việc dở. Nợ có sẵn: `learning.spec.ts` và `notebook-people.spec.ts › reuses vocabulary context` đỏ do từ vựng bản tin (đã xác nhận đỏ ở `5de9eaf`), cùng nhóm `feedback-*` từ trước; chưa chạy full E2E.
 
 ## Active Decisions
 
@@ -47,7 +47,7 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 - Art lấy sprite/evidence repo, crop portrait4/5 và top-60% đã alpha-bound test cả ba đầu; fallback chỉ hiện nếu thiếu/lỗi ảnh. Không bịa metadata/IPA/audio/personal notes theo ảnh.
 - Node22.23.3/npm10.9.9 riêng tại .superpowers/runtime/node-v22.23.3-win-x64; đặt Path trước và NX_DAEMON=false. Dùng node .../node_modules/npm/bin/npx-cli.js nx khi wrapper npx.cmd không hoạt động; không đổi Node hệ thống.
 - Giữ apps/game-web/debug.log untracked; git add đường dẫn cụ thể. Skill Bash helpers thiếu basename/dirname dùng Python/PowerShell tương đương; mọi ruling/cost trong report.
-- Case #002 (PR-03): content-first, sửa engine chỉ khi vỡ (ngoài `difficulty`, `startSceneId`, bộ chọn case không khoá); art tái dùng, ảnh evidence sinh bằng code. Không tự push/merge; approval push cũ không áp dụng.
+- Case #002 (PR-03): content-first, sửa engine chỉ khi vỡ; ảnh evidence sinh bằng `tools/art-codegen/build_case002_evidence.py` (cần Pillow). Không tự push/merge. Git lock `.git/index.lock` mồ côi có thể xuất hiện trên mount Windows: kiểm tra không có tiến trình git rồi xóa.
 
 ## Blockers
 
@@ -55,10 +55,10 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Next Actions
 
-1. Người dùng duyệt plan Case #002 và chọn cách thực thi; xác nhận quyết định âm thanh.
-2. Thực thi Task 1→9 (`docs/superpowers/plans/2026-10-02-case-002.md`), ghi mọi thay đổi engine vào báo cáo trước khi commit.
-3. Task 9: DoD đầy đủ, một review độc lập, cập nhật `PR-03` ở product doc và memory.
-4. PR-02: tạm dừng polish notebook/board; PR-04 chỉ sau khi có báo cáo PR-03.
+1. Người dùng duyệt PR-03 và quyết định push `dev`.
+2. Đề xuất cho PR-04: reconcile objective sau `addEvidence`, namespace context id theo case, audio-codegen theo case, cờ `*_question_done` không phụ thuộc nút Continue.
+3. Tùy chọn: sửa nợ E2E (learning/notebook-people) bằng cập nhật kỳ vọng từ vựng bản tin.
+4. PR-02 vẫn tạm dừng.
 
 ## Verification
 
@@ -75,7 +75,7 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Latest Handoff
 
-- Case #002: dùng lại Anna/David/Leo, sự thật Leo đổi nhãn 14→41 Bridge Street; 3 scene (`main_office`, `mail_room`, `reception`), 6 evidence text, 2 contradiction, không listening, không audio. Bảng định danh nằm đầu plan. Onboarding: state máy title ở `game/GameCanvas.tsx` (`title/titleModel.ts`); Task 7 thêm stage `cases`. Mount Windows có CRLF còn HEAD là LF: `sed -i 's/$//'` trước `git add`.
+- Case #002 dùng lại Anna/Leo/David, sự thật Leo đổi nhãn 14→41 Bridge Street; 3 scene, 6 evidence, 2 contradiction, không listening/audio. Màn chọn case nằm trong `GameCanvas` (`selectedCaseId === null`), `CaseFlow` remount theo case. E2E: `case-002.spec.ts` 13 test + journey/onboarding #001 xanh; helper `chooseCase`, `saved(page, caseId)`. Mount Windows CRLF vs HEAD LF: dùng Python giữ newline khi sửa.
 
 ## Required Reading
 
