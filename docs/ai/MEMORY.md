@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T23:30:00+07:00
-phase: intro-onboarding
+updated_at: 2026-10-03T00:30:00+07:00
+phase: case-002
 status: in_progress
-result_commit: 79fa1c7
-active_spec: docs/superpowers/specs/2026-10-02-intro-onboarding-design.md
-active_plan: docs/superpowers/plans/2026-10-02-intro-onboarding.md
+result_commit: 0ed6649
+active_spec: docs/superpowers/specs/2026-10-02-case-002-design.md
+active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 ---
 
 ## Metadata
@@ -15,16 +15,15 @@ active_plan: docs/superpowers/plans/2026-10-02-intro-onboarding.md
 
 ## Current Phase
 
-- Gói intro + onboarding Case #001 (PR-01) đã code xong trên dev (9 commit `c648d4f`…`9c22d33`); còn thiếu full E2E và review độc lập.
+- PR-03 Case #002 "The Wrong Delivery": spec đã duyệt (`3140dc0`), plan 9 task đã viết (`0ed6649`), chờ người dùng duyệt plan và chọn cách thực thi; chưa có code. PR-01 (onboarding) còn nợ kiểm chứng, không mở rộng.
 
 ## Active Goal
 
-- Chốt kiểm chứng gói onboarding: chạy lại E2E các spec bị ảnh hưởng, phân biệt lỗi có sẵn với lỗi mới, rồi một review độc lập. Chưa mở phase mới.
+- Duyệt plan Case #002, chọn subagent-driven/Native (khuyến nghị subagent-driven), rồi thực thi theo thứ tự Task 1→9. Mục tiêu chính: bằng chứng tính tổng quát của engine, báo cáo `docs/ai/2026-10-02-case-002-engine-generality.md`.
 
 ## Current Status
 
-- Code + unit xong: lint 7 project, test (game-web 608), build, typecheck, prettier PASS. `onboarding.spec.ts` 8/8 (Chromium Linux). Full E2E dừng ~77/185 với 17 fail; ~9 đã fail sẵn ở baseline `08e115f`. Báo cáo: `docs/ai/2026-10-02-intro-onboarding-verification.md`.
-- Chưa push trước lượt này theo yêu cầu cũ; lượt này đã push theo yêu cầu người dùng.
+- Spec/plan commit cục bộ, chưa push (chờ người dùng). Plan phát hiện sớm F-1 (learning record kiểm tra theo catalogue một case → có thể backup+reset), F-2 (context id không gắn caseId), F-3 (khai báo `audio` ép voice cho mọi node NPC), F-4 (`DEFAULT_START`/`GameCanvas` một case). Onboarding: code xong, `onboarding.spec.ts` 8/8; full E2E 17 fail (~9 có sẵn ở baseline `08e115f`), báo cáo `docs/ai/2026-10-02-intro-onboarding-verification.md`.
 
 ## Completed
 
@@ -35,7 +34,7 @@ active_plan: docs/superpowers/plans/2026-10-02-intro-onboarding.md
 
 ## In Progress
 
-- Phân loại fail E2E còn lại (`feedback-navigation`, `feedback-navigation-review`, `feedback-audio` pass ở baseline); chạy các spec chưa chạy (dialogue, journey, timeline, notebook-*, learning, settings, listening, world, performance, viewport-focus).
+- Chờ xác nhận plan: (1) Case #002 không `audio` (không nhạc/voice), lệch spec §6.8; (2) sáu evidence. Nợ onboarding: phân loại fail E2E (`feedback-navigation(-review)`, `feedback-audio`) và review độc lập, gộp vào Task 8–9 nếu người dùng đồng ý.
 
 ## Active Decisions
 
@@ -48,7 +47,7 @@ active_plan: docs/superpowers/plans/2026-10-02-intro-onboarding.md
 - Art lấy sprite/evidence repo, crop portrait4/5 và top-60% đã alpha-bound test cả ba đầu; fallback chỉ hiện nếu thiếu/lỗi ảnh. Không bịa metadata/IPA/audio/personal notes theo ảnh.
 - Node22.23.3/npm10.9.9 riêng tại .superpowers/runtime/node-v22.23.3-win-x64; đặt Path trước và NX_DAEMON=false. Dùng node .../node_modules/npm/bin/npx-cli.js nx khi wrapper npx.cmd không hoạt động; không đổi Node hệ thống.
 - Giữ apps/game-web/debug.log untracked; git add đường dẫn cụ thể. Skill Bash helpers thiếu basename/dirname dùng Python/PowerShell tương đương; mọi ruling/cost trong report.
-- Authorization push People cũ chỉ cho b8e7fd8 → e08ea5f; không áp dụng gói UI mới. Không tự push/merge theo approval cũ.
+- Case #002 (PR-03): content-first, sửa engine chỉ khi vỡ (ngoài `difficulty`, `startSceneId`, bộ chọn case không khoá); art tái dùng, ảnh evidence sinh bằng code. Không tự push/merge; approval push cũ không áp dụng.
 
 ## Blockers
 
@@ -56,10 +55,10 @@ active_plan: docs/superpowers/plans/2026-10-02-intro-onboarding.md
 
 ## Next Actions
 
-1. Chạy riêng các spec fail/chưa chạy, so với baseline `08e115f`; sửa lỗi do onboarding.
-2. Thêm E2E mở "Cách điều tra" từ màn hình tiêu đề (lỗi giật đã gặp thực tế).
-3. Một review độc lập cả nhánh, rồi cập nhật báo cáo.
-4. PR-02 (minor no-scroll) chỉ khi ảnh hưởng người chơi thật; không tự bắt đầu phase mới.
+1. Người dùng duyệt plan Case #002 và chọn cách thực thi; xác nhận quyết định âm thanh.
+2. Thực thi Task 1→9 (`docs/superpowers/plans/2026-10-02-case-002.md`), ghi mọi thay đổi engine vào báo cáo trước khi commit.
+3. Task 9: DoD đầy đủ, một review độc lập, cập nhật `PR-03` ở product doc và memory.
+4. PR-02: tạm dừng polish notebook/board; PR-04 chỉ sau khi có báo cáo PR-03.
 
 ## Verification
 
@@ -76,7 +75,7 @@ active_plan: docs/superpowers/plans/2026-10-02-intro-onboarding.md
 
 ## Latest Handoff
 
-- Onboarding: state máy title/support/confirm ở `game/GameCanvas.tsx` (`title/titleModel.ts`), briefing qua `briefingOpen` trong gameStore, gợi ý qua `onboarding/useOnboardingSignals.ts`. Mount Windows có CRLF còn HEAD là LF: `sed -i 's/\r$//'` trước `git add`. E2E chạy được ở sandbox Linux qua `playwright.cloud.config` tạm (không commit).
+- Case #002: dùng lại Anna/David/Leo, sự thật Leo đổi nhãn 14→41 Bridge Street; 3 scene (`main_office`, `mail_room`, `reception`), 6 evidence text, 2 contradiction, không listening, không audio. Bảng định danh nằm đầu plan. Onboarding: state máy title ở `game/GameCanvas.tsx` (`title/titleModel.ts`); Task 7 thêm stage `cases`. Mount Windows có CRLF còn HEAD là LF: `sed -i 's/$//'` trước `git add`.
 
 ## Required Reading
 
