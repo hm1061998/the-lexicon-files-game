@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { scenePoint, sceneSpawnPoint } from './sceneTestData';
 import { interactAt, openWorld, saved, talkToDavid } from './journeyHelpers';
+import { openFace, reveal } from './investigationFixture';
 
 // Roadmap §31 E2E, one test per step on a shared page so each step builds on the last save.
 test.describe.serial('Case #001 journey', () => {
@@ -85,32 +86,29 @@ test.describe.serial('Case #001 journey', () => {
 
   test('find contradiction', async () => {
     await page.keyboard.press('b');
-    await page.getByRole('button', { name: 'The report was discovered missing.' }).click();
-    await page.getByRole('button', { name: 'Mốc 21:05' }).click();
+    await openFace(page, 'Dòng thời gian');
+    await (await reveal(page, 'The report was discovered missing.')).click();
+    await (await reveal(page, 'Mốc 21:05')).click();
     await page.getByRole('button', { name: 'Đặt sự kiện' }).click();
     await expect
       .poll(async () => (await saved(page))?.state.timelineEventIds)
       .toEqual(['report_missing_21_05']);
 
-    const statementFact = page.getByRole('button', {
-      name: "David says he didn't enter the meeting room after eight.",
-    });
-    const annaFact = page.getByRole('button', {
-      name: 'Anna Reed left the meeting room at 20:18.',
-    });
-    const davidFact = page.getByRole('button', {
-      name: 'David Cole entered the meeting room at 20:32.',
-    });
-    await statementFact.click();
-    await annaFact.click();
+    await openFace(page, 'Đối chiếu');
+    const statementName = "David says he didn't enter the meeting room after eight.";
+    const annaName = 'Anna Reed left the meeting room at 20:18.';
+    const davidName = 'David Cole entered the meeting room at 20:32.';
+    await (await reveal(page, statementName)).click();
+    await (await reveal(page, annaName)).click();
     await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).click();
     await expect(
       page
         .locator('.notebook-feedback')
         .filter({ hasText: "This interpretation doesn't match the evidence." }),
     ).toBeVisible();
-    await annaFact.click();
-    await davidFact.click();
+    await openFace(page, 'Dữ kiện đã thu thập');
+    await (await reveal(page, annaName)).click();
+    await (await reveal(page, davidName)).click();
     await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).click();
     await expect(page.locator('.contradiction-confirmed')).toContainText(
       'Mâu thuẫn đã được xác nhận.',
@@ -146,6 +144,7 @@ test.describe.serial('Case #001 journey', () => {
     await page.keyboard.press('Escape');
 
     await page.keyboard.press('b');
+    await openFace(page, 'Kết luận');
     const submit = page.getByRole('button', { name: 'Nộp kết luận' });
     await expect(submit).toBeDisabled();
     const beforeWrong = await saved(page);
@@ -158,7 +157,9 @@ test.describe.serial('Case #001 journey', () => {
   });
 
   test('complete case', async () => {
-    await page.locator('.accusation-panel').getByRole('button', { name: 'David Cole' }).click();
+    // Feedback replaces the choice pages; go back to the suspects before choosing again.
+    await page.locator('.accusation-panel').getByRole('button', { name: 'Quay lại' }).click();
+    await (await reveal(page, 'David Cole')).click();
     await page.getByRole('button', { name: 'Nộp kết luận' }).click();
     await expect(page.getByText('CASE CLOSED', { exact: true })).toBeVisible();
     await expect.poll(async () => (await saved(page))?.state.flags.case_closed).toBe(true);

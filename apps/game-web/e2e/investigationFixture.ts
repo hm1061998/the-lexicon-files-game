@@ -214,3 +214,37 @@ export async function readStatements(scope: Locator): Promise<string[]> {
   for (let i = 0; i < 40 && (await previous.isEnabled()); i += 1) await previous.click();
   return [...parts.values()].map((chunks) => normalize(chunks.join(' ')));
 }
+
+export const openFace = (page: Page, name: string) =>
+  page.getByRole('button', { name, exact: true }).click();
+
+/** Board choices are paginated: turn pages forward until the named button is on screen. */
+export async function reveal(page: Page, name: string): Promise<Locator> {
+  const target = page.getByRole('button', { name, exact: true });
+  const next = page.getByRole('button', { name: /Trang sau/ });
+  for (let turns = 0; turns < 12; turns += 1) {
+    if (await target.isVisible()) return target;
+    if (!(await next.count()) || (await next.first().isDisabled())) break;
+    await next.first().click();
+  }
+  await expect(target).toBeVisible();
+  return target;
+}
+
+/** Every visible control inside the dialog is a comfortable target (>=44x44) and its text is >=14px. */
+export async function expectComfortableControls(dialog: Locator): Promise<void> {
+  const small = await dialog.evaluate((el) =>
+    Array.from(el.querySelectorAll<HTMLElement>('button, [role=button], select, input'))
+      .filter((n) => n.getClientRects().length && !n.closest('.page-measurement'))
+      .map((n) => ({ box: n.getBoundingClientRect(), n }))
+      .filter(
+        ({ box, n }) =>
+          box.width < 43.5 || box.height < 43.5 || parseFloat(getComputedStyle(n).fontSize) < 13.99,
+      )
+      .map(
+        ({ box, n }) =>
+          `${n.textContent?.trim().slice(0, 20)} ${Math.round(box.width)}x${Math.round(box.height)}`,
+      ),
+  );
+  expect(small).toEqual([]);
+}

@@ -23,6 +23,7 @@ import { Hud } from '../hud/Hud';
 import { PauseMenu } from '../pause/PauseMenu';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
 import { DeductionBoard } from '../deduction/DeductionBoard';
+import { PaperCueContext } from '../investigation/pagination/PaperCueContext';
 import { useDeductionShortcut } from '../deduction/useDeductionShortcut';
 import { useNotebookShortcut } from '../notebook/useNotebookShortcut';
 import { useMinimapShortcut } from '../hud/useMinimapShortcut';
@@ -346,6 +347,7 @@ function GameRoot({
       }),
     [caseDefinition, learningRecord, bus],
   );
+  const paperCue = useCallback(() => bus.emit('audio:cue', { cue: 'paper' }), [bus]);
   const settings = useMemo(() => createSettingsStore(settingsLoad.settings), [settingsLoad]);
   const presentationAudio = useMemo(
     () => createPresentationAudio(caseDefinition),
@@ -536,8 +538,10 @@ function GameRoot({
               <DialogueLayer strings={strings} returnFocusRef={containerRef} />
               <PauseLayer strings={strings} store={store} />
               <EvidenceLayer strings={strings} />
-              <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
-              <DeductionLayer strings={strings} caseDefinition={caseDefinition} />
+              <PaperCueContext.Provider value={paperCue}>
+                <NotebookLayer strings={strings} caseDefinition={caseDefinition} />
+                <DeductionLayer strings={strings} caseDefinition={caseDefinition} />
+              </PaperCueContext.Provider>
               <CaseSummaryLayer strings={strings} />
             </SettingsStoreProvider>
           </LearningStoreProvider>

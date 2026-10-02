@@ -25,6 +25,12 @@ export function useMeasuredPages({
     blocks: readonly ReaderBlock[] | null;
   }>({ layout: { pages: [[]] }, ready: false, error: null, blocks: null });
   const [localAnchor, setLocalAnchor] = useState<PageAnchor | null>(anchor);
+  // New content (another dossier, another word) opens on its first page, never a stale local anchor.
+  useEffect(() => setLocalAnchor(null), [signature]);
+  // Extra height held back after a visible page was seen spilling; keyed to the content it was learned on.
+  const reserveKey = signature + revision;
+  const [reserveState, setReserve] = useState({ key: reserveKey, px: 0 });
+  const reserve = reserveState.key === reserveKey ? reserveState.px : 0;
   const anchorRef = useRef(anchor);
   anchorRef.current = anchor ?? localAnchor;
   useEffect(() => {
@@ -38,7 +44,7 @@ export function useMeasuredPages({
     const layout = () => {
       if (stopped) return;
       // The viewport has 4px padding on every side; measure at the width the fragments really get.
-      const height = viewport.clientHeight - 8,
+      const height = viewport.clientHeight - 8 - reserve,
         width = viewport.clientWidth - 8;
       if (height <= 0 || width <= 0) return;
       root.style.width = `${width}px`;
@@ -95,8 +101,20 @@ export function useMeasuredPages({
         img.removeEventListener('error', schedule);
       }
     };
-  }, [stableBlocks, revision, viewportRef, measureRef]);
+  }, [stableBlocks, revision, viewportRef, measureRef, reserve]);
+  const settled = state.blocks === stableBlocks && state.ready;
   const current = anchor ?? localAnchor;
+  useEffect(() => {
+    // Visible markup (vocabulary buttons) can wrap differently from the plain measurement text:
+    // if the shown page spills, hold back one more line and lay out again.
+    const viewport = viewportRef.current;
+    if (!viewport || !settled) return;
+    const frame = requestAnimationFrame(() => {
+      if (viewport.scrollHeight > viewport.clientHeight + 1 && reserve < 240)
+        setReserve({ key: reserveKey, px: reserve + 24 });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [settled, state.layout, current?.blockId, current?.offset, reserve, reserveKey, viewportRef]);
   const pageIndex = current ? pageForAnchor(state.layout, current) : 0;
   const goToPage = (n: number) => {
     const page = state.layout.pages[Math.max(0, Math.min(n, state.layout.pages.length - 1))];

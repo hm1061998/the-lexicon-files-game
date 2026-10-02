@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { UiStrings } from '@lexicon/shared-types';
 import type { PageAnchor, ReaderBlock, PageFragment } from './pageTypes';
 import { MeasuredPage } from './MeasuredPage';
@@ -11,6 +12,7 @@ export function ChoicePages({
   onAnchorChange,
   disabled,
   boardPrefix,
+  empty,
 }: {
   choices: readonly { id: string; label: string; secondary?: string }[];
   selected?: readonly string[];
@@ -18,6 +20,8 @@ export function ChoicePages({
   strings: UiStrings;
   label: string;
   anchor?: PageAnchor | null | undefined;
+  /** Shown instead of an empty page when there is nothing to choose. */
+  empty?: ReactNode;
   onAnchorChange?: ((a: PageAnchor) => void) | undefined;
   disabled?: (id: string) => boolean;
   boardPrefix?: string;
@@ -59,6 +63,7 @@ export function ChoicePages({
       renderMeasurement={(f) => render(f, true)}
       strings={strings}
       controlsLabel={label}
+      empty={empty}
     />
   );
 }

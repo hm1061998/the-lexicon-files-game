@@ -61,7 +61,11 @@ export function ContradictionWorkspace({
           />
         ) : (
           <div
-            className={mode === 'results' ? 'notebook-feedback' : ''}
+            className={
+              mode === 'results'
+                ? `notebook-feedback${view.confirmedContradictions.length ? ' contradiction-confirmed' : ''}`
+                : ''
+            }
             role={mode === 'results' ? 'status' : undefined}
           >
             <ReadDocument
@@ -72,7 +76,9 @@ export function ContradictionWorkspace({
               }
               learning={learning}
               label={mode === 'selected' ? s.investigationReadFull : s.investigationResults}
-              empty={<p>{s.contradictionUnavailable}</p>}
+              empty={
+                <p>{view.facts.length ? s.contradictionSelectFacts : s.contradictionUnavailable}</p>
+              }
             />
           </div>
         )}

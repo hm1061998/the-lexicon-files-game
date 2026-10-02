@@ -127,10 +127,12 @@ test('visible dialogue records only annotated contexts and persists mode/progres
   await page.keyboard.press('j');
   await page.getByRole('button', { name: 'Từ vựng', exact: true }).click();
   await page
-    .locator('.notebook-word-list')
+    .locator('.notebook-index .page-viewport')
     .getByRole('button', { name: 'leave', exact: true })
     .click();
-  await expect(page.getByRole('heading', { name: 'leave' })).toBeVisible();
+  await expect(
+    page.locator('.notebook-word-detail .page-viewport').getByRole('heading', { name: 'leave' }),
+  ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'return' })).toHaveCount(0);
   await expect(page.locator('canvas')).toHaveCount(1);
 });

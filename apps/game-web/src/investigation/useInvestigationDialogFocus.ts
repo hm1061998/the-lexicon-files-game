@@ -14,7 +14,12 @@ export function useInvestigationDialogFocus(ref: RefObject<HTMLElement>): void {
           'button, summary, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         ),
       ).filter(
-        (el) => !el.matches(':disabled') && el.tabIndex >= 0 && el.getClientRects().length > 0,
+        (el) =>
+          !el.matches(':disabled') &&
+          el.tabIndex >= 0 &&
+          el.getClientRects().length > 0 &&
+          // Measurement copies are inert and invisible: never a tab stop.
+          !el.closest('[inert], .page-measurement'),
       );
     focusables()[0]?.focus();
     const handle = (event: KeyboardEvent) => {

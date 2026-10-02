@@ -1,22 +1,7 @@
-import { test, expect, type Locator, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { scenePoint, sceneSpawnPoint } from './sceneTestData';
 import { interactAt, openWorld, saved } from './journeyHelpers';
-
-const openFace = (page: Page, name: string) =>
-  page.getByRole('button', { name, exact: true }).click();
-
-// Board choices are paginated: turn pages forward until the named button is on screen.
-async function reveal(page: Page, name: string): Promise<Locator> {
-  const target = page.getByRole('button', { name, exact: true });
-  const next = page.getByRole('button', { name: /Trang sau/ });
-  for (let turns = 0; turns < 12; turns += 1) {
-    if (await target.isVisible()) return target;
-    if (!(await next.count()) || (await next.first().isDisabled())) break;
-    await next.first().click();
-  }
-  await expect(target).toBeVisible();
-  return target;
-}
+import { openFace, reveal } from './investigationFixture';
 
 test('Archive, timeline, contradiction, conclusion and case report survive reload', async ({
   page,
@@ -118,7 +103,9 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('.notebook-feedback')).toContainText('Mâu thuẫn đã được xác nhận.');
+  await expect(page.locator('.contradiction-confirmed')).toContainText(
+    'Mâu thuẫn đã được xác nhận.',
+  );
   await expect
     .poll(async () => (await saved(page))?.state.contradictionIds)
     .toContain('david_statement_vs_access_log');

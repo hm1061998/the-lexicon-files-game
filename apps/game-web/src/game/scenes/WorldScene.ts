@@ -119,6 +119,8 @@ export class WorldScene extends Phaser.Scene {
   private inputLock!: InputLockSource;
   private interactKey: Phaser.Input.Keyboard.Key | null = null;
   private triggeredEventCount = 0;
+  private paperCueCount = 0;
+  private unsubscribePaperCue: (() => void) | null = null;
   private unsubscribeTriggered: (() => void) | null = null;
   private areas: InteractableArea[] = [];
   private depths = new Map<string, number>();
@@ -248,7 +250,11 @@ export class WorldScene extends Phaser.Scene {
     this.interactionTracker = new InteractionTracker(this.bus);
     this.nearbyEventCount = 0;
     this.triggeredEventCount = 0;
+    this.paperCueCount = 0;
     if (import.meta.env.DEV) {
+      this.unsubscribePaperCue = this.bus.on('audio:cue', ({ cue }) => {
+        if (cue === 'paper') this.paperCueCount += 1;
+      });
       this.unsubscribeTriggered = this.bus.on('interaction:triggered', () => {
         this.triggeredEventCount += 1;
       });
@@ -538,6 +544,7 @@ export class WorldScene extends Phaser.Scene {
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
       triggeredEvents: () => this.triggeredEventCount,
+      paperCues: () => this.paperCueCount,
       markerY: () => (this.marker.visible ? this.marker.y : null),
       highlightBounds: () => (this.outline?.visible ? this.outlineBounds : null),
       markerBaseY: () => (this.marker.visible ? this.markerBaseY : null),
@@ -1261,6 +1268,8 @@ export class WorldScene extends Phaser.Scene {
     }
     this.markerTween?.destroy();
     this.markerTween = null;
+    this.unsubscribePaperCue?.();
+    this.unsubscribePaperCue = null;
     this.unsubscribeNearby?.();
     this.unsubscribeNearby = null;
     this.unsubscribeTriggered?.();

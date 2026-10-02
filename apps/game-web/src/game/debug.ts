@@ -39,6 +39,8 @@ export type LexiconDebug = {
   nearby(): string | null;
   nearbyEvents(): number;
   triggeredEvents(): number;
+  /** Count of `paper` audio cues seen on the bus since the scene started (dev only). */
+  paperCues(): number;
   teleport(x: number, y: number): void;
   teleportLogical(u: number, v: number): void;
   markerY(): number | null;

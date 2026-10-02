@@ -196,11 +196,10 @@ test('reduced motion turns pages without the paper animation', async ({ page }) 
   await expect(decoration).toHaveCSS('display', 'none');
   const pager = dialog.locator('.notebook-detail .page-controls span');
   const next = dialog.locator('.notebook-detail').getByRole('button', { name: /Trang sau/ });
-  if (await next.isEnabled()) {
-    const before = await pager.innerText();
-    await next.click();
-    await expect(pager).not.toHaveText(before, { timeout: 150 });
-  }
+  expect(await next.isEnabled()).toBe(true);
+  const before = await pager.innerText();
+  await next.click();
+  await expect(pager).not.toHaveText(before, { timeout: 150 });
 });
 
 test('rapid page turns then closing leave no stuck input', async ({ page }) => {
@@ -232,7 +231,7 @@ test('resizing while reading keeps the reading position', async ({ page }) => {
   await openCard(dialog, definition.npcs[0]!.name);
   const scope = dialog.locator('.notebook-person .measured-page');
   const next = scope.getByRole('button', { name: /Trang sau/ });
-  test.skip(!(await next.isEnabled()), 'content fits one page at this size');
+  expect(await next.isEnabled()).toBe(true);
   await next.click();
   const anchor = await scope
     .locator('.page-viewport .page-fragment')

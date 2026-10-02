@@ -1,8 +1,9 @@
-import { useId, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import type { UiStrings } from '@lexicon/shared-types';
 import type { PageAnchor, PageFragment, ReaderBlock } from './pageTypes';
 import { useMeasuredPages } from './useMeasuredPages';
 import { PageControls } from './PageControls';
+import { usePaperCue } from './PaperCueContext';
 import './pagination.css';
 export function MeasuredPage({
   blocks,
@@ -38,13 +39,36 @@ export function MeasuredPage({
     anchor,
     onAnchorChange,
   });
+  const paperCue = usePaperCue();
+  const section = useRef<HTMLElement>(null);
+  const hadFocus = useRef(false);
   const change = (n: number) => {
     if (n === pageIndex || n < 0 || n >= layout.pages.length) return;
+    hadFocus.current = section.current?.contains(document.activeElement) ?? false;
     goToPage(n);
+    paperCue();
     onPageTurn?.();
   };
+  // A page turn can unmount the focused word or disable the focused pager button: keep focus on the
+  // pager (or the page itself) instead of dropping it to the document body.
+  useEffect(() => {
+    const root = section.current;
+    if (!root || !hadFocus.current) return;
+    hadFocus.current = false;
+    const active = document.activeElement;
+    if (
+      active &&
+      active !== document.body &&
+      root.contains(active) &&
+      !(active as HTMLButtonElement).disabled
+    )
+      return;
+    const next = root.querySelector<HTMLElement>('.page-controls button:not(:disabled)');
+    (next ?? viewport.current)?.focus();
+  }, [pageIndex]);
   return (
     <section
+      ref={section}
       className="measured-page"
       aria-label={controlsLabel}
       onKeyDown={(e) => {
@@ -54,17 +78,24 @@ export function MeasuredPage({
           e.ctrlKey ||
           e.metaKey ||
           e.shiftKey ||
-          (e.target as HTMLElement).closest(
-            'input,textarea,[contenteditable=true],[role=dialog].investigation-vocabulary-popover',
-          )
+          (e.target as HTMLElement).closest('input,textarea,[contenteditable=true]')
         )
           return;
+        // A vocabulary popover owns PageUp/PageDown while focus is inside it; only its own pages react.
+        const popover = (e.target as HTMLElement).closest('.investigation-vocabulary-popover');
+        if (popover && !e.currentTarget.closest('.investigation-vocabulary-popover')) return;
         e.preventDefault();
         e.stopPropagation();
         change(pageIndex + (e.key === 'PageDown' ? 1 : -1));
       }}
     >
-      <div ref={viewport} className="page-viewport" id={id} data-page-index={pageIndex}>
+      <div
+        ref={viewport}
+        className="page-viewport"
+        id={id}
+        data-page-index={pageIndex}
+        tabIndex={-1}
+      >
         {blocks.length === 0 ? (
           empty
         ) : !ready ? (

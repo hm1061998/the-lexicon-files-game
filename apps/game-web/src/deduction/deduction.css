@@ -117,17 +117,6 @@
   text-align: left;
   box-shadow: 2px 3px 4px #30271d88;
 }
-.deduction-card:before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: 48%;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #a4412d;
-  border: 1px solid #743026;
-}
 .deduction-card .investigation-artwork {
   width: 100%;
   height: 130px;

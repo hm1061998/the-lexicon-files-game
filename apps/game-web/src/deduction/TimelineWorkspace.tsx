@@ -73,6 +73,7 @@ export function TimelineWorkspace({
             selected={ui.eventId ? [ui.eventId] : []}
             strings={strings}
             label={strings.timelineSelectEvent}
+            empty={<p>{strings.timelineEmpty}</p>}
             anchor={ui.anchors.events}
             onAnchorChange={(a) => dispatch({ type: 'anchor', key: 'events', anchor: a })}
             onSelect={(id) => {

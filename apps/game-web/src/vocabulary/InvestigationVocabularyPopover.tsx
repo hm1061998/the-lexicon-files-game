@@ -80,6 +80,17 @@ export function InvestigationVocabularyPopover({
       role="dialog"
       tabIndex={-1}
       aria-label={entry.lemma}
+      onKeyDown={(event) => {
+        // Focus on the card itself (or its close button) is outside the paged reader's own handler.
+        if (event.key !== 'PageDown' && event.key !== 'PageUp') return;
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const [previous, next] =
+          event.currentTarget.querySelectorAll<HTMLButtonElement>('.page-controls button');
+        const turn = event.key === 'PageDown' ? next : previous;
+        event.preventDefault();
+        event.stopPropagation();
+        if (turn && !turn.disabled) turn.click();
+      }}
     >
       <div className="investigation-vocabulary-pages">
         <ReadDocument
