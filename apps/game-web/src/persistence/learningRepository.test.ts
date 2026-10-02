@@ -3,8 +3,10 @@ import { createLearningRepository, type LearningDatabase } from './learningRepos
 import { createDefaultLearningRecord, parseLearningRecord } from './learningMigration';
 
 function legacyBase() {
-  const { onboardingSeen: _onboardingSeen, ...rest } = createDefaultLearningRecord();
-  return rest;
+  const record: Partial<ReturnType<typeof createDefaultLearningRecord>> =
+    createDefaultLearningRecord();
+  delete record.onboardingSeen;
+  return record as Omit<ReturnType<typeof createDefaultLearningRecord>, 'onboardingSeen'>;
 }
 
 function memory(raw?: unknown) {

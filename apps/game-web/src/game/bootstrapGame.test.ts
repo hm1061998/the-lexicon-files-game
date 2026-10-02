@@ -33,6 +33,8 @@ describe('loadGameBootstrap', () => {
       status: 'ready',
       initialState: restored,
       activeSceneId: 'archive',
+      source: 'saved',
+      saveAvailability: 'loaded',
       commerceConfig: { schemaVersion: 1, mode: 'free' },
       autosaveEnabled: true,
     });
@@ -46,6 +48,8 @@ describe('loadGameBootstrap', () => {
       status: 'ready',
       initialState: createCaseState(definition),
       activeSceneId: 'main_office',
+      source: 'fresh',
+      saveAvailability: 'missing',
       commerceConfig: { schemaVersion: 1, mode: 'free' },
       autosaveEnabled: true,
     });
@@ -70,6 +74,7 @@ describe('loadGameBootstrap', () => {
       status: 'memory-only',
       initialState: createCaseState(definition),
       activeSceneId: 'main_office',
+      saveAvailability: 'memory-only',
       commerceConfig: { schemaVersion: 1, mode: 'free' },
       autosaveEnabled: false,
       error: 'blocked',

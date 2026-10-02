@@ -21,6 +21,13 @@ import { loadGameBootstrap, type GameBootstrapResult } from './bootstrapGame';
 import { DialogueLayer } from '../dialogue/DialogueLayer';
 import { Hud } from '../hud/Hud';
 import { PauseMenu } from '../pause/PauseMenu';
+import { SettingsFields } from '../pause/SettingsFields';
+import { HowToInvestigate } from '../onboarding/HowToInvestigate';
+import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
+import { TitleScreen } from '../title/TitleScreen';
+import { SupportPicker } from '../title/SupportPicker';
+import { NewCaseConfirm } from '../title/NewCaseConfirm';
+import { nextTitleStage, selectTitleActions, type TitleStage } from '../title/titleModel';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
 import { DeductionBoard } from '../deduction/DeductionBoard';
 import { PaperCueContext } from '../investigation/pagination/PaperCueContext';
@@ -45,14 +52,14 @@ import {
 import {
   createSettingsRepository,
   type SettingsLoadResult,
-  type SettingsRepository,
 } from '../persistence/settingsRepository';
-import { createSettingsStore } from '../state/settingsStore';
+import { createSettingsStore, type SettingsStore } from '../state/settingsStore';
 import { SettingsStoreProvider } from '../state/SettingsStoreContext';
 import { useMasterVolume } from '../audio/useMasterVolume';
 import { useSettingsStore } from '../state/SettingsStoreContext';
 import { useTranslationMode } from '../state/useTranslationMode';
 import { connectSettingsAutosave } from '../persistence/connectSettingsAutosave';
+import { PaperPanel } from '@lexicon/ui';
 import { createDefaultLearningRecord } from '../persistence/learningMigration';
 import { createLearningStore } from '../state/learningStore';
 import { LearningStoreProvider } from '../state/LearningStoreContext';
@@ -107,6 +114,29 @@ export function GameCanvas({
   const [bootstrap, setBootstrap] = useState<GameBootstrapResult | { status: 'loading' }>({
     status: 'loading',
   });
+  const [stage, setStage] = useState<TitleStage>('title');
+  const [startMode, setStartMode] = useState<'continue' | 'new'>('continue');
+  const [runId, setRunId] = useState(0);
+  const [startError, setStartError] = useState<string | null>(null);
+  const settings = useMemo(
+    () => (settingsLoad ? createSettingsStore(settingsLoad.settings) : null),
+    [settingsLoad],
+  );
+  const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
+  const settingsStrings = result.ok ? result.content.strings : null;
+
+  useEffect(() => {
+    if (!settings || !settingsLoad || !settingsStrings || settingsLoad.status === 'memory-only')
+      return;
+    return connectSettingsAutosave(
+      settings,
+      async (next) => {
+        await settingsRepository.saveSettings(next);
+        setSettingsWriteError(null);
+      },
+      () => setSettingsWriteError(settingsStrings.settingsUnavailable),
+    );
+  }, [settings, settingsLoad, settingsRepository, settingsStrings]);
 
   useEffect(() => {
     if (!result.ok) return;
@@ -150,6 +180,7 @@ export function GameCanvas({
           status: 'memory-only',
           initialState: createCaseState(result.content.caseDefinition),
           activeSceneId: DEFAULT_START.sceneId,
+          saveAvailability: 'memory-only',
           commerceConfig: FREE_COMMERCE_CONFIG,
           autosaveEnabled: false,
           error: error instanceof Error ? error.message : String(error),
@@ -174,7 +205,7 @@ export function GameCanvas({
     return <div role="status">{result.content.strings.loadingGame}</div>;
   }
 
-  if (!learningLoad || !settingsLoad)
+  if (!learningLoad || !settingsLoad || !settings)
     return <div role="status">{result.content.strings.loadingGame}</div>;
 
   if (bootstrap.status === 'confirmation-required') {
@@ -194,6 +225,8 @@ export function GameCanvas({
                 status: 'ready',
                 initialState,
                 activeSceneId: DEFAULT_START.sceneId,
+                source: 'fresh',
+                saveAvailability: 'missing',
                 commerceConfig: bootstrap.commerceConfig,
                 autosaveEnabled: true,
               });
@@ -203,6 +236,7 @@ export function GameCanvas({
                 status: 'memory-only',
                 initialState: createCaseState(result.content.caseDefinition),
                 activeSceneId: DEFAULT_START.sceneId,
+                saveAvailability: 'memory-only',
                 commerceConfig: bootstrap.commerceConfig,
                 autosaveEnabled: false,
                 error: error instanceof Error ? error.message : String(error),
@@ -214,6 +248,7 @@ export function GameCanvas({
             status: 'memory-only',
             initialState: createCaseState(result.content.caseDefinition),
             activeSceneId: DEFAULT_START.sceneId,
+            saveAvailability: 'memory-only',
             commerceConfig: bootstrap.commerceConfig,
             autosaveEnabled: false,
             error: result.content.strings.saveUnavailable,
@@ -223,13 +258,129 @@ export function GameCanvas({
     );
   }
 
+  const strings = result.content.strings;
+  const caseDefinition = result.content.caseDefinition;
+  const actions = selectTitleActions({
+    save: bootstrap.saveAvailability,
+    settingsStatus: settingsLoad.status,
+  });
+  const flow = {
+    hasSave: bootstrap.saveAvailability === 'loaded',
+    askSupportLevel: actions.askSupportLevel,
+  };
+  const go = (event: Parameters<typeof nextTitleStage>[1]) =>
+    setStage((current) => nextTitleStage(current, event, flow));
+
+  const play = (mode: 'continue' | 'new', replaceSave: boolean): void => {
+    setStartError(null);
+    if (!replaceSave) {
+      setStartMode(mode);
+      setRunId((id) => id + 1);
+      setStage('playing');
+      return;
+    }
+    void repository
+      .startNewCase(caseDefinition.id, caseDefinition)
+      .then((initialState) => {
+        setBootstrap({
+          status: 'ready',
+          initialState,
+          activeSceneId: DEFAULT_START.sceneId,
+          source: 'fresh',
+          saveAvailability: 'missing',
+          commerceConfig: bootstrap.commerceConfig,
+          autosaveEnabled: true,
+        });
+        setStartMode('new');
+        setRunId((id) => id + 1);
+        setStage('playing');
+      })
+      .catch((error: unknown) => {
+        setStartError(error instanceof Error ? error.message : String(error));
+        setStage('title');
+      });
+  };
+
+  if (stage !== 'playing') {
+    const titleLearning: InvestigationLearningProps = {
+      catalogue: caseDefinition.vocabulary,
+      strings,
+      translationMode: settings.getState().settings.translationMode,
+      onEncounter: () => undefined,
+      onInspect: () => undefined,
+      onRevealTranslation: () => undefined,
+    };
+    return (
+      <div className="game-root" data-reduced-motion="false">
+        <SettingsStoreProvider store={settings}>
+          {stage === 'title' && (
+            <>
+              <TitleScreen
+                strings={strings}
+                actions={actions}
+                onContinue={() => play('continue', false)}
+                onNewCase={() => {
+                  if (flow.hasSave) go('newCase');
+                  else if (flow.askSupportLevel) go('newCase');
+                  else play('new', false);
+                }}
+                onHowTo={() => go('howTo')}
+                onSettings={() => go('settings')}
+              />
+              {startError && (
+                <aside role="alert" className="learning-recovery-notice">
+                  {strings.saveWriteFailed} {startError}
+                </aside>
+              )}
+            </>
+          )}
+          {stage === 'confirm' && (
+            <NewCaseConfirm
+              strings={strings}
+              onCancel={() => go('back')}
+              onAccept={() => {
+                if (flow.askSupportLevel) go('confirmed');
+                else play('new', true);
+              }}
+            />
+          )}
+          {stage === 'support' && (
+            <SupportPicker
+              strings={strings}
+              onChoose={(mode) => {
+                settings.getState().setTranslationMode(mode);
+                play('new', flow.hasSave);
+              }}
+            />
+          )}
+          {stage === 'settings' && (
+            <main className="title-screen">
+              <PaperPanel as="div" className="pause-menu">
+                <h2>{strings.titleSettings}</h2>
+                <SettingsFields strings={strings} />
+                <button type="button" autoFocus onClick={() => go('back')}>
+                  {strings.titleBack}
+                </button>
+              </PaperPanel>
+            </main>
+          )}
+          {stage === 'howto' && (
+            <HowToInvestigate learning={titleLearning} onClose={() => go('back')} />
+          )}
+        </SettingsStoreProvider>
+      </div>
+    );
+  }
+
   const persistenceWarning =
     bootstrap.status === 'memory-only'
-      ? `${result.content.strings.saveUnavailable} ${bootstrap.error}`
+      ? `${strings.saveUnavailable} ${bootstrap.error}`
       : undefined;
   return (
     <GameRoot
+      key={runId}
       content={result.content}
+      startMode={startMode}
       initialState={bootstrap.initialState}
       initialSceneId={bootstrap.activeSceneId}
       autosaveEnabled={bootstrap.autosaveEnabled}
@@ -241,8 +392,9 @@ export function GameCanvas({
           ? createDefaultLearningRecord()
           : learningLoad.record
       }
-      settingsRepository={settingsRepository}
+      settings={settings}
       settingsLoad={settingsLoad}
+      settingsWriteError={settingsWriteError}
       learningPersistenceInitiallyEnabled={
         learningLoad.status === 'loaded' || learningLoad.status === 'missing'
       }
@@ -289,13 +441,15 @@ function GameRoot({
   repository,
   learningRepository,
   learningRecord,
-  settingsRepository,
+  settings,
   settingsLoad,
+  settingsWriteError,
   learningPersistenceInitiallyEnabled,
   learningRecoveryRequired,
   learningPersistenceError,
 }: {
   content: StartContent;
+  startMode: 'continue' | 'new';
   initialState: ReturnType<typeof createCaseState>;
   initialSceneId: string;
   autosaveEnabled: boolean;
@@ -303,8 +457,9 @@ function GameRoot({
   repository: SaveRepository;
   learningRepository: ReturnType<typeof createLearningRepository>;
   learningRecord: ReturnType<typeof createDefaultLearningRecord>;
-  settingsRepository: SettingsRepository;
+  settings: SettingsStore;
   settingsLoad: SettingsLoadResult;
+  settingsWriteError: string | null;
   learningPersistenceInitiallyEnabled: boolean;
   learningRecoveryRequired: string | null;
   learningPersistenceError: string | null;
@@ -348,7 +503,6 @@ function GameRoot({
     [caseDefinition, learningRecord, bus],
   );
   const paperCue = useCallback(() => bus.emit('audio:cue', { cue: 'paper' }), [bus]);
-  const settings = useMemo(() => createSettingsStore(settingsLoad.settings), [settingsLoad]);
   const presentationAudio = useMemo(
     () => createPresentationAudio(caseDefinition),
     [caseDefinition],
@@ -366,7 +520,6 @@ function GameRoot({
     () => settings.getState().settings.reducedMotion,
     () => false,
   );
-  const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
   useEffect(() => () => presentationAudio.dispose(), [presentationAudio]);
   usePauseShortcut(store);
   useNotebookShortcut(store);
@@ -457,18 +610,6 @@ function GameRoot({
       },
     );
   }, [learning, learningRepository, learningPersistenceEnabled, strings.vocabularyLearningError]);
-
-  useEffect(() => {
-    if (settingsLoad.status === 'memory-only') return;
-    return connectSettingsAutosave(
-      settings,
-      async (next) => {
-        await settingsRepository.saveSettings(next);
-        setSettingsWriteError(null);
-      },
-      () => setSettingsWriteError(strings.settingsUnavailable),
-    );
-  }, [settings, settingsRepository, settingsLoad.status, strings.settingsUnavailable]);
 
   const settingsNotice =
     settingsLoad.status === 'memory-only' || settingsWriteError
@@ -751,6 +892,48 @@ function PersistenceNotice({ strings }: { strings: UiStrings }): JSX.Element | n
 
 function PauseLayer({ strings, store }: { strings: UiStrings; store: GameStore }) {
   const paused = useGameStore((state) => state.paused);
+  const dispatchLearning = useLearningStore((state) => state.dispatchLearning);
+  const [translationMode] = useTranslationMode();
+  const catalogue = useGameStore((state) => state.caseDefinition.vocabulary);
+  const [howToOpen, setHowToOpen] = useState(false);
+  useEffect(() => {
+    if (!paused) setHowToOpen(false);
+  }, [paused]);
+  useEffect(() => {
+    if (!howToOpen) return;
+    // Esc closes the how-to page first; the pause menu stays open underneath.
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setHowToOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [howToOpen]);
+  const learning = useMemo<InvestigationLearningProps>(
+    () => ({
+      catalogue,
+      strings,
+      translationMode,
+      onEncounter: (vocabularyId: string, contextId: string) =>
+        dispatchLearning({ type: 'encounterContext', vocabularyId, contextId }),
+      onInspect: (vocabularyId: string, contextId: string) =>
+        dispatchLearning({ type: 'inspectVocabulary', vocabularyId, contextId }),
+      onRevealTranslation: (vocabularyId: string, contextId: string) =>
+        dispatchLearning({ type: 'revealTranslation', vocabularyId, contextId }),
+    }),
+    [catalogue, strings, translationMode, dispatchLearning],
+  );
   if (!paused) return null;
-  return <PauseMenu strings={strings} onResume={() => store.getState().setPaused(false)} />;
+  return (
+    <>
+      <PauseMenu
+        strings={strings}
+        onResume={() => store.getState().setPaused(false)}
+        onOpenHowTo={() => setHowToOpen(true)}
+      />
+      {howToOpen && <HowToInvestigate learning={learning} onClose={() => setHowToOpen(false)} />}
+    </>
+  );
 }

@@ -1,6 +1,7 @@
 import type { CaseDefinition } from '@lexicon/shared-types';
 import { createCaseState } from '@lexicon/game-core';
 import { DEFAULT_START } from '@lexicon/game-content';
+import type { SaveAvailability } from '../title/titleModel';
 import type { SaveRepository } from '../persistence/saveRepository';
 import {
   defaultCommerceConfigProvider,
@@ -14,6 +15,8 @@ export type GameBootstrapResult =
       status: 'ready';
       initialState: ReturnType<typeof createCaseState>;
       activeSceneId: string;
+      source: 'saved' | 'fresh';
+      saveAvailability: SaveAvailability;
       commerceConfig: CommerceConfig;
       autosaveEnabled: true;
     }
@@ -21,6 +24,7 @@ export type GameBootstrapResult =
       status: 'memory-only';
       initialState: ReturnType<typeof createCaseState>;
       activeSceneId: string;
+      saveAvailability: SaveAvailability;
       commerceConfig: CommerceConfig;
       autosaveEnabled: false;
       error: string;
@@ -46,6 +50,8 @@ export async function loadGameBootstrap(
         status: 'ready',
         initialState: result.state,
         activeSceneId: result.activeSceneId,
+        source: 'saved',
+        saveAvailability: 'loaded',
         commerceConfig,
         autosaveEnabled: true,
       };
@@ -54,6 +60,8 @@ export async function loadGameBootstrap(
         status: 'ready',
         initialState: createCaseState(definition),
         activeSceneId: startScene.id,
+        source: 'fresh',
+        saveAvailability: 'missing',
         commerceConfig,
         autosaveEnabled: true,
       };
@@ -64,6 +72,7 @@ export async function loadGameBootstrap(
         status: 'memory-only',
         initialState: createCaseState(definition),
         activeSceneId: startScene.id,
+        saveAvailability: 'memory-only',
         commerceConfig,
         autosaveEnabled: false,
         error: result.error,

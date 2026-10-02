@@ -6,13 +6,14 @@ import type { InvestigationLearningProps } from '../investigation/RecordedStatem
 
 describe('HowToInvestigate', () => {
   const strings = loadUiStrings('vi');
-  const learning = {
+  const learning: InvestigationLearningProps = {
+    catalogue: [],
     strings,
     translationMode: 'Beginner',
     onEncounter: () => undefined,
     onInspect: () => undefined,
     onRevealTranslation: () => undefined,
-  } as unknown as InvestigationLearningProps;
+  };
   const html = renderToString(<HowToInvestigate learning={learning} onClose={() => undefined} />);
   it('renders the how-to title and its first section', () => {
     expect(html).toContain(strings.howToTitle);
