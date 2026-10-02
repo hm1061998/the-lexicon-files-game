@@ -433,6 +433,21 @@ for (const viewport of [
       expect(backward.has(label)).toBe(true);
     }
     expect(scrolled).toBe(false);
+    if (!openedWord) {
+      // Font metrics decide which page holds the first annotated word; look for it page by page.
+      const next = panel.locator('button:not([disabled])', { hasText: '›' });
+      const word = panel.locator('.vocabulary-word:visible').first();
+      for (let page_ = 0; page_ < 12 && !(await word.count()); page_ += 1) {
+        if (!(await next.count())) break;
+        await next.last().click();
+      }
+      await expect(word).toBeVisible();
+      await word.focus();
+      await page.keyboard.press('Enter');
+      await expect(panel.locator('.vocabulary-popover')).toBeVisible();
+      await page.keyboard.press('Escape');
+      openedWord = true;
+    }
     expect(openedWord).toBe(true);
     await panel.getByRole('button', { name: strings.openDeductionBoard, exact: true }).click();
     const board = page.locator('.deduction-board');

@@ -79,6 +79,8 @@ async function openInMode(page: Page, mode: 'Beginner' | 'Learning' | 'Immersion
 test('phone recording resolves the fact and persists playback telemetry after reload', async ({
   page,
 }) => {
+  // Two real playbacks plus a reload: needs more than the 30s default on software GL.
+  test.setTimeout(90_000);
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
   page.on('console', (message) => {
