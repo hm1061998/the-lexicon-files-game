@@ -1,0 +1,2 @@
+Source: https://github.com/gamedev-skills/awesome-gamedev-agent-skills @ d4b0e35 (Apache-2.0)
+Installed 2026-10-02 as real copies (no symlinks). 15 skills selected for Phaser 3 + React web detective game.
