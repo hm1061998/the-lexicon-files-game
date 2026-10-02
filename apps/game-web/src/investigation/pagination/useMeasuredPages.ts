@@ -1,0 +1,29 @@
+import { useEffect, useRef, useState, type RefObject } from 'react';
+import type { PageAnchor, PageFragment, PageLayout, ReaderBlock } from './pageTypes';
+import { paginateBlocks, pageForAnchor } from './paginateBlocks';
+export function useMeasuredPages({blocks,viewportRef,measureRef,revision,anchor,onAnchorChange}:{blocks:readonly ReaderBlock[];viewportRef:RefObject<HTMLElement>;measureRef:RefObject<HTMLElement>;revision:string;anchor:PageAnchor|null;onAnchorChange?:((a:PageAnchor)=>void)|undefined}) {
+ const [state,setState]=useState<{layout:PageLayout;ready:boolean;error:string|null}>({layout:{pages:[[]]},ready:false,error:null});
+ const [localAnchor,setLocalAnchor]=useState<PageAnchor|null>(anchor);const anchorRef=useRef(anchor);anchorRef.current=anchor??localAnchor;
+ useEffect(()=>{
+  const viewport=viewportRef.current,root=measureRef.current;if(!viewport||!root)return;
+  root.inert=true; let stopped=false,frame=0;
+  const layout=()=>{if(stopped)return; const height=viewport.clientHeight-8,width=viewport.clientWidth;if(height<=0||width<=0)return;
+   root.style.width=`${width}px`;
+   const measure=(f:PageFragment)=>{const source=Array.from(root.children).find(n=>(n as HTMLElement).dataset.measureId===f.blockId) as HTMLElement|undefined;if(!source)return 0;
+    const clone=source.cloneNode(true) as HTMLElement; const block=blocks.find(b=>b.id===f.blockId);
+    if(block?.kind==='text'){const text=clone.querySelector('[data-measure-text]')??clone;text.textContent=block.text.slice(f.start,f.end);}
+    root.append(clone);const h=clone.getBoundingClientRect().height+8;clone.remove();return h;
+   };
+   try {const result=paginateBlocks(blocks,height,measure);setState({layout:result,ready:true,error:null});}
+   catch(e){setState({layout:{pages:[[]]},ready:true,error:e instanceof Error?e.message:String(e)});}
+  };
+  const schedule=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(layout);};
+  const observer=new ResizeObserver(schedule);observer.observe(viewport);
+  const fonts=document.fonts?.ready??Promise.resolve();void fonts.then(()=>{if(!stopped)schedule();});
+  const images=Array.from(root.querySelectorAll('img')); for(const img of images){img.addEventListener('load',schedule);img.addEventListener('error',schedule);}
+  schedule();return()=>{stopped=true;cancelAnimationFrame(frame);observer.disconnect();for(const img of images){img.removeEventListener('load',schedule);img.removeEventListener('error',schedule);}};
+ },[blocks,revision,viewportRef,measureRef]);
+ const current=anchor??localAnchor;const pageIndex=current?pageForAnchor(state.layout,current):0;
+ const goToPage=(n:number)=>{const page=state.layout.pages[Math.max(0,Math.min(n,state.layout.pages.length-1))];const f=page?.[0];if(f){const a={blockId:f.blockId,offset:f.start};setLocalAnchor(a);onAnchorChange?.(a);}};
+ return {...state,pageIndex,goToPage};
+}
