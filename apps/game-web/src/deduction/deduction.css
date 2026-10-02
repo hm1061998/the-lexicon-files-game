@@ -475,3 +475,67 @@
     height: 31px;
   }
 }
+
+/* Short landscape screens: steps and actions sit in side columns so the reading page keeps the height. */
+@media (max-height: 500px) {
+  .paginated-workspace {
+    display: grid;
+    grid-template-columns: minmax(130px, 170px) minmax(110px, 150px) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'steps actions reading'
+      'count actions reading';
+    column-gap: 10px;
+    row-gap: 4px;
+    align-content: start;
+  }
+  .paginated-workspace.single-reading {
+    display: flex;
+  }
+  .paginated-workspace > .workspace-steps {
+    grid-area: steps;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    margin: 0;
+  }
+  .paginated-workspace > .workspace-steps button {
+    flex: none;
+  }
+  .paginated-workspace > .deduction-selection-count {
+    grid-area: count;
+    margin: 0;
+  }
+  .paginated-workspace > .workspace-reading {
+    grid-area: reading;
+  }
+  .paginated-workspace > .workspace-actions,
+  .paginated-workspace > .workspace-submit {
+    grid-area: actions;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    align-self: start;
+    margin: 0;
+  }
+  .accusation-panel.paginated-workspace {
+    grid-template-columns: minmax(130px, 170px) minmax(0, 1fr);
+    grid-template-areas:
+      'title reading'
+      'actions reading';
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .accusation-panel.paginated-workspace > h3 {
+    grid-area: title;
+    margin: 0;
+  }
+}
+
+/* The cork surface is dark: keep the pager readable on its own paper chip. */
+.clues-cards .page-controls {
+  width: max-content;
+  margin: 0 auto;
+  padding: 0 10px;
+  background: var(--lexicon-paper);
+  border: 1px solid var(--lexicon-border);
+  color: var(--lexicon-ink);
+}

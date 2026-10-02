@@ -160,11 +160,15 @@ export function DeductionBoard({
                 onFeedbackChange={(text) => dispatch({ type: 'setFeedback', text })}
               />
             ) : (
-              <ReadDocument
-                blocks={[textBlock('conclusion:unavailable', strings.conclusionUnavailable)]}
-                learning={learning}
-                label={strings.conclusion}
-              />
+              <section className="paginated-workspace single-reading">
+                <div className="workspace-reading">
+                  <ReadDocument
+                    blocks={[textBlock('conclusion:unavailable', strings.conclusionUnavailable)]}
+                    learning={learning}
+                    label={strings.conclusion}
+                  />
+                </div>
+              </section>
             )}
           </div>
         </div>

@@ -128,7 +128,7 @@ export async function expectNoInvestigationScroll(page: Page, dialog: Locator): 
     const frame = el.getBoundingClientRect();
     return Array.from(
       el.querySelectorAll<HTMLElement>(
-        '.page-viewport .page-fragment,header button,.page-controls button',
+        '.page-viewport .page-fragment,button,.page-controls button',
       ),
     )
       .filter((n) => n.getClientRects().length && !n.closest('.page-measurement'))
@@ -143,9 +143,21 @@ export async function expectNoInvestigationScroll(page: Page, dialog: Locator): 
       .map(({ text }) => text);
   });
   expect(overflow).toEqual([]);
+  // Measured pages must really fit: no fragment may run past the bottom of its own page.
+  const spill = await dialog.evaluate((el) =>
+    Array.from(el.querySelectorAll<HTMLElement>('.page-viewport'))
+      .filter((v) => v.getClientRects().length && !v.closest('.page-measurement'))
+      .flatMap((v) => {
+        const page = v.getBoundingClientRect();
+        return Array.from(v.querySelectorAll<HTMLElement>('.page-fragment'))
+          .filter((n) => n.getBoundingClientRect().bottom > page.bottom + 1)
+          .map((n) => n.textContent?.slice(0, 40) ?? '');
+      }),
+  );
+  expect(spill).toEqual([]);
 }
 
-/** Turns every page of one `.measured-page` from the first to the last and joins the visible text. */
+/** Reads every page of one `.measured-page` from the first to the last, then returns to the first. */
 export async function readAllPages(scope: Locator): Promise<string> {
   const previous = scope.getByRole('button', { name: /Trang trước/ });
   const next = scope.getByRole('button', { name: /Trang sau/ });
@@ -156,12 +168,21 @@ export async function readAllPages(scope: Locator): Promise<string> {
     if (!(await next.isEnabled())) break;
     await next.click();
   }
+  for (let i = 0; i < 40 && (await previous.isEnabled()); i += 1) await previous.click();
   return pages.join(' ');
 }
 
-/** Turns pages of one `.measured-page` forward until `target` is on screen, then returns it. */
+/** Rewinds one `.measured-page` to its first page, then turns forward until `target` is on screen. */
 export async function turnToVisible(scope: Locator, target: Locator): Promise<Locator> {
+  const previous = scope.getByRole('button', { name: /Trang trước/ });
   const next = scope.getByRole('button', { name: /Trang sau/ });
+  if (!(await target.isVisible()))
+    for (
+      let i = 0;
+      i < 40 && (await previous.count()) && (await previous.first().isEnabled());
+      i += 1
+    )
+      await previous.first().click();
   for (let i = 0; i < 40; i += 1) {
     if (await target.isVisible()) return target;
     if (!(await next.count()) || !(await next.first().isEnabled())) break;
@@ -190,5 +211,6 @@ export async function readStatements(scope: Locator): Promise<string[]> {
     if (!(await next.isEnabled())) break;
     await next.click();
   }
+  for (let i = 0; i < 40 && (await previous.isEnabled()); i += 1) await previous.click();
   return [...parts.values()].map((chunks) => normalize(chunks.join(' ')));
 }

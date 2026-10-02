@@ -37,8 +37,9 @@ export function useMeasuredPages({
       frame = 0;
     const layout = () => {
       if (stopped) return;
+      // The viewport has 4px padding on every side; measure at the width the fragments really get.
       const height = viewport.clientHeight - 8,
-        width = viewport.clientWidth;
+        width = viewport.clientWidth - 8;
       if (height <= 0 || width <= 0) return;
       root.style.width = `${width}px`;
       const measure = (f: PageFragment) => {
