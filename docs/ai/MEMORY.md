@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T15:30:00+07:00
+updated_at: 2026-10-02T18:00:00+07:00
 phase: phase-11e
-status: in_progress
-result_commit: 325fc2e
+status: complete
+result_commit: d357cbf
 active_spec: docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md
 active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 ---
@@ -15,17 +15,17 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Current Phase
 
-- Đang triển khai cải tiến UI notebook và bảng suy luận không cuộn, chia trang và có hiệu ứng lật giấy.
+- Cải tiến UI notebook + bảng suy luận không cuộn (plan 02/10, 8 task) **hoàn tất** trên dev; chờ người dùng review.
 
 ## Active Goal
 
-- Yêu cầu mới: sổ tay và bảng suy luận không có scroll; nội dung dài chia trang, hiệu ứng tự nhiên, có thể dùng thư viện phù hợp. Đinh ghim, vòng kim loại ở gáy và góc/khung sổ dùng artwork SVG chân thật theo ảnh, thay mô phỏng CSS/HTML hiện tại. Giữ logic điều tra hiện có và phong cách diegetic.
+- Không có mục tiêu đang chạy; chờ yêu cầu mới. Không tự mở phase nội dung/backend.
 
 ## Current Status
 
-- Spec và plan 02/10 đã duyệt. Task1–7 hoàn tất và commit (Task6 hoàn thiện `cc8ad7a`; Task7 popover `1f537a9`; format `325fc2e`). Task8 (acceptance 5 viewport, final review, handoff) chưa làm.
-- Result commit code gần nhất 325fc2e. Baseline UI cũ result 8c734b5 vẫn verified; không làm lại plan 01/10. Gói UI này chưa push theo yêu cầu cũ (người dùng đã cho push các commit trước đó của dev; hỏi lại nếu cần).
-- Report baseline: docs/ai/2026-10-01-notebook-deduction-verification.md. Ảnh acceptance mới ghi vào docs/ai/playtests/2026-10-02-investigation-pagination/ (untracked, chưa commit).
+- Task1–8 xong. Result commit code `d357cbf` (acceptance + báo cáo), sửa review độc lập `fe30a8c`. Báo cáo: `docs/ai/2026-10-02-investigation-pagination-verification.md`; ảnh 5 viewport: `docs/ai/playtests/2026-10-02-investigation-pagination/`.
+- Gate: lint/test/build/typecheck/prettier/memory:check PASS; nhóm E2E 10 file 61/61 (21 phút) + chạy lại phần liên quan sau thay đổi CSS cuối. Chỉ Chromium Windows; không tuyên bố full E2E toàn repo.
+- Dev ahead origin theo yêu cầu cũ chưa push gói này; hỏi người dùng trước khi push.
 
 ## Completed
 
@@ -36,8 +36,7 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## In Progress
 
-- Task8: ma trận browser 5 viewport × 4 tab + 4 mặt, fixture dài, ảnh actual, final reviewer độc lập, gate lint/test/build/typecheck + nhóm E2E, report docs/ai/2026-10-02-investigation-pagination-verification.md, rồi memory.
-- Việc đã làm Task6/7: spec cũ timeline/notebook-deduction/notebook-people chuyển sang luồng phân trang (helper readAllPages/readStatements/turnToVisible/expectNoInvestigationScroll trong e2e/investigationFixture.ts); popover `InvestigationVocabularyPopover` portal vào dialog; `.deduction-board` dùng token font Cambria.
+- Không có việc đang dở.
 
 ## Active Decisions
 
@@ -58,13 +57,13 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Next Actions
 
-1. Thực hiện Task8: ma trận 5 viewport (1280×720, 760×600, 390×844, 1280×540, 844×390) cho 4 tab + 4 mặt, nội dung dài/ảnh chậm/resize/reduced-motion, chụp và xem ảnh.
-2. Một final reviewer độc lập (read-only), xử lý findings, ghi ruling.
-3. Chạy `npm run lint/test/build/typecheck` + nhóm E2E (`investigation-pagination notebook-deduction notebook-people timeline journey viewport-focus learning settings dialogue`, --workers=1), lưu output vào report.
-4. Cập nhật plan/spec/memory theo kết quả thật; không push nếu chưa được yêu cầu.
+1. Người dùng review gói UI; push chỉ khi được yêu cầu.
+2. Nếu tiếp tục UI, xử lý minor trong report: `role=status` bọc tài liệu phân trang (đọc trùng), khối cố định quá cao hiện lỗi dev, khay đối chiếu hiện hai dữ kiện đã chọn, hồ sơ nghi phạm ở mặt Kết luận, mở bảng từ timeline sổ tay vào mặt Timeline, nhãn trang tiếp nối, bộ đếm lật riêng cho mục lục/chi tiết, tách grapheme, fixture dài tổng hợp.
+3. Không tự bắt đầu phase mới.
 
 ## Verification
 
+- Gói 02/10 (`d357cbf`): lint 7 project, test (game-web 547, content 188), build, typecheck, prettier, memory:check PASS; nhóm E2E 61 passed (21,1 phút). Chi tiết: report 2026-10-02-investigation-pagination.
 - Task6 partial: deduction/conclusion unit subset28/28 pass; `npm run typecheck` exit0; `investigation-pagination.spec.ts`2/2 pass, gồm ghép fact qua đổi mặt và no-scroll. Timeline browser regression và full acceptance chưa chạy.
 - Task5: reading/session unit66/66 pass; typecheck exit0; notebook browser regression tại760×600 pass. Task8 sẽ xác nhận mọi 5 viewport.
 - Page-flip gate: package2.0.7 MIT, nhưng Chromium probe còn12 RAF sau destroy/200ms; loại dependency và dùng SVG/CSS fallback.
@@ -77,7 +76,7 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Latest Handoff
 
-- Commit mới nhất: `325fc2e` (format), `1f537a9` (popover), `cc8ad7a` (test regression). Tiếp tục từ Task8. `apps/game-web/debug.log` vẫn untracked, không commit. Dùng Node 22 trong `.superpowers/runtime/node-v22.23.3-win-x64` và `node .../npm/bin/npx-cli.js nx ...` như plan.
+- Gói investigation no-scroll hoàn tất (`d357cbf`). `apps/game-web/debug.log` vẫn untracked, không commit. Node 22 ở `.superpowers/runtime/node-v22.23.3-win-x64`; chạy Nx bằng `node .../npm/bin/npx-cli.js nx ...`. Helper E2E dùng chung: `e2e/investigationFixture.ts` (`readAllPages`, `readStatements`, `turnToVisible`, `reveal`, `openFace`, `expectNoInvestigationScroll`, `expectComfortableControls`).
 
 ## Required Reading
 
