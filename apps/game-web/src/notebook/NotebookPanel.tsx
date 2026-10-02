@@ -9,8 +9,12 @@ import type {
 } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
 import { NotebookReaderPage } from './NotebookReaderPage';
-import {createNotebookReadingState,selectNotebookReading,type NotebookReadingState} from './notebookReadingState';
-import {InvestigationDecoration} from '../investigation/art/InvestigationDecoration';
+import {
+  createNotebookReadingState,
+  selectNotebookReading,
+  type NotebookReadingState,
+} from './notebookReadingState';
+import { InvestigationDecoration } from '../investigation/art/InvestigationDecoration';
 import { selectInvestigationView } from '../investigation/selectInvestigationView';
 import { useInvestigationDialogFocus } from '../investigation/useInvestigationDialogFocus';
 import './notebook.css';
@@ -30,7 +34,9 @@ export function NotebookPanel({
   onEncounter = noop,
   onInspect = noop,
   onReviewEvidence = noop,
-  reading, onReadingChange, onPaperCue,
+  reading,
+  onReadingChange,
+  onPaperCue,
 }: {
   caseDefinition: CaseDefinition;
   caseState: GameState;
@@ -45,14 +51,18 @@ export function NotebookPanel({
   onEncounter?(id: string, contextId: string): void;
   onInspect?(id: string, contextId: string): void;
   onReviewEvidence?(id: string): void;
-  reading?:NotebookReadingState;onReadingChange?:(s:NotebookReadingState)=>void;onPaperCue?:()=>void;
+  reading?: NotebookReadingState;
+  onReadingChange?: (s: NotebookReadingState) => void;
+  onPaperCue?: () => void;
 }): JSX.Element {
   const headingId = useId();
   const dialogRef = useRef<HTMLElement>(null);
   useInvestigationDialogFocus(dialogRef);
   const view = selectInvestigationView(caseDefinition, caseState);
-  const [localReading,setLocalReading]=useState(()=>createNotebookReadingState(caseDefinition.id));
-  const currentReading=selectNotebookReading(reading??localReading,caseDefinition.id);
+  const [localReading, setLocalReading] = useState(() =>
+    createNotebookReadingState(caseDefinition.id),
+  );
+  const currentReading = selectNotebookReading(reading ?? localReading, caseDefinition.id);
   const learning = {
     catalogue: caseDefinition.vocabulary,
     strings,
@@ -64,7 +74,9 @@ export function NotebookPanel({
   return (
     <div className="notebook-overlay">
       <PaperPanel as="div" className="notebook-panel">
-{["","corner-tr","corner-bl","corner-br"].map(c=><InvestigationDecoration kind="corner" className={c} key={c}/>)}
+        {['', 'corner-tr', 'corner-bl', 'corner-br'].map((c) => (
+          <InvestigationDecoration kind="corner" className={c} key={c} />
+        ))}
         <section
           ref={dialogRef}
           className="notebook-dialog"
@@ -99,8 +111,18 @@ export function NotebookPanel({
             ))}
           </nav>
           <div className="notebook-content">
-            <NotebookReaderPage definition={caseDefinition} view={view} tab={activeTab} reading={currentReading} onReadingChange={onReadingChange??setLocalReading} learning={learning} profile={profile} onReviewEvidence={onReviewEvidence} onOpenDeduction={onOpenDeduction} onPaperCue={onPaperCue}/>
-
+            <NotebookReaderPage
+              definition={caseDefinition}
+              view={view}
+              tab={activeTab}
+              reading={currentReading}
+              onReadingChange={onReadingChange ?? setLocalReading}
+              learning={learning}
+              profile={profile}
+              onReviewEvidence={onReviewEvidence}
+              onOpenDeduction={onOpenDeduction}
+              onPaperCue={onPaperCue}
+            />
           </div>
         </section>
       </PaperPanel>

@@ -5,10 +5,29 @@ import { createGameStore } from './gameStore';
 
 describe('createGameStore', () => {
   it('keeps reading position and tab across close without modifying persisted case state', () => {
-    const store=createGameStore({caseDefinition:loadCaseDefinition('case-001')});const before=store.getState().caseState;
-    const reading=store.getState().notebookReading;const next={...reading,tabs:{...reading.tabs,people:{...reading.tabs.people,selectedId:'leo',detailAnchor:{blockId:'leo:statement:answer1',offset:40}}}};
-    store.getState().openNotebook();store.getState().setNotebookTab('people');store.getState().setNotebookReading(next);store.getState().toggleNotebook();store.getState().openNotebook();
-    expect(store.getState().notebookTab).toBe('people');expect(store.getState().notebookReading).toEqual(next);expect(store.getState().caseState).toBe(before);expect(before).not.toHaveProperty('notebookReading');
+    const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });
+    const before = store.getState().caseState;
+    const reading = store.getState().notebookReading;
+    const next = {
+      ...reading,
+      tabs: {
+        ...reading.tabs,
+        people: {
+          ...reading.tabs.people,
+          selectedId: 'leo',
+          detailAnchor: { blockId: 'leo:statement:answer1', offset: 40 },
+        },
+      },
+    };
+    store.getState().openNotebook();
+    store.getState().setNotebookTab('people');
+    store.getState().setNotebookReading(next);
+    store.getState().toggleNotebook();
+    store.getState().openNotebook();
+    expect(store.getState().notebookTab).toBe('people');
+    expect(store.getState().notebookReading).toEqual(next);
+    expect(store.getState().caseState).toBe(before);
+    expect(before).not.toHaveProperty('notebookReading');
   });
   it('atomically switches between notebook and board without touching case state', () => {
     const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });

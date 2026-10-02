@@ -25,10 +25,9 @@ export function DeductionConnections({
     if (!root) return;
     const update = () => {
       const nodes = new Map(
-        Array.from(root.querySelectorAll<HTMLElement>('[data-board-node]')).filter(n => !n.closest('.page-measurement') && n.getClientRects().length>0).map((n) => [
-          n.dataset.boardNode,
-          n,
-        ]),
+        Array.from(root.querySelectorAll<HTMLElement>('[data-board-node]'))
+          .filter((n) => !n.closest('.page-measurement') && n.getClientRects().length > 0)
+          .map((n) => [n.dataset.boardNode, n]),
       );
       const bounds = root.getBoundingClientRect();
       const origin = {
@@ -51,11 +50,13 @@ export function DeductionConnections({
     const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
     observer?.observe(root);
     root.querySelectorAll('[data-board-node]').forEach((n) => observer?.observe(n));
-    const mutation=new MutationObserver(update);mutation.observe(root,{childList:true,subtree:true});
+    const mutation = new MutationObserver(update);
+    mutation.observe(root, { childList: true, subtree: true });
     window.addEventListener('resize', update);
     root.addEventListener('scroll', update, true);
     return () => {
-      observer?.disconnect();mutation.disconnect();
+      observer?.disconnect();
+      mutation.disconnect();
       window.removeEventListener('resize', update);
       root.removeEventListener('scroll', update, true);
     };

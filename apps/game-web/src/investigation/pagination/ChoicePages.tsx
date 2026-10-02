@@ -1,6 +1,64 @@
-import type {UiStrings} from '@lexicon/shared-types';import type {PageAnchor,ReaderBlock,PageFragment} from './pageTypes';import {MeasuredPage} from './MeasuredPage';
-export function ChoicePages({choices,selected=[],onSelect,strings,label,anchor=null,onAnchorChange,disabled,boardPrefix}:{choices:readonly {id:string;label:string;secondary?:string}[];selected?:readonly string[];onSelect:(id:string)=>void;strings:UiStrings;label:string;anchor?:PageAnchor|null|undefined;onAnchorChange?:((a:PageAnchor)=>void)|undefined;disabled?:(id:string)=>boolean;boardPrefix?:string}) {
- const blocks:ReaderBlock[]=choices.map(c=>({kind:'text',id:c.id,text:c.label+(c.secondary?'\n'+c.secondary:''),spans:[],contextId:null}));
- const render=(f:PageFragment,passive:boolean)=>{const c=choices.find(c=>c.id===f.blockId);const b=blocks.find(b=>b.id===f.blockId);if(!c||b?.kind!=='text')return null;return <button type="button" className="paginated-choice" data-board-node={!passive&&boardPrefix?boardPrefix+c.id:undefined} aria-label={c.label} aria-pressed={selected.includes(c.id)} disabled={!passive&&disabled?.(c.id)} tabIndex={passive?-1:undefined} onClick={passive?undefined:()=>onSelect(c.id)}><span className="page-text" data-measure-text={passive?'true':undefined}>{b.text.slice(f.start,f.end)}</span></button>;};
- return <MeasuredPage blocks={blocks} anchor={anchor} onAnchorChange={onAnchorChange} renderFragment={f=>render(f,false)} renderMeasurement={f=>render(f,true)} strings={strings} controlsLabel={label}/>;
+import type { UiStrings } from '@lexicon/shared-types';
+import type { PageAnchor, ReaderBlock, PageFragment } from './pageTypes';
+import { MeasuredPage } from './MeasuredPage';
+export function ChoicePages({
+  choices,
+  selected = [],
+  onSelect,
+  strings,
+  label,
+  anchor = null,
+  onAnchorChange,
+  disabled,
+  boardPrefix,
+}: {
+  choices: readonly { id: string; label: string; secondary?: string }[];
+  selected?: readonly string[];
+  onSelect: (id: string) => void;
+  strings: UiStrings;
+  label: string;
+  anchor?: PageAnchor | null | undefined;
+  onAnchorChange?: ((a: PageAnchor) => void) | undefined;
+  disabled?: (id: string) => boolean;
+  boardPrefix?: string;
+}) {
+  const blocks: ReaderBlock[] = choices.map((c) => ({
+    kind: 'text',
+    id: c.id,
+    text: c.label + (c.secondary ? '\n' + c.secondary : ''),
+    spans: [],
+    contextId: null,
+  }));
+  const render = (f: PageFragment, passive: boolean) => {
+    const c = choices.find((c) => c.id === f.blockId);
+    const b = blocks.find((b) => b.id === f.blockId);
+    if (!c || b?.kind !== 'text') return null;
+    return (
+      <button
+        type="button"
+        className="paginated-choice"
+        data-board-node={!passive && boardPrefix ? boardPrefix + c.id : undefined}
+        aria-label={c.label}
+        aria-pressed={selected.includes(c.id)}
+        disabled={!passive && disabled?.(c.id)}
+        tabIndex={passive ? -1 : undefined}
+        onClick={passive ? undefined : () => onSelect(c.id)}
+      >
+        <span className="page-text" data-measure-text={passive ? 'true' : undefined}>
+          {b.text.slice(f.start, f.end)}
+        </span>
+      </button>
+    );
+  };
+  return (
+    <MeasuredPage
+      blocks={blocks}
+      anchor={anchor}
+      onAnchorChange={onAnchorChange}
+      renderFragment={(f) => render(f, false)}
+      renderMeasurement={(f) => render(f, true)}
+      strings={strings}
+      controlsLabel={label}
+    />
+  );
 }

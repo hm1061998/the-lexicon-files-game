@@ -1,8 +1,83 @@
-import type {PageAnchor} from '../investigation/pagination/pageTypes';
-export type DeductionFace='clues'|'timeline'|'compare'|'conclusion';
-export type DeductionUi={face:DeductionFace;selectedNode:string|null;selectedFactIds:readonly string[];eventId:string|null;slotId:string|null;suspectId:string|null;feedback:string;anchors:Record<string,PageAnchor|null>};
-export type DeductionUiAction={type:'selectFace';face:DeductionFace}|{type:'selectNode'|'toggleFact'|'selectEvent'|'selectSlot'|'selectSuspect';id:string|null}|{type:'setFeedback';text:string}|{type:'clearFacts'}|{type:'anchor';key:string;anchor:PageAnchor}|{type:'reconcile';facts:readonly string[];events:readonly string[];slots:readonly string[];suspects:readonly string[];nodes:readonly string[]};
-export const initialDeductionUi=():DeductionUi=>({face:'clues',selectedNode:null,selectedFactIds:[],eventId:null,slotId:null,suspectId:null,feedback:'',anchors:{}});
-export function deductionUiReducer(s:DeductionUi,a:DeductionUiAction):DeductionUi {
- switch(a.type){case 'selectFace':return {...s,face:a.face,feedback:''};case 'selectNode':return {...s,selectedNode:a.id};case 'toggleFact':return {...s,feedback:'',selectedFactIds:a.id===null?s.selectedFactIds:s.selectedFactIds.includes(a.id)?s.selectedFactIds.filter(id=>id!==a.id):s.selectedFactIds.length<2?[...s.selectedFactIds,a.id]:s.selectedFactIds};case 'selectEvent':return {...s,eventId:a.id,slotId:null,feedback:''};case 'selectSlot':return {...s,slotId:a.id,feedback:''};case 'selectSuspect':return {...s,suspectId:a.id,feedback:''};case 'clearFacts':return {...s,selectedFactIds:[],feedback:''};case 'setFeedback':return {...s,feedback:a.text};case 'anchor':return {...s,anchors:{...s.anchors,[a.key]:a.anchor}};case 'reconcile':{const next={...s,selectedFactIds:s.selectedFactIds.filter(id=>a.facts.includes(id)),eventId:s.eventId&&a.events.includes(s.eventId)?s.eventId:null,slotId:s.slotId&&a.slots.includes(s.slotId)?s.slotId:null,suspectId:s.suspectId&&a.suspects.includes(s.suspectId)?s.suspectId:null,selectedNode:s.selectedNode&&a.nodes.includes(s.selectedNode)?s.selectedNode:null};return JSON.stringify(next)===JSON.stringify(s)?s:next;}}
+import type { PageAnchor } from '../investigation/pagination/pageTypes';
+export type DeductionFace = 'clues' | 'timeline' | 'compare' | 'conclusion';
+export type DeductionUi = {
+  face: DeductionFace;
+  selectedNode: string | null;
+  selectedFactIds: readonly string[];
+  eventId: string | null;
+  slotId: string | null;
+  suspectId: string | null;
+  feedback: string;
+  anchors: Record<string, PageAnchor | null>;
+};
+export type DeductionUiAction =
+  | { type: 'selectFace'; face: DeductionFace }
+  | {
+      type: 'selectNode' | 'toggleFact' | 'selectEvent' | 'selectSlot' | 'selectSuspect';
+      id: string | null;
+    }
+  | { type: 'setFeedback'; text: string }
+  | { type: 'clearFacts' }
+  | { type: 'anchor'; key: string; anchor: PageAnchor }
+  | {
+      type: 'reconcile';
+      facts: readonly string[];
+      events: readonly string[];
+      slots: readonly string[];
+      suspects: readonly string[];
+      nodes: readonly string[];
+    };
+export const initialDeductionUi = (): DeductionUi => ({
+  face: 'clues',
+  selectedNode: null,
+  selectedFactIds: [],
+  eventId: null,
+  slotId: null,
+  suspectId: null,
+  feedback: '',
+  anchors: {},
+});
+export function deductionUiReducer(s: DeductionUi, a: DeductionUiAction): DeductionUi {
+  switch (a.type) {
+    case 'selectFace':
+      return { ...s, face: a.face, feedback: '' };
+    case 'selectNode':
+      return { ...s, selectedNode: a.id };
+    case 'toggleFact':
+      return {
+        ...s,
+        feedback: '',
+        selectedFactIds:
+          a.id === null
+            ? s.selectedFactIds
+            : s.selectedFactIds.includes(a.id)
+              ? s.selectedFactIds.filter((id) => id !== a.id)
+              : s.selectedFactIds.length < 2
+                ? [...s.selectedFactIds, a.id]
+                : s.selectedFactIds,
+      };
+    case 'selectEvent':
+      return { ...s, eventId: a.id, slotId: null, feedback: '' };
+    case 'selectSlot':
+      return { ...s, slotId: a.id, feedback: '' };
+    case 'selectSuspect':
+      return { ...s, suspectId: a.id, feedback: '' };
+    case 'clearFacts':
+      return { ...s, selectedFactIds: [], feedback: '' };
+    case 'setFeedback':
+      return { ...s, feedback: a.text };
+    case 'anchor':
+      return { ...s, anchors: { ...s.anchors, [a.key]: a.anchor } };
+    case 'reconcile': {
+      const next = {
+        ...s,
+        selectedFactIds: s.selectedFactIds.filter((id) => a.facts.includes(id)),
+        eventId: s.eventId && a.events.includes(s.eventId) ? s.eventId : null,
+        slotId: s.slotId && a.slots.includes(s.slotId) ? s.slotId : null,
+        suspectId: s.suspectId && a.suspects.includes(s.suspectId) ? s.suspectId : null,
+        selectedNode: s.selectedNode && a.nodes.includes(s.selectedNode) ? s.selectedNode : null,
+      };
+      return JSON.stringify(next) === JSON.stringify(s) ? s : next;
+    }
+  }
 }

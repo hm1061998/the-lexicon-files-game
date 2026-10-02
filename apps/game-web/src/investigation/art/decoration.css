@@ -1,1 +1,50 @@
-.investigation-decoration{position:absolute;pointer-events:none;user-select:none;object-fit:contain;z-index:5}.decoration-pushpin{width:28px;height:34px;top:-13px;left:calc(50% - 14px);transform:rotate(-9deg)}.decoration-ring{width:62px;height:35px;left:calc(36% - 31px)}.decoration-corner{width:70px;height:70px;top:-7px;left:-7px;z-index:6}.decoration-corner.corner-tr{left:auto;right:-7px;transform:rotate(90deg)}.decoration-corner.corner-bl{top:auto;bottom:-7px;transform:rotate(-90deg)}.decoration-corner.corner-br{left:auto;right:-7px;top:auto;bottom:-7px;transform:rotate(180deg)}.decoration-clip{width:19px;height:52px;left:15px;top:-18px;transform:rotate(10deg)}
+.investigation-decoration {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  object-fit: contain;
+  z-index: 5;
+}
+.decoration-pushpin {
+  width: 28px;
+  height: 34px;
+  top: -13px;
+  left: calc(50% - 14px);
+  transform: rotate(-9deg);
+}
+.decoration-ring {
+  width: 62px;
+  height: 35px;
+  left: calc(36% - 31px);
+}
+.decoration-corner {
+  width: 70px;
+  height: 70px;
+  top: -7px;
+  left: -7px;
+  z-index: 6;
+}
+.decoration-corner.corner-tr {
+  left: auto;
+  right: -7px;
+  transform: rotate(90deg);
+}
+.decoration-corner.corner-bl {
+  top: auto;
+  bottom: -7px;
+  transform: rotate(-90deg);
+}
+.decoration-corner.corner-br {
+  left: auto;
+  right: -7px;
+  top: auto;
+  bottom: -7px;
+  transform: rotate(180deg);
+}
+.decoration-clip {
+  width: 19px;
+  height: 52px;
+  left: 15px;
+  top: -18px;
+  transform: rotate(10deg);
+}

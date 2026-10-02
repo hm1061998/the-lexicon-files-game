@@ -8,7 +8,9 @@ describe('parseUiStrings', () => {
     const strings = parseUiStrings(viStrings, 'ui/vi.json') as unknown as Record<string, string>;
     expect(strings.pagePosition).toContain('{current}');
     expect(strings.pagePosition).toContain('{total}');
-    expect(() => parseUiStrings({ ...viStrings, pagePrevious: undefined }, 'ui/vi.json')).toThrow('pagePrevious');
+    expect(() => parseUiStrings({ ...viStrings, pagePrevious: undefined }, 'ui/vi.json')).toThrow(
+      'pagePrevious',
+    );
   });
   it('provides labels for the separate deduction board and readable notebook pages', () => {
     const strings = parseUiStrings(viStrings, 'ui/vi.json') as unknown as Record<string, string>;

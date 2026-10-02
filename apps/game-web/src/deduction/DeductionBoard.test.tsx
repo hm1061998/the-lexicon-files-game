@@ -57,7 +57,19 @@ describe('DeductionBoard disclosure', () => {
       />,
     );
     expect(html).toContain(c.explanation);
-    const conclusion=renderToStaticMarkup(<DeductionBoard {...props} initialFace="conclusion" caseState={{...state,objectiveStatuses:{...state.objectiveStatuses,[definition.conclusion!.objectiveId]:'active'}}}/>);
+    const conclusion = renderToStaticMarkup(
+      <DeductionBoard
+        {...props}
+        initialFace="conclusion"
+        caseState={{
+          ...state,
+          objectiveStatuses: {
+            ...state.objectiveStatuses,
+            [definition.conclusion!.objectiveId]: 'active',
+          },
+        }}
+      />,
+    );
     expect(conclusion).toContain(strings.conclusionSubmit);
   });
 });
