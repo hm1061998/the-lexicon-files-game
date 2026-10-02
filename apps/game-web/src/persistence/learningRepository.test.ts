@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { loadAllVocabulary, loadCaseDefinition } from '@lexicon/game-content';
 import { createLearningRepository, type LearningDatabase } from './learningRepository';
 import { createDefaultLearningRecord, parseLearningRecord } from './learningMigration';
 
@@ -46,6 +47,70 @@ describe('separate learning repository', () => {
     expect(result.status).toBe('confirmation-required');
     expect(store.backups).toEqual([raw]);
     expect(store.value()).toBe(raw);
+  });
+
+  it('keeps a record that contains words of another case when loaded with the union catalogue', async () => {
+    const { catalogue, contexts } = loadAllVocabulary();
+    const case1 = new Set(loadCaseDefinition('case-001').vocabulary.map((entry) => entry.id));
+    const only002 = loadCaseDefinition('case-002').vocabulary.find(
+      (entry) => !case1.has(entry.id),
+    )!;
+    const context002 = contexts.find((context) => context.vocabularyIds.includes(only002.id))!;
+    const record = createDefaultLearningRecord();
+    const raw = {
+      ...record,
+      profile: {
+        ...record.profile,
+        vocabulary: {
+          [only002.id]: {
+            vocabularyId: only002.id,
+            stage: 'seen',
+            encounterCount: 1,
+            correctRecognitionCount: 0,
+            incorrectRecognitionCount: 0,
+            lastSeenAt: '2026-10-02T00:00:00.000Z',
+            contextsSeen: [context002.id],
+          },
+        },
+      },
+    };
+    const store = memory(raw);
+    const repo = createLearningRepository(async () => store.db);
+    const result = await repo.loadLearning(catalogue, contexts);
+    expect(result.status).toBe('loaded');
+    expect(store.backups).toEqual([]);
+
+    // The same record validated against case-001 alone is what used to be treated as corrupt.
+    const single = await repo.loadLearning(
+      loadCaseDefinition('case-001').vocabulary,
+      loadCaseDefinition('case-001').vocabularyContexts,
+    );
+    expect(single.status).toBe('confirmation-required');
+  });
+
+  it('still reports confirmation-required for a word unknown to every case', async () => {
+    const { catalogue, contexts } = loadAllVocabulary();
+    const record = createDefaultLearningRecord();
+    const store = memory({
+      ...record,
+      profile: {
+        ...record.profile,
+        vocabulary: {
+          ghost: {
+            vocabularyId: 'ghost',
+            stage: 'seen',
+            encounterCount: 1,
+            correctRecognitionCount: 0,
+            incorrectRecognitionCount: 0,
+            lastSeenAt: '2026-10-02T00:00:00.000Z',
+            contextsSeen: [],
+          },
+        },
+      },
+    });
+    const repo = createLearningRepository(async () => store.db);
+    const result = await repo.loadLearning(catalogue, contexts);
+    expect(result.status).toBe('confirmation-required');
   });
 
   it('falls back to memory when IndexedDB cannot open', async () => {

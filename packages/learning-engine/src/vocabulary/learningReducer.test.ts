@@ -326,4 +326,30 @@ describe('learning reducer edge cases', () => {
     );
     expect(result).toMatchObject({ ok: false, error: { code: 'invalidAction' } });
   });
+
+  it('applies an action for an active-case word and preserves progress of words outside the active catalogue', () => {
+    const other = {
+      vocabularyId: 'courier',
+      stage: 'understood' as const,
+      encounterCount: 3,
+      correctRecognitionCount: 1,
+      incorrectRecognitionCount: 0,
+      lastSeenAt: '2026-10-01T00:00:00.000Z',
+      contextsSeen: ['evidence:courier_receipt:description'],
+    };
+    const profile = {
+      ...createInitialLanguageProfile(),
+      vocabulary: { courier: other },
+    };
+    const result = applyLearningAction(
+      profile,
+      catalogue,
+      contexts,
+      { type: 'encounterContext', vocabularyId: 'leave', contextId: 'dialogue:anna:entry:text' },
+      '2026-10-02T00:00:00.000Z',
+    );
+    expect(result.ok).toBe(true);
+    expect(result.profile.vocabulary.courier).toEqual(other);
+    expect(result.profile.vocabulary.leave).toMatchObject({ stage: 'seen', encounterCount: 1 });
+  });
 });

@@ -71,11 +71,11 @@
       "lemma": "receipt",
       "partOfSpeech": "noun",
       "cefr": "A2",
-      "definitionEn": "A document that shows that something has been paid for or received.",
-      "translationVi": "biên nhận",
-      "examples": ["Keep the receipt for this delivery."],
-      "tags": ["delivery", "investigation"],
-      "surfaceForms": ["receipts"]
+      "definitionEn": "A document showing that payment was made.",
+      "translationVi": "biên lai",
+      "examples": ["She kept the receipt."],
+      "tags": ["records"],
+      "surfaceForms": ["receipt", "receipts"]
     },
     {
       "id": "urgent",
