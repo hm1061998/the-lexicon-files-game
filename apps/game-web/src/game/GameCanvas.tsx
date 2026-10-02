@@ -20,6 +20,9 @@ import { createSaveRepository, type SaveRepository } from '../persistence/saveRe
 import { loadGameBootstrap, type GameBootstrapResult } from './bootstrapGame';
 import { DialogueLayer } from '../dialogue/DialogueLayer';
 import { Hud } from '../hud/Hud';
+import { CoachNote } from '../onboarding/CoachNote';
+import { selectCoachNote } from '../onboarding/selectCoachNote';
+import { useOnboardingSignals } from '../onboarding/useOnboardingSignals';
 import { BriefingMemo } from '../briefing/BriefingMemo';
 import { PauseMenu } from '../pause/PauseMenu';
 import { SettingsFields } from '../pause/SettingsFields';
@@ -62,7 +65,7 @@ import { useTranslationMode } from '../state/useTranslationMode';
 import { connectSettingsAutosave } from '../persistence/connectSettingsAutosave';
 import { PaperPanel } from '@lexicon/ui';
 import { createDefaultLearningRecord } from '../persistence/learningMigration';
-import { createLearningStore } from '../state/learningStore';
+import { createLearningStore, type LearningStore } from '../state/learningStore';
 import { LearningStoreProvider } from '../state/LearningStoreContext';
 import { connectLearningAutosave } from '../persistence/connectLearningAutosave';
 import { useLearningStore } from '../state/LearningStoreContext';
@@ -678,6 +681,7 @@ function GameRoot({
                 </aside>
               )}
               <Hud strings={strings} bus={bus} />
+              <CoachLayer strings={strings} bus={bus} store={store} learning={learning} />
               <PersistenceNotice strings={strings} />
               <DialogueLayer strings={strings} returnFocusRef={containerRef} />
               <PaperCueContext.Provider value={paperCue}>
@@ -702,6 +706,29 @@ function GameRoot({
 function SettingsEffects(): null {
   useMasterVolume(useSettingsStore((state) => state.settings.volume));
   return null;
+}
+
+function CoachLayer({
+  strings,
+  bus,
+  store,
+  learning,
+}: {
+  strings: UiStrings;
+  bus: ReturnType<typeof createEventBus<GameEventMap>>;
+  store: GameStore;
+  learning: LearningStore;
+}): JSX.Element | null {
+  const progress = useOnboardingSignals(bus, store, learning);
+  const noteId = selectCoachNote(progress);
+  if (noteId === null) return null;
+  return (
+    <CoachNote
+      strings={strings}
+      noteId={noteId}
+      onDismiss={() => learning.getState().markOnboardingSeen(noteId)}
+    />
+  );
 }
 
 function BriefingLayer({

@@ -1,0 +1,61 @@
+.coach-note {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 72px;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(520px, calc(100% - 32px));
+  padding: 10px 14px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 4px;
+  background: var(--lexicon-paper);
+  color: var(--lexicon-ink);
+  font-size: var(--lexicon-text-min);
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(42, 37, 33, 0.35);
+}
+
+.coach-note p {
+  flex: 1;
+  margin: 0;
+}
+
+.coach-note button {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 3px;
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .game-root[data-reduced-motion='false'] .coach-note {
+    animation: coach-note-in 180ms ease-out;
+  }
+}
+
+@keyframes coach-note-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 959px), (max-height: 639px) {
+  .coach-note {
+    bottom: 60px;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+}
