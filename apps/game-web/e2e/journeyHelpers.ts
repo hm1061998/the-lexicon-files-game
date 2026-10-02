@@ -31,7 +31,22 @@ export type OpenWorldOptions = {
   mode?: 'auto' | 'new' | 'continue';
   /** `seen` pre-dismisses the coach notes so they never cover the UI under test. */
   coach?: 'seen' | 'fresh';
+  /** Case picked on the case picker; defaults to Case #001. */
+  caseId?: string;
 };
+
+const CASE_TITLES: Record<string, string> = {
+  'case-001': 'The Missing Report',
+  'case-002': 'The Wrong Delivery',
+};
+
+/** Picks a case on the case picker, which is the first screen after every load. */
+export async function chooseCase(page: Page, caseId = 'case-001'): Promise<void> {
+  const title = CASE_TITLES[caseId];
+  if (!title) throw new Error(`Unknown test case ${caseId}`);
+  await page.getByRole('button', { name: title }).click();
+  await expect(page.getByRole('heading', { name: 'The Lexicon Files' })).toBeVisible();
+}
 
 const LEARNING_RECORD_KEY = 'local-profile';
 
@@ -108,7 +123,8 @@ export async function reopenWorld(page: Page, options: OpenWorldOptions = {}): P
 }
 
 async function passTitle(page: Page, options: OpenWorldOptions): Promise<void> {
-  const { mode = 'auto' } = options;
+  const { mode = 'auto', caseId = 'case-001' } = options;
+  await chooseCase(page, caseId);
   const ready = () => page.evaluate(() => window.__lexiconDebug !== undefined);
   const continueButton = page.getByRole('button', { name: 'Tiếp tục điều tra' });
   const newCaseButton = page.getByRole('button', { name: 'Vụ án mới', exact: true });
@@ -162,8 +178,8 @@ export async function interactAt(
   }
 }
 
-export async function saved(page: Page): Promise<SavedRecord | undefined> {
-  return page.evaluate(async () => {
+export async function saved(page: Page, caseId = 'case-001'): Promise<SavedRecord | undefined> {
+  return page.evaluate(async (caseId) => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open('lexicon-game-saves', 1);
       request.onsuccess = () => resolve(request.result);
@@ -171,14 +187,14 @@ export async function saved(page: Page): Promise<SavedRecord | undefined> {
     });
     try {
       return await new Promise<SavedRecord | undefined>((resolve, reject) => {
-        const request = db.transaction('saves').objectStore('saves').get('case-001');
+        const request = db.transaction('saves').objectStore('saves').get(caseId);
         request.onsuccess = () => resolve(request.result as SavedRecord | undefined);
         request.onerror = () => reject(request.error);
       });
     } finally {
       db.close();
     }
-  });
+  }, caseId);
 }
 
 export async function talkToDavid(page: Page): Promise<void> {

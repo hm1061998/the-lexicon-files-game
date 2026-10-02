@@ -12,19 +12,23 @@ type Scene = {
   assets: Asset[];
   spawnPoints: Record<string, Point>;
 };
-function readScene(sceneId: string): Scene {
+function readScene(sceneId: string, caseId: string): Scene {
   return JSON.parse(
     readFileSync(
       new URL(
-        `../../../packages/game-content/cases/case-001/scenes/${sceneId}.json`,
+        `../../../packages/game-content/cases/${caseId}/scenes/${sceneId}.json`,
         import.meta.url,
       ),
       'utf8',
     ),
   ) as Scene;
 }
-export function sceneSpawnPoint(sceneId: string, spawnId = 'default'): { x: number; y: number } {
-  const scene = readScene(sceneId);
+export function sceneSpawnPoint(
+  sceneId: string,
+  spawnId = 'default',
+  caseId = 'case-001',
+): { x: number; y: number } {
+  const scene = readScene(sceneId, caseId);
   const p = scene.spawnPoints[spawnId];
   if (!p) throw new Error(`Unknown test spawn ${sceneId}/${spawnId}`);
   return {
@@ -36,8 +40,9 @@ export function scenePoint(
   sceneId: string,
   id: string,
   offset: Point = { u: 0, v: 0 },
+  caseId = 'case-001',
 ): { x: number; y: number } {
-  const scene = readScene(sceneId);
+  const scene = readScene(sceneId, caseId);
   const anchor = (asset: Asset): Point => {
     if (asset.position) return asset.position;
     const parent = scene.assets.find((a) => a.id === asset.restsOn);

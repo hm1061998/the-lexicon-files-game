@@ -3,7 +3,7 @@ import { mkdirSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import type { UiStrings } from '@lexicon/shared-types';
 import { scenePoint } from './sceneTestData';
-import { interactAt, openWorld, pressInteract, saved } from './journeyHelpers';
+import { chooseCase, interactAt, openWorld, pressInteract, saved } from './journeyHelpers';
 
 const strings = JSON.parse(
   readFileSync(new URL('../../../packages/game-content/ui/vi.json', import.meta.url), 'utf8'),
@@ -89,6 +89,7 @@ test.describe('intro onboarding', () => {
     await page.setViewportSize({ width: 760, height: 600 });
     await page.route('**/favicon.ico', (route) => route.fulfill({ status: 204 }));
     await page.goto('/');
+    await chooseCase(page);
     await expect(page.getByRole('heading', { name: strings.titleGame })).toBeVisible();
     await expect(page.getByRole('button', { name: strings.titleContinue })).toHaveCount(0);
     await expect(page.locator('canvas')).toHaveCount(0);
@@ -137,6 +138,7 @@ test.describe('intro onboarding', () => {
       .toMatchObject({ move: true, interact: true, notebook: true });
 
     await page.reload();
+    await chooseCase(page);
     await page.getByRole('button', { name: strings.titleContinue }).click();
     await page.waitForFunction(() => window.__lexiconDebug !== undefined);
     await page.waitForTimeout(1200);
@@ -166,6 +168,7 @@ test.describe('intro onboarding', () => {
     ).length;
 
     await page.reload();
+    await chooseCase(page);
     await page.getByRole('button', { name: strings.titleNewCase, exact: true }).click();
     await expect(
       page.getByRole('alertdialog', { name: strings.newCaseConfirmTitle }),
@@ -263,6 +266,7 @@ test.describe('intro onboarding', () => {
       };
 
       await page.goto('/');
+      await chooseCase(page);
       await expect(page.getByRole('heading', { name: strings.titleGame })).toBeVisible();
       await inside('.title-card');
       expect(await noScroll('.title-card')).toBe(true);
