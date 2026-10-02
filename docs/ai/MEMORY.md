@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T17:45:00+07:00
-phase: case-002
+updated_at: 2026-10-02T21:30:00+07:00
+phase: ui-foundation-hud
 status: in_progress
-result_commit: 4ffcd3b
-active_spec: docs/superpowers/specs/2026-10-02-case-002-design.md
-active_plan: docs/superpowers/plans/2026-10-02-case-002.md
+result_commit: dd7cb77
+active_spec: docs/superpowers/specs/2026-10-02-ui-foundation-hud-design.md
+active_plan: docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 ---
 
 ## Metadata
@@ -15,15 +15,15 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Current Phase
 
-- PR-03 Case #002 "The Wrong Delivery": triển khai xong Task 1–9, plan hoàn tất; đã push `dev` lên origin (d734b57) theo yêu cầu người dùng. PR-01 (onboarding) còn nợ kiểm chứng, không mở rộng.
+- UI foundation + HUD (PR-02 làm lại UI, phần 1+2): Task 0–9 xong trên `dev`, chưa push (plan cấm push). Chờ người dùng duyệt ảnh trước/sau/concept (spec §9.4) trước khi đánh dấu hoàn tất. PR-03 Case #002 đã xong và đã push.
 
 ## Active Goal
 
-- Người dùng xem báo cáo `docs/ai/2026-10-02-case-002-engine-generality.md` (F-1…F-7, review độc lập) rồi chọn việc tiếp theo (PR-04 chỉ sau khi duyệt PR-03).
+- Người dùng xem ảnh `docs/ai/playtests/2026-10-02-ui-foundation-hud/{before,after}` và báo `docs/ai/2026-10-02-ui-foundation-hud-verification.md`, duyệt hoặc yêu cầu chỉnh; sau đó mới chọn phần 3 (vỏ ngoài game) hay việc khác.
 
 ## Current Status
 
-- Commit: picker/boot `0981ade`, fix deduction `be59dc1`, E2E `27b7da1`, fix reconcile + docs `4ffcd3b`. Engine phải sửa: F-1/F-2 (từ vựng toàn cục `loadAllVocabulary`), F-4 (`DEFAULT_START`, boot theo case), F-6 (một nút so sánh), F-7 (reconcile trong `submitContradiction`). Case #002 không `audio` (F-3, đã duyệt).
+- Commit: T0 `4643bd2`, font `06b55eb`, vật liệu `df7ecc4`, primitive `f44c932`, HUD `70df036`/`d5314b3`, nhãn NPC `1c93cdb`, cue `4e0b92c`, cổng vòm `6213a5d`, sửa E2E `60407d4`, review fixes `dd7cb77`. Dependency mới: 4 font `@fontsource`. Ngoại lệ ánh sáng cổng đã ghi vào `apps/game-web/AGENTS.md` và docs/art/06. FPS không đổi (8,9 cùng điều kiện). E2E đầy đủ: 181 pass, 20 đỏ (17 có sẵn + 3 đã sửa).
 
 ## Completed
 
@@ -34,7 +34,7 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## In Progress
 
-- Không có việc dở. Nợ có sẵn: `learning.spec.ts` và `notebook-people.spec.ts › reuses vocabulary context` đỏ do từ vựng bản tin (đã xác nhận đỏ ở `5de9eaf`), cùng nhóm `feedback-*` từ trước; chưa chạy full E2E.
+- Không có việc dở kỹ thuật. Nợ: 17 E2E đỏ có sẵn (danh sách trong báo cáo verification), 1 pytest đỏ có sẵn (`test_chair_directions`), minor review đã ghi ledger (aria-label phím compact, validator cổng chỉ kiểm tâm, v.v.).
 
 ## Active Decisions
 
@@ -55,10 +55,10 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Next Actions
 
-1. Người dùng duyệt PR-03 và chọn việc tiếp theo (đã push `dev`).
-2. Đề xuất cho PR-04: reconcile objective sau `addEvidence`, namespace context id theo case, audio-codegen theo case, cờ `*_question_done` không phụ thuộc nút Continue.
-3. Tùy chọn: sửa nợ E2E (learning/notebook-people) bằng cập nhật kỳ vọng từ vựng bản tin.
-4. PR-02 vẫn tạm dừng.
+1. Người dùng duyệt ảnh UI trước/sau/concept; chỉnh nếu cần.
+2. Quyết định push `dev` (hiện ahead của origin; plan UI cấm tự push).
+3. Phần 3 UI (màn tiêu đề, chọn case, pause, briefing, tổng kết) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
+4. Tùy chọn: sửa nợ E2E có sẵn và minor review.
 
 ## Verification
 
@@ -75,7 +75,7 @@ active_plan: docs/superpowers/plans/2026-10-02-case-002.md
 
 ## Latest Handoff
 
-- Case #002 dùng lại Anna/Leo/David, sự thật Leo đổi nhãn 14→41 Bridge Street; 3 scene, 6 evidence, 2 contradiction, không listening/audio. Màn chọn case nằm trong `GameCanvas` (`selectedCaseId === null`), `CaseFlow` remount theo case. E2E: `case-002.spec.ts` 13 test + journey/onboarding #001 xanh; helper `chooseCase`, `saved(page, caseId)`. Mount Windows CRLF vs HEAD LF: dùng Python giữ newline khi sửa.
+- UI mới: `packages/ui` có PaperSheet/IndexTab/Stamp/KeyHintLine/InkButton (PaperPanel giữ nguyên cho modal cũ đến phần 5). Texture sinh bằng `.venv-art-codegen/Scripts/python tools/art-codegen/build_ui_materials.py [--check]` (+ `portal_art.py`). `hudInsets` đi qua store (đo từ canvas). Cổng là vòm trong opening tường, không lật ảnh trên tường xa. Chạy E2E: tắt mọi thao tác sửa file trong lúc chạy (HMR làm nhiễu); `pkill` không có trên máy, dùng PowerShell `Stop-Process`.
 
 ## Required Reading
 
