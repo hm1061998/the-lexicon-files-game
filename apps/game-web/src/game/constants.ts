@@ -29,3 +29,6 @@ export const SCENE_FADE_MS = 250;
 
 /** Font stack of room labels; mirrors the `--lexicon-font-body` token of `@lexicon/ui`. */
 export const LABEL_FONT_FAMILY = '"IBM Plex Mono", ui-monospace, monospace';
+
+/** An NPC dossier tag appears within this multiple of the NPC's interaction radius. */
+export const NAMEPLATE_RADIUS_FACTOR = 1.5;

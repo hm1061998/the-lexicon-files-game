@@ -51,6 +51,7 @@ import { unprojectIso, type LogicalPoint } from '../systems/isometricProjection'
 import { facingToward } from '../systems/facingToward';
 import { breathing } from '../systems/breathing';
 import { nameTagPosition } from '../systems/nameTagLayout';
+import { nameplateVisible } from '../systems/nameplateVisibility';
 import { cameraFollowConfig } from '../systems/cameraFollow';
 import { createNavigationController } from '../systems/navigationController';
 import { createGameInputGate } from '../systems/gameInputGate';
@@ -211,6 +212,11 @@ export class WorldScene extends Phaser.Scene {
       tagText: Phaser.GameObjects.Text;
       tagWidth: number;
       tagHeight: number;
+      hasPaperPlate: boolean;
+      interactionRadius: number;
+      /** Whether the tag is currently meant to be visible (it fades towards this). */
+      tagShown: boolean;
+      tagTween: Phaser.Tweens.Tween | null;
       phase: number;
       facing: Facing;
       walking: boolean;
@@ -324,6 +330,10 @@ export class WorldScene extends Phaser.Scene {
             tagText: nameplate.text,
             tagWidth: nameplate.width,
             tagHeight: nameplate.height,
+            hasPaperPlate: nameplate.hasPaperPlate,
+            interactionRadius: asset.interaction?.radius ?? 90,
+            tagShown: false,
+            tagTween: null,
             phase: Array.from(asset.id).reduce((n, c) => n + c.charCodeAt(0), 0) * 0.37,
             facing: 'SE',
             walking: false,
@@ -502,12 +512,13 @@ export class WorldScene extends Phaser.Scene {
       npcTexture: (id) => this.npcVisuals.get(id)?.sprite.texture.key,
       npcScaleY: (id) => this.npcVisuals.get(id)?.sprite.scaleY,
       npcName: (id) => this.npcVisuals.get(id)?.tagText.text,
+      nameplateVisible: (id) => this.npcVisuals.get(id)?.tagShown ?? false,
       npcNameplate: (id) => {
         const visual = this.npcVisuals.get(id);
         if (!visual) return undefined;
         return {
           text: visual.tagText.text,
-          hasPaperPlate: visual.tag.list.length === 2,
+          hasPaperPlate: visual.hasPaperPlate,
           textColor:
             typeof visual.tagText.style.color === 'string' ? visual.tagText.style.color : '',
           gap: visual.sprite.y - CHARACTER_FIGURE_HEIGHT - (visual.tag.y + visual.tagHeight / 2),
@@ -708,7 +719,41 @@ export class WorldScene extends Phaser.Scene {
         prompt: promptRect,
       });
       visual.tag.setPosition(pos.x, pos.y);
+      this.syncNameplateVisibility(visual);
     }
+  }
+
+  /** Fades a dossier tag in or out when the player gets near or the pointer rests on the NPC. */
+  private syncNameplateVisibility(visual: {
+    sprite: Phaser.GameObjects.Sprite;
+    tag: Phaser.GameObjects.Container;
+    interactionRadius: number;
+    tagShown: boolean;
+    tagTween: Phaser.Tweens.Tween | null;
+  }): void {
+    const pointer = this.input.activePointer;
+    const hovered =
+      this.input.isOver && visual.sprite.getBounds().contains(pointer.worldX, pointer.worldY);
+    const shown = nameplateVisible({
+      player: { x: this.player.x, y: this.player.y },
+      npcFeet: { x: visual.sprite.x, y: visual.sprite.y },
+      interactionRadius: visual.interactionRadius,
+      hovered,
+    });
+    if (shown === visual.tagShown) return;
+    visual.tagShown = shown;
+    visual.tagTween?.stop();
+    visual.tagTween = null;
+    if (this.options.motion.reducedMotion()) {
+      visual.tag.setAlpha(shown ? 1 : 0);
+      return;
+    }
+    visual.tagTween = this.tweens.add({
+      targets: visual.tag,
+      alpha: shown ? 1 : 0,
+      duration: 150,
+      ease: 'Linear',
+    });
   }
 
   private setNpcWalking(id: string, walking: boolean): void {
@@ -1268,6 +1313,10 @@ export class WorldScene extends Phaser.Scene {
     }
     this.markerTween?.destroy();
     this.markerTween = null;
+    for (const visual of this.npcVisuals.values()) {
+      visual.tagTween?.stop();
+      visual.tagTween = null;
+    }
     this.unsubscribePaperCue?.();
     this.unsubscribePaperCue = null;
     this.unsubscribeNearby?.();

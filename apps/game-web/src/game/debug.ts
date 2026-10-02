@@ -19,6 +19,8 @@ export type LexiconDebug = {
   npcTexture(id: string): string | undefined;
   npcScaleY(id: string): number | undefined;
   npcName(id: string): string | undefined;
+  /** Whether the NPC's dossier tag is meant to be showing (distance or hover). */
+  nameplateVisible(id: string): boolean;
   npcNameplate(
     id: string,
   ): { text: string; hasPaperPlate: boolean; textColor: string; gap: number } | undefined;

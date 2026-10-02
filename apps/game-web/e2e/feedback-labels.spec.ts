@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { openWorld } from './journeyHelpers';
+import { scenePoint } from './sceneTestData';
 
 const office = JSON.parse(
   readFileSync(
@@ -23,6 +24,24 @@ test('investigation room label stays within the visible back-wall segment', () =
   expect(label).toMatchObject({ u: 6, mount: { kind: 'wall', wallId: 'wall_back' } });
   expect(label!.u - 2).toBeGreaterThan(0);
   expect(label!.u + 2).toBeLessThan(16);
+});
+
+test('NPC dossier tags show by proximity, not on entry', async ({ page }) => {
+  await openWorld(page);
+  await expect.poll(() => page.evaluate(() => Boolean(window.__lexiconDebug))).toBe(true);
+  // The default spawn is inside Anna's and Leo's radius but well outside David's.
+  await page.waitForTimeout(400);
+  expect(await page.evaluate(() => window.__lexiconDebug!.nameplateVisible('david'))).toBe(false);
+  const anna = scenePoint('main_office', 'anna', { u: 0.3, v: 0.6 });
+  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), anna);
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nameplateVisible('anna')))
+    .toBe(true);
+  const far = scenePoint('main_office', 'hallway_door');
+  await page.evaluate(({ x, y }) => window.__lexiconDebug!.teleport(x, y), far);
+  await expect
+    .poll(() => page.evaluate(() => window.__lexiconDebug!.nameplateVisible('anna')))
+    .toBe(false);
 });
 
 test('NPC nameplate uses the paper dossier style without covering the figure', async ({ page }) => {
