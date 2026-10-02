@@ -4,6 +4,23 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 
 const uiStringsSchema = z
   .object({
+    pagePrevious: z.string().min(1),
+    pageNext: z.string().min(1),
+    pagePosition: z.string().min(1),
+    pagePreparing: z.string().min(1),
+    notebookContents: z.string().min(1),
+    notebookBackToContents: z.string().min(1),
+    deductionCluesFace: z.string().min(1),
+    deductionTimelineFace: z.string().min(1),
+    deductionCompareFace: z.string().min(1),
+    deductionConclusionFace: z.string().min(1),
+    investigationBack: z.string().min(1),
+    investigationCaseFile: z.string().min(1),
+    investigationRelations: z.string().min(1),
+    investigationReadFull: z.string().min(1),
+    investigationResults: z.string().min(1),
+    timelineConfirmSelection: z.string().min(1),
+
     deductionBoard: z.string().min(1),
     openDeductionBoard: z.string().min(1),
     openNotebookFromBoard: z.string().min(1),

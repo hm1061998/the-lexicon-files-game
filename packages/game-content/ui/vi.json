@@ -136,5 +136,21 @@
   "vocabularyStageRecognized": "Đã nhận biết",
   "vocabularyStageUnderstood": "Đã hiểu",
   "vocabularyStageUsed": "Đã vận dụng",
-  "vocabularyStageMastered": "Đã nắm vững"
+  "vocabularyStageMastered": "Đã nắm vững",
+  "pagePrevious": "Trang trước",
+  "pageNext": "Trang sau",
+  "pagePosition": "Trang {current}/{total}",
+  "pagePreparing": "Đang mở trang…",
+  "notebookContents": "Mục lục",
+  "notebookBackToContents": "Về mục lục",
+  "deductionCluesFace": "Manh mối",
+  "deductionTimelineFace": "Dòng thời gian",
+  "deductionCompareFace": "Đối chiếu",
+  "deductionConclusionFace": "Kết luận",
+  "investigationBack": "Quay lại",
+  "investigationCaseFile": "Hồ sơ vụ việc",
+  "investigationRelations": "Liên hệ nguồn",
+  "investigationReadFull": "Đọc đầy đủ",
+  "investigationResults": "Kết quả",
+  "timelineConfirmSelection": "Xác nhận lựa chọn"
 }

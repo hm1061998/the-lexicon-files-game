@@ -4,6 +4,12 @@ import { ContentValidationError } from '../loader/ContentValidationError';
 import viStrings from '../../ui/vi.json';
 
 describe('parseUiStrings', () => {
+  it('requires pagination labels and a readable current/total template', () => {
+    const strings = parseUiStrings(viStrings, 'ui/vi.json') as unknown as Record<string, string>;
+    expect(strings.pagePosition).toContain('{current}');
+    expect(strings.pagePosition).toContain('{total}');
+    expect(() => parseUiStrings({ ...viStrings, pagePrevious: undefined }, 'ui/vi.json')).toThrow('pagePrevious');
+  });
   it('provides labels for the separate deduction board and readable notebook pages', () => {
     const strings = parseUiStrings(viStrings, 'ui/vi.json') as unknown as Record<string, string>;
     for (const key of [

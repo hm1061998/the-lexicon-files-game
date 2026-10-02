@@ -1,4 +1,21 @@
 export interface UiStrings {
+  readonly pagePrevious: string;
+  readonly pageNext: string;
+  readonly pagePosition: string;
+  readonly pagePreparing: string;
+  readonly notebookContents: string;
+  readonly notebookBackToContents: string;
+  readonly deductionCluesFace: string;
+  readonly deductionTimelineFace: string;
+  readonly deductionCompareFace: string;
+  readonly deductionConclusionFace: string;
+  readonly investigationBack: string;
+  readonly investigationCaseFile: string;
+  readonly investigationRelations: string;
+  readonly investigationReadFull: string;
+  readonly investigationResults: string;
+  readonly timelineConfirmSelection: string;
+
   readonly deductionBoard: string;
   readonly openDeductionBoard: string;
   readonly openNotebookFromBoard: string;
