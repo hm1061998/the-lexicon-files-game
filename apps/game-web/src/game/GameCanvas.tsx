@@ -26,7 +26,6 @@ import { selectCoachNote } from '../onboarding/selectCoachNote';
 import { useOnboardingSignals } from '../onboarding/useOnboardingSignals';
 import { BriefingMemo } from '../briefing/BriefingMemo';
 import { PauseMenu } from '../pause/PauseMenu';
-import { SettingsFields } from '../pause/SettingsFields';
 import { HowToInvestigate } from '../onboarding/HowToInvestigate';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import { TitleScreen } from '../title/TitleScreen';
@@ -34,6 +33,8 @@ import { SupportPicker } from '../title/SupportPicker';
 import { CasePicker } from '../title/CasePicker';
 import { selectCaseCards, type CaseCardModel } from '../title/caseCardModel';
 import { NewCaseConfirm } from '../title/NewCaseConfirm';
+import { SaveRecoveryScreen } from '../title/SaveRecoveryScreen';
+import { SettingsPage } from '../title/SettingsPage';
 import { nextTitleStage, selectTitleActions, type TitleStage } from '../title/titleModel';
 import { usePauseShortcut } from '../pause/usePauseShortcut';
 import { DeductionBoard } from '../deduction/DeductionBoard';
@@ -67,7 +68,6 @@ import { useMasterVolume } from '../audio/useMasterVolume';
 import { useSettingsStore } from '../state/SettingsStoreContext';
 import { useTranslationMode } from '../state/useTranslationMode';
 import { connectSettingsAutosave } from '../persistence/connectSettingsAutosave';
-import { PaperPanel } from '@lexicon/ui';
 import { createDefaultLearningRecord } from '../persistence/learningMigration';
 import { createLearningStore, type LearningStore } from '../state/learningStore';
 import { LearningStoreProvider } from '../state/LearningStoreContext';
@@ -460,6 +460,7 @@ function CaseFlow({
           {stage === 'support' && (
             <SupportPicker
               strings={strings}
+              caseTitle={caseDefinition.title}
               onChoose={(mode) => {
                 settings.getState().setTranslationMode(mode);
                 play('new', flow.hasSave);
@@ -467,15 +468,11 @@ function CaseFlow({
             />
           )}
           {stage === 'settings' && (
-            <main className="title-screen">
-              <PaperPanel as="div" className="pause-menu">
-                <h2>{strings.titleSettings}</h2>
-                <SettingsFields strings={strings} />
-                <button type="button" autoFocus onClick={() => go('back')}>
-                  {strings.titleBack}
-                </button>
-              </PaperPanel>
-            </main>
+            <SettingsPage
+              strings={strings}
+              caseTitle={caseDefinition.title}
+              onBack={() => go('back')}
+            />
           )}
           {stage === 'howto' && (
             <HowToInvestigate learning={titleLearning} onClose={() => go('back')} />
@@ -516,32 +513,6 @@ function CaseFlow({
       }
       learningPersistenceError={learningLoad.status === 'memory-only' ? learningLoad.error : null}
     />
-  );
-}
-
-function SaveRecoveryScreen({
-  strings,
-  reason,
-  onConfirm,
-  onCancel,
-}: {
-  strings: UiStrings;
-  reason: string;
-  onConfirm(): void;
-  onCancel(): void;
-}): JSX.Element {
-  return (
-    <main role="alert" className="save-recovery-screen">
-      <h1>{strings.saveRecoveryTitle}</h1>
-      <p>{strings.saveRecoveryBody}</p>
-      <p>{reason}</p>
-      <button type="button" autoFocus onClick={onConfirm}>
-        {strings.createFreshSave}
-      </button>
-      <button type="button" onClick={onCancel}>
-        {strings.cancel}
-      </button>
-    </main>
   );
 }
 

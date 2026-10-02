@@ -36,4 +36,13 @@ describe('SupportPicker', () => {
     fallback?.props.onClick?.();
     expect(chosen).toEqual(['Learning']);
   });
+
+  it('is a dialog inside the folder cover with Learning focused and no paper panel', () => {
+    const html = renderToString(<SupportPicker strings={strings} onChoose={() => undefined} />);
+    expect(html).toContain('folder-cover');
+    expect(html).toContain('role="dialog"');
+    expect(html).toContain(`aria-label="${strings.supportTitle}"`);
+    expect(html).not.toContain('paper-panel');
+    expect(html).toMatch(/autofocus[^>]*>(?:<strong>)?Đang học/);
+  });
 });

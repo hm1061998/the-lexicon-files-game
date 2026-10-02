@@ -1,6 +1,6 @@
-import { PaperPanel } from '@lexicon/ui';
+import { DeskBackdrop, InkButton, ModalSheet } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
-import './title.css';
+import './shell-cover.css';
 
 export function NewCaseConfirm({
   strings,
@@ -13,20 +13,22 @@ export function NewCaseConfirm({
 }): JSX.Element {
   return (
     <main className="title-screen">
-      <PaperPanel as="div" className="title-card">
-        <div role="alertdialog" aria-modal="true" aria-label={strings.newCaseConfirmTitle}>
-          <h2>{strings.newCaseConfirmTitle}</h2>
-          <p>{strings.newCaseConfirmBody}</p>
-          <div className="title-actions">
-            <button type="button" autoFocus onClick={onCancel}>
-              {strings.cancel}
-            </button>
-            <button type="button" onClick={onAccept}>
-              {strings.newCaseConfirmAccept}
-            </button>
-          </div>
+      <DeskBackdrop />
+      <ModalSheet
+        role="alertdialog"
+        heading={strings.newCaseConfirmTitle}
+        className="new-case-confirm"
+      >
+        <p>{strings.newCaseConfirmBody}</p>
+        <div className="shell-actions">
+          <InkButton className="shell-button" autoFocus onClick={onCancel}>
+            {strings.cancel}
+          </InkButton>
+          <InkButton className="shell-button" onClick={onAccept}>
+            {strings.newCaseConfirmAccept}
+          </InkButton>
         </div>
-      </PaperPanel>
+      </ModalSheet>
     </main>
   );
 }

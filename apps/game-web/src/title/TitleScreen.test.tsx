@@ -88,6 +88,10 @@ describe('NewCaseConfirm', () => {
       <NewCaseConfirm strings={strings} onAccept={noop} onCancel={noop} />,
     );
     expect(html).toContain(strings.newCaseConfirmBody);
+    expect(html).toContain('role="alertdialog"');
+    expect(html).toContain('modal-sheet');
+    expect(html).not.toContain('paper-panel');
+    expect(html).toMatch(/autofocus[^>]*>Hủy</);
     expect(html.indexOf(`>${strings.cancel}<`)).toBeGreaterThan(-1);
     expect(html.indexOf(`>${strings.cancel}<`)).toBeLessThan(
       html.indexOf(`>${strings.newCaseConfirmAccept}<`),

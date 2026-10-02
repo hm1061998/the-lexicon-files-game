@@ -3,7 +3,14 @@ import { mkdirSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import type { UiStrings } from '@lexicon/shared-types';
 import { scenePoint } from './sceneTestData';
-import { chooseCase, interactAt, openWorld, pressInteract, saved } from './journeyHelpers';
+import {
+  chooseCase,
+  interactAt,
+  openWorld,
+  pressInteract,
+  saved,
+  seedOnboardingSeen,
+} from './journeyHelpers';
 
 const strings = JSON.parse(
   readFileSync(new URL('../../../packages/game-content/ui/vi.json', import.meta.url), 'utf8'),
@@ -322,4 +329,50 @@ test.describe('intro onboarding', () => {
     await expect(page.getByText(strings.paused)).toHaveCount(0);
     expect(errors).toEqual([]);
   });
+});
+
+test('an unreadable save shows a readable recovery note and does not block the other case', async ({
+  page,
+}) => {
+  await seedOnboardingSeen(page);
+  await page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('lexicon-game-saves', 1);
+      request.onupgradeneeded = () => {
+        request.result.createObjectStore('saves');
+        request.result.createObjectStore('backups', { autoIncrement: true });
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction('saves', 'readwrite');
+      tx.objectStore('saves').put({ schemaVersion: 999, junk: true }, 'case-001');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+    db.close();
+  });
+  await page.goto('/');
+  // The recovery note replaces the title, so click the card directly instead of `chooseCase`.
+  await page.getByRole('button', { name: 'The Missing Report' }).click();
+  const note = page.getByRole('alert');
+  await expect(note).toBeVisible();
+  await expect(note).toContainText(strings.saveRecoveryTitle);
+  expect(
+    ((await note.locator('.save-recovery-reason').innerText()) ?? '').trim().length,
+  ).toBeGreaterThan(0);
+  const box = (await note.locator('.save-recovery-note').boundingBox())!;
+  expect(box.x).toBeGreaterThanOrEqual(0);
+  for (const button of await note.getByRole('button').all()) {
+    const b = (await button.boundingBox())!;
+    expect(b.width).toBeGreaterThanOrEqual(43.5);
+    expect(b.height).toBeGreaterThanOrEqual(43.5);
+  }
+  await note.getByRole('button', { name: strings.cancel, exact: true }).click();
+  await expect(page.getByRole('heading', { name: strings.titleGame })).toBeVisible();
+  // The other case is still reachable and playable from the picker.
+  await page.getByRole('button', { name: strings.titleChangeCase, exact: true }).click();
+  await chooseCase(page, 'case-002');
+  await expect(page.getByRole('heading', { name: strings.titleGame })).toBeVisible();
 });

@@ -14,7 +14,12 @@ const viewports = [
   { w: 390, h: 844 },
 ] as const;
 
-type Screen = { name: string; reach: (page: Page) => Promise<void> };
+type Screen = {
+  name: string;
+  reach: (page: Page) => Promise<void>;
+  /** Pre-dismiss the coach notes (only the in-game screens need it). */
+  quietCoach?: boolean;
+};
 
 const newCase = (page: Page) => page.getByRole('button', { name: 'Vụ án mới', exact: true });
 
@@ -61,6 +66,7 @@ const screens: readonly Screen[] = [
   },
   {
     name: 'pause',
+    quietCoach: true,
     reach: async (page) => {
       await openWorld(page);
       await page.keyboard.press('Escape');
@@ -94,7 +100,7 @@ test.describe('UI shell screenshots (opt-in)', () => {
       test(`${screen.name} ${w}x${h}`, async ({ page }) => {
         mkdirSync(dir!, { recursive: true });
         await page.setViewportSize({ width: w, height: h });
-        await seedOnboardingSeen(page);
+        if (screen.quietCoach) await seedOnboardingSeen(page);
         await screen.reach(page);
         await page.waitForTimeout(600);
         await page.screenshot({ path: `${dir}/${screen.name}-${w}x${h}.png` });

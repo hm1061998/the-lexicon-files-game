@@ -1,4 +1,4 @@
-import { PaperPanel } from '@lexicon/ui';
+import { InkButton, ModalSheet } from '@lexicon/ui';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 
 /** Plain, scrollable text: the paginated reader needs a fixed page box that this overlay has no use for. */
@@ -17,23 +17,22 @@ export function HowToInvestigate({
     [s.howToPrinciplesHeading, s.howToPrinciplesBody],
   ] as const;
   return (
-    <div className="pause-menu-overlay">
-      <PaperPanel as="div" className="pause-menu howto">
-        <div role="dialog" aria-modal="true" aria-label={s.howToTitle}>
-          <h2>{s.howToTitle}</h2>
-          <div className="howto-body">
-            {sections.map(([heading, body]) => (
-              <section key={heading}>
-                <h3>{heading}</h3>
-                <p>{body}</p>
-              </section>
-            ))}
-          </div>
-          <button type="button" autoFocus onClick={onClose}>
-            {s.titleBack}
-          </button>
-        </div>
-      </PaperPanel>
-    </div>
+    <ModalSheet
+      heading={s.howToTitle}
+      overlayClassName="pause-menu-overlay"
+      className="pause-menu howto"
+    >
+      <div className="howto-body">
+        {sections.map(([heading, body]) => (
+          <section key={heading}>
+            <h3>{heading}</h3>
+            <p>{body}</p>
+          </section>
+        ))}
+      </div>
+      <InkButton className="shell-button" autoFocus onClick={onClose}>
+        {s.titleBack}
+      </InkButton>
+    </ModalSheet>
   );
 }

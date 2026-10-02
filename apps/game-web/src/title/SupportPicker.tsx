@@ -1,12 +1,13 @@
-import { PaperPanel } from '@lexicon/ui';
 import type { TranslationMode, UiStrings } from '@lexicon/shared-types';
-import './title.css';
+import { ShellCover } from './ShellCover';
 
 export function SupportPicker({
   strings,
+  caseTitle,
   onChoose,
 }: {
   strings: UiStrings;
+  caseTitle?: string;
   onChoose: (mode: TranslationMode) => void;
 }): JSX.Element {
   const options: readonly { mode: TranslationMode; label: string; hint: string }[] = [
@@ -19,29 +20,34 @@ export function SupportPicker({
     },
   ];
   return (
-    <main className="title-screen">
-      <PaperPanel as="div" className="title-card">
-        <div role="dialog" aria-modal="true" aria-label={strings.supportTitle}>
-          <h2>{strings.supportTitle}</h2>
-          <div className="title-actions support-options">
-            {options.map(({ mode, label, hint }) => (
-              <button
-                key={mode}
-                type="button"
-                className="support-option"
-                autoFocus={mode === 'Learning'}
-                onClick={() => onChoose(mode)}
-              >
-                <strong>{label}</strong>
-                <span>{hint}</span>
-              </button>
-            ))}
-          </div>
-          <button type="button" className="title-link" onClick={() => onChoose('Learning')}>
-            {strings.supportUseDefault}
+    <ShellCover
+      strings={strings}
+      {...(caseTitle ? { caseTitle } : {})}
+      title={strings.supportTitle}
+      tagline={false}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={strings.supportTitle}
+        className="support-notes"
+      >
+        {options.map(({ mode, label, hint }) => (
+          <button
+            key={mode}
+            type="button"
+            className="support-option"
+            autoFocus={mode === 'Learning'}
+            onClick={() => onChoose(mode)}
+          >
+            <strong>{label}</strong>
+            <span>{hint}</span>
           </button>
-        </div>
-      </PaperPanel>
-    </main>
+        ))}
+        <button type="button" className="title-link" onClick={() => onChoose('Learning')}>
+          {strings.supportUseDefault}
+        </button>
+      </div>
+    </ShellCover>
   );
 }
