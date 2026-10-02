@@ -1,30 +1,29 @@
-import { PaperPanel } from '@lexicon/ui';
+import { useEffect, useRef, useState } from 'react';
+import { IndexTab } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import { useGameStore } from '../state/GameStoreContext';
-
-function FolderIcon(): JSX.Element {
-  return (
-    <svg viewBox="0 0 28 22" width="28" height="22" aria-hidden="true" focusable="false">
-      <path
-        d="M2 4.5A1.5 1.5 0 0 1 3.5 3H10l2.5 3H24.5A1.5 1.5 0 0 1 26 7.5v11a1.5 1.5 0 0 1-1.5 1.5h-21A1.5 1.5 0 0 1 2 18.5z"
-        fill="currentColor"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 export function CaseProgress({ strings }: { strings: UiStrings }): JSX.Element {
   const evidenceCollected = useGameStore((state) => state.caseState.evidenceIds.length);
   const evidenceTotal = useGameStore((state) => state.caseState.evidenceTotal);
+  const previous = useRef(evidenceCollected);
+  // Remounting the count (new key) replays its 180ms bounce once per new evidence.
+  const [bump, setBump] = useState(0);
+
+  useEffect(() => {
+    if (evidenceCollected > previous.current) setBump((value) => value + 1);
+    previous.current = evidenceCollected;
+  }, [evidenceCollected]);
 
   return (
-    <PaperPanel className="hud-case-progress hud-case-badge">
-      <FolderIcon />
-      <span className="hud-case-progress-label">{strings.caseFile}</span>
-      <span className="hud-case-progress-count">{`${evidenceCollected}/${evidenceTotal}`}</span>
-    </PaperPanel>
+    <div className="hud-case-progress hud-case-badge">
+      <IndexTab>
+        <span className="hud-case-progress-label">{strings.caseFile}</span>
+        <span
+          key={bump}
+          className={`hud-case-progress-count${bump > 0 ? ' hud-case-progress-count--bump' : ''}`}
+        >{`${evidenceCollected}/${evidenceTotal}`}</span>
+      </IndexTab>
+    </div>
   );
 }

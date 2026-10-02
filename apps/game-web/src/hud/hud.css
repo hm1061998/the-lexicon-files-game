@@ -9,101 +9,106 @@
 
 .hud-objective-panel {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 20px;
+  left: 20px;
+  min-width: 240px;
   max-width: 340px;
   pointer-events: auto;
-  padding: 14px 16px 14px 40px;
-  /* Slightly torn lower edge: shallow sawtooth, no blur. */
-  clip-path: polygon(
-    -24px -24px,
-    calc(100% + 8px) -24px,
-    calc(100% + 8px) 92%,
-    100% 92%,
-    96% 97%,
-    91% 93%,
-    85% 98%,
-    78% 94%,
-    70% 98%,
-    62% 93%,
-    54% 98%,
-    45% 94%,
-    36% 98%,
-    27% 93%,
-    18% 98%,
-    9% 94%,
-    0 97%,
-    -24px 97%
-  );
+  padding: 14px 18px 14px 44px;
 }
 
-.hud-panel-launcher,
-.hud-panel-collapse {
-  display: grid;
-  place-items: center;
+/* Collapsed state: a folded paper tab, not a boxed button. */
+.hud-panel-launcher {
+  position: absolute;
+  top: 20px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   min-width: 44px;
   min-height: 44px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 2px;
-  background: var(--lexicon-paper);
+  padding: 6px 14px 6px 12px;
+  border: 0;
+  background: var(--lexicon-paper) url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  filter: drop-shadow(var(--lexicon-shadow-paper));
   color: var(--lexicon-ink);
-  font: inherit;
+  font-family: var(--lexicon-font-label);
+  font-size: var(--lexicon-text-min);
   cursor: pointer;
   pointer-events: auto;
 }
 
-.hud-panel-launcher {
-  position: absolute;
-  top: 16px;
-  z-index: 2;
-  font-size: 24px;
+.hud-panel-launcher:hover {
+  filter: drop-shadow(var(--lexicon-shadow-lift));
 }
 
 .hud-objective-launcher {
-  left: 16px;
-}
-.hud-map-launcher {
-  right: 16px;
-  top: 84px;
+  left: 20px;
 }
 
+.hud-map-launcher {
+  right: 20px;
+  top: 92px;
+}
+
+/* Fold-corner control on an open panel: no glyph, a dog-ear in the top-right corner. */
 .hud-panel-collapse {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  min-width: 44px;
-  min-height: 44px;
+  top: 0;
+  right: 0;
   z-index: 2;
-  font-size: 22px;
-  line-height: 1;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: linear-gradient(225deg, rgb(62 52 43 / 40%) 0 12px, transparent 12px);
+  cursor: pointer;
+  pointer-events: auto;
 }
 
-.hud-objective-clip {
-  position: absolute;
-  top: -6px;
-  left: 8px;
-  color: var(--lexicon-ink);
-  pointer-events: none;
+.hud-panel-collapse:hover {
+  background: linear-gradient(225deg, rgb(62 52 43 / 65%) 0 16px, transparent 16px);
 }
 
 .hud-objective-heading {
   margin: 0 0 8px;
   padding-bottom: 6px;
-  border-bottom: 1px solid var(--lexicon-border);
+  border-bottom: 1px solid rgb(62 52 43 / 55%);
   color: var(--lexicon-investigation-red);
-  font-size: 19px;
-  font-weight: 700;
+  font-family: var(--lexicon-font-display);
+  font-size: 18px;
+  font-weight: 400;
   line-height: 1.2;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .hud-objective-text {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
+  line-height: 1.35;
+  animation: hud-objective-in 200ms ease-out backwards;
+}
+
+.hud-objective--leaving {
+  animation: none;
+  color: rgb(42 37 33 / 70%);
+}
+
+/* The ink strike draws left to right over 300ms. */
+.hud-objective--leaving::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 52%;
+  height: 2px;
+  background: var(--lexicon-ink);
+  animation: hud-strike 300ms ease-out forwards;
 }
 
 .hud-objective-marker {
@@ -117,34 +122,65 @@
 
 .hud-case-progress {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  box-sizing: border-box;
-  width: 216px;
+  top: 20px;
+  right: 20px;
   pointer-events: auto;
-  padding: 4px 12px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-}
-
-.hud-case-badge svg {
-  flex-shrink: 0;
-  color: var(--lexicon-ink);
 }
 
 .hud-case-progress-label {
-  font-size: 18px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .hud-case-progress-count {
+  display: inline-block;
   color: var(--lexicon-investigation-red);
+  font-family: var(--lexicon-font-display);
   font-size: 28px;
-  font-weight: 700;
   line-height: 1.1;
+}
+
+.hud-case-progress-count--bump {
+  animation: hud-count-bump 180ms ease-out;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes hud-objective-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes hud-strike {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes hud-count-bump {
+  from {
+    scale: 1.2;
+  }
+  to {
+    scale: 1;
+  }
 }
 
 .hud-interaction-prompt {
@@ -276,7 +312,7 @@
     font-size: 14px;
   }
   .hud-minimap {
-    top: 104px;
+    top: 124px;
     right: 8px;
     width: min(184px, 38vw);
   }
@@ -293,9 +329,14 @@
   .hud-case-progress {
     top: 60px;
     right: 8px;
-    width: auto;
-    min-width: 112px;
-    padding: 4px 8px;
+  }
+  .hud-case-progress .index-tab {
+    border-width: 8px;
+    border-image-width: 8px;
+    padding: 2px 4px;
+  }
+  .hud-case-progress-count {
+    font-size: 22px;
   }
   .hud-key-hints {
     display: none;

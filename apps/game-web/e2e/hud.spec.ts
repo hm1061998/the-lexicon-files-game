@@ -279,22 +279,25 @@ test('storage warning is readable and does not cover the objective panel', async
   expect(overlaps).toBe(false);
 });
 
-test('paper panels use the classic serif file styling', async ({ page }) => {
+test('paper sheets use the bundled serif and a soft paper shadow', async ({ page }) => {
+  // Replaces the old hard-shadow Cambria assertion: UI foundation spec D-3 (fonts) and D-5 (soft shadow).
   await openWorld(page);
   const style = await page
-    .locator('.paper-panel')
+    .locator('.paper-sheet')
     .first()
     .evaluate((el) => {
       const cs = getComputedStyle(el);
-      return { fontFamily: cs.fontFamily, fontSize: cs.fontSize, boxShadow: cs.boxShadow };
+      return { fontFamily: cs.fontFamily, fontSize: cs.fontSize, filter: cs.filter };
     });
-  expect(style.fontFamily).toContain('Cambria');
+  expect(style.fontFamily).toContain('Literata');
   expect(parseFloat(style.fontSize)).toBeGreaterThanOrEqual(14);
-  const blurs = [
-    ...style.boxShadow.matchAll(/rgba?\([^)]*\)\s+(-?\d+px)\s+(-?\d+px)\s+(-?\d+px)/g),
-  ];
-  expect(blurs.length).toBeGreaterThan(0);
-  for (const m of blurs) expect(m[3]).toBe('0px');
+  const shadow =
+    /drop-shadow\(rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)\s+(-?\d+)px\s+(-?\d+)px\s+(\d+)px\)/.exec(
+      style.filter,
+    );
+  expect(shadow, style.filter).not.toBeNull();
+  expect(Number(shadow![7])).toBeLessThanOrEqual(6);
+  expect(Number(shadow![4] ?? 1)).toBeLessThanOrEqual(0.25);
 });
 
 test('panel entrance animates unless reduced motion is on', async ({ page }) => {
@@ -419,7 +422,7 @@ test('HUD chrome follows the concept: red objective heading, clip, case badge, m
   const heading = page.locator('.hud-objective-heading');
   expect(await heading.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(164, 65, 45)');
   expect(await heading.evaluate((el) => getComputedStyle(el).textTransform)).toBe('uppercase');
-  await expect(page.locator('.hud-objective-panel .hud-objective-clip')).toHaveCount(1);
+  await expect(page.locator('.hud-objective-panel .paper-clip')).toHaveCount(1);
   await expect(page.locator('.hud-objective-marker')).toBeVisible();
 
   const badge = page.locator('.hud-case-badge');
@@ -430,7 +433,7 @@ test('HUD chrome follows the concept: red objective heading, clip, case badge, m
     await count.evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
   ).toBeGreaterThanOrEqual(24);
   expect(await count.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(164, 65, 45)');
-  await expect(badge.locator('svg')).toHaveCount(1);
+  await expect(badge.locator('.index-tab')).toHaveCount(1);
 
   const keys = await page.locator('.hud-key-hints .keycap').allTextContents();
   expect(keys).toEqual(['WASD / ↑↓←→', 'E', 'J', 'M', 'Esc']);

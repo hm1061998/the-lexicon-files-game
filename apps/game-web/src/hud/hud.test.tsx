@@ -12,6 +12,7 @@ import { SettingsStoreProvider } from '../state/SettingsStoreContext';
 import { createSettingsStore } from '../state/settingsStore';
 import { createDefaultSettings } from '../persistence/settingsSchema';
 import { PauseMenu } from '../pause/PauseMenu';
+import { readFileSync } from 'node:fs';
 
 const strings = loadUiStrings('vi');
 const caseDefinition = loadCaseDefinition('case-001');
@@ -27,7 +28,32 @@ describe('ObjectivePanel', () => {
     expect(html).toContain(strings.objectiveHeading);
     expect(html).toContain(caseDefinition.objectives[0]?.text);
     expect(html).toContain('hud-objective-marker');
-    expect(html).toContain('hud-objective-clip');
+    expect(html).toContain('hud-objective-panel');
+    expect(html).toContain('paper-sheet--torn');
+    expect(html).toContain('paper-clip');
+  });
+
+  it('draws the heading in the display font', () => {
+    const css = readFileSync(new URL('./hud.css', import.meta.url), 'utf8');
+    expect(css).toMatch(
+      /\.hud-objective-heading\s*\{[^}]*font-family:\s*var\(--lexicon-font-display\)/,
+    );
+  });
+
+  it('collapses to a folded paper tab labelled with the heading, not a minus box', () => {
+    const store = createStore<GameStoreState>(() => ({
+      ...createGameStore({ caseDefinition }).getState(),
+      objectiveVisible: false,
+    }));
+    const html = renderToString(
+      <GameStoreProvider store={store}>
+        <ObjectivePanel strings={strings} />
+      </GameStoreProvider>,
+    );
+    expect(html).toContain('hud-panel-launcher');
+    expect(html).toContain(strings.objectiveHeading);
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).not.toContain('−');
   });
 });
 
@@ -42,7 +68,8 @@ describe('CaseProgress', () => {
     expect(html).toContain(strings.caseFile);
     expect(html).toContain(`0/${caseDefinition.evidenceTotal}`);
     expect(html).toContain('hud-case-badge');
-    expect(html).toContain('<svg');
+    expect(html).toContain('index-tab');
+    expect(html).toContain('hud-case-progress-count');
   });
 });
 

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { PaperPanel } from '@lexicon/ui';
+import { PaperSheet } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import { useGameStore } from '../state/GameStoreContext';
 import { buildMinimapModel } from './minimapModel';
@@ -28,6 +28,7 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
         onClick={toggle}
       >
         <span aria-hidden="true">▦</span>
+        <span className="hud-panel-launcher-text">{strings.minimapTitle}</span>
       </button>
     );
   }
@@ -38,16 +39,14 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
     top: `${((point.y - vy) / vh) * 100}%`,
   });
   return (
-    <PaperPanel className="hud-minimap">
+    <PaperSheet tape="tl" tilt={0.6} className="hud-minimap">
       <button
         className="hud-panel-collapse"
         type="button"
         aria-expanded={true}
         aria-label={strings.collapseMap}
         onClick={toggle}
-      >
-        −
-      </button>
+      />
       <div className="minimap-drawing">
         <svg
           className="minimap-svg"
@@ -108,13 +107,7 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
           )}
         </div>
       </div>
-      <p className="minimap-label">{strings.minimapTitle}</p>
-      {model.player && (
-        <p className="minimap-legend">
-          <span aria-hidden="true" />
-          {strings.minimapPlayer}
-        </p>
-      )}
-    </PaperPanel>
+      <p className="minimap-label visually-hidden">{strings.minimapTitle}</p>
+    </PaperSheet>
   );
 }

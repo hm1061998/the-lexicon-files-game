@@ -1,40 +1,46 @@
-import { PaperPanel } from '@lexicon/ui';
+import { useEffect, useState } from 'react';
+import { PaperSheet } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import { useGameStore } from '../state/GameStoreContext';
+import { clearLeaving, nextObjectiveDisplay, type ObjectiveDisplay } from './objectiveTransition';
 
-/** Inline paperclip drawn in ink, pinned over the panel's top-left corner. */
-function PaperClip(): JSX.Element {
-  return (
-    <svg
-      className="hud-objective-clip"
-      viewBox="0 0 24 56"
-      width="24"
-      height="56"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        d="M8 40V13a5 5 0 0 1 10 0v34a8 8 0 0 1-16 0V16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+/** How long the old objective stays on the paper, struck through, before it is removed. */
+const STRIKE_MS = 300;
 
 export function ObjectivePanel({ strings }: { strings: UiStrings }): JSX.Element {
   const visible = useGameStore((state) => state.objectiveVisible);
   const toggle = useGameStore((state) => state.toggleObjective);
-  const objective = useGameStore((state) => {
-    return (
+  // Select primitives: a fresh object per call would make the store snapshot unstable.
+  const activeId = useGameStore(
+    (state) =>
       state.caseDefinition.objectives.find(
         (item) => state.caseState.objectiveStatuses[item.id] === 'active',
-      ) ?? null
+      )?.id ?? null,
+  );
+  const activeText = useGameStore(
+    (state) =>
+      state.caseDefinition.objectives.find(
+        (item) => state.caseState.objectiveStatuses[item.id] === 'active',
+      )?.text ?? null,
+  );
+  const active = activeId === null ? null : { id: activeId, text: activeText ?? '' };
+  const [display, setDisplay] = useState<ObjectiveDisplay>({ current: active, leaving: null });
+
+  useEffect(() => {
+    setDisplay((prev) =>
+      nextObjectiveDisplay(
+        prev,
+        activeId === null ? null : { id: activeId, text: activeText ?? '' },
+      ),
     );
-  });
+  }, [activeId, activeText]);
+
+  const leavingId = display.leaving?.id ?? null;
+  useEffect(() => {
+    if (leavingId === null) return;
+    const timer = setTimeout(() => setDisplay(clearLeaving), STRIKE_MS);
+    return () => clearTimeout(timer);
+  }, [leavingId]);
 
   if (!visible) {
     return (
@@ -46,29 +52,36 @@ export function ObjectivePanel({ strings }: { strings: UiStrings }): JSX.Element
         onClick={toggle}
       >
         <span aria-hidden="true">◎</span>
+        <span className="hud-panel-launcher-text">{strings.objectiveHeading}</span>
       </button>
     );
   }
 
   return (
-    <PaperPanel className="hud-objective-panel">
+    <PaperSheet edge="torn" clip tilt={-1} className="hud-objective-panel">
       <button
         className="hud-panel-collapse"
         type="button"
         aria-expanded={true}
         aria-label={strings.collapseObjective}
         onClick={toggle}
-      >
-        −
-      </button>
-      <PaperClip />
+      />
       <h2 className="hud-objective-heading">{strings.objectiveHeading}</h2>
-      {objective ? (
-        <p className="hud-objective-text">
+      {display.leaving ? (
+        <p
+          key={`leaving-${display.leaving.id}`}
+          className="hud-objective-text hud-objective--leaving"
+        >
           <span className="hud-objective-marker" aria-hidden="true" />
-          {objective.text}
+          {display.leaving.text}
         </p>
       ) : null}
-    </PaperPanel>
+      {display.current ? (
+        <p key={display.current.id} className="hud-objective-text">
+          <span className="hud-objective-marker" aria-hidden="true" />
+          {display.current.text}
+        </p>
+      ) : null}
+    </PaperSheet>
   );
 }
