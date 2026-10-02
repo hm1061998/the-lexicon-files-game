@@ -62,7 +62,8 @@ describe('NotebookPanel reading pages', () => {
     );
     expect(html).toContain('Meeting Minutes');
     expect(html).toContain(strings.evidenceReview);
-    expect(html).toContain('vocabulary-word');
+    expect(html).toContain('has-vocabulary');
+    expect(html).not.toContain('vocabulary-word'); // Measurement never mounts learning annotations.
   });
   it('records only correctly placed timeline events', () => {
     const empty = renderToStaticMarkup(<NotebookPanel {...props} activeTab="timeline" />);
@@ -112,6 +113,8 @@ describe('NotebookPanel reading pages', () => {
     );
     expect(html).toContain(word.lemma);
     expect(html).toContain(word.definitionEn);
+    expect(html).toContain(strings.revealTranslation);
+    expect(html).not.toContain(word.translationVi);
     expect(html).toContain(strings.vocabularyStageSeen);
     expect(html).toContain('Meeting Minutes');
     expect(html).not.toContain('evidence:meeting_minutes:description');

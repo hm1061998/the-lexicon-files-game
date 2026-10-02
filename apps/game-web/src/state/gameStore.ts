@@ -1,3 +1,4 @@
+import { createNotebookReadingState, selectNotebookReading, type NotebookReadingState } from '../notebook/notebookReadingState';
 import { createStore, type StoreApi } from 'zustand/vanilla';
 import type {
   CaseDefinition,
@@ -44,6 +45,8 @@ export type GameStoreState = {
   notebookOpen: boolean;
   deductionOpen: boolean;
   notebookTab: NotebookTab;
+  notebookReading: NotebookReadingState;
+  setNotebookReading(reading: NotebookReadingState): void;
   dialogueSession: DialogueSession | null;
   dialogueError: string | null;
   inputLocked: boolean;
@@ -130,6 +133,8 @@ export function createGameStore(init: {
     notebookOpen: false,
     deductionOpen: false,
     notebookTab: 'evidence',
+    notebookReading: createNotebookReadingState(init.caseDefinition.id),
+    setNotebookReading: reading => set(state => ({notebookReading: selectNotebookReading(reading,state.caseDefinition.id)})),
     dialogueSession: null,
     dialogueError: null,
     // A closed case never resumes free movement; the report replaces play.
@@ -194,7 +199,7 @@ export function createGameStore(init: {
     openNotebook() {
       const s = get();
       if (s.paused || s.activeEvidenceId || s.dialogueSession || caseClosed(s)) return;
-      set({ notebookOpen: true, deductionOpen: false, notebookTab: 'evidence', inputLocked: true });
+      set({ notebookOpen: true, deductionOpen: false, inputLocked: true });
     },
     openDeduction() {
       const s = get();

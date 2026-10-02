@@ -674,6 +674,8 @@ function NotebookLayer({
       activeTab={activeTab}
       strings={strings}
       onSelectTab={(tab) => store.setNotebookTab(tab)}
+      reading={store.notebookReading}
+      onReadingChange={store.setNotebookReading}
       onClose={() => store.toggleNotebook()}
       profile={learningProfile}
       translationMode={translationMode}

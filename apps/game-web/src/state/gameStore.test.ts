@@ -4,6 +4,12 @@ import { createCaseState } from '@lexicon/game-core';
 import { createGameStore } from './gameStore';
 
 describe('createGameStore', () => {
+  it('keeps reading position and tab across close without modifying persisted case state', () => {
+    const store=createGameStore({caseDefinition:loadCaseDefinition('case-001')});const before=store.getState().caseState;
+    const reading=store.getState().notebookReading;const next={...reading,tabs:{...reading.tabs,people:{...reading.tabs.people,selectedId:'leo',detailAnchor:{blockId:'leo:statement:answer1',offset:40}}}};
+    store.getState().openNotebook();store.getState().setNotebookTab('people');store.getState().setNotebookReading(next);store.getState().toggleNotebook();store.getState().openNotebook();
+    expect(store.getState().notebookTab).toBe('people');expect(store.getState().notebookReading).toEqual(next);expect(store.getState().caseState).toBe(before);expect(before).not.toHaveProperty('notebookReading');
+  });
   it('atomically switches between notebook and board without touching case state', () => {
     const store = createGameStore({ caseDefinition: loadCaseDefinition('case-001') });
     const before = store.getState().caseState;
@@ -232,7 +238,7 @@ describe('createGameStore', () => {
     expect(store.getState().inputLocked).toBe(false);
   });
 
-  it('reopens the notebook on Evidence after closing it from another tab', () => {
+  it('reopens the notebook at its previous tab after closing', () => {
     const definition = loadCaseDefinition('case-001');
     const store = createGameStore({ caseDefinition: definition });
 
@@ -242,7 +248,7 @@ describe('createGameStore', () => {
     store.getState().toggleNotebook();
 
     expect(store.getState().notebookOpen).toBe(true);
-    expect(store.getState().notebookTab).toBe('evidence');
+    expect(store.getState().notebookTab).toBe('people');
   });
 
   it('does not notify store subscribers when opening the same evidence twice', () => {

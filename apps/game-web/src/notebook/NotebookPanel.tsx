@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react';
+import { useId, useRef, useState } from 'react';
 import { PaperPanel } from '@lexicon/ui';
 import type {
   CaseDefinition,
@@ -8,12 +8,10 @@ import type {
   UiStrings,
 } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
-import { NotebookPeoplePanel } from './NotebookPeoplePanel';
-import { NotebookEvidencePage } from './NotebookEvidencePage';
-import { NotebookVocabularyPage } from './NotebookVocabularyPage';
-import { NotebookTimelinePage } from './NotebookTimelinePage';
+import { NotebookReaderPage } from './NotebookReaderPage';
+import {createNotebookReadingState,selectNotebookReading,type NotebookReadingState} from './notebookReadingState';
+import {InvestigationDecoration} from '../investigation/art/InvestigationDecoration';
 import { selectInvestigationView } from '../investigation/selectInvestigationView';
-import { resolveInvestigationArtwork } from '../investigation/resolveInvestigationArtwork';
 import { useInvestigationDialogFocus } from '../investigation/useInvestigationDialogFocus';
 import './notebook.css';
 const TABS: readonly NotebookTab[] = ['people', 'evidence', 'vocabulary', 'timeline'];
@@ -32,6 +30,7 @@ export function NotebookPanel({
   onEncounter = noop,
   onInspect = noop,
   onReviewEvidence = noop,
+  reading, onReadingChange, onPaperCue,
 }: {
   caseDefinition: CaseDefinition;
   caseState: GameState;
@@ -46,14 +45,14 @@ export function NotebookPanel({
   onEncounter?(id: string, contextId: string): void;
   onInspect?(id: string, contextId: string): void;
   onReviewEvidence?(id: string): void;
+  reading?:NotebookReadingState;onReadingChange?:(s:NotebookReadingState)=>void;onPaperCue?:()=>void;
 }): JSX.Element {
   const headingId = useId();
   const dialogRef = useRef<HTMLElement>(null);
   useInvestigationDialogFocus(dialogRef);
   const view = selectInvestigationView(caseDefinition, caseState);
-  const artwork = Object.fromEntries(
-    view.people.map((p) => [p.npc.id, resolveInvestigationArtwork(caseDefinition, p.npc.id)]),
-  );
+  const [localReading,setLocalReading]=useState(()=>createNotebookReadingState(caseDefinition.id));
+  const currentReading=selectNotebookReading(reading??localReading,caseDefinition.id);
   const learning = {
     catalogue: caseDefinition.vocabulary,
     strings,
@@ -65,6 +64,7 @@ export function NotebookPanel({
   return (
     <div className="notebook-overlay">
       <PaperPanel as="div" className="notebook-panel">
+{["","corner-tr","corner-bl","corner-br"].map(c=><InvestigationDecoration kind="corner" className={c} key={c}/>)}
         <section
           ref={dialogRef}
           className="notebook-dialog"
@@ -74,7 +74,7 @@ export function NotebookPanel({
         >
           <header className="notebook-header">
             <h2 id={headingId}>
-              <kbd>J</kbd> {strings.notebook}
+              <kbd aria-hidden="true">J</kbd> {strings.notebook}
             </h2>
             <div>
               <button type="button" aria-label={strings.close} onClick={onClose}>
@@ -99,33 +99,8 @@ export function NotebookPanel({
             ))}
           </nav>
           <div className="notebook-content">
-            {activeTab === 'people' && (
-              <NotebookPeoplePanel people={view.people} artworkByNpcId={artwork} {...learning} />
-            )}
-            {activeTab === 'evidence' && (
-              <NotebookEvidencePage
-                evidence={view.evidence}
-                people={view.people}
-                onReviewEvidence={onReviewEvidence}
-                {...learning}
-              />
-            )}
-            {activeTab === 'vocabulary' && (
-              <NotebookVocabularyPage
-                definition={caseDefinition}
-                profile={profile}
-                strings={strings}
-                translationMode={translationMode}
-                onRevealTranslation={onRevealTranslation}
-              />
-            )}
-            {activeTab === 'timeline' && (
-              <NotebookTimelinePage
-                events={view.placedEvents}
-                strings={strings}
-                onOpenDeduction={onOpenDeduction}
-              />
-            )}
+            <NotebookReaderPage definition={caseDefinition} view={view} tab={activeTab} reading={currentReading} onReadingChange={onReadingChange??setLocalReading} learning={learning} profile={profile} onReviewEvidence={onReviewEvidence} onOpenDeduction={onOpenDeduction} onPaperCue={onPaperCue}/>
+
           </div>
         </section>
       </PaperPanel>
