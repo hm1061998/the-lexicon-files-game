@@ -43,4 +43,12 @@ describe('DialogueView', () => {
     expect(html).toContain('effectFailed: unknown ID');
     expect(html).toContain(strings.close);
   });
+  it('is a torn paper sheet with note-style choices and an ink close button', () => {
+    const html = renderToString(<DialogueView {...props} />);
+    expect(html).toContain('paper-sheet');
+    expect(html).toContain('dialogue-panel');
+    expect(html).not.toContain('paper-panel');
+    expect(html).toContain('ink-button dialogue-close');
+    expect(html.match(/dialogue-choice"/g)?.length).toBe(node.choices.length);
+  });
 });

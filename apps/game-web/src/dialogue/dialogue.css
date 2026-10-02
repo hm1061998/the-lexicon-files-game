@@ -6,7 +6,7 @@
   align-items: flex-end;
   justify-content: center;
   padding: 24px 24px 72px;
-  background: rgba(42, 37, 33, 0.55);
+  background: rgba(42, 37, 33, 0.35);
   color: var(--lexicon-ink);
   font-size: 16px;
   box-sizing: border-box;
@@ -15,7 +15,7 @@
   width: min(760px, 100%);
   max-height: calc(100vh - 120px);
   overflow-y: auto;
-  padding: 24px;
+  padding: 36px 24px 24px;
   box-sizing: border-box;
   line-height: 1.6;
 }
@@ -60,19 +60,36 @@
   display: grid;
   gap: 10px;
 }
-.dialogue-panel button {
+.dialogue-close {
+  flex: none;
+}
+/* A choice is a small paper note: a slight alternating tilt that straightens on hover or focus. */
+.dialogue-choice {
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 3px;
-  background: var(--lexicon-beige);
+  border: 1px solid rgb(62 52 43 / 40%);
+  border-radius: 2px;
+  background: #e6d9b8 url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
   color: var(--lexicon-ink);
   font: inherit;
   text-align: left;
   cursor: pointer;
+  filter: drop-shadow(var(--lexicon-shadow-paper));
 }
-.dialogue-panel button:hover {
-  background: var(--lexicon-paper);
+.dialogue-choice:nth-child(odd) {
+  rotate: -0.5deg;
+}
+.dialogue-choice:nth-child(even) {
+  rotate: 0.5deg;
+}
+.dialogue-choice:hover,
+.dialogue-choice:focus-visible {
+  rotate: 0deg;
+}
+.dialogue-choice-translation {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
 }
 .dialogue-panel :focus-visible {
   outline: 3px solid var(--lexicon-ink);
@@ -92,7 +109,7 @@
     padding: 16px;
   }
   .dialogue-panel {
-    padding: 16px;
+    padding: 32px 16px 16px;
     max-height: calc(100vh - 32px);
   }
 }
@@ -108,6 +125,11 @@
 
 .dialogue-voice-controls button {
   display: inline-flex;
+  border: 1px solid var(--lexicon-border);
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
   align-items: center;
   gap: 8px;
   min-height: 44px;

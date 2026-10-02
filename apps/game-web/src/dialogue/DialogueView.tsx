@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef } from 'react';
-import { PaperPanel } from '@lexicon/ui';
+import { InkButton, PaperSheet } from '@lexicon/ui';
 import type {
   DialogueAction,
   DialogueChoice,
@@ -81,7 +81,7 @@ export function DialogueView({
   }, [session.nodeId, session.revision]);
   return (
     <div className="dialogue-overlay">
-      <PaperPanel as="div" className="dialogue-panel">
+      <PaperSheet as="div" edge="torn" clip className="dialogue-panel">
         <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={title}>
           <div className="dialogue-header">
             <div>
@@ -89,9 +89,9 @@ export function DialogueView({
               <h2 id={title}>{speakerName}</h2>
               <p className="dialogue-role">{speakerRole}</p>
             </div>
-            <button type="button" onClick={onClose}>
+            <InkButton className="dialogue-close" onClick={onClose}>
               {strings.close}
-            </button>
+            </InkButton>
           </div>
           <div className="dialogue-tools">
             <DialogueVoiceControls audio={node.audio} strings={strings} />
@@ -122,6 +122,7 @@ export function DialogueView({
               <button
                 type="button"
                 key={choice.id}
+                className="dialogue-choice"
                 onClick={(event) => {
                   // A replacement choice can occupy the same spot during a double click.
                   // Keyboard activation has detail 0 and remains available immediately.
@@ -141,7 +142,7 @@ export function DialogueView({
             ))}
           </div>
         </div>
-      </PaperPanel>
+      </PaperSheet>
     </div>
   );
 }

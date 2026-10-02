@@ -142,3 +142,27 @@
   width: 100%;
   background: var(--lexicon-beige);
 }
+
+/* The same card inside the dialogue sheet: in the text flow, so it never covers the choices. */
+.dialogue-panel .vocabulary-popover:not(.investigation-vocabulary-popover) {
+  position: static;
+  margin: 8px 0;
+  box-sizing: border-box;
+  width: 100%;
+  background: var(--lexicon-beige);
+}
+.dialogue-panel .vocabulary-popover:not(.investigation-vocabulary-popover) button {
+  justify-self: start;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 3px;
+  background: var(--lexicon-beige);
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.dialogue-panel .vocabulary-popover:not(.investigation-vocabulary-popover) button:hover {
+  background: var(--lexicon-paper);
+}
