@@ -61,3 +61,18 @@ describe('authored notebook statements', () => {
     expect(tree.completionFlag).toBe('david_interviewed');
   });
 });
+
+describe('case briefing content', () => {
+  it('authors the Case 001 briefing in docs order', () => {
+    const definition = mod.loadCaseDefinition('case-001');
+    expect(definition.briefing?.lines.map((l) => l.id)).toEqual([
+      'welcome',
+      'incident',
+      'first_step',
+      'sign_off',
+    ]);
+    expect(definition.vocabularyContexts.map((c) => c.id)).toContain(
+      'briefing:case-001:incident:text',
+    );
+  });
+});

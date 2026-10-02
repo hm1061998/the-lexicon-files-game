@@ -773,3 +773,68 @@ describe('case conclusion contract', () => {
     );
   });
 });
+
+describe('parseCaseDefinition briefing', () => {
+  const meetingEntry = {
+    id: 'meeting',
+    lemma: 'meeting',
+    partOfSpeech: 'noun',
+    cefr: 'A2',
+    definitionEn: 'A planned gathering of people.',
+    translationVi: 'cuộc họp',
+    examples: ['The meeting began.'],
+    tags: [],
+    surfaceForms: ['meetings'],
+  };
+  const line = (over: Record<string, unknown> = {}) => ({
+    id: 'incident',
+    text: 'A report disappeared after last night’s meeting.',
+    translationVi: 'Một bản báo cáo đã biến mất sau cuộc họp tối qua.',
+    vocabularySpans: [{ start: 40, end: 47, vocabularyId: 'meeting' }],
+    ...over,
+  });
+  const withBriefing = (briefing: unknown) => ({
+    caseRaw: { ...caseRaw, briefing },
+    vocabularyRaw: { vocabulary: [meetingEntry] },
+  });
+
+  it('keeps a valid briefing and registers its vocabulary context', () => {
+    const definition = parse(withBriefing({ from: 'Chief', lines: [line()] }));
+    expect(definition.briefing?.lines.map((l) => l.id)).toEqual(['incident']);
+    expect(definition.vocabularyContexts.map((c) => c.id)).toContain(
+      'briefing:case-001:incident:text',
+    );
+  });
+  it('loads a case without a briefing', () => {
+    expect(parse().briefing).toBeUndefined();
+  });
+  it('rejects zero lines, more than six lines and duplicate line ids', () => {
+    expect(() => parse(withBriefing({ from: 'Chief', lines: [] }))).toThrow();
+    const many = Array.from({ length: 7 }, (_, i) => line({ id: `l${i}`, vocabularySpans: [] }));
+    expect(() => parse(withBriefing({ from: 'Chief', lines: many }))).toThrow();
+    expect(() => parse(withBriefing({ from: 'Chief', lines: [line(), line()] }))).toThrow();
+  });
+  it('reports unknown vocabulary ids, out-of-bounds spans and surface mismatches', () => {
+    expectValidationIssue(
+      withBriefing({
+        from: 'Chief',
+        lines: [line({ vocabularySpans: [{ start: 40, end: 47, vocabularyId: 'nope' }] })],
+      }),
+      'briefing.incident.spans.0.vocabularyId',
+    );
+    expectValidationIssue(
+      withBriefing({
+        from: 'Chief',
+        lines: [line({ vocabularySpans: [{ start: 40, end: 400, vocabularyId: 'meeting' }] })],
+      }),
+      'briefing.incident.spans.0.end',
+    );
+    expectValidationIssue(
+      withBriefing({
+        from: 'Chief',
+        lines: [line({ vocabularySpans: [{ start: 2, end: 8, vocabularyId: 'meeting' }] })],
+      }),
+      'does not match vocabulary entry',
+    );
+  });
+});

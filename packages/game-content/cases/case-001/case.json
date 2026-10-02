@@ -3,6 +3,60 @@
   "title": "The Missing Report",
   "evidenceTotal": 5,
   "initialObjectiveId": "find_what_happened",
+  "briefing": {
+    "from": "Chief, International Investigation Bureau",
+    "lines": [
+      {
+        "id": "welcome",
+        "text": "Welcome to the International Investigation Bureau, Junior Investigator.",
+        "translationVi": "Chào mừng đến với Cục Điều tra Quốc tế, điều tra viên tập sự."
+      },
+      {
+        "id": "incident",
+        "text": "A confidential report disappeared after last night's meeting.",
+        "translationVi": "Một bản báo cáo mật đã biến mất sau cuộc họp tối qua.",
+        "vocabularySpans": [
+          {
+            "start": 2,
+            "end": 14,
+            "vocabularyId": "confidential"
+          },
+          {
+            "start": 15,
+            "end": 21,
+            "vocabularyId": "report"
+          },
+          {
+            "start": 53,
+            "end": 60,
+            "vocabularyId": "meeting"
+          }
+        ]
+      },
+      {
+        "id": "first_step",
+        "text": "Start with the meeting room and speak to everyone who had access.",
+        "translationVi": "Hãy bắt đầu từ phòng họp và nói chuyện với tất cả những người có quyền ra vào.",
+        "vocabularySpans": [
+          {
+            "start": 15,
+            "end": 22,
+            "vocabularyId": "meeting"
+          },
+          {
+            "start": 58,
+            "end": 64,
+            "vocabularyId": "access"
+          }
+        ]
+      },
+      {
+        "id": "sign_off",
+        "text": "Read carefully. Every word is a clue.",
+        "translationVi": "Hãy đọc kỹ. Mỗi từ đều là một manh mối."
+      }
+    ]
+  },
   "conclusion": {
     "suspectNpcIds": ["anna", "leo", "david"],
     "correctSuspectNpcId": "david",

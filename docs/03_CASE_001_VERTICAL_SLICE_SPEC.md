@@ -140,10 +140,12 @@ MỤC TIÊU HIỆN TẠI
 ○ Tìm hiểu điều gì đã xảy ra với bản báo cáo
 ```
 
-Chief message:
+Chief message (briefing, shown as a memo when a new case starts; authored in `case.json` → `briefing`):
 
+> Welcome to the International Investigation Bureau, Junior Investigator.  
 > A confidential report disappeared after last night's meeting.  
-> Start with the meeting room and speak to everyone who had access.
+> Start with the meeting room and speak to everyone who had access.  
+> Read carefully. Every word is a clue.
 
 ---
 

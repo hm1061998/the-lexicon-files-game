@@ -134,4 +134,43 @@ describe('parseUiStrings', () => {
       expect(validationError.issues.some((issue) => issue.includes('caseFile'))).toBe(true);
     }
   });
+
+  it.each([
+    'titleGame',
+    'titleTagline',
+    'titleContinue',
+    'titleNewCase',
+    'titleHowTo',
+    'titleSettings',
+    'titleBack',
+    'newCaseConfirmTitle',
+    'newCaseConfirmBody',
+    'newCaseConfirmAccept',
+    'supportTitle',
+    'supportBeginnerHint',
+    'supportLearningHint',
+    'supportImmersionHint',
+    'supportUseDefault',
+    'briefingTitle',
+    'briefingAccept',
+    'coachMove',
+    'coachInteract',
+    'coachNotebook',
+    'coachBoard',
+    'coachDismiss',
+    'howToTitle',
+    'howToControlsHeading',
+    'howToControlsBody',
+    'howToLoopHeading',
+    'howToLoopBody',
+    'howToWordsHeading',
+    'howToWordsBody',
+    'howToPrinciplesHeading',
+    'howToPrinciplesBody',
+    'pauseHowTo',
+  ])('requires a nonempty onboarding label %s', (key) => {
+    const strings = parseUiStrings(viStrings, 'ui/vi.json') as unknown as Record<string, string>;
+    expect(strings[key]?.length).toBeGreaterThan(0);
+    expect(() => parseUiStrings({ ...viStrings, [key]: '' }, 'ui/vi.json')).toThrow(key);
+  });
 });

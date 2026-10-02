@@ -19,6 +19,16 @@ export interface CaseConclusionDefinition {
   readonly objectiveId: string;
 }
 
+export interface CaseBriefingLineDefinition {
+  readonly id: string;
+  readonly text: string;
+  readonly translationVi?: string | undefined;
+  readonly vocabularySpans?: readonly VocabularySpan[] | undefined;
+}
+export interface CaseBriefingDefinition {
+  readonly from: string;
+  readonly lines: readonly CaseBriefingLineDefinition[];
+}
 export interface EvidenceDefinition {
   readonly id: string;
   readonly caseId: string;
@@ -129,6 +139,8 @@ export interface CaseDefinition {
   readonly audio?: import('./audio').CaseAudioDefinition | undefined;
   readonly contradictions: readonly ContradictionDefinition[];
   readonly conclusion?: CaseConclusionDefinition | undefined;
+  /** Optional memo shown when a new case starts and kept readable in the case file. */
+  readonly briefing?: CaseBriefingDefinition | undefined;
   /** Textures used by every scene (player facings and walk sheet, paper overlay); loaded once at boot. */
   readonly sharedTextures: readonly TextureEntry[];
   /** Character textures by name (`player` required); every key is one of `sharedTextures`. */

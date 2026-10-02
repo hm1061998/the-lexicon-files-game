@@ -12,6 +12,7 @@ type Input = {
   catalogue: readonly Pick<VocabularyEntryData, 'id' | 'lemma' | 'surfaceForms'>[];
   evidenceContexts: readonly Context[];
   dialogueContexts: readonly Context[];
+  briefingContexts?: readonly Context[];
 };
 
 export function validateVocabularyReferences({
@@ -19,12 +20,14 @@ export function validateVocabularyReferences({
   catalogue,
   evidenceContexts,
   dialogueContexts,
+  briefingContexts = [],
 }: Input): string[] {
   const issues: string[] = [];
   const byId = new Map(catalogue.map((entry) => [entry.id, entry]));
   for (const [kind, contexts] of [
     ['evidence', evidenceContexts],
     ['dialogue', dialogueContexts],
+    ['briefing', briefingContexts],
   ] as const) {
     for (const context of contexts) {
       const spans = context.spans ?? [];

@@ -39,6 +39,8 @@ export type {
   EvidenceCategory,
   ObjectiveDefinition,
   CaseConclusionDefinition,
+  CaseBriefingDefinition,
+  CaseBriefingLineDefinition,
   AccusationError,
   AccusationResult,
   EvidenceDefinition,

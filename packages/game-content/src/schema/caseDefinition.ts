@@ -28,6 +28,30 @@ import { validateVocabularyReferences } from '../validation/vocabularyReferences
 import { assetPathSchema } from './assetPath';
 import { caseAudioDefinitionSchema } from './audio';
 
+const briefingSchema = z
+  .object({
+    from: z.string().min(1),
+    lines: z
+      .array(
+        z
+          .object({
+            id: z.string().min(1),
+            text: z.string().min(1),
+            translationVi: z.string().min(1).optional(),
+            vocabularySpans: z.array(vocabularySpanSchema).optional(),
+          })
+          .strict(),
+      )
+      .min(1)
+      .max(6),
+  })
+  .strict()
+  .superRefine(({ lines }, ctx) => {
+    const ids = lines.map(({ id }) => id);
+    if (new Set(ids).size !== ids.length)
+      ctx.addIssue({ code: 'custom', path: ['lines'], message: 'duplicate briefing line id' });
+  });
+
 const caseRawSchema = z
   .object({
     id: z.string().min(1),
@@ -35,6 +59,7 @@ const caseRawSchema = z
     audio: caseAudioDefinitionSchema.optional(),
     evidenceTotal: z.number().int().min(0),
     initialObjectiveId: z.string().min(1),
+    briefing: briefingSchema.optional(),
     conclusion: z
       .object({
         suspectNpcIds: z.array(z.string().min(1)).min(1),
@@ -584,10 +609,22 @@ export function parseCaseDefinition(
         });
     }),
   );
+  caseData.briefing?.lines.forEach((line) => {
+    if (line.vocabularySpans?.length)
+      vocabularyContexts.push({
+        id: `briefing:${caseData.id}:${line.id}:text`,
+        vocabularyIds: [...new Set(line.vocabularySpans.map(({ vocabularyId }) => vocabularyId))],
+      });
+  });
   issues.push(
     ...validateVocabularyReferences({
       source,
       catalogue: vocabulary,
+      briefingContexts: (caseData.briefing?.lines ?? []).map((line) => ({
+        id: line.id,
+        text: line.text,
+        spans: line.vocabularySpans,
+      })),
       evidenceContexts: evidences.map((entry) => ({
         id: `evidence:${entry.id}:description`,
         text: entry.description,
@@ -714,6 +751,7 @@ export function parseCaseDefinition(
     ...(caseData.audio ? { audio: caseData.audio } : {}),
     contradictions,
     ...(conclusion ? { conclusion } : {}),
+    ...(caseData.briefing ? { briefing: caseData.briefing } : {}),
     sharedTextures: caseData.sharedTextures,
     // The schema refinement guarantees the `player` entry.
     characterSheets: caseData.characterSheets as CharacterSheets,
