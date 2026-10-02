@@ -1,6 +1,6 @@
 # Nền vật liệu UI, HUD trong game và chỉ dẫn trong thế giới
 
-Ngày: 02/10/2026. Trạng thái: **chờ người dùng duyệt spec**. Chưa sửa code.
+Ngày: 02/10/2026. Trạng thái: **đã duyệt (02/10/2026)**. Plan: `docs/superpowers/plans/2026-10-02-ui-foundation-hud.md`. Chưa sửa code.
 
 Phân loại theo `brainstorming`: **architectural** — thêm dependency font, thêm primitive dùng chung trong `packages/ui`, thêm pipeline texture UI trong `tools/art-codegen`, đổi asset và vị trí cổng trong scene JSON của cả hai case, nới một product rule (ánh sáng cho cổng). Sau khi spec được duyệt mới chuyển sang `writing-plans`.
 
@@ -107,7 +107,7 @@ Chỉ React + CSS, không import game state, Phaser hay store:
 - Token bóng: `--lexicon-shadow-paper: 0 3px 6px rgb(42 37 33 / 25%)` (D-5), `--lexicon-shadow-lift` cho trạng thái hover/focus; cùng hướng sáng như world (từ trên-trái).
 - Chuyển động: giấy trượt vào 160–220ms; gạch mực 300ms; con dấu 115% → 100% trong 180ms; không rung màn hình, không nhấp nháy.
 - `prefers-reduced-motion: reduce` và setting giảm chuyển động hiện có: tắt chuyển động và độ nghiêng (tilt = 0).
-- Focus: viền 2px màu `--lexicon-dark-red`, offset 2px, dùng chung cho mọi primitive tương tác.
+- Focus: viền 3px màu `--lexicon-dark-red`, offset 3px (khớp ngưỡng ≥ 3px của E2E pause menu hiện có), dùng chung cho mọi primitive tương tác.
 - Test tương phản (`palette.test.ts`) cho mọi cặp chữ/nền mới, ngưỡng WCAG AA 4.5:1 cho chữ thường.
 
 ## 5. Phần 2 — HUD trong game
