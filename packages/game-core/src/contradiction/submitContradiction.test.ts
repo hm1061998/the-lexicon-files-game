@@ -166,4 +166,18 @@ describe('submitContradiction', () => {
       objectiveId: 'submit_your_conclusion',
     });
   });
+
+  it('accepts a correct pair even when its objective was not activated by a dialogue yet', () => {
+    const second = loadCaseDefinition('case-002');
+    const facts = ['leo_statement_at_desk_all_afternoon', 'leo_entry_16_40'];
+    // Statement heard first, evidence collected last: no dialogue reconciled afterwards.
+    const state = { ...createCaseState(second), discoveredFactIds: facts };
+    expect(state.objectiveStatuses.compare_leo_desk_statement).toBe('locked');
+
+    const result = submitContradiction(second, state, 'leo_desk_vs_access_log', facts);
+    expect(result).toMatchObject({ ok: true, correct: true });
+    if (!result.ok) return;
+    expect(result.state.objectiveStatuses.compare_leo_desk_statement).toBe('completed');
+    expect(result.state.contradictionIds).toEqual(['leo_desk_vs_access_log']);
+  });
 });

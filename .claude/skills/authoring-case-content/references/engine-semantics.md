@@ -25,7 +25,7 @@
 - Chọn choice: cần node hiện tại, choice và node đích đều thỏa điều kiện; áp `choice.effects + target.effects` thành **một batch**, rồi reconcile.
 - Batch lỗi → `effectFailed`, người chơi đứng yên ở node cũ.
 
-## `reconcileDialogueProgress` — chỉ chạy sau bước hội thoại và khi load save
+## `reconcileDialogueProgress` — chạy sau bước hội thoại, khi load save và trong `submitContradiction` (trước và sau khi hoàn thành so sánh); KHÔNG chạy sau khi nhặt evidence
 
 1. Tree chưa có `completionFlag` mà `completionCondition` đúng → `setFlag completionFlag`.
 2. Objective `locked` có `activationCondition` đúng → `active`.

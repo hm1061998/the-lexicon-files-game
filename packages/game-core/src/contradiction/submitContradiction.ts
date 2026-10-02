@@ -40,7 +40,12 @@ export function submitContradiction(
     return { ok: true, correct: true, state, events: [] };
   }
 
-  const applied = applyEffects(definition, state, [
+  // Facts can arrive from evidence after the last dialogue, so the comparison's objective may
+  // still be locked; bring objective statuses up to date before completing it.
+  const ready = reconcileDialogueProgress(definition, state);
+  if (!ready.ok) return { ok: false, state, error: ready.error };
+
+  const applied = applyEffects(definition, ready.state, [
     { type: 'setFlag', key: 'david_contradiction_found', value: true },
     { type: 'completeObjective', objectiveId: contradiction.objectiveId },
   ]);
@@ -55,6 +60,6 @@ export function submitContradiction(
     ok: true,
     correct: true,
     state: { ...reconciled.state, contradictionIds: [...state.contradictionIds, contradictionId] },
-    events: [...applied.events, ...reconciled.events],
+    events: [...ready.events, ...applied.events, ...reconciled.events],
   };
 }
