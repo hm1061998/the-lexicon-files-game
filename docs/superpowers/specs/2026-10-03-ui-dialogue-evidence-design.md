@@ -1,6 +1,6 @@
 # Hội thoại, vật chứng, bài nghe và thẻ từ vựng
 
-Ngày: 03/10/2026. Trạng thái: **đã duyệt (03/10/2026)**. Plan: chưa viết. Chưa sửa code.
+Ngày: 03/10/2026. Trạng thái: **đã duyệt (03/10/2026)**. Plan: `docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md` (duyệt, thực thi Native). Chưa sửa code.
 
 Phân loại theo `brainstorming`: **architectural** — đổi cách trình bày của ba màn trong lúc chơi và dùng lại primitive `packages/ui`. Sau khi spec được duyệt mới chuyển sang `writing-plans`.
 
