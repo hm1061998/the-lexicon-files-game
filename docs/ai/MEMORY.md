@@ -1,8 +1,8 @@
 ---
 schema_version: 1
-updated_at: 2026-10-03T09:30:00+07:00
+updated_at: 2026-10-03T11:00:00+07:00
 phase: ui-shell
-status: in_progress
+status: complete
 result_commit: 3896c87
 active_spec: docs/superpowers/specs/2026-10-02-ui-shell-design.md
 active_plan: docs/superpowers/plans/2026-10-02-ui-shell.md
@@ -15,11 +15,11 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-shell.md
 
 ## Current Phase
 
-- UI shell (PR-02 phần 3: vỏ ngoài game): Task 0–7 xong trên `dev`, chưa push. Chờ người dùng duyệt ảnh trước/sau (`docs/ai/playtests/2026-10-02-ui-shell/`) rồi mới đánh dấu hoàn tất. Phần 1+2 (foundation + HUD) và PR-03 Case #002 đã xong và đã push.
+- UI shell (PR-02 phần 3: vỏ ngoài game): Task 0–7 xong. Người dùng đã duyệt ảnh trước/sau (`docs/ai/playtests/2026-10-02-ui-shell/`, 03/10/2026): phase hoàn tất, đã push `dev`. Phần 1+2 (foundation + HUD) và PR-03 Case #002 đã xong và đã push.
 
 ## Active Goal
 
-- Người dùng duyệt ảnh shell; không tự mở phase mới.
+- Chọn phase kế tiếp; không tự mở phase mới.
 
 ## Current Status
 
@@ -56,7 +56,7 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-shell.md
 
 ## Next Actions
 
-1. Chờ người dùng duyệt ảnh shell; sau đó mới đánh dấu phase hoàn tất. Chưa push `dev`.
+1. Chọn việc kế tiếp (chờ người dùng); `dev` đã push, không còn việc push treo.
 2. Phần 4–5 UI (hội thoại, bằng chứng, sổ tay) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor shell ở trên.
 
