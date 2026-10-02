@@ -36,3 +36,13 @@ Sau: mặt bàn gỗ (`DeskBackdrop`), bìa hồ sơ kèm tab chia mục (`Folde
 ## Ruling của executor
 
 Xem `Ruling:` trong ledger; tóm tắt: ShellCover nhận prop `title`; luật `.title-card` cũ thu hẹp rồi xóa cùng `title.css`; motion-off dùng `!important` và reset `rotate/translate`; tab compact nâng lên thay vì hạ xuống; How-to giữ là `ModalSheet` (dùng chung với tạm dừng); Esc đóng briefing (hành vi cũ); `ModalSheet` không nghiêng mặc định; `form-controls.css` mở rộng selector; tóm tắt không có nút quay về tiêu đề (ngoài phạm vi chỉ-trình-bày).
+
+## Review độc lập và sửa
+
+Một review toàn nhánh (opus): không Critical, ba Important đã sửa RED→GREEN ở `3896c87`:
+1. Nút trong thẻ định nghĩa của màn điều tra bị restyle bởi luật sửa briefing → giới hạn phạm vi `.modal-sheet .vocabulary-popover:not(.investigation-vocabulary-popover)` (test `shellCss.test.ts`).
+2. Motion-off và `prefers-reduced-motion` chưa phủ hết tilt (`.support-option`, `.case-card-flag`, `.folder-cover`, `.case-card`, `SaveRecoveryScreen` ngoài `.game-root`) → đã phủ và bọc `SaveRecoveryScreen` (test `shellCss.test.ts`).
+3. Bìa hồ sơ có thể bị cắt ở 844×390 → `max-height: 100%` và sheet cuộn; E2E thêm viewport 844×390 kèm kiểm tra biên dọc và màn `settings` (đỏ ở `support` trước khi sửa, xanh sau).
+Sau sửa: unit game-web 694 pass; E2E `ui-shell`, `onboarding`, `case-002`, `investigation-pagination`, `investigation-acceptance`: 93 pass. Lượt E2E đầy đủ 220 pass/17 đỏ có sẵn chạy trước ba sửa này.
+
+Minor chưa sửa: `aria-modal` trong `SupportPicker`; `ModalSheet` thiếu tên khi không có heading; `NewCaseConfirm` thiếu `aria-describedby` và Stamp trung tính; thiếu fallback forced-colors cho tab/thẻ; `aria-labelledby` của section đầu màn tổng kết.
