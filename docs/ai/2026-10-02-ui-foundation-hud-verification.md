@@ -74,3 +74,11 @@ Chênh 12,1 → 8,9 là do tải máy, không do thay đổi: cùng commit basel
 - `python -m pytest tools/art-codegen -q`: 61 pass, 1 đỏ có sẵn (`test_chair_directions`, đỏ giống hệt ở `0750ce6`).
 - `npm run test:e2e` đầy đủ: 181 pass, 20 đỏ. Đỏ có sẵn ở baseline Task 0 (19 test): 17 còn đỏ, 2 đã xanh nhờ cập nhật dải phím (`hud.spec` chrome và compact). Ba test đỏ mới trong lần chạy đầy đủ: `world.spec` WASD (flake, xanh khi chạy riêng), `listening` ghi âm (vượt 30 giây mặc định do khởi động chậm hơn: thêm `test.setTimeout(90s)`), `notebook-people` 760 (font Literata đẩy lời khai sang trang 2: tìm từ vựng theo trang). Cả ba xanh sau sửa.
 - Danh sách đỏ có sẵn còn lại: `feedback-audio`, `feedback-navigation(-review)` ×3, `feedback-ui-controls`, `feedback-viewport` ×5, `hud` (collecting evidence, reload, storage warning, minimap narrow), `learning`, `notebook-people` (vocabulary context), `settings` (V1 translation).
+
+### Review độc lập (toàn nhánh) và đợt sửa
+
+- Không Critical. Sáu Important đã sửa bằng test đỏ→xanh (commit `dd7cb77`): vòm bị lật trên tường xa (nay không lật, chỉ đổi phía ánh sáng); vùng tránh HUD đo từ canvas letterbox và tính cả launcher thu gọn; chỉ báo nhỏ trên màn hẹp (nhân theo px game/CSS); cổng (door) không còn vòng mực/chỉ báo ngoài màn hình (chỉ vật chứng); setting giảm chuyển động nay đưa độ nghiêng giấy về 0.
+- Minor chưa sửa (đã ghi ledger): vạch gạch mực thiếu khi giảm chuyển động; `aria-label` phím compact không chứa nhãn phím hiển thị; validator cổng chỉ kiểm tâm; biển tên dùng `labels[0]`; assert E2E cue còn vô nghĩa; ngưỡng "trong khung" dùng điểm chân; ripple reset khi đổi vật gần nhất; chuỗi/rule thừa; màu đỏ của focus ring (spec duyệt).
+- Chờ người dùng duyệt ảnh trước/sau/concept (spec §9.4) trước khi đánh dấu phase hoàn tất. Không push.
+
+Ảnh: `docs/ai/playtests/2026-10-02-ui-foundation-hud/{before,after}`.
