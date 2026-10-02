@@ -2,7 +2,8 @@ import { useEffect, type RefObject } from 'react';
 import { useGameStoreApi } from '../state/GameStoreContext';
 import { computeHudInsets } from './hudInsets';
 
-const MEASURED = '.hud-objective-panel, .hud-case-progress, .hud-minimap, .hud-key-hints';
+const MEASURED =
+  '.hud-objective-panel, .hud-case-progress, .hud-minimap, .hud-key-hints, .hud-panel-launcher';
 
 /** Publishes how much screen the HUD blocks cover, for Phaser to read through the store. */
 export function useHudInsets(hudRef: RefObject<HTMLElement>): void {
@@ -21,7 +22,17 @@ export function useHudInsets(hudRef: RefObject<HTMLElement>): void {
           bottom: r.bottom - origin.top,
         };
       });
-      store.getState().setHudInsets(computeHudInsets(origin, rects));
+      // Measure from the canvas: Scale.FIT letterboxes it inside the HUD box.
+      const canvas = hud.parentElement?.querySelector('canvas')?.getBoundingClientRect();
+      const area = canvas
+        ? {
+            width: canvas.width,
+            height: canvas.height,
+            x: canvas.left - origin.left,
+            y: canvas.top - origin.top,
+          }
+        : { width: origin.width, height: origin.height, x: 0, y: 0 };
+      store.getState().setHudInsets(computeHudInsets(area, rects, { x: area.x, y: area.y }));
     };
     const observer = new ResizeObserver(measure);
     observer.observe(hud);

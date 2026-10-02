@@ -13,6 +13,8 @@ export type CueAnchor = {
   depth: number;
   /** Where the object stands on the floor; the ink ripple is drawn here. */
   floor?: { x: number; y: number };
+  /** Evidence gets the ripple and edge pointers; doors keep only the diamond. */
+  kind?: 'evidence' | 'door';
 };
 const MARKER_COLOR = Number.parseInt(INTERACTION_RED.slice(1), 16);
 const CREAM = 0xf2e8d5;
@@ -85,16 +87,20 @@ export class WorldCueLayer {
     camera: Phaser.Cameras.Scene2D.Camera,
     player: { x: number; y: number },
     insets: HudInsetsLike,
+    /** Game px per CSS px, so pointers keep a readable size when the canvas is scaled down. */
+    gamePerCss = 1,
   ): void {
     const view = camera.worldView;
     const toScreen = (p: { x: number; y: number }) => ({
       x: (p.x - view.x) * camera.zoom,
       y: (p.y - view.y) * camera.zoom,
     });
-    const cues = [...this.visuals.keys()].map((id) => {
-      const anchor = this.anchors.get(id)!;
-      return { id, ...toScreen(anchor.floor ?? anchor) };
-    });
+    const cues = [...this.visuals.keys()]
+      .filter((id) => this.anchors.get(id)?.kind !== 'door')
+      .map((id) => {
+        const anchor = this.anchors.get(id)!;
+        return { id, ...toScreen(anchor.floor ?? anchor) };
+      });
     const pointers = offscreenCues({
       cues,
       view: { x: 0, y: 0, width: camera.width, height: camera.height },
@@ -123,7 +129,7 @@ export class WorldCueLayer {
           (pointer.x - originX) / camera.zoom + originX,
           (pointer.y - originY) / camera.zoom + originY,
         )
-        .setScale(1 / camera.zoom)
+        .setScale(gamePerCss / camera.zoom)
         .setRotation(pointer.angle);
     }
   }
@@ -175,7 +181,12 @@ export class WorldCueLayer {
       visual.marker = marker;
       created = true;
     }
-    if (!visual.ripple && anchor.floor && this.scene.textures.exists(RIPPLE_KEY)) {
+    if (
+      !visual.ripple &&
+      anchor.kind !== 'door' &&
+      anchor.floor &&
+      this.scene.textures.exists(RIPPLE_KEY)
+    ) {
       visual.ripple = this.scene.add
         .image(anchor.floor.x, anchor.floor.y, RIPPLE_KEY)
         .setOrigin(0.5, 0.5)

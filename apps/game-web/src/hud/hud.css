@@ -259,6 +259,11 @@
   outline-offset: 2px;
 }
 
+.game-root[data-reduced-motion='true'] .paper-sheet {
+  --paper-tilt: 0deg;
+  transform: none;
+}
+
 .game-root[data-reduced-motion='true'] * {
   animation: none !important;
   transition: none !important;

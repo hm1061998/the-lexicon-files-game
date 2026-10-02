@@ -43,6 +43,30 @@ describe('computeHudInsets', () => {
   });
 });
 
+describe('computeHudInsets with a letterboxed canvas', () => {
+  // Canvas occupies y 86..634 of a 760x720 page (bars above and below).
+  const canvas = { width: 760, height: 548, origin: { x: 0, y: 86 } };
+
+  it('measures HUD reach from the canvas edge, not from the page edge', () => {
+    // An objective card over the top bar and the first 34px of the canvas.
+    const insets = computeHudInsets(
+      { width: canvas.width, height: canvas.height },
+      [{ left: 0, top: 20, right: 340, bottom: 120 }],
+      canvas.origin,
+    );
+    expect(insets).toEqual({ top: 34, bottom: 0, left: 0, right: 0 });
+  });
+
+  it('ignores HUD blocks lying entirely over the letterbox bars', () => {
+    const insets = computeHudInsets(
+      { width: canvas.width, height: canvas.height },
+      [{ left: 0, top: 8, right: 200, bottom: 60 }],
+      canvas.origin,
+    );
+    expect(insets).toEqual({ top: 0, bottom: 0, left: 0, right: 0 });
+  });
+});
+
 describe('sameInsets', () => {
   it('compares all four sides', () => {
     expect(

@@ -18,9 +18,25 @@ export function sameInsets(a: HudInsets, b: HudInsets): boolean {
 export function computeHudInsets(
   viewport: { width: number; height: number },
   rects: readonly HudRect[],
+  /** Where the measured area starts in the same space as `rects` (the canvas when letterboxed). */
+  origin: { x: number; y: number } = { x: 0, y: 0 },
 ): HudInsets {
   const insets: HudInsets = { top: 0, right: 0, bottom: 0, left: 0 };
-  for (const rect of rects) {
+  for (const placed of rects) {
+    const rect = {
+      left: placed.left - origin.x,
+      right: placed.right - origin.x,
+      top: placed.top - origin.y,
+      bottom: placed.bottom - origin.y,
+    };
+    // A block that lies wholly over the letterbox bars never touches the canvas.
+    if (
+      rect.right <= 0 ||
+      rect.left >= viewport.width ||
+      rect.bottom <= 0 ||
+      rect.top >= viewport.height
+    )
+      continue;
     const distances = [
       ['top', rect.top],
       ['bottom', viewport.height - rect.bottom],

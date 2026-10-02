@@ -37,6 +37,7 @@ export function createPortalPresentation(
 ): { setReducedMotion(value: boolean): void; destroy(): void } {
   const { position, facing } = args;
   let reducedMotion = args.reducedMotion;
+  // Far walls share the near walls' on-screen slant, so only the light flips sides, never the art.
   const flip = facing.endsWith('flip');
   const art = facing.startsWith('ne') ? 'ne' : 'nw';
   // The room side of the wall, in screen space: a wall along v opens towards +u, along u towards +v.
@@ -49,7 +50,6 @@ export function createPortalPresentation(
         .sprite(position.x, position.y, veilKey, 0)
         .setOrigin(0.5, VEIL_ORIGIN_Y)
         .setDepth(position.y + 0.002)
-        .setFlipX(flip)
     : null;
 
   const light = scene.add

@@ -106,4 +106,20 @@ describe('WorldCueLayer', () => {
     expect(layer.activeCount).toBe(0);
     expect(images).toHaveLength(1);
   });
+
+  it('gives doors only the diamond: no ripple and no edge pointer', () => {
+    const { scene, images } = richScene();
+    const layer = new WorldCueLayer(
+      scene,
+      new Map([
+        ['door', { x: 12, y: 20, depth: 30, floor: { x: 12, y: 60 }, kind: 'door' as const }],
+      ]),
+    );
+    layer.sync(new Set(['door']), null, false);
+    expect(layer.activeCount).toBe(1);
+    expect(images).toHaveLength(0);
+    const camera = { worldView: { x: 0, y: 0 }, zoom: 1, width: 100, height: 100 } as never;
+    layer.syncOffscreen(camera, { x: 50, y: 50 }, { top: 0, right: 0, bottom: 0, left: 0 }, 1);
+    expect(layer.offscreenIds()).toEqual([]);
+  });
 });

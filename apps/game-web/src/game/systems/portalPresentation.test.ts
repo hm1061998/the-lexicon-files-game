@@ -90,9 +90,20 @@ describe('createPortalPresentation', () => {
     expect(Math.max(...graphics.alphas)).toBeLessThanOrEqual(0.35);
   });
 
-  it('mirrors the veil for flipped facings', () => {
+  it('never mirrors the veil: walls along one axis share one on-screen slant', () => {
     const { scene, veil } = makeScene();
     createPortalPresentation(scene, { ...args, facing: 'ne-flip', reducedMotion: true });
-    expect(veil.setFlipX).toHaveBeenCalledWith(true);
+    expect(veil.setFlipX).not.toHaveBeenCalledWith(true);
+  });
+
+  it('puts the light on the room side of a far wall, opposite to the near wall', () => {
+    const near = makeScene();
+    const far = makeScene();
+    createPortalPresentation(near.scene, { ...args, reducedMotion: true });
+    createPortalPresentation(far.scene, { ...args, facing: 'ne-flip', reducedMotion: true });
+    const x = (g: ReturnType<typeof makeScene>['graphics']) =>
+      (g.fillEllipse as unknown as { mock: { calls: number[][] } }).mock.calls[0]![0]!;
+    expect(x(near.graphics)).toBeGreaterThan(args.position.x);
+    expect(x(far.graphics)).toBeLessThan(args.position.x);
   });
 });

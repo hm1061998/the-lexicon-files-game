@@ -312,6 +312,7 @@ export class WorldScene extends Phaser.Scene {
           y: sprite.getTopCenter().y - 12,
           depth: sprite.depth + 2,
           floor: { x: floorPoint.x, y: floorPoint.y },
+          kind: asset.cue.kind,
         });
       }
       this.depths.set(asset.id, sprite.depth);
@@ -352,7 +353,6 @@ export class WorldScene extends Phaser.Scene {
             ? facingForPortal(def, asset.position)
             : 'ne';
         this.portalFacings.set(asset.id, facing);
-        if (facing.endsWith('flip') && 'setFlipX' in sprite) sprite.setFlipX(true);
         const target = asset.interaction?.transition?.targetSceneId;
         const label = options.caseDefinition.scenes.find(({ id }) => id === target)?.labels?.[0]
           ?.text;
@@ -728,6 +728,7 @@ export class WorldScene extends Phaser.Scene {
         bottom: css.bottom * factor,
         left: css.left * factor,
       },
+      factor,
     );
   }
 

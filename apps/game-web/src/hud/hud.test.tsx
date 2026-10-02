@@ -151,6 +151,15 @@ describe('KeyHints', () => {
   });
 });
 
+describe('reduced motion', () => {
+  it('levels tilted paper when the in-game setting is on', () => {
+    const css = readFileSync(new URL('./hud.css', import.meta.url), 'utf8');
+    expect(css).toMatch(
+      /\.game-root\[data-reduced-motion='true'\]\s+\.paper-sheet\s*\{[^}]*--paper-tilt:\s*0deg/,
+    );
+  });
+});
+
 describe('CoachNote', () => {
   it('is a handwritten paper note', () => {
     const html = renderToString(
