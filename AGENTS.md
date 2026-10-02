@@ -4,16 +4,19 @@ Rule chung cho mọi coding agent (Codex, Claude Code, …). Rule theo khu vực
 
 ## 1. Đọc trước khi làm
 
-| File                                                     | Vai trò                              |
-| -------------------------------------------------------- | ------------------------------------ |
-| `docs/01_GAME_DESIGN_DOCUMENT.md`                        | Product rules                        |
-| `docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md`              | Learning rules                       |
-| `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md`                | MVP content contract                 |
-| `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`                | Phase, Definition of Done            |
-| `docs/05_DOTNET_BACKEND_TECHNICAL_DESIGN.md`             | Backend rules                        |
-| `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md` | Asset/scene/character contract       |
-| `docs/architecture/ARCHITECTURE.md`                      | Kiến trúc tổng hợp, dependency rules |
-| `docs/concept/*.webp`                                    | Visual target                        |
+| File                                                      | Vai trò                                         |
+| --------------------------------------------------------- | ----------------------------------------------- |
+| `docs/01_GAME_DESIGN_DOCUMENT.md`                         | Product rules                                   |
+| `docs/02_ENGLISH_LEARNING_SYSTEM_DESIGN.md`               | Learning rules                                  |
+| `docs/03_CASE_001_VERTICAL_SLICE_SPEC.md`                 | MVP content contract                            |
+| `docs/04_CODEX_IMPLEMENTATION_ROADMAP.md`                 | Phase, Definition of Done                       |
+| `docs/05_DOTNET_BACKEND_TECHNICAL_DESIGN.md`              | Backend rules                                   |
+| `docs/art/06_PHASER_CHARACTER_SCENE_ASSET_MODEL_SPEC.md`  | Asset/scene/character contract                  |
+| `docs/architecture/ARCHITECTURE.md`                       | Kiến trúc tổng hợp, dependency rules            |
+| `docs/concept/*.webp`                                     | Visual target                                   |
+| `docs/product/2026-10-02-product-review-and-direction.md` | Định hướng sản phẩm, backlog `PR-xx` (advisory) |
+
+Khi đề xuất việc tiếp theo hoặc ưu tiên công việc, đối chiếu backlog trong tài liệu định hướng sản phẩm; tài liệu đó là advisory, không cho phép tự mở phase.
 
 Không tự ý thay đổi product rule trong docs. Nếu thấy docs mâu thuẫn hoặc thiếu → hỏi, không đoán.
 

@@ -52,6 +52,11 @@ Bộ tài liệu này được thiết kế để đưa trực tiếp cho Codex 
    - Quy trình project memory cho coding agent
    - Phase, plan, tiến độ, blocker và handoff hiện hành
 
+10. `product/2026-10-02-product-review-and-direction.md`
+    - Đánh giá ý tưởng, công nghệ, hướng desktop/Steam và thương mại hóa
+    - Backlog định hướng có mã `PR-xx` để agent đề xuất việc tiếp theo
+    - **Advisory**: không thuộc bảng nguồn authoritative bên dưới
+
 ## Thứ tự ưu tiên khi tài liệu mâu thuẫn
 
 Áp dụng tài liệu chuyên biệt cho đúng phạm vi của quyết định:

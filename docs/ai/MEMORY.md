@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T18:00:00+07:00
-phase: phase-11e
-status: complete
-result_commit: d357cbf
-active_spec: docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md
-active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
+updated_at: 2026-10-02T23:30:00+07:00
+phase: intro-onboarding
+status: in_progress
+result_commit: 9c22d33
+active_spec: docs/superpowers/specs/2026-10-02-intro-onboarding-design.md
+active_plan: docs/superpowers/plans/2026-10-02-intro-onboarding.md
 ---
 
 ## Metadata
@@ -15,17 +15,16 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Current Phase
 
-- Cải tiến UI notebook + bảng suy luận không cuộn (plan 02/10, 8 task) **hoàn tất** trên dev; chờ người dùng review.
+- Gói intro + onboarding Case #001 (PR-01) đã code xong trên dev (9 commit `c648d4f`…`9c22d33`); còn thiếu full E2E và review độc lập.
 
 ## Active Goal
 
-- Không có mục tiêu đang chạy; chờ yêu cầu mới. Không tự mở phase nội dung/backend.
+- Chốt kiểm chứng gói onboarding: chạy lại E2E các spec bị ảnh hưởng, phân biệt lỗi có sẵn với lỗi mới, rồi một review độc lập. Chưa mở phase mới.
 
 ## Current Status
 
-- Task1–8 xong. Result commit code `d357cbf` (acceptance + báo cáo), sửa review độc lập `fe30a8c`. Báo cáo: `docs/ai/2026-10-02-investigation-pagination-verification.md`; ảnh 5 viewport: `docs/ai/playtests/2026-10-02-investigation-pagination/`.
-- Gate: lint/test/build/typecheck/prettier/memory:check PASS; nhóm E2E 10 file 61/61 (21 phút) + chạy lại phần liên quan sau thay đổi CSS cuối. Chỉ Chromium Windows; không tuyên bố full E2E toàn repo.
-- Dev ahead origin theo yêu cầu cũ chưa push gói này; hỏi người dùng trước khi push.
+- Code + unit xong: lint 7 project, test (game-web 608), build, typecheck, prettier PASS. `onboarding.spec.ts` 8/8 (Chromium Linux). Full E2E dừng ~77/185 với 17 fail; ~9 đã fail sẵn ở baseline `08e115f`. Báo cáo: `docs/ai/2026-10-02-intro-onboarding-verification.md`.
+- Chưa push trước lượt này theo yêu cầu cũ; lượt này đã push theo yêu cầu người dùng.
 
 ## Completed
 
@@ -36,7 +35,7 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## In Progress
 
-- Không có việc đang dở.
+- Phân loại fail E2E còn lại (`feedback-navigation`, `feedback-navigation-review`, `feedback-audio` pass ở baseline); chạy các spec chưa chạy (dialogue, journey, timeline, notebook-*, learning, settings, listening, world, performance, viewport-focus).
 
 ## Active Decisions
 
@@ -53,13 +52,14 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Blockers
 
-- Không có blocker kỹ thuật. Task6 chưa có regression run cho timeline.spec; board browser acceptance rộng và Task7–8 còn pending. Chưa push gói UI này.
+- Không có blocker kỹ thuật. Môi trường E2E hiện là Chromium Linux trong sandbox, không phải Windows.
 
 ## Next Actions
 
-1. Người dùng review gói UI; push chỉ khi được yêu cầu.
-2. Nếu tiếp tục UI, xử lý minor trong report: `role=status` bọc tài liệu phân trang (đọc trùng), khối cố định quá cao hiện lỗi dev, khay đối chiếu hiện hai dữ kiện đã chọn, hồ sơ nghi phạm ở mặt Kết luận, mở bảng từ timeline sổ tay vào mặt Timeline, nhãn trang tiếp nối, bộ đếm lật riêng cho mục lục/chi tiết, tách grapheme, fixture dài tổng hợp.
-3. Không tự bắt đầu phase mới.
+1. Chạy riêng các spec fail/chưa chạy, so với baseline `08e115f`; sửa lỗi do onboarding.
+2. Thêm E2E mở "Cách điều tra" từ màn hình tiêu đề (lỗi giật đã gặp thực tế).
+3. Một review độc lập cả nhánh, rồi cập nhật báo cáo.
+4. PR-02 (minor no-scroll) chỉ khi ảnh hưởng người chơi thật; không tự bắt đầu phase mới.
 
 ## Verification
 
@@ -76,7 +76,7 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Latest Handoff
 
-- Gói investigation no-scroll hoàn tất (`d357cbf`). `apps/game-web/debug.log` vẫn untracked, không commit. Node 22 ở `.superpowers/runtime/node-v22.23.3-win-x64`; chạy Nx bằng `node .../npm/bin/npx-cli.js nx ...`. Helper E2E dùng chung: `e2e/investigationFixture.ts` (`readAllPages`, `readStatements`, `turnToVisible`, `reveal`, `openFace`, `expectNoInvestigationScroll`, `expectComfortableControls`).
+- Onboarding: state máy title/support/confirm ở `game/GameCanvas.tsx` (`title/titleModel.ts`), briefing qua `briefingOpen` trong gameStore, gợi ý qua `onboarding/useOnboardingSignals.ts`. Mount Windows có CRLF còn HEAD là LF: `sed -i 's/\r$//'` trước `git add`. E2E chạy được ở sandbox Linux qua `playwright.cloud.config` tạm (không commit).
 
 ## Required Reading
 
