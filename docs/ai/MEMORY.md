@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-updated_at: 2026-10-02T09:04:42+07:00
+updated_at: 2026-10-02T15:30:00+07:00
 phase: phase-11e
 status: in_progress
-result_commit: 13ea769
+result_commit: 325fc2e
 active_spec: docs/superpowers/specs/2026-10-02-investigation-no-scroll-design.md
 active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 ---
@@ -23,9 +23,9 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Current Status
 
-- Spec và plan02/10 đã được duyệt. Task1–5 hoàn tất; Task6 có phần triển khai được commit nhưng còn kiểm thử browser cũ và acceptance; Task7–8 chưa làm.
-- Result commit code gần nhất13ea769. Baseline UI cũ result8c734b5 vẫn hoàn tất và verified; không làm lại plan01/10.
-- Report baseline: docs/ai/2026-10-01-notebook-deduction-verification.md; ảnh/raw output trong docs/ai/playtests/2026-10-01-notebook-deduction/. Gói mới chưa triển khai/push.
+- Spec và plan 02/10 đã duyệt. Task1–7 hoàn tất và commit (Task6 hoàn thiện `cc8ad7a`; Task7 popover `1f537a9`; format `325fc2e`). Task8 (acceptance 5 viewport, final review, handoff) chưa làm.
+- Result commit code gần nhất 325fc2e. Baseline UI cũ result 8c734b5 vẫn verified; không làm lại plan 01/10. Gói UI này chưa push theo yêu cầu cũ (người dùng đã cho push các commit trước đó của dev; hỏi lại nếu cần).
+- Report baseline: docs/ai/2026-10-01-notebook-deduction-verification.md. Ảnh acceptance mới ghi vào docs/ai/playtests/2026-10-02-investigation-pagination/ (untracked, chưa commit).
 
 ## Completed
 
@@ -36,8 +36,8 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## In Progress
 
-- Plan8task: contracts/text fragments → measured pagination → SVG artwork → page-turn adapter/library gate → notebook → board4faces → popover/focus/audio → browser acceptance/review/handoff. Task1–5 xong; Task6 đang dở; Task7–8 còn lại.
-- Scope theo spec02/10:5viewport, nội dung dài không mất, giữ UI selections, learning chỉ visible pages, engine/discovery/save giữ nguyên.
+- Task8: ma trận browser 5 viewport × 4 tab + 4 mặt, fixture dài, ảnh actual, final reviewer độc lập, gate lint/test/build/typecheck + nhóm E2E, report docs/ai/2026-10-02-investigation-pagination-verification.md, rồi memory.
+- Việc đã làm Task6/7: spec cũ timeline/notebook-deduction/notebook-people chuyển sang luồng phân trang (helper readAllPages/readStatements/turnToVisible/expectNoInvestigationScroll trong e2e/investigationFixture.ts); popover `InvestigationVocabularyPopover` portal vào dialog; `.deduction-board` dùng token font Cambria.
 
 ## Active Decisions
 
@@ -58,10 +58,10 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Next Actions
 
-1. Hoàn thiện Task6: chạy/sửa `timeline.spec.ts` browser regression, bảo toàn assertion engine.
-2. Thực hiện Task7: popover, focus/input/audio và tích hợp điều khiển trang.
-3. Thực hiện Task8: 5 viewport, fixture dài, luồng đầy đủ, kiểm tra/review cuối và handoff.
-4. Cập nhật plan/verification/memory với kết quả thực tế; gói UI này chưa được cho phép push.
+1. Thực hiện Task8: ma trận 5 viewport (1280×720, 760×600, 390×844, 1280×540, 844×390) cho 4 tab + 4 mặt, nội dung dài/ảnh chậm/resize/reduced-motion, chụp và xem ảnh.
+2. Một final reviewer độc lập (read-only), xử lý findings, ghi ruling.
+3. Chạy `npm run lint/test/build/typecheck` + nhóm E2E (`investigation-pagination notebook-deduction notebook-people timeline journey viewport-focus learning settings dialogue`, --workers=1), lưu output vào report.
+4. Cập nhật plan/spec/memory theo kết quả thật; không push nếu chưa được yêu cầu.
 
 ## Verification
 
@@ -77,8 +77,7 @@ active_plan: docs/superpowers/plans/2026-10-02-investigation-no-scroll.md
 
 ## Latest Handoff
 
-- Commit code mới nhất13ea769 chứa phần Task6 hiện có. Tiếp tục Task6 từ timeline browser regression; sau đó Task7 và Task8. Plan đã duyệt, không hỏi lại approval hay cách thực thi.
-- `apps/game-web/debug.log` vẫn untracked, giữ nguyên và không đưa vào commit. Không push theo authorization cũ dành cho People.
+- Commit mới nhất: `325fc2e` (format), `1f537a9` (popover), `cc8ad7a` (test regression). Tiếp tục từ Task8. `apps/game-web/debug.log` vẫn untracked, không commit. Dùng Node 22 trong `.superpowers/runtime/node-v22.23.3-win-x64` và `node .../npm/bin/npx-cli.js nx ...` như plan.
 
 ## Required Reading
 
