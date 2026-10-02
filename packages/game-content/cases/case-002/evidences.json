@@ -1,0 +1,218 @@
+{
+  "evidences": [
+    {
+      "id": "delivery_note",
+      "caseId": "case-002",
+      "name": "Delivery Note",
+      "category": "document",
+      "description": "Delivery note, 15:30. Anna Reed prepared an urgent package for Harper & Co. The address is 14 Bridge Street. The schedule says: deliver before 17:30.",
+      "descriptionVi": "Phiếu giao hàng, 15:30. Anna Reed chuẩn bị một gói hàng khẩn cho Harper & Co. Địa chỉ là 14 Bridge Street. Lịch trình ghi: giao trước 17:30.",
+      "relatedFactIds": ["note_address_14"],
+      "relatedNpcIds": ["anna"],
+      "vocabularyIds": ["urgent", "package", "address", "schedule", "deliver"],
+      "vocabularySpans": [
+        {
+          "start": 44,
+          "end": 50,
+          "vocabularyId": "urgent"
+        },
+        {
+          "start": 51,
+          "end": 58,
+          "vocabularyId": "package"
+        },
+        {
+          "start": 80,
+          "end": 87,
+          "vocabularyId": "address"
+        },
+        {
+          "start": 113,
+          "end": 121,
+          "vocabularyId": "schedule"
+        },
+        {
+          "start": 128,
+          "end": 135,
+          "vocabularyId": "deliver"
+        }
+      ],
+      "image": "/assets/evidence/evidence_delivery_note.png"
+    },
+    {
+      "id": "mailroom_access_log",
+      "caseId": "case-002",
+      "name": "Mail Room Access Log",
+      "category": "digital",
+      "description": "Anna Reed SIGN-IN 16:10; David Cole REQUEST AT RECEPTION 16:25 (no mail room entry); Leo Tran ENTRY 16:40; Leo Tran EXIT 16:46. Staff must sign for each package.",
+      "descriptionVi": "Anna Reed KÝ NHẬN 16:10; David Cole YÊU CẦU TẠI QUẦY TIẾP TÂN 16:25 (không vào phòng thư); Leo Tran VÀO 16:40; Leo Tran RỜI 16:46. Nhân viên phải ký nhận mỗi gói hàng.",
+      "relatedFactIds": ["package_signed_in_16_10", "leo_entry_16_40", "leo_exit_16_46"],
+      "relatedNpcIds": ["anna", "leo", "david"],
+      "vocabularyIds": ["sign", "package"],
+      "vocabularySpans": [
+        {
+          "start": 10,
+          "end": 14,
+          "vocabularyId": "sign"
+        },
+        {
+          "start": 153,
+          "end": 160,
+          "vocabularyId": "package"
+        }
+      ],
+      "image": "/assets/evidence/evidence_mailroom_access_log.png"
+    },
+    {
+      "id": "courier_receipt",
+      "caseId": "case-002",
+      "name": "Courier Receipt",
+      "category": "document",
+      "description": "Courier receipt: collected the package at 17:00. Delivered to 41 Bridge Street. The receipt confirms the delivery address on the label.",
+      "descriptionVi": "Biên nhận chuyển phát: lấy gói hàng lúc 17:00. Đã giao đến 41 Bridge Street. Biên nhận xác nhận địa chỉ giao trên nhãn.",
+      "relatedFactIds": ["courier_delivered_41"],
+      "relatedNpcIds": [],
+      "vocabularyIds": ["courier", "receipt", "package", "deliver", "address", "label"],
+      "vocabularySpans": [
+        {
+          "start": 0,
+          "end": 7,
+          "vocabularyId": "courier"
+        },
+        {
+          "start": 8,
+          "end": 15,
+          "vocabularyId": "receipt"
+        },
+        {
+          "start": 31,
+          "end": 38,
+          "vocabularyId": "package"
+        },
+        {
+          "start": 49,
+          "end": 58,
+          "vocabularyId": "deliver"
+        },
+        {
+          "start": 114,
+          "end": 121,
+          "vocabularyId": "address"
+        },
+        {
+          "start": 129,
+          "end": 134,
+          "vocabularyId": "label"
+        }
+      ],
+      "image": "/assets/evidence/evidence_courier_receipt.png"
+    },
+    {
+      "id": "label_printer_log",
+      "caseId": "case-002",
+      "name": "Label Printer Log",
+      "category": "digital",
+      "description": "Label printer log, 16:44. Account: Leo Tran. Reprinted label: 41 Bridge Street. Previous address: 14 Bridge Street. Package: Harper & Co.",
+      "descriptionVi": "Nhật ký máy in nhãn, 16:44. Tài khoản: Leo Tran. Nhãn in lại: 41 Bridge Street. Địa chỉ trước đó: 14 Bridge Street. Gói hàng: Harper & Co.",
+      "relatedFactIds": ["label_reprinted_16_44"],
+      "relatedNpcIds": ["leo"],
+      "vocabularyIds": ["label", "address", "package"],
+      "vocabularySpans": [
+        {
+          "start": 0,
+          "end": 5,
+          "vocabularyId": "label"
+        },
+        {
+          "start": 89,
+          "end": 96,
+          "vocabularyId": "address"
+        },
+        {
+          "start": 116,
+          "end": 123,
+          "vocabularyId": "package"
+        }
+      ],
+      "image": "/assets/evidence/evidence_label_printer_log.png"
+    },
+    {
+      "id": "client_complaint_email",
+      "caseId": "case-002",
+      "name": "Client Complaint Email",
+      "category": "digital",
+      "description": "From: Harper & Co., 17:45. Subject: Delivery complaint. We are the client at 14 Bridge Street. Our urgent package has not arrived. Please check the courier receipt.",
+      "descriptionVi": "Từ: Harper & Co., 17:45. Chủ đề: Khiếu nại giao hàng. Chúng tôi là khách hàng tại 14 Bridge Street. Gói hàng khẩn của chúng tôi chưa đến. Xin kiểm tra biên nhận chuyển phát.",
+      "relatedFactIds": ["client_reports_missing_17_45"],
+      "relatedNpcIds": [],
+      "vocabularyIds": ["complaint", "client", "urgent", "package", "courier", "receipt"],
+      "vocabularySpans": [
+        {
+          "start": 45,
+          "end": 54,
+          "vocabularyId": "complaint"
+        },
+        {
+          "start": 67,
+          "end": 73,
+          "vocabularyId": "client"
+        },
+        {
+          "start": 99,
+          "end": 105,
+          "vocabularyId": "urgent"
+        },
+        {
+          "start": 106,
+          "end": 113,
+          "vocabularyId": "package"
+        },
+        {
+          "start": 148,
+          "end": 155,
+          "vocabularyId": "courier"
+        },
+        {
+          "start": 156,
+          "end": 163,
+          "vocabularyId": "receipt"
+        }
+      ],
+      "image": "/assets/evidence/evidence_client_complaint_email.png"
+    },
+    {
+      "id": "chat_messages",
+      "caseId": "case-002",
+      "name": "Chat Messages",
+      "category": "digital",
+      "description": "15:35 Leo: Is the address 14 Bridge Street? Anna: Yes, 14 Bridge Street. I checked it on the delivery note. 16:25 Anna: David asked for the package early. I told him to wait for the courier.",
+      "descriptionVi": "15:35 Leo: Địa chỉ là 14 Bridge Street phải không? Anna: Đúng, 14 Bridge Street. Tôi đã kiểm tra trên phiếu giao hàng. 16:25 Anna: David đòi lấy gói hàng sớm. Tôi bảo anh ấy đợi người chuyển phát.",
+      "relatedFactIds": ["chat_anna_confirmed_14"],
+      "relatedNpcIds": ["anna", "leo", "david"],
+      "vocabularyIds": ["address", "package", "early", "courier"],
+      "vocabularySpans": [
+        {
+          "start": 18,
+          "end": 25,
+          "vocabularyId": "address"
+        },
+        {
+          "start": 140,
+          "end": 147,
+          "vocabularyId": "package"
+        },
+        {
+          "start": 148,
+          "end": 153,
+          "vocabularyId": "early"
+        },
+        {
+          "start": 182,
+          "end": 189,
+          "vocabularyId": "courier"
+        }
+      ],
+      "image": "/assets/evidence/evidence_chat_messages.png"
+    }
+  ]
+}

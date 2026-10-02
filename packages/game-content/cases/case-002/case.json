@@ -1,0 +1,318 @@
+{
+  "id": "case-002",
+  "title": "The Wrong Delivery",
+  "evidenceTotal": 6,
+  "initialObjectiveId": "find_what_happened",
+  "difficulty": {
+    "tier": "medium",
+    "cefrRange": {
+      "from": "A2",
+      "to": "B1"
+    },
+    "estimatedMinutes": 28,
+    "summaryVi": "Đối chiếu hồ sơ giao hàng và lời khai để tìm ra ai đã đổi nhãn địa chỉ.",
+    "recommendedForNewPlayers": false
+  },
+  "startSceneId": "main_office",
+  "sceneIds": ["main_office", "mail_room", "reception"],
+  "briefing": {
+    "from": "Chief, International Investigation Bureau",
+    "lines": [
+      {
+        "id": "incident",
+        "text": "An urgent package for Harper & Co. did not arrive at 14 Bridge Street.",
+        "translationVi": "Một gói hàng khẩn cho Harper & Co. chưa đến 14 Bridge Street."
+      },
+      {
+        "id": "wrong_delivery",
+        "text": "The courier says it was delivered to 41 Bridge Street.",
+        "translationVi": "Người chuyển phát nói gói hàng đã được giao đến 41 Bridge Street."
+      },
+      {
+        "id": "instructions",
+        "text": "Read the delivery records and speak to Anna, Leo, and David.",
+        "translationVi": "Hãy đọc hồ sơ giao hàng và nói chuyện với Anna, Leo, và David."
+      },
+      {
+        "id": "sign_off",
+        "text": "Compare their statements with the evidence before you reach a conclusion.",
+        "translationVi": "Hãy đối chiếu lời khai của họ với bằng chứng trước khi đưa ra kết luận."
+      }
+    ]
+  },
+  "conclusion": {
+    "suspectNpcIds": ["anna", "leo", "david"],
+    "correctSuspectNpcId": "leo",
+    "objectiveId": "submit_your_conclusion"
+  },
+  "sharedTextures": [
+    {
+      "key": "tex_player_ne",
+      "url": "/assets/characters/player/chr_player_idle_ne.png"
+    },
+    {
+      "key": "tex_player_se",
+      "url": "/assets/characters/player/chr_player_idle_se.png"
+    },
+    {
+      "key": "tex_player_sw",
+      "url": "/assets/characters/player/chr_player_idle_sw.png"
+    },
+    {
+      "key": "tex_player_nw",
+      "url": "/assets/characters/player/chr_player_idle_nw.png"
+    },
+    {
+      "key": "sheet_player_walk",
+      "url": "/assets/characters/player/chr_player_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    },
+    {
+      "key": "tex_anna_ne",
+      "url": "/assets/characters/anna/chr_anna_idle_ne.png"
+    },
+    {
+      "key": "tex_anna_se",
+      "url": "/assets/characters/anna/chr_anna_idle_se.png"
+    },
+    {
+      "key": "tex_anna_sw",
+      "url": "/assets/characters/anna/chr_anna_idle_sw.png"
+    },
+    {
+      "key": "tex_anna_nw",
+      "url": "/assets/characters/anna/chr_anna_idle_nw.png"
+    },
+    {
+      "key": "tex_leo_ne",
+      "url": "/assets/characters/leo/chr_leo_idle_ne.png"
+    },
+    {
+      "key": "tex_leo_se",
+      "url": "/assets/characters/leo/chr_leo_idle_se.png"
+    },
+    {
+      "key": "tex_leo_sw",
+      "url": "/assets/characters/leo/chr_leo_idle_sw.png"
+    },
+    {
+      "key": "tex_leo_nw",
+      "url": "/assets/characters/leo/chr_leo_idle_nw.png"
+    },
+    {
+      "key": "tex_david_ne",
+      "url": "/assets/characters/david/chr_david_idle_ne.png"
+    },
+    {
+      "key": "tex_david_se",
+      "url": "/assets/characters/david/chr_david_idle_se.png"
+    },
+    {
+      "key": "tex_david_sw",
+      "url": "/assets/characters/david/chr_david_idle_sw.png"
+    },
+    {
+      "key": "tex_david_nw",
+      "url": "/assets/characters/david/chr_david_idle_nw.png"
+    },
+    {
+      "key": "sheet_anna_walk",
+      "url": "/assets/characters/anna/chr_anna_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    },
+    {
+      "key": "sheet_leo_walk",
+      "url": "/assets/characters/leo/chr_leo_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    },
+    {
+      "key": "sheet_david_walk",
+      "url": "/assets/characters/david/chr_david_walk.png",
+      "frameWidth": 160,
+      "frameHeight": 160
+    }
+  ],
+  "characterSheets": {
+    "player": {
+      "idle": {
+        "NE": "tex_player_ne",
+        "SE": "tex_player_se",
+        "SW": "tex_player_sw",
+        "NW": "tex_player_nw"
+      },
+      "walk": "sheet_player_walk"
+    },
+    "anna": {
+      "idle": {
+        "NE": "tex_anna_ne",
+        "SE": "tex_anna_se",
+        "SW": "tex_anna_sw",
+        "NW": "tex_anna_nw"
+      },
+      "walk": "sheet_anna_walk"
+    },
+    "leo": {
+      "idle": {
+        "NE": "tex_leo_ne",
+        "SE": "tex_leo_se",
+        "SW": "tex_leo_sw",
+        "NW": "tex_leo_nw"
+      },
+      "walk": "sheet_leo_walk"
+    },
+    "david": {
+      "idle": {
+        "NE": "tex_david_ne",
+        "SE": "tex_david_se",
+        "SW": "tex_david_sw",
+        "NW": "tex_david_nw"
+      },
+      "walk": "sheet_david_walk"
+    }
+  },
+  "timeline": {
+    "slots": [
+      {
+        "id": "15_30",
+        "time": "15:30"
+      },
+      {
+        "id": "16_10",
+        "time": "16:10"
+      },
+      {
+        "id": "16_25",
+        "time": "16:25"
+      },
+      {
+        "id": "16_40",
+        "time": "16:40"
+      },
+      {
+        "id": "16_44",
+        "time": "16:44"
+      },
+      {
+        "id": "16_46",
+        "time": "16:46"
+      },
+      {
+        "id": "17_00",
+        "time": "17:00"
+      },
+      {
+        "id": "17_45",
+        "time": "17:45"
+      }
+    ],
+    "events": [
+      {
+        "id": "package_prepared",
+        "text": "Anna prepared the package and delivery note for 14 Bridge Street.",
+        "slotId": "15_30",
+        "location": "Main office",
+        "personIds": ["anna"],
+        "source": "Delivery Note",
+        "confidence": "Recorded directly in the delivery records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["note_address_14"]
+        }
+      },
+      {
+        "id": "package_signed_in_16_10",
+        "text": "Anna signed the package into the mail room.",
+        "slotId": "16_10",
+        "location": "Mail room",
+        "personIds": ["anna"],
+        "source": "Mail Room Access Log",
+        "confidence": "Recorded directly in the delivery records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["package_signed_in_16_10"]
+        }
+      },
+      {
+        "id": "david_asked_early_16_25",
+        "text": "David asked for the package early and was told to wait.",
+        "slotId": "16_25",
+        "location": "Reception",
+        "personIds": ["david"],
+        "source": "David's statement",
+        "confidence": "Reported by David; compare with the records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["david_asked_early_16_25"]
+        }
+      },
+      {
+        "id": "leo_entry_16_40",
+        "text": "Leo entered the mail room.",
+        "slotId": "16_40",
+        "location": "Mail room",
+        "personIds": ["leo"],
+        "source": "Mail Room Access Log",
+        "confidence": "Recorded directly in the delivery records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["leo_entry_16_40"]
+        }
+      },
+      {
+        "id": "label_reprinted_16_44",
+        "text": "A new label was printed from Leo's account.",
+        "slotId": "16_44",
+        "location": "Mail room",
+        "personIds": ["leo"],
+        "source": "Label Printer Log",
+        "confidence": "Recorded directly in the delivery records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["label_reprinted_16_44"]
+        }
+      },
+      {
+        "id": "leo_exit_16_46",
+        "text": "Leo left the mail room.",
+        "slotId": "16_46",
+        "location": "Mail room",
+        "personIds": ["leo"],
+        "source": "Mail Room Access Log",
+        "confidence": "Recorded directly in the delivery records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["leo_exit_16_46"]
+        }
+      },
+      {
+        "id": "courier_collected_package",
+        "text": "The courier collected the package.",
+        "slotId": "17_00",
+        "location": "Reception",
+        "personIds": [],
+        "source": "Courier Receipt",
+        "confidence": "Recorded directly in the delivery records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["courier_delivered_41"]
+        }
+      },
+      {
+        "id": "client_reports_missing_17_45",
+        "text": "The client reported that the package had not arrived.",
+        "slotId": "17_45",
+        "location": "14 Bridge Street",
+        "personIds": [],
+        "source": "Client Complaint Email",
+        "confidence": "Recorded directly in the delivery records.",
+        "availability": {
+          "type": "requiresFacts",
+          "factIds": ["client_reports_missing_17_45"]
+        }
+      }
+    ]
+  }
+}

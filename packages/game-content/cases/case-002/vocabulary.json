@@ -1,0 +1,136 @@
+{
+  "vocabulary": [
+    {
+      "id": "deliver",
+      "lemma": "deliver",
+      "partOfSpeech": "verb",
+      "cefr": "A2",
+      "definitionEn": "To take something to the person or place it is sent to.",
+      "translationVi": "giao, chuyển đến",
+      "examples": ["The courier will deliver the package."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["delivers", "delivered", "delivering"]
+    },
+    {
+      "id": "address",
+      "lemma": "address",
+      "partOfSpeech": "noun",
+      "cefr": "A2",
+      "definitionEn": "The details that show where a person or business is.",
+      "translationVi": "địa chỉ",
+      "examples": ["Please check the address before sending the package."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["addresses"]
+    },
+    {
+      "id": "sign",
+      "lemma": "sign",
+      "partOfSpeech": "verb",
+      "cefr": "A2",
+      "definitionEn": "To write your name to show that you agree or have received something.",
+      "translationVi": "ký tên",
+      "examples": ["Anna will sign for the package."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["signs", "signed", "signing"]
+    },
+    {
+      "id": "label",
+      "lemma": "label",
+      "partOfSpeech": "noun",
+      "cefr": "A2",
+      "definitionEn": "A piece of paper attached to something to give information about it.",
+      "translationVi": "nhãn",
+      "examples": ["The label shows the delivery address."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["labels"]
+    },
+    {
+      "id": "schedule",
+      "lemma": "schedule",
+      "partOfSpeech": "noun",
+      "cefr": "B1",
+      "definitionEn": "A plan that shows when things will happen.",
+      "translationVi": "lịch trình",
+      "examples": ["The delivery schedule says five o'clock."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["schedules"]
+    },
+    {
+      "id": "courier",
+      "lemma": "courier",
+      "partOfSpeech": "noun",
+      "cefr": "B1",
+      "definitionEn": "A person or company that takes packages from one place to another.",
+      "translationVi": "người hoặc công ty chuyển phát",
+      "examples": ["The courier collected the package at reception."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["couriers"]
+    },
+    {
+      "id": "receipt",
+      "lemma": "receipt",
+      "partOfSpeech": "noun",
+      "cefr": "A2",
+      "definitionEn": "A document that shows that something has been paid for or received.",
+      "translationVi": "biên nhận",
+      "examples": ["Keep the receipt for this delivery."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["receipts"]
+    },
+    {
+      "id": "urgent",
+      "lemma": "urgent",
+      "partOfSpeech": "adjective",
+      "cefr": "B1",
+      "definitionEn": "Needing attention or action very soon.",
+      "translationVi": "khẩn cấp",
+      "examples": ["This is an urgent delivery."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["urgent"]
+    },
+    {
+      "id": "package",
+      "lemma": "package",
+      "partOfSpeech": "noun",
+      "cefr": "A2",
+      "definitionEn": "Something wrapped or put in a box to be sent or carried.",
+      "translationVi": "gói hàng",
+      "examples": ["Anna prepared a package for the client."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["packages"]
+    },
+    {
+      "id": "complaint",
+      "lemma": "complaint",
+      "partOfSpeech": "noun",
+      "cefr": "B1",
+      "definitionEn": "A statement that something is wrong or unsatisfactory.",
+      "translationVi": "lời khiếu nại",
+      "examples": ["The client sent a complaint about the delivery."],
+      "tags": ["delivery", "investigation"],
+      "surfaceForms": ["complaints"]
+    },
+    {
+      "id": "client",
+      "lemma": "client",
+      "partOfSpeech": "noun",
+      "cefr": "B1",
+      "definitionEn": "A person or organization receiving a service.",
+      "translationVi": "khách hàng",
+      "examples": ["She called a client."],
+      "tags": ["work"],
+      "surfaceForms": ["client", "clients"]
+    },
+    {
+      "id": "early",
+      "lemma": "early",
+      "partOfSpeech": "adverb",
+      "cefr": "A1",
+      "definitionEn": "Before the expected time.",
+      "translationVi": "sớm",
+      "examples": ["He left early."],
+      "tags": ["time"],
+      "surfaceForms": ["early"]
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "facts": [
+    {
+      "id": "note_address_14",
+      "text": "The delivery note says 14 Bridge Street.",
+      "sourceEvidenceIds": ["delivery_note"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "delivery_note"
+      }
+    },
+    {
+      "id": "package_signed_in_16_10",
+      "text": "Anna signed the package into the mail room at 16:10.",
+      "sourceEvidenceIds": ["mailroom_access_log"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "mailroom_access_log"
+      }
+    },
+    {
+      "id": "leo_entry_16_40",
+      "text": "Leo entered the mail room at 16:40.",
+      "sourceEvidenceIds": ["mailroom_access_log"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "mailroom_access_log"
+      }
+    },
+    {
+      "id": "leo_exit_16_46",
+      "text": "Leo left the mail room at 16:46.",
+      "sourceEvidenceIds": ["mailroom_access_log"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "mailroom_access_log"
+      }
+    },
+    {
+      "id": "label_reprinted_16_44",
+      "text": "A label for 41 Bridge Street was printed from Leo's account at 16:44.",
+      "sourceEvidenceIds": ["label_printer_log"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "label_printer_log"
+      }
+    },
+    {
+      "id": "courier_delivered_41",
+      "text": "The courier collected the package at 17:00 and delivered it to 41 Bridge Street.",
+      "sourceEvidenceIds": ["courier_receipt"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "courier_receipt"
+      }
+    },
+    {
+      "id": "client_reports_missing_17_45",
+      "text": "At 17:45, Harper & Co. reported that the package had not arrived at 14 Bridge Street.",
+      "sourceEvidenceIds": ["client_complaint_email"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "client_complaint_email"
+      }
+    },
+    {
+      "id": "chat_anna_confirmed_14",
+      "text": "Anna confirmed 14 Bridge Street in her message to Leo.",
+      "sourceEvidenceIds": ["chat_messages"],
+      "unlockCondition": {
+        "type": "hasEvidence",
+        "evidenceId": "chat_messages"
+      }
+    },
+    {
+      "id": "david_asked_early_16_25",
+      "text": "David asked for the package early at 16:25 and was told to wait.",
+      "sourceEvidenceIds": [],
+      "sourceDialogueIds": ["david_delivery"],
+      "unlockCondition": {
+        "type": "flag",
+        "key": "david_early_request_read",
+        "value": true
+      }
+    },
+    {
+      "id": "leo_statement_at_desk_all_afternoon",
+      "text": "Leo says he was at his desk all afternoon.",
+      "sourceEvidenceIds": [],
+      "sourceDialogueIds": ["leo_delivery"],
+      "unlockCondition": {
+        "type": "flag",
+        "key": "leo_desk_statement_read",
+        "value": true
+      }
+    },
+    {
+      "id": "leo_blames_anna_wrong_number",
+      "text": "Leo says Anna wrote the wrong house number.",
+      "sourceEvidenceIds": [],
+      "sourceDialogueIds": ["leo_delivery"],
+      "unlockCondition": {
+        "type": "flag",
+        "key": "leo_blame_statement_read",
+        "value": true
+      }
+    },
+    {
+      "id": "anna_checked_address_16_10",
+      "text": "Anna says she checked 14 Bridge Street when she signed in the package at 16:10.",
+      "sourceEvidenceIds": [],
+      "sourceDialogueIds": ["anna_delivery"],
+      "unlockCondition": {
+        "type": "flag",
+        "key": "anna_address_checked_read",
+        "value": true
+      }
+    }
+  ]
+}

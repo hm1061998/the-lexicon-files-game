@@ -1,0 +1,446 @@
+{
+  "objectives": [
+    {
+      "id": "find_what_happened",
+      "text": "Find out what happened to the delivery",
+      "initialStatus": "active",
+      "completionCondition": {
+        "type": "objectiveCompleted",
+        "objectiveId": "review_the_records"
+      }
+    },
+    {
+      "id": "review_the_records",
+      "text": "Review at least three delivery records",
+      "initialStatus": "active",
+      "completionCondition": {
+        "type": "any",
+        "conditions": [
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "delivery_note"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "mailroom_access_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "courier_receipt"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          },
+          {
+            "type": "all",
+            "conditions": [
+              {
+                "type": "hasEvidence",
+                "evidenceId": "label_printer_log"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "client_complaint_email"
+              },
+              {
+                "type": "hasEvidence",
+                "evidenceId": "chat_messages"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "speak_to_everyone",
+      "text": "Speak to Anna, Leo, and David",
+      "initialStatus": "locked",
+      "activationCondition": {
+        "type": "objectiveCompleted",
+        "objectiveId": "review_the_records"
+      },
+      "completionCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "flag",
+            "key": "anna_interviewed",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "leo_interviewed",
+            "value": true
+          },
+          {
+            "type": "flag",
+            "key": "david_interviewed",
+            "value": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "compare_leo_desk_statement",
+      "text": "Compare Leo's desk statement with the access log",
+      "initialStatus": "locked",
+      "activationCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "hasFact",
+            "factId": "leo_statement_at_desk_all_afternoon"
+          },
+          {
+            "type": "hasFact",
+            "factId": "leo_entry_16_40"
+          }
+        ]
+      }
+    },
+    {
+      "id": "compare_leo_blame_statement",
+      "text": "Compare Leo's address statement with the label log",
+      "initialStatus": "locked",
+      "activationCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "hasFact",
+            "factId": "leo_blames_anna_wrong_number"
+          },
+          {
+            "type": "hasFact",
+            "factId": "label_reprinted_16_44"
+          }
+        ]
+      }
+    },
+    {
+      "id": "submit_your_conclusion",
+      "text": "Submit your conclusion",
+      "initialStatus": "locked",
+      "activationCondition": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "objectiveCompleted",
+            "objectiveId": "compare_leo_desk_statement"
+          },
+          {
+            "type": "objectiveCompleted",
+            "objectiveId": "compare_leo_blame_statement"
+          }
+        ]
+      }
+    }
+  ]
+}

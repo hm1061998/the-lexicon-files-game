@@ -1,0 +1,16 @@
+{
+  "contradictions": [
+    {
+      "id": "leo_desk_vs_access_log",
+      "factIds": ["leo_statement_at_desk_all_afternoon", "leo_entry_16_40"],
+      "explanation": "Leo says he was at his desk all afternoon, but the mail room access log records his entry at 16:40.",
+      "objectiveId": "compare_leo_desk_statement"
+    },
+    {
+      "id": "leo_blame_vs_label_log",
+      "factIds": ["leo_blames_anna_wrong_number", "label_reprinted_16_44"],
+      "explanation": "Leo blames Anna for the wrong house number, but a new label for 41 Bridge Street was printed from his account at 16:44. Anna's delivery note gives 14 Bridge Street.",
+      "objectiveId": "compare_leo_blame_statement"
+    }
+  ]
+}
