@@ -12,6 +12,7 @@
 - Movement khoá khi: dialogue active, critical modal mở, scene transition.
 - Interaction radius: NPC 80–110, evidence nhỏ 60–90, door 90–120 px.
 - Marker: diamond đỏ, float 4px, 800–1200ms, không glow. Không neon outline, bloom, chromatic aberration.
+- Ngoại lệ (02/10/2026): cổng dịch chuyển được có lớp sáng ấm blend `ADD` alpha ≤ 0,35, bán kính ≤ 1,2 ô; không bloom/post-process, không viền neon. Bóng UI mềm blur ≤ 6px, alpha ≤ 25%. Font UI: Xanh Mono (tiêu đề ≥ 18px), IBM Plex Mono (phím/nhãn), Literata (thân), Patrick Hand (ghi chú tay), đóng gói qua `@fontsource`.
 - Paper overlay chỉ trong Phaser (alpha 0.10–0.18); React UI dùng texture riêng.
 - `shutdown`/`destroy` phải gỡ mọi listener bus/input/timer.
 

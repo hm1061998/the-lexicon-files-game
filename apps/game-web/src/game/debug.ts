@@ -36,6 +36,8 @@ export type LexiconDebug = {
   listenerCount(): number;
   /** Visible world cue markers currently owned by the active scene. */
   worldCueCount(): number;
+  /** Which arch drawing a portal asset uses: `ne`, `nw`, or the mirrored `-flip` copy. */
+  portalFacing(id: string): 'ne' | 'nw' | 'ne-flip' | 'nw-flip' | undefined;
   /** Ids of the cues that currently have an edge pointer (outside the camera view). */
   offscreenCueIds(): string[];
   /** Current alpha of an occluding wall/board (NaN for any other id). */

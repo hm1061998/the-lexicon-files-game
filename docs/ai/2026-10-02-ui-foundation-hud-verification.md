@@ -48,3 +48,9 @@ Ngày: 02/10/2026. Plan: `docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 
 - Marker 24px nổi 4px/1000ms, vòng mực `evidence_ripple.png` (2400ms; tĩnh alpha 0,5 khi giảm chuyển động), tối đa 3 chỉ báo ngoài màn hình.
 - `hudInsets` đổi từ CSS px sang px game bằng `scale.width / displaySize.width`; HUD letterbox không được tính offset (sai số nhỏ, chỉ ảnh hưởng vị trí chỉ báo cách mép HUD).
+
+## Task 8 — vòm cổng sát tường
+
+- Sáu cổng (5 scene JSON) dời vào đúng giữa `opening` của tường ngoài, `portal.style: 'arch'`; điểm tương tác 0,75 ô vào trong phòng; footprint 0,25 ô (bằng bề dày tường) × bề dài opening; spawn `from_*` về u 1,5 / 14,5.
+- Validator `validatePortalPlacement` chạy trong `validateSceneGeometry`; cả hai case qua; `check-case-flow` cả hai case `closable=true`.
+- Lệch plan có ghi: veil 128×256 (plan ghi 192) vì vòm cao hơn nhân vật sau phép nghiêng 2:1; footprint 0,25 thay vì 0,3 để nằm trong bề dày tường.

@@ -53,7 +53,7 @@ test('Office and Archive keep the player visible and clamp all four edges throug
       await page.evaluate(() => window.__lexiconDebug!.requestTransition('archive', 'from_office'));
       await expect
         .poll(() => page.evaluate(() => window.__lexiconDebug?.logicalPlayer()?.u))
-        .toBe(14.85);
+        .toBe(14.5);
     }
     for (const viewport of [
       { width: 760, height: 600 },

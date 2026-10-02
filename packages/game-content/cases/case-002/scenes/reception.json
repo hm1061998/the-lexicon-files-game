@@ -23,7 +23,7 @@
       "v": 5
     },
     "from_office": {
-      "u": 0.9,
+      "u": 1.5,
       "v": 5
     }
   },
@@ -77,8 +77,14 @@
       "url": "/assets/environment/office/wall_v_cap_end.png"
     },
     {
-      "key": "tex_brass_portal",
-      "url": "/assets/environment/common/brass_portal.png"
+      "key": "tex_portal_arch_ne",
+      "url": "/assets/ui/world/portal_arch_ne.png"
+    },
+    {
+      "key": "sheet_portal_veil_ne",
+      "url": "/assets/ui/world/portal_veil_ne.png",
+      "frameWidth": 128,
+      "frameHeight": 256
     }
   ],
   "assets": [
@@ -289,10 +295,10 @@
     {
       "id": "door_to_office_from_reception",
       "type": "interactable",
-      "texture": "tex_brass_portal",
+      "texture": "tex_portal_arch_ne",
       "depthBias": 0,
       "interaction": {
-        "x": 0,
+        "x": 0.75,
         "y": 0,
         "radius": 100,
         "prompt": "Quay lại văn phòng",
@@ -301,23 +307,23 @@
           "targetSpawnId": "from_reception"
         }
       },
-      "origin": [0.5, 0.71875],
+      "origin": [0.5, 0.8523],
       "scale": 1,
       "position": {
-        "u": 1.5,
+        "u": 0,
         "v": 5
       },
       "footprint": {
-        "u": -0.65,
-        "v": -0.65,
-        "width": 1.3,
-        "height": 1.3
+        "u": 0,
+        "v": -1,
+        "width": 0.25,
+        "height": 2
       },
       "cue": {
         "kind": "door"
       },
       "portal": {
-        "style": "aged-brass",
+        "style": "arch",
         "radius": 0.65
       }
     }

@@ -69,6 +69,10 @@ describe('content texture manifests', () => {
         const used = new Set(
           [...scene.assets, ...expandWalls(scene.walls ?? []).assets].map(({ texture }) => texture),
         );
+        // An arch portal also plays its veil spritesheet (same facing art), drawn by the presentation.
+        for (const { texture, portal } of scene.assets)
+          if (portal?.style === 'arch')
+            used.add(texture.replace('tex_portal_arch_', 'sheet_portal_veil_'));
         for (const { key } of scene.textures)
           expect(used.has(key), `${scene.id}:${key}`).toBe(true);
       }

@@ -1505,6 +1505,8 @@ chromatic aberration mạnh
 heavy blur
 ```
 
+Ngoại lệ (02/10/2026, spec `2026-10-02-ui-foundation-hud-design.md` D-6): cổng dịch chuyển dạng vòm gắn tường có lớp sáng ấm vẽ cộng lớp (`ADD`) trong Phaser, alpha ≤ 0,35, bán kính ≤ 1,2 ô, không dùng post-process bloom và không viền neon. UI React dùng bóng mềm (blur ≤ 6px, alpha ≤ 25%), font Xanh Mono / IBM Plex Mono / Literata / Patrick Hand đóng gói offline, và vật liệu giấy sinh bằng `tools/art-codegen/build_ui_materials.py`.
+
 ---
 
 # 64. Paper Overlay

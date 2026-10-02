@@ -9,7 +9,7 @@ async function open(page: Page) {
 async function position(page: Page) {
   return page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!);
 }
-test('minimap drawing, player marker, legend and padding consume clicks', async ({ page }) => {
+test('minimap drawing, player marker and padding consume clicks', async ({ page }) => {
   await open(page);
   for (const viewport of [
     { width: 1280, height: 720 },
@@ -21,7 +21,8 @@ test('minimap drawing, player marker, legend and padding consume clicks', async 
     await expect(page.locator('.hud-minimap')).toBeVisible();
     const before = await position(page);
     const triggered = await page.evaluate(() => window.__lexiconDebug!.triggeredEvents());
-    for (const selector of ['.minimap-svg', '.minimap-player', '.minimap-legend', '.hud-minimap']) {
+    // The legend caption was removed from the paper in the HUD rebuild; svg, marker and padding remain.
+    for (const selector of ['.minimap-svg', '.minimap-player', '.hud-minimap']) {
       const box = (await page.locator(selector).first().boundingBox())!;
       const point =
         selector === '.hud-minimap'

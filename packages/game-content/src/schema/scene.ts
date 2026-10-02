@@ -137,7 +137,7 @@ const sceneAssetDefinitionSchema = z
     angle: z.number().finite().optional(),
     depthBias: z.number().finite().default(0),
     portal: z
-      .object({ style: z.literal('aged-brass'), radius: z.number().positive().finite() })
+      .object({ style: z.enum(['aged-brass', 'arch']), radius: z.number().positive().finite() })
       .strict()
       .optional(),
     elevationPx: z.number().finite().optional(),

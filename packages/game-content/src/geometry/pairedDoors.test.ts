@@ -11,15 +11,17 @@ it('pairs exits on opposite edges with safe reachable arrival points', () => {
     targetSpawnId: 'from_office',
   });
   const door = archive.assets.find((a) => a.id === 'PLACEHOLDER_archive_door')!;
-  expect('position' in door ? door.position : null).toEqual({ u: 14.5, v: 5 });
-  expect(archive.spawnPoints.from_office).toEqual({ u: 14.85, v: 5 });
-  expect(office.spawnPoints.from_archive).toEqual({ u: 0.9, v: 5 });
+  // Arch portals stand in the wall opening; arrival spawns sit where the old floor disc was.
+  expect('position' in door ? door.position : null).toEqual({ u: 15.75, v: 5 });
+  expect(archive.spawnPoints.from_office).toEqual({ u: 14.5, v: 5 });
+  expect(office.spawnPoints.from_archive).toEqual({ u: 1.5, v: 5 });
   for (const scene of [office, archive]) {
     const pad = scene.assets.find((a) => a.interaction?.transition)!;
-    expect(pad).toHaveProperty('portal.style', 'aged-brass');
+    expect(pad).toHaveProperty('portal.style', 'arch');
     expect(pad.collision).toBeUndefined();
-    expect(pad.footprint?.width).toBe(1.3);
-    expect(pad.interaction?.x).toBe(0);
+    // The footprint stays inside the 0.25 thick wall; the prompt point is 0.75 tile into the room.
+    expect(pad.footprint?.width).toBe(0.25);
+    expect(Math.abs(pad.interaction?.x ?? 0)).toBe(0.75);
   }
   expect(archive.walls?.find(({ id }) => id === 'archive_west_wall_upper')?.openings).toEqual([]);
   expect(archive.walls?.find(({ id }) => id === 'archive_west_wall_lower')?.openings).toEqual([]);

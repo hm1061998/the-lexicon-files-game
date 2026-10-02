@@ -123,6 +123,41 @@ class WorldMaterialTests(unittest.TestCase):
         self.assertEqual(a[0, 0, 3], 0)
         self.assertEqual(a[32, 64, 3], 0)  # hollow centre
 
+    def test_portal_arches_are_256_by_352_with_transparent_corners(self):
+        for facing in ("ne", "nw"):
+            a = np.asarray(Image.open(self.out / "world" / f"portal_arch_{facing}.png").convert("RGBA"), float)
+            self.assertEqual(a.shape[:2], (352, 256), facing)
+            self.assertEqual(a[0, 0, 3], 0, facing)
+            self.assertEqual(a[0, -1, 3], 0, facing)
+            self.assertGreater(a[:, :, 3].max(), 200, facing)
+
+    def test_portal_arches_slope_in_opposite_directions(self):
+        def base_row(facing, column):
+            a = np.asarray(Image.open(self.out / "world" / f"portal_arch_{facing}.png").convert("RGBA"))
+            ys = np.nonzero(a[:, column, 3] > 128)[0]
+            return ys.max()
+
+        # A wall running along v rises to the right (ne); one along u falls to the right (nw).
+        self.assertLess(base_row("ne", 186), base_row("ne", 70))
+        self.assertGreater(base_row("nw", 186), base_row("nw", 70))
+
+    def test_portal_veils_are_ten_frames_of_128_by_256(self):
+        for facing in ("ne", "nw"):
+            a = np.asarray(Image.open(self.out / "world" / f"portal_veil_{facing}.png").convert("RGBA"), float)
+            self.assertEqual(a.shape[:2], (256, 1280), facing)
+            frames = [a[:, i * 128:(i + 1) * 128, :] for i in range(10)]
+            self.assertTrue(any(not np.array_equal(frames[0], f) for f in frames[1:]), facing)
+            for f in frames:
+                self.assertEqual(f[0, 0, 3], 0)
+                self.assertGreater(f[:, :, 3].max(), 150)
+
+    def test_veil_loops_seamlessly(self):
+        a = np.asarray(Image.open(self.out / "world" / "portal_veil_ne.png").convert("RGBA"), float)
+        first, last = a[:, 0:128, :3], a[:, 9 * 128:10 * 128, :3]
+        step = np.abs(a[:, 128:256, :3] - first).mean()
+        wrap = np.abs(first - last).mean()
+        self.assertLess(wrap, step * 1.5 + 1)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -16,6 +16,8 @@ from typing import Literal
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
+from portal_art import render_portal_arch, render_portal_veil  # noqa: F401  (re-exported)
+
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "apps/game-web/public/assets/ui"
 
@@ -255,6 +257,14 @@ def build(out_dir: Path) -> list[Path]:
     ripple = world / "evidence_ripple.png"
     render_evidence_ripple(8).save(ripple)
     paths.append(ripple)
+    for facing, seed in (("ne", 9), ("nw", 10)):
+        for name, image in (
+            (f"portal_arch_{facing}", render_portal_arch(facing, seed)),
+            (f"portal_veil_{facing}", render_portal_veil(facing, seed)),
+        ):
+            path = world / f"{name}.png"
+            image.save(path)
+            paths.append(path)
     return paths
 
 

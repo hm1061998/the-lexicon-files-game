@@ -536,7 +536,7 @@ test('the player can walk from the archive arrival spawn to the archive exit and
   await page.waitForFunction((old) => window.__lexiconDebug !== old, officeDebug);
   await expect
     .poll(() => page.evaluate(() => window.__lexiconDebug!.logicalPlayer()))
-    .toEqual({ u: 14.85, v: 5 });
+    .toEqual({ u: 14.5, v: 5 });
   const archive = sceneById.get('archive')!;
   const door = areas(archive).find(({ id }) => id === 'PLACEHOLDER_archive_door')!;
   const arrival = await page.evaluate(() => window.__lexiconDebug!.logicalPlayer()!);
@@ -554,7 +554,7 @@ test('the player can walk from the archive arrival spawn to the archive exit and
   await page.waitForFunction((old) => window.__lexiconDebug !== old, archiveDebug);
   await expect
     .poll(() => page.evaluate(() => window.__lexiconDebug!.logicalPlayer()))
-    .toEqual({ u: 0.9, v: 5 });
+    .toEqual({ u: 1.5, v: 5 });
 });
 
 test('scene review captures office and archive at desktop viewport', async ({ page }) => {

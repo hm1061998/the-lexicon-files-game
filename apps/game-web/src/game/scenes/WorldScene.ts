@@ -57,6 +57,7 @@ import { createNavigationController } from '../systems/navigationController';
 import { createGameInputGate } from '../systems/gameInputGate';
 import { advanceNavigationMovement } from '../systems/navigationMovement';
 import { createPortalPresentation } from '../systems/portalPresentation';
+import { facingForPortal, type PortalFacing } from '../systems/portalFacing';
 import { findNavigationPath } from '../systems/navigation';
 import {
   isPointOccluded,
@@ -171,6 +172,7 @@ export class WorldScene extends Phaser.Scene {
   private navigation = createNavigationController();
   private keyGate = createGameInputGate();
   private portals: ReturnType<typeof createPortalPresentation>[] = [];
+  private portalFacings = new Map<string, PortalFacing>();
   private lastPointerAt = -Infinity;
   private pointerDiagnostic: {
     x: number;
@@ -344,10 +346,25 @@ export class WorldScene extends Phaser.Scene {
         }
       }
       if (body) colliders.add(body);
-      if (asset.portal)
+      if (asset.portal) {
+        const facing =
+          asset.position && 'u' in resolved.floorAnchor
+            ? facingForPortal(def, asset.position)
+            : 'ne';
+        this.portalFacings.set(asset.id, facing);
+        if (facing.endsWith('flip') && 'setFlipX' in sprite) sprite.setFlipX(true);
+        const target = asset.interaction?.transition?.targetSceneId;
+        const label = options.caseDefinition.scenes.find(({ id }) => id === target)?.labels?.[0]
+          ?.text;
         this.portals.push(
-          createPortalPresentation(this, floorPoint, options.motion.reducedMotion()),
+          createPortalPresentation(this, {
+            position: floorPoint,
+            facing,
+            reducedMotion: options.motion.reducedMotion(),
+            label,
+          }),
         );
+      }
       if (
         logicalMode &&
         resolved.collision &&
@@ -553,6 +570,7 @@ export class WorldScene extends Phaser.Scene {
             emitter.eventNames().reduce((sum, name) => sum + emitter.listenerCount(name), 0),
           0,
         ),
+      portalFacing: (id) => this.portalFacings.get(id),
       worldCueCount: () => this.cueLayer?.activeCount ?? 0,
       offscreenCueIds: () => this.cueLayer?.offscreenIds() ?? [],
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
@@ -1287,6 +1305,7 @@ export class WorldScene extends Phaser.Scene {
   private cleanup(): void {
     for (const portal of this.portals) portal.destroy();
     this.portals = [];
+    this.portalFacings.clear();
     this.cancelInput();
     window.removeEventListener('blur', this.blurInput);
     window.removeEventListener('keydown', this.preventGameplayArrows);

@@ -6,6 +6,7 @@ import type {
   WallSegmentDefinition,
 } from '@lexicon/shared-types';
 import { expandWalls, WALL_THICKNESS } from './wallSegments';
+import { validatePortalPlacement } from './portalPlacement';
 
 export const PLAYER_LOGICAL_BODY = { u: -0.18, v: -0.18, width: 0.36, height: 0.36 } as const;
 const EPS = 1e-9;
@@ -23,7 +24,7 @@ export function overlapsLogical(a: LogicalRectFootprint, b: LogicalRectFootprint
 export function validateSceneGeometry(scene: SceneDefinition): string[] {
   if (!scene.walls || !('u' in scene.worldBounds)) return [];
   const bounds = scene.worldBounds,
-    errors: string[] = [];
+    errors: string[] = validatePortalPlacement(scene);
   const expanded = expandWalls(scene.walls),
     assets = [...scene.assets, ...expanded.assets];
   const ids = new Set<string>();
