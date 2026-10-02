@@ -183,6 +183,7 @@ export interface UiStrings {
   readonly supportUseDefault: string;
   readonly briefingTitle: string;
   readonly briefingAccept: string;
+  readonly briefingStamp: string;
   readonly coachMove: string;
   readonly coachInteract: string;
   readonly coachNotebook: string;

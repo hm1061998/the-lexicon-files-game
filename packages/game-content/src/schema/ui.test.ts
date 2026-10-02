@@ -153,6 +153,7 @@ describe('parseUiStrings', () => {
     'supportUseDefault',
     'briefingTitle',
     'briefingAccept',
+    'briefingStamp',
     'coachMove',
     'coachInteract',
     'coachNotebook',

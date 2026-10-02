@@ -376,3 +376,25 @@ test('an unreadable save shows a readable recovery note and does not block the o
   await chooseCase(page, 'case-002');
   await expect(page.getByRole('heading', { name: strings.titleGame })).toBeVisible();
 });
+
+test('the briefing traps focus and Esc closes only the memo, never opening the pause menu', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await chooseCase(page);
+  await page.getByRole('button', { name: strings.titleNewCase, exact: true }).click();
+  await page.getByRole('button', { name: strings.supportUseDefault }).click();
+  const memo = page.locator('.briefing-memo');
+  await expect(memo).toBeVisible();
+  const insideMemo = () =>
+    page.evaluate(() => Boolean(document.activeElement?.closest('.briefing-memo')));
+  for (const key of ['Tab', 'Tab', 'Tab', 'Tab', 'Shift+Tab', 'Shift+Tab', 'Shift+Tab']) {
+    await page.keyboard.press(key);
+    expect(await insideMemo(), key).toBe(true);
+  }
+  // Existing behaviour kept: Esc closes the memo (it must not open the pause menu as well).
+  await page.keyboard.press('Escape');
+  await expect(memo).toHaveCount(0);
+  await expect(page.getByText(strings.paused)).toHaveCount(0);
+  await page.waitForFunction(() => window.__lexiconDebug !== undefined);
+});

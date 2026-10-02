@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef } from 'react';
-import { PaperPanel } from '@lexicon/ui';
+import { useEffect, useRef } from 'react';
+import { InkButton, ModalSheet } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import { SettingsFields } from './SettingsFields';
 import { getFocusTrapTarget } from './focusTrap';
@@ -17,7 +17,6 @@ export function PauseMenu({
   onResume: () => void;
   onOpenHowTo?: () => void;
 }): JSX.Element {
-  const headingId = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -34,27 +33,26 @@ export function PauseMenu({
         target.focus();
       }
     }
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   return (
-    <div className="pause-menu-overlay">
-      <PaperPanel as="div" className="pause-menu">
-        <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={headingId}>
-          <h2 id={headingId}>{strings.paused}</h2>
-          <SettingsFields strings={strings} />
-          {onOpenHowTo ? (
-            <button type="button" className="pause-howto" onClick={onOpenHowTo}>
-              {strings.pauseHowTo}
-            </button>
-          ) : null}
-          <button type="button" autoFocus onClick={onResume}>
-            {strings.resume}
-          </button>
-        </div>
-      </PaperPanel>
-    </div>
+    <ModalSheet
+      heading={strings.paused}
+      overlayClassName="pause-menu-overlay"
+      className="pause-menu"
+      dialogRef={dialogRef}
+    >
+      <SettingsFields strings={strings} />
+      {onOpenHowTo ? (
+        <InkButton className="pause-howto" onClick={onOpenHowTo}>
+          {strings.pauseHowTo}
+        </InkButton>
+      ) : null}
+      <InkButton className="shell-button" autoFocus onClick={onResume}>
+        {strings.resume}
+      </InkButton>
+    </ModalSheet>
   );
 }

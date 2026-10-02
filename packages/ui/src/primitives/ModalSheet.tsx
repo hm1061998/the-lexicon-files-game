@@ -15,6 +15,7 @@ export function ModalSheet({
   overlayClassName,
   dialogRef,
   focusOnMount = false,
+  tilt,
   children,
 }: {
   heading?: ReactNode;
@@ -25,6 +26,8 @@ export function ModalSheet({
   overlayClassName?: string;
   dialogRef?: Ref<HTMLDivElement>;
   focusOnMount?: boolean;
+  /** Degrees (-2..2). Off by default: a tilted sheet shifts focus rects past its scroll box. */
+  tilt?: number;
   children?: ReactNode;
 }): JSX.Element {
   const generatedId = useId();
@@ -42,7 +45,7 @@ export function ModalSheet({
     <div className={['modal-scrim', overlayClassName].filter(Boolean).join(' ')}>
       <PaperSheet
         as="div"
-        tilt={-0.6}
+        {...(tilt === undefined ? {} : { tilt })}
         className={['modal-sheet', className].filter(Boolean).join(' ')}
       >
         <div

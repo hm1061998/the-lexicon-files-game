@@ -40,4 +40,16 @@ describe('PauseMenu settings', () => {
     expect(render(() => undefined)).toContain(strings.pauseHowTo);
     expect(render()).not.toContain(strings.pauseHowTo);
   });
+
+  it('is a paper modal sheet: dialog named by its heading, resume focused, no paper panel', () => {
+    const labelled = /aria-labelledby="([^"]+)"/.exec(html)?.[1];
+    expect(html).toContain('role="dialog"');
+    expect(html).toContain('aria-modal="true"');
+    expect(html).toContain('modal-sheet');
+    expect(html).toContain('pause-menu');
+    expect(html).not.toContain('paper-panel');
+    expect(labelled).toBeTruthy();
+    expect(html).toMatch(new RegExp(`id="${labelled}"[^>]*>${strings.paused}<`));
+    expect(html).toMatch(new RegExp(`autofocus[^>]*>${strings.resume}<`));
+  });
 });

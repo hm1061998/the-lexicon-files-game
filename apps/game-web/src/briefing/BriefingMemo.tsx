@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, type RefObject } from 'react';
-import { PaperPanel } from '@lexicon/ui';
+import { useEffect, useRef, type RefObject } from 'react';
+import { InkButton, ModalSheet, Stamp } from '@lexicon/ui';
 import type {
   CaseBriefingDefinition,
   TranslationMode,
@@ -41,7 +41,6 @@ export function BriefingMemo({
   onAccept(): void;
   returnFocusRef?: RefObject<HTMLElement | null>;
 }): JSX.Element {
-  const headingId = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const paperCue = usePaperCue();
   const cueRef = useRef(paperCue);
@@ -72,34 +71,35 @@ export function BriefingMemo({
   }, [returnFocusRef]);
 
   return (
-    <div className="briefing-overlay">
-      <PaperPanel as="div" className="briefing-memo">
-        <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={headingId}>
-          <h2 id={headingId}>{strings.briefingTitle}</h2>
-          <p className="briefing-from">{briefing.from}</p>
-          {briefing.lines.map((line) => (
-            <p key={line.id} className="briefing-line">
-              <VocabularyText
-                text={line.text}
-                translationVi={line.translationVi}
-                spans={line.vocabularySpans}
-                contextId={`briefing:${caseId}:${line.id}:text`}
-                catalogue={vocabulary}
-                mode={translationMode}
-                strings={strings}
-                onEncounter={onEncounter}
-                onInspect={onInspect}
-                onRevealTranslation={onRevealTranslation}
-                tutorialSeen={vocabularyTutorialSeen}
-                onTutorialSeen={onVocabularyTutorialSeen}
-              />
-            </p>
-          ))}
-          <button type="button" className="briefing-accept" autoFocus onClick={onAccept}>
-            {strings.briefingAccept}
-          </button>
-        </div>
-      </PaperPanel>
-    </div>
+    <ModalSheet
+      heading={strings.briefingTitle}
+      stamp={<Stamp className="briefing-stamp">{strings.briefingStamp}</Stamp>}
+      overlayClassName="briefing-overlay"
+      className="briefing-memo"
+      dialogRef={dialogRef}
+    >
+      <p className="briefing-from">{briefing.from}</p>
+      {briefing.lines.map((line) => (
+        <p key={line.id} className="briefing-line">
+          <VocabularyText
+            text={line.text}
+            translationVi={line.translationVi}
+            spans={line.vocabularySpans}
+            contextId={`briefing:${caseId}:${line.id}:text`}
+            catalogue={vocabulary}
+            mode={translationMode}
+            strings={strings}
+            onEncounter={onEncounter}
+            onInspect={onInspect}
+            onRevealTranslation={onRevealTranslation}
+            tutorialSeen={vocabularyTutorialSeen}
+            onTutorialSeen={onVocabularyTutorialSeen}
+          />
+        </p>
+      ))}
+      <InkButton className="briefing-accept shell-button" autoFocus onClick={onAccept}>
+        {strings.briefingAccept}
+      </InkButton>
+    </ModalSheet>
   );
 }

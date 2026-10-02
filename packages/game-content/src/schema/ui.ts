@@ -187,6 +187,7 @@ const uiStringsSchema = z
     supportUseDefault: z.string().min(1),
     briefingTitle: z.string().min(1),
     briefingAccept: z.string().min(1),
+    briefingStamp: z.string().min(1),
     coachMove: z.string().min(1),
     coachInteract: z.string().min(1),
     coachNotebook: z.string().min(1),

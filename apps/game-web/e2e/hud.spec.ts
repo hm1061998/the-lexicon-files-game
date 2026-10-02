@@ -306,7 +306,7 @@ test('panel entrance animates unless reduced motion is on', async ({ page }) => 
   const pause = page.getByRole('dialog');
   await expect(pause).toBeVisible();
   const panel = page.locator('.pause-menu');
-  expect(await panel.evaluate((el) => getComputedStyle(el).animationName)).toBe('lexicon-panel-in');
+  expect(await panel.evaluate((el) => getComputedStyle(el).animationName)).toBe('paper-sheet-in');
   await pause.getByLabel('Giảm chuyển động').check();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);

@@ -43,4 +43,16 @@ describe('BriefingMemo', () => {
     expect(translated).toBeDefined();
     expect(render('Beginner')).toContain(translated?.translationVi?.slice(0, 12) ?? '');
   });
+
+  it('is a paper modal sheet with an ink stamp and a focused accept button', () => {
+    const html = render('Learning');
+    expect(html).toContain('modal-sheet');
+    expect(html).toContain('briefing-memo');
+    expect(html).not.toContain('paper-panel');
+    expect(html).toContain(strings.briefingStamp);
+    expect(html).toContain('stamp--ink');
+    expect(html).not.toContain('stamp--red');
+    expect(html).toMatch(/autofocus[^>]*>Nhận hồ sơ</);
+    expect(html.indexOf(strings.briefingStamp)).toBeLessThan(html.indexOf(strings.briefingTitle));
+  });
 });

@@ -170,6 +170,7 @@
   "supportUseDefault": "Dùng mặc định",
   "briefingTitle": "Bản ghi nhớ",
   "briefingAccept": "Nhận hồ sơ",
+  "briefingStamp": "Mật",
   "coachMove": "Di chuyển bằng WASD hoặc phím mũi tên, hoặc click lên sàn để đi tới.",
   "coachInteract": "Nhấn E, hoặc click vào người/vật khi đã đứng gần, để tương tác.",
   "coachNotebook": "Chứng cứ đã được ghi vào sổ tay. Nhấn J để xem lại.",
