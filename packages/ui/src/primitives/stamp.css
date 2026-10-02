@@ -8,7 +8,7 @@
   min-height: 72px;
   padding: 18px;
   box-sizing: border-box;
-  color: var(--lexicon-investigation-red);
+  color: var(--lexicon-border);
   font-family: var(--lexicon-font-display);
   font-size: 18px;
   letter-spacing: 0.08em;
@@ -37,4 +37,8 @@
   to {
     scale: 1;
   }
+}
+
+.stamp--red {
+  color: var(--lexicon-investigation-red);
 }

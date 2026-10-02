@@ -128,6 +128,25 @@ function ContentError({ error }: { error: Error }): JSX.Element {
   );
 }
 
+const NO_SUBSCRIBE = (): (() => void) => () => undefined;
+
+/** The in-game "reduce motion" setting as render state (false until settings have loaded). */
+function useReducedMotion(settings: SettingsStore | null): boolean {
+  return useSyncExternalStore(
+    settings ? settings.subscribe : NO_SUBSCRIBE,
+    () => settings?.getState().settings.reducedMotion ?? false,
+    () => false,
+  );
+}
+
+/** Root attributes: the CSS motion switch (`lexicon-motion-off`) plus the data attribute E2E reads. */
+function rootAttributes(reduced: boolean) {
+  return {
+    className: reduced ? 'game-root lexicon-motion-off' : 'game-root',
+    'data-reduced-motion': reduced ? 'true' : 'false',
+  } as const;
+}
+
 export function GameCanvas({
   commerceConfigProvider = defaultCommerceConfigProvider,
 }: {
@@ -151,6 +170,7 @@ export function GameCanvas({
   );
   const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
   const settingsStrings = shell.ok ? shell.content.strings : null;
+  const reducedMotion = useReducedMotion(settings);
 
   useEffect(() => {
     if (!settings || !settingsLoad || !settingsStrings || settingsLoad.status === 'memory-only')
@@ -208,7 +228,7 @@ export function GameCanvas({
 
   if (selectedCaseId === null) {
     return (
-      <div className="game-root" data-reduced-motion="false">
+      <div {...rootAttributes(reducedMotion)}>
         <CasePicker
           strings={shell.content.strings}
           cards={shell.content.cards}
@@ -267,6 +287,7 @@ function CaseFlow({
   const [startMode, setStartMode] = useState<'continue' | 'new'>('continue');
   const [runId, setRunId] = useState(0);
   const [startError, setStartError] = useState<string | null>(null);
+  const shellReducedMotion = useReducedMotion(settings);
 
   useEffect(() => {
     if (!result.ok) return;
@@ -401,7 +422,7 @@ function CaseFlow({
       onRevealTranslation: () => undefined,
     };
     return (
-      <div className="game-root" data-reduced-motion="false">
+      <div {...rootAttributes(shellReducedMotion)}>
         <SettingsStoreProvider store={settings}>
           {stage === 'title' && (
             <>
@@ -726,7 +747,7 @@ function GameRoot({
         : null;
 
   return (
-    <div className="game-root" data-reduced-motion={reducedMotion ? 'true' : 'false'}>
+    <div {...rootAttributes(reducedMotion)}>
       <div
         ref={containerRef}
         tabIndex={-1}

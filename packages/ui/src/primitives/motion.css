@@ -11,6 +11,14 @@
   transform: none;
 }
 
+/* Shell paper never tilts or slides when motion is off. */
+.lexicon-motion-off .folder-cover,
+.lexicon-motion-off .modal-sheet,
+.lexicon-motion-off .case-card {
+  transform: none;
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .paper-sheet,
   .paper-sheet *,

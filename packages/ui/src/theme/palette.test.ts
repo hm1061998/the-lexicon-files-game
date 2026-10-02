@@ -71,6 +71,12 @@ describe('contrastRatio', () => {
   it('investigation red on the light paper sheet >= 3 (display text, 18px+)', () => {
     expect(contrastRatio(PALETTE.investigationRed, '#E9DCC2')).toBeGreaterThanOrEqual(3);
   });
+  it('ink on the folder cover manila >= 4.5', () => {
+    expect(contrastRatio(PALETTE.inkBlack, '#D2BC8A')).toBeGreaterThanOrEqual(4.5);
+  });
+  it('cream text on the dark desk >= 4.5', () => {
+    expect(contrastRatio('#E9DCC2', '#2E261F')).toBeGreaterThanOrEqual(4.5);
+  });
   it('red on paper >= 3 (large text / borders only)', () => {
     expect(contrastRatio('#A4412D', '#D8C5A4')).toBeGreaterThanOrEqual(3);
   });

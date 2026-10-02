@@ -1,17 +1,25 @@
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import './stamp.css';
 
+/** An ink stamp. Ink (brown) by default; red is reserved for the case-closed verdict. */
 export function Stamp({
   className,
   animate = false,
+  tone = 'ink',
   children,
+  ...rest
 }: {
   className?: string;
   animate?: boolean;
+  tone?: 'ink' | 'red';
   children: ReactNode;
-}): JSX.Element {
-  const classes = ['stamp', animate ? 'stamp--animate' : undefined, className]
+} & Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'children'>): JSX.Element {
+  const classes = ['stamp', `stamp--${tone}`, animate ? 'stamp--animate' : undefined, className]
     .filter(Boolean)
     .join(' ');
-  return <span className={classes}>{children}</span>;
+  return (
+    <span className={classes} {...rest}>
+      {children}
+    </span>
+  );
 }

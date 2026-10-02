@@ -11,3 +11,8 @@ export { Stamp } from './primitives/Stamp';
 export { KeyHintLine } from './primitives/KeyHintLine';
 export type { KeyHintItem } from './primitives/KeyHintLine';
 export { FONT_FAMILIES } from './theme/fonts';
+export { DeskBackdrop } from './primitives/DeskBackdrop';
+export { FolderCover } from './primitives/FolderCover';
+export { FolderTabs } from './primitives/FolderTabs';
+export type { FolderTabItem } from './primitives/FolderTabs';
+export { ModalSheet } from './primitives/ModalSheet';

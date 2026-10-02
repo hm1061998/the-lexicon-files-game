@@ -1,0 +1,67 @@
+@import '../theme/palette.css';
+
+.folder-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: none;
+  margin: 28px 0 0 -6px;
+}
+
+.folder-tabs .folder-tab {
+  box-sizing: border-box;
+  min-width: 150px;
+  min-height: 44px;
+  padding: 6px 18px 6px 16px;
+  color: var(--lexicon-ink);
+  font-family: var(--lexicon-font-label);
+  font-size: var(--lexicon-text-min);
+  text-align: left;
+  text-decoration: none;
+  background: #d6c08e url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
+  border: 0 solid transparent;
+  border-width: 8px 8px 8px 0;
+  border-image: url('/assets/ui/folder_tab.png') 20 / 8px 8px 8px 0 stretch;
+  background-clip: padding-box;
+  filter: drop-shadow(var(--lexicon-shadow-paper));
+  transition: translate 120ms ease-out;
+}
+
+.folder-tabs .folder-tab:hover:not(:disabled),
+.folder-tabs .folder-tab:focus-visible {
+  translate: 6px 0;
+  text-decoration: underline 1px;
+  text-underline-offset: 4px;
+}
+
+.folder-tabs .folder-tab--primary {
+  font-weight: 600;
+  min-width: 172px;
+}
+
+.folder-tabs .folder-tab[aria-current='true'] {
+  translate: 10px 0;
+}
+
+@media (max-width: 959px), (max-height: 639px) {
+  .folder-tabs {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: -4px 0 0;
+    padding: 0 4px;
+  }
+
+  .folder-tabs .folder-tab {
+    flex: 1 1 140px;
+    min-width: 0;
+    text-align: center;
+    border-width: 0 8px 8px 8px;
+    border-image-width: 0 8px 8px 8px;
+  }
+
+  .folder-tabs .folder-tab:hover:not(:disabled),
+  .folder-tabs .folder-tab:focus-visible,
+  .folder-tabs .folder-tab[aria-current='true'] {
+    translate: 0 4px;
+  }
+}

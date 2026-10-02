@@ -7,6 +7,11 @@ import { InkButton } from './InkButton';
 import { IndexTab } from './IndexTab';
 import { Stamp } from './Stamp';
 import { KeyHintLine } from './KeyHintLine';
+import { DeskBackdrop } from './DeskBackdrop';
+import { FolderCover } from './FolderCover';
+import { FolderTabs } from './FolderTabs';
+import { ModalSheet } from './ModalSheet';
+import { readFileSync } from 'node:fs';
 
 describe('PaperPanel', () => {
   it('renders children', () => {
@@ -107,5 +112,152 @@ describe('Keycap', () => {
   it('renders key label', () => {
     const html = renderToString(<Keycap>E</Keycap>);
     expect(html).toContain('E');
+  });
+});
+
+describe('Stamp tone', () => {
+  it('is ink by default and red only on request', () => {
+    const ink = renderToString(<Stamp>OK</Stamp>);
+    expect(ink).toContain('stamp--ink');
+    expect(ink).not.toContain('stamp--red');
+    expect(renderToString(<Stamp tone="red">OK</Stamp>)).toContain('stamp--red');
+  });
+
+  it('passes standard span attributes through', () => {
+    const html = renderToString(
+      <Stamp role="status" aria-live="polite">
+        CLOSED
+      </Stamp>,
+    );
+    expect(html).toContain('role="status"');
+    expect(html).toContain('aria-live="polite"');
+  });
+});
+
+describe('DeskBackdrop', () => {
+  it('renders a hidden decorative layer around its children', () => {
+    const html = renderToString(<DeskBackdrop>inside</DeskBackdrop>);
+    expect(html).toContain('desk-backdrop');
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain('inside');
+  });
+});
+
+describe('FolderCover', () => {
+  it('renders label, a level-one title and tagline', () => {
+    const html = renderToString(
+      <FolderCover
+        label="The Missing Report"
+        title="The Lexicon Files"
+        tagline="Every word is a clue."
+      >
+        body
+      </FolderCover>,
+    );
+    expect(html).toContain('folder-cover');
+    expect(html).toContain('The Missing Report');
+    expect(html).toMatch(/<h1[^>]*>The Lexicon Files<\/h1>/);
+    expect(html).toContain('Every word is a clue.');
+    expect(html).toContain('body');
+  });
+
+  it('can use a level-two heading', () => {
+    expect(renderToString(<FolderCover title="Cài đặt" headingLevel={2} />)).toMatch(
+      /<h2[^>]*>Cài đặt<\/h2>/,
+    );
+  });
+});
+
+describe('FolderTabs', () => {
+  const items = [
+    {
+      id: 'continue',
+      label: 'Tiếp tục',
+      onSelect: () => undefined,
+      primary: true,
+      autoFocus: true,
+    },
+    { id: 'new', label: 'Vụ án mới', onSelect: () => undefined, current: true },
+    { id: 'settings', label: 'Cài đặt', onSelect: () => undefined, disabled: true },
+  ];
+
+  it('is a labelled nav with one button per item in order', () => {
+    const html = renderToString(<FolderTabs label="Menu" items={items} />);
+    expect(html).toMatch(/<nav[^>]*aria-label="Menu"/);
+    expect(html.match(/<button/g)).toHaveLength(3);
+    expect(html.indexOf('Tiếp tục')).toBeLessThan(html.indexOf('Vụ án mới'));
+    expect(html.indexOf('Vụ án mới')).toBeLessThan(html.indexOf('Cài đặt'));
+  });
+
+  it('marks the primary, current and disabled tabs', () => {
+    const html = renderToString(<FolderTabs label="Menu" items={items} />);
+    expect(html).toContain('folder-tab--primary');
+    expect(html).toContain('aria-current="true"');
+    expect(html).toContain('disabled=""');
+    expect(html).toContain('autofocus');
+  });
+});
+
+describe('ModalSheet', () => {
+  it('is a modal dialog labelled by its heading', () => {
+    const html = renderToString(<ModalSheet heading="Tạm dừng">body</ModalSheet>);
+    expect(html).toContain('role="dialog"');
+    expect(html).toContain('aria-modal="true"');
+    const labelledBy = /aria-labelledby="([^"]+)"/.exec(html)?.[1];
+    expect(labelledBy).toBeTruthy();
+    expect(html).toContain(`id="${labelledBy}"`);
+  });
+
+  it('can be an alertdialog and puts the stamp before the heading', () => {
+    const html = renderToString(
+      <ModalSheet role="alertdialog" heading="Xác nhận" stamp={<Stamp>MẬT</Stamp>}>
+        x
+      </ModalSheet>,
+    );
+    expect(html).toContain('role="alertdialog"');
+    expect(html.indexOf('MẬT')).toBeLessThan(html.indexOf('Xác nhận'));
+  });
+
+  it('sits on the scrim and applies the extra class names', () => {
+    const html = renderToString(
+      <ModalSheet heading="H" className="pause-menu" overlayClassName="pause-menu-overlay">
+        x
+      </ModalSheet>,
+    );
+    expect(html).toContain('modal-scrim');
+    expect(html).toContain('pause-menu-overlay');
+    expect(html).toContain('modal-sheet');
+    expect(html).toContain('pause-menu');
+  });
+
+  it('makes the dialog focusable when asked to take focus on mount', () => {
+    expect(
+      renderToString(
+        <ModalSheet heading="H" focusOnMount>
+          x
+        </ModalSheet>,
+      ),
+    ).toContain('tabindex="-1"');
+  });
+});
+
+describe('shell CSS guardrails', () => {
+  const read = (name: string) => readFileSync(new URL(`./${name}`, import.meta.url), 'utf8');
+
+  it('keeps the investigation red out of the shell materials', () => {
+    for (const file of [
+      'desk-backdrop.css',
+      'folder-cover.css',
+      'folder-tabs.css',
+      'modal-sheet.css',
+    ])
+      expect(read(file).toLowerCase()).not.toContain('#a4412d');
+  });
+
+  it('levels tilted shell paper when the motion switch is on', () => {
+    const css = read('motion.css');
+    expect(css).toMatch(/\.lexicon-motion-off\s+\.folder-cover/);
+    expect(css).toMatch(/\.lexicon-motion-off\s+\.modal-sheet/);
+    expect(css).toMatch(/\.lexicon-motion-off\s+\.case-card/);
   });
 });
