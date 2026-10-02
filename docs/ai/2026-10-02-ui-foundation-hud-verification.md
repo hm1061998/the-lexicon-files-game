@@ -43,3 +43,8 @@ Ngày: 02/10/2026. Plan: `docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 
 - 15 file woff2 trong `dist/assets`, tổng 213.992 byte (~209 KB), bốn họ font `@fontsource` 5.3.0, đúng subset latin/latin-ext/vietnamese.
 - Phaser chờ `waitForFonts` tối đa 3 giây trước `createGame`, không bao giờ treo (test: load xong, treo mãi → `timeout`, reject → `timeout`).
+
+## Task 7 — cue vật chứng
+
+- Marker 24px nổi 4px/1000ms, vòng mực `evidence_ripple.png` (2400ms; tĩnh alpha 0,5 khi giảm chuyển động), tối đa 3 chỉ báo ngoài màn hình.
+- `hudInsets` đổi từ CSS px sang px game bằng `scale.width / displaySize.width`; HUD letterbox không được tính offset (sai số nhỏ, chỉ ảnh hưởng vị trí chỉ báo cách mép HUD).

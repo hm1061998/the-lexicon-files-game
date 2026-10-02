@@ -65,6 +65,10 @@
   "sceneIds": ["main_office", "archive"],
   "sharedTextures": [
     {
+      "key": "tex_evidence_ripple",
+      "url": "/assets/ui/world/evidence_ripple.png"
+    },
+    {
       "key": "tex_player_ne",
       "url": "/assets/characters/player/chr_player_idle_ne.png"
     },

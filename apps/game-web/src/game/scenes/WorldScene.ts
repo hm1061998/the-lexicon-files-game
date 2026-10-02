@@ -86,6 +86,8 @@ export type WorldOptions = {
   transitions: TransitionSource;
   motion: MotionSource;
   worldCueIds?: () => ReadonlySet<string>;
+  /** HUD blocks in CSS px, published by React through the store; keeps off-screen pointers clear. */
+  hudInsets?: () => { top: number; right: number; bottom: number; left: number };
   interactionAvailable?: (sceneId: string, interactableId: string) => boolean;
 };
 
@@ -307,6 +309,7 @@ export class WorldScene extends Phaser.Scene {
           x: sprite.x,
           y: sprite.getTopCenter().y - 12,
           depth: sprite.depth + 2,
+          floor: { x: floorPoint.x, y: floorPoint.y },
         });
       }
       this.depths.set(asset.id, sprite.depth);
@@ -551,6 +554,7 @@ export class WorldScene extends Phaser.Scene {
           0,
         ),
       worldCueCount: () => this.cueLayer?.activeCount ?? 0,
+      offscreenCueIds: () => this.cueLayer?.offscreenIds() ?? [],
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
       nearby: () => this.interactionTracker.current,
       nearbyEvents: () => this.nearbyEventCount,
@@ -638,6 +642,7 @@ export class WorldScene extends Phaser.Scene {
       this.interactionTracker.current,
       this.options.motion.reducedMotion(),
     );
+    this.syncOffscreenCues();
     this.syncOccluders();
     if (!this.keys) return;
     if (this.transitioning || this.pendingTransition) {
@@ -688,6 +693,24 @@ export class WorldScene extends Phaser.Scene {
     const result = advanceFootstep(this.footstepState, distance, locked);
     this.footstepState = result.state;
     if (result.emit) this.bus.emit('audio:cue', { cue: 'footstep' });
+  }
+
+  private syncOffscreenCues(): void {
+    if (!this.cueLayer) return;
+    const css = this.options.hudInsets?.() ?? { top: 0, right: 0, bottom: 0, left: 0 };
+    // Insets are CSS px of the HUD; the camera works in game px.
+    const factor =
+      this.scale.displaySize.width > 0 ? this.scale.width / this.scale.displaySize.width : 1;
+    this.cueLayer.syncOffscreen(
+      this.cameras.main,
+      { x: this.player.x, y: this.player.y },
+      {
+        top: css.top * factor,
+        right: css.right * factor,
+        bottom: css.bottom * factor,
+        left: css.left * factor,
+      },
+    );
   }
 
   private syncNpcPresentation(timeMs: number): void {

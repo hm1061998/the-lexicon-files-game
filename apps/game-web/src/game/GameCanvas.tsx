@@ -679,6 +679,7 @@ function GameRoot({
         },
         motion: { reducedMotion: () => settings.getState().settings.reducedMotion },
         worldCueIds: () => worldCueSource.visibleIds(store.getState().activeSceneId),
+        hudInsets: () => store.getState().hudInsets,
         interactionAvailable: interactionEligibility.isAvailable,
       });
     });

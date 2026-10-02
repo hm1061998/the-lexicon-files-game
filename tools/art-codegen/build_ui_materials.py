@@ -211,6 +211,26 @@ def render_cork_board(seed: int) -> Image.Image:
     return to_image(np.concatenate([rgb, alpha], axis=2))
 
 
+def render_evidence_ripple(seed: int) -> Image.Image:
+    """An isometric ink ring (2:1 ellipse) drawn under an evidence object; only alpha varies."""
+    g = rng(seed)
+    w, h = 128, 64
+    yy, xx = np.mgrid[0:h, 0:w]
+    nx = (xx - (w - 1) / 2) / ((w - 1) / 2)
+    ny = (yy - (h - 1) / 2) / ((h - 1) / 2)
+    r = np.hypot(nx, ny)
+    theta = np.arctan2(ny, nx)
+    wobble = sum(g.uniform(-0.03, 0.03) * np.sin(k * theta + g.uniform(0, 6.28)) for k in (2, 3, 4))
+    ring = np.clip(1.0 - np.abs(r - (0.86 + wobble)) / 0.075, 0, 1)
+    alpha = ring * 215.0
+    patches = wrap_blur(g.standard_normal((h, w)), 3)
+    alpha[(patches > 0.12) & (g.random((h, w)) < 0.4)] *= 0.45
+    alpha[r < 0.7] = 0
+    rgb = np.empty((h, w, 3))
+    rgb[:] = np.array([164, 65, 45], float)  # --lexicon-investigation-red: evidence cue
+    return to_image(np.concatenate([rgb, alpha[:, :, None]], axis=2))
+
+
 def build(out_dir: Path) -> list[Path]:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -230,6 +250,11 @@ def build(out_dir: Path) -> list[Path]:
         path = out_dir / f"{name}.png"
         image.save(path)
         paths.append(path)
+    world = out_dir / "world"
+    world.mkdir(parents=True, exist_ok=True)
+    ripple = world / "evidence_ripple.png"
+    render_evidence_ripple(8).save(ripple)
+    paths.append(ripple)
     return paths
 
 
@@ -240,7 +265,13 @@ def digest(path: Path) -> str:
 def check(out_dir: Path = OUT_DIR) -> list[str]:
     with tempfile.TemporaryDirectory() as tmp:
         fresh = build(Path(tmp))
-        return [p.name for p in fresh if not (Path(out_dir) / p.name).exists() or digest(p) != digest(Path(out_dir) / p.name)]
+        root = Path(tmp)
+        return [
+            str(p.relative_to(root))
+            for p in fresh
+            if not (Path(out_dir) / p.relative_to(root)).exists()
+            or digest(p) != digest(Path(out_dir) / p.relative_to(root))
+        ]
 
 
 def main(argv: list[str]) -> int:

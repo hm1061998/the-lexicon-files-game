@@ -39,13 +39,13 @@ class UiMaterialTests(unittest.TestCase):
         return np.asarray(Image.open(self.out / name).convert("RGBA"), float)
 
     def test_builds_exactly_the_nine_files(self):
-        self.assertEqual({p.name for p in self.paths}, EXPECTED)
+        self.assertEqual({p.name for p in self.paths if p.parent == self.out}, EXPECTED)
         self.assertEqual({p.name for p in self.out.glob("*.png")}, EXPECTED)
 
     def test_two_builds_are_byte_identical(self):
         with tempfile.TemporaryDirectory() as other:
             b.build(Path(other))
-            for name in EXPECTED:
+            for name in EXPECTED | {"world/evidence_ripple.png"}:
                 self.assertEqual((self.out / name).read_bytes(), (Path(other) / name).read_bytes(), name)
 
     def test_paper_sheets_tile_horizontally_and_vertically(self):
@@ -101,6 +101,27 @@ class UiMaterialTests(unittest.TestCase):
             a = self.load(name)
             self.assertEqual(a[0, 0, 3], 0, name)
             self.assertEqual(a[a.shape[0] // 2, a.shape[1] // 2, 3], 255, name)
+
+
+class WorldMaterialTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.out = Path(cls.tmp.name)
+        b.build(cls.out)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_evidence_ripple_is_128_by_64_and_only_alpha_varies(self):
+        a = np.asarray(Image.open(self.out / "world" / "evidence_ripple.png").convert("RGBA"), float)
+        self.assertEqual(a.shape[:2], (64, 128))
+        rgb = a[:, :, :3].reshape(-1, 3)
+        self.assertTrue(np.all(rgb == rgb[0]))
+        self.assertGreater(a[:, :, 3].max(), 150)
+        self.assertEqual(a[0, 0, 3], 0)
+        self.assertEqual(a[32, 64, 3], 0)  # hollow centre
 
 
 if __name__ == "__main__":
