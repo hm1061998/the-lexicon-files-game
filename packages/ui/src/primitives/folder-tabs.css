@@ -62,6 +62,7 @@
   .folder-tabs .folder-tab:hover:not(:disabled),
   .folder-tabs .folder-tab:focus-visible,
   .folder-tabs .folder-tab[aria-current='true'] {
-    translate: 0 4px;
+    /* Lift upwards: moving down would push the last row past the cover and add scroll. */
+    translate: 0 -4px;
   }
 }

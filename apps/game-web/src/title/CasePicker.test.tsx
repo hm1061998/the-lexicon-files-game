@@ -33,4 +33,16 @@ describe('CasePicker', () => {
   it('has no score, rank or countdown wording', () => {
     expect(html).not.toMatch(/điểm số|xếp hạng|đếm ngược|score|rank|timer/i);
   });
+
+  it('is a desk with folder-style case cards, not a paper panel', () => {
+    expect(html).toContain('desk-backdrop');
+    expect(html).not.toContain('paper-panel');
+    expect(html).toContain('case-card');
+  });
+
+  it('stamps only the recommended case, in ink rather than red', () => {
+    expect(html.match(/class="stamp stamp--ink/g)).toHaveLength(1);
+    expect(html).not.toContain('stamp--red');
+    expect(html.indexOf('stamp--ink')).toBeLessThan(html.indexOf(cards[1]!.title));
+  });
 });

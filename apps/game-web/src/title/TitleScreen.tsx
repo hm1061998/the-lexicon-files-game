@@ -1,10 +1,11 @@
-import { PaperPanel } from '@lexicon/ui';
+import type { FolderTabItem } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import type { TitleActions } from './titleModel';
-import './title.css';
+import { ShellCover } from './ShellCover';
 
 export function TitleScreen({
   strings,
+  caseTitle,
   actions,
   onContinue,
   onNewCase,
@@ -13,6 +14,7 @@ export function TitleScreen({
   onChangeCase,
 }: {
   strings: UiStrings;
+  caseTitle: string;
   actions: TitleActions;
   onContinue: () => void;
   onNewCase: () => void;
@@ -20,43 +22,30 @@ export function TitleScreen({
   onSettings: () => void;
   onChangeCase?: () => void;
 }): JSX.Element {
-  return (
-    <main className="title-screen">
-      <PaperPanel as="section" className="title-card">
-        <h1>{strings.titleGame}</h1>
-        <p className="title-tagline">{strings.titleTagline}</p>
-        <nav className="title-actions" aria-label={strings.titleGame}>
-          {actions.continue ? (
-            <button
-              type="button"
-              className={actions.primary === 'continue' ? 'title-primary' : undefined}
-              autoFocus={actions.primary === 'continue'}
-              onClick={onContinue}
-            >
-              {strings.titleContinue}
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className={actions.primary === 'newCase' ? 'title-primary' : undefined}
-            autoFocus={actions.primary === 'newCase'}
-            onClick={onNewCase}
-          >
-            {strings.titleNewCase}
-          </button>
-          <button type="button" onClick={onHowTo}>
-            {strings.titleHowTo}
-          </button>
-          <button type="button" onClick={onSettings}>
-            {strings.titleSettings}
-          </button>
-          {onChangeCase ? (
-            <button type="button" onClick={onChangeCase}>
-              {strings.titleChangeCase}
-            </button>
-          ) : null}
-        </nav>
-      </PaperPanel>
-    </main>
-  );
+  const tabs: FolderTabItem[] = [
+    ...(actions.continue
+      ? [
+          {
+            id: 'continue',
+            label: strings.titleContinue,
+            onSelect: onContinue,
+            primary: actions.primary === 'continue',
+            autoFocus: actions.primary === 'continue',
+          },
+        ]
+      : []),
+    {
+      id: 'new-case',
+      label: strings.titleNewCase,
+      onSelect: onNewCase,
+      primary: actions.primary === 'newCase',
+      autoFocus: actions.primary === 'newCase',
+    },
+    { id: 'how-to', label: strings.titleHowTo, onSelect: onHowTo },
+    { id: 'settings', label: strings.titleSettings, onSelect: onSettings },
+    ...(onChangeCase
+      ? [{ id: 'change-case', label: strings.titleChangeCase, onSelect: onChangeCase }]
+      : []),
+  ];
+  return <ShellCover strings={strings} caseTitle={caseTitle} tabs={tabs} />;
 }

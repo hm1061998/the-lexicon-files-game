@@ -1,0 +1,13 @@
+.title-screen {
+  position: absolute;
+  inset: 0;
+}
+
+.title-card .folder-cover__body:empty {
+  display: none;
+}
+
+/* Settings and how-to pages inside the cover read left-aligned. */
+.title-card .folder-cover__body {
+  text-align: left;
+}

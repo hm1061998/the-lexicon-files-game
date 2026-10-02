@@ -15,8 +15,10 @@
 .lexicon-motion-off .folder-cover,
 .lexicon-motion-off .modal-sheet,
 .lexicon-motion-off .case-card {
-  transform: none;
-  animation: none;
+  transform: none !important;
+  rotate: none !important;
+  translate: none !important;
+  animation: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

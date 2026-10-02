@@ -2,7 +2,14 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import type { UiStrings } from '@lexicon/shared-types';
 import { scenePoint } from './sceneTestData';
-import { interactAt, openWorld, reopenWorld, saved, type SavedRecord } from './journeyHelpers';
+import {
+  chooseCase,
+  interactAt,
+  openWorld,
+  reopenWorld,
+  saved,
+  type SavedRecord,
+} from './journeyHelpers';
 import { openFace, reveal } from './investigationFixture';
 
 const strings = JSON.parse(
@@ -272,5 +279,29 @@ test.describe.serial('Case #002 journey', () => {
 
   test('case-002 raised no console errors', async () => {
     expect(errors).toEqual([]);
+  });
+});
+
+test.describe('Shell reduced motion', () => {
+  test('the in-game setting levels the title cover and the picker cards', async ({ page }) => {
+    await page.goto('/');
+    await chooseCase(page);
+    await page.getByRole('button', { name: 'Cài đặt', exact: true }).click();
+    await page.getByLabel('Giảm chuyển động').check();
+    await expect(page.locator('.game-root')).toHaveClass(/lexicon-motion-off/);
+    await page.getByRole('button', { name: 'Quay lại', exact: true }).click();
+    const cover = await page
+      .locator('.folder-cover')
+      .evaluate((el) => getComputedStyle(el).animationName);
+    expect(cover).toBe('none');
+    await page.getByRole('button', { name: 'Đổi hồ sơ', exact: true }).click();
+    const card = page.locator('.case-card').first();
+    await expect(card).toBeVisible();
+    const style = await card.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { animationName: cs.animationName, rotate: cs.rotate };
+    });
+    expect(style.animationName).toBe('none');
+    expect(style.rotate).toBe('none');
   });
 });

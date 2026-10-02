@@ -428,6 +428,7 @@ function CaseFlow({
             <>
               <TitleScreen
                 strings={strings}
+                caseTitle={caseDefinition.title}
                 actions={actions}
                 onContinue={() => play('continue', false)}
                 onNewCase={() => {

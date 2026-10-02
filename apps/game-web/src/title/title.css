@@ -1,3 +1,4 @@
+/* Legacy pre-game pages (support picker, confirm) still use PaperPanel until the shell pages move over. */
 .title-screen {
   position: absolute;
   inset: 0;
@@ -11,7 +12,7 @@
   font-size: var(--lexicon-text-min);
 }
 
-.title-card {
+.paper-panel.title-card {
   box-sizing: border-box;
   width: min(440px, 100%);
   max-height: 100%;
@@ -21,8 +22,8 @@
   color: var(--lexicon-ink);
 }
 
-.title-card h1,
-.title-card h2 {
+.paper-panel.title-card h1,
+.paper-panel.title-card h2 {
   margin: 0 0 8px;
 }
 
@@ -37,7 +38,7 @@
   gap: 10px;
 }
 
-.title-card button {
+.paper-panel.title-card button {
   min-height: 44px;
   min-width: 44px;
   padding: 8px 20px;
@@ -70,46 +71,4 @@
   background: none;
   border: none;
   text-decoration: underline;
-}
-
-.case-picker {
-  width: min(560px, 100%);
-}
-
-.case-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.title-card .case-card {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: left;
-  overflow-wrap: anywhere;
-}
-
-.case-card-flag {
-  align-self: flex-start;
-  padding: 0 8px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 3px;
-  font-size: 0.85em;
-}
-
-.case-card-meta,
-.case-card-stats {
-  font-size: 0.9em;
-}
-
-.case-card-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 14px;
 }
