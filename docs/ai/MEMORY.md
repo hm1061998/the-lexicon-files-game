@@ -15,7 +15,7 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 
 ## Current Phase
 
-- UI foundation + HUD (PR-02 làm lại UI, phần 1+2): Task 0–9 xong trên `dev`, chưa push (plan cấm push). Chờ người dùng duyệt ảnh trước/sau/concept (spec §9.4) trước khi đánh dấu hoàn tất. PR-03 Case #002 đã xong và đã push.
+- UI foundation + HUD (PR-02 làm lại UI, phần 1+2): Task 0–9 xong trên `dev`, đã push lên origin theo yêu cầu người dùng. Chờ người dùng duyệt ảnh trước/sau/concept (spec §9.4) trước khi đánh dấu hoàn tất. PR-03 Case #002 đã xong và đã push.
 
 ## Active Goal
 
@@ -56,7 +56,7 @@ active_plan: docs/superpowers/plans/2026-10-02-ui-foundation-hud.md
 ## Next Actions
 
 1. Người dùng duyệt ảnh UI trước/sau/concept; chỉnh nếu cần.
-2. Quyết định push `dev` (hiện ahead của origin; plan UI cấm tự push).
+2. `dev` đã push; không còn việc push treo.
 3. Phần 3 UI (màn tiêu đề, chọn case, pause, briefing, tổng kết) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 4. Tùy chọn: sửa nợ E2E có sẵn và minor review.
 
