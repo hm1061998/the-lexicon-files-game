@@ -168,6 +168,7 @@ const uiStringsSchema = z
     dialogueNotesEmpty: z.string().min(1),
     dialogueLogHeading: z.string().min(1),
     dialogueLogEmpty: z.string().min(1),
+    listeningVerified: z.string().min(1),
     textSpeedInstant: z.string().min(1),
     textSpeedNormal: z.string().min(1),
     textSpeedFast: z.string().min(1),

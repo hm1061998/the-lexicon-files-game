@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { InkButton, ModalSheet } from '@lexicon/ui';
+import { DeskBackdrop, FolderTabs, InkButton, ModalSheet } from '@lexicon/ui';
 import type { EvidenceDefinition, UiStrings } from '@lexicon/shared-types';
 import { getFocusTrapTarget } from '../pause/focusTrap';
 import './evidence.css';
@@ -40,6 +40,7 @@ export function EvidenceModal({
   listeningCompleted = false,
   onListeningAnswer,
   onListeningTelemetry,
+  reducedMotion = false,
 }: {
   evidence: EvidenceDefinition;
   strings: UiStrings;
@@ -56,6 +57,7 @@ export function EvidenceModal({
   listeningCompleted?: boolean;
   onListeningAnswer?(taskId: string, optionId: string): ListeningAnswerResult;
   onListeningTelemetry?(event: ListeningEvent, elapsedMs?: number): void;
+  reducedMotion?: boolean;
 }): JSX.Element {
   const headingId = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -70,7 +72,10 @@ export function EvidenceModal({
     const previousFocus =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const dialog = dialogRef.current;
-    const first = dialog?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+    // An audio card opens on the play key, so Space plays instead of pressing Close.
+    const first =
+      dialog?.querySelector<HTMLElement>('[data-initial-focus]') ??
+      dialog?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
     first?.focus();
 
     function handleTab(event: KeyboardEvent): void {
@@ -101,29 +106,35 @@ export function EvidenceModal({
       overlayClassName="evidence-overlay"
       className="evidence-modal"
       dialogRef={dialogRef}
+      backdrop={<DeskBackdrop />}
     >
-      <InkButton className="evidence-close" autoFocus aria-label={strings.close} onClick={onClose}>
+      <InkButton
+        className="evidence-close"
+        autoFocus={!hasListening}
+        aria-label={strings.close}
+        onClick={onClose}
+      >
         {strings.close}
       </InkButton>
       {hasListening && (
-        <div className="evidence-tabs" role="group" aria-label={evidence.name}>
-          <button
-            type="button"
-            className="evidence-tab"
-            aria-pressed={section === 'listening'}
-            onClick={() => setSection('listening')}
-          >
-            {strings.listeningTask}
-          </button>
-          <button
-            type="button"
-            className="evidence-tab"
-            aria-pressed={section === 'evidence'}
-            onClick={() => setSection('evidence')}
-          >
-            {strings.evidence}
-          </button>
-        </div>
+        <FolderTabs
+          className="evidence-tabs"
+          label={evidence.name}
+          items={[
+            {
+              id: 'listening',
+              label: strings.listeningTask,
+              current: section === 'listening',
+              onSelect: () => setSection('listening'),
+            },
+            {
+              id: 'evidence',
+              label: strings.evidence,
+              current: section === 'evidence',
+              onSelect: () => setSection('evidence'),
+            },
+          ]}
+        />
       )}
       <div className="evidence-section" hidden={!showEvidence}>
         {showImage && (
@@ -164,6 +175,8 @@ export function EvidenceModal({
             onAnswer={(optionId) => onListeningAnswer(listeningTask.id, optionId)}
             onTelemetry={(event, elapsedMs) => onListeningTelemetry?.(event, elapsedMs)}
             strings={strings}
+            reducedMotion={reducedMotion}
+            active={!hasListening || section === 'listening'}
           />
         )}
       </div>

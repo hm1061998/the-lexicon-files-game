@@ -78,7 +78,7 @@
   background: #efe5cc url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
 }
 
-.listening-task button {
+.listening-task button:not(.device-key) {
   min-width: 44px;
   min-height: 44px;
   padding: 8px 14px;
@@ -90,11 +90,11 @@
   cursor: pointer;
 }
 
-.listening-task button:hover:not(:disabled) {
+.listening-task button:not(.device-key):hover:not(:disabled) {
   background: var(--lexicon-paper);
 }
 
-.listening-task button:disabled {
+.listening-task button:not(.device-key):disabled {
   opacity: 0.6;
   cursor: default;
 }
@@ -133,6 +133,83 @@
 
 .listening-transcript p {
   margin: 8px 0 0;
+}
+
+.listening-support {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.listening-question {
+  margin: 16px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.listening-question legend {
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.listening-question:disabled {
+  opacity: 0.8;
+}
+
+.listening-feedback {
+  margin: 12px 0 0;
+  color: var(--lexicon-ink);
+}
+
+.evidence-modal :focus-visible {
+  outline: 3px solid var(--lexicon-ink);
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .evidence-modal {
+    padding: 24px 16px 16px;
+  }
+
+  .evidence-art {
+    max-width: 160px;
+  }
+
+  .listening-task {
+    padding: 12px;
+  }
+}
+
+/* Audio cards hold two sections (the recording, the evidence) so neither has to scroll. */
+.evidence-section[hidden],
+.evidence-listening[hidden] {
+  display: none;
+}
+
+/* The two sections are folder tabs along the top of the card, in a row. */
+.evidence-modal .evidence-tabs {
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.evidence-modal .evidence-tabs .folder-tab {
+  flex: 0 1 auto;
+  min-width: 0;
+  border-width: 0 8px 8px 8px;
+  border-image-width: 0 8px 8px 8px;
+}
+
+.evidence-modal .evidence-tabs .folder-tab[aria-current='true'] {
+  translate: 0 0;
+  font-weight: 700;
+}
+
+.evidence-modal .evidence-tabs .folder-tab:hover:not(:disabled),
+.evidence-modal .evidence-tabs .folder-tab:focus-visible {
+  translate: 0 0;
 }
 
 .listening-support {
@@ -262,10 +339,118 @@
   .listening-task .listening-transcript {
     margin: 8px 0 0;
   }
+
+  .evidence-modal .modal-sheet__heading {
+    margin-bottom: 4px;
+  }
+
+  .evidence-modal .evidence-tabs {
+    margin-top: 2px;
+  }
+
+  .listening-task {
+    padding: 6px 12px;
+  }
+
+  .listening-task .listening-playback-state {
+    min-height: 0;
+    margin: 2px 0;
+  }
+
+  .listening-task .recorder-wave {
+    height: 20px;
+  }
+
+  /* The recorder gives up its tape window so the display and keys fit one narrow column. */
+  .listening-task .recorder {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'display'
+      'keys';
+    padding: 8px 10px 10px;
+    gap: 6px;
+  }
+
+  .listening-task .recorder__window {
+    display: none;
+  }
+
+  .listening-task .recorder__keys {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .listening-task .device-key {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 48px;
+    padding: 4px 2px 6px;
+    font-size: 13px;
+    line-height: 1.1;
+    text-align: center;
+  }
 }
 
 /* Last resort for very small screens: a thin ink scrollbar instead of the browser default. */
 .evidence-modal {
   scrollbar-color: var(--lexicon-border) transparent;
   scrollbar-width: thin;
+}
+
+/* Wide screens: the photo is pinned on the left, the description card sits to its right. */
+@media (min-width: 700px) {
+  .evidence-section:not([hidden]) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    align-content: start;
+    column-gap: 24px;
+  }
+
+  .evidence-section .evidence-photo {
+    grid-row: 1 / span 2;
+    margin: 12px 0 0;
+  }
+}
+
+.listening-task .recorder {
+  margin-bottom: 8px;
+}
+
+/* Keyword hint: a yellow note stuck under the recorder. */
+.listening-hint {
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: #f1df8e;
+  box-shadow: var(--lexicon-shadow-paper);
+  font-family: var(--lexicon-font-hand);
+  font-size: 18px;
+}
+
+/* An answer is a slip of paper with its key number; the number key picks it. */
+.listening-option {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.listening-option__key {
+  min-width: 22px;
+  border: 1px solid currentcolor;
+  border-radius: 4px;
+  font-family: var(--lexicon-font-label);
+  font-size: 14px;
+  text-align: center;
+}
+
+.listening-verified {
+  margin: 10px 0 0;
+}
+
+/* Short screens of any width: the status line takes no room until it has something to say. */
+@media (max-height: 640px) {
+  .listening-task .listening-playback-state {
+    min-height: 0;
+    margin: 4px 0;
+  }
 }

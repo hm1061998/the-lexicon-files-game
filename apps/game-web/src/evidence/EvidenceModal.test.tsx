@@ -76,7 +76,8 @@ describe('EvidenceModal', () => {
       />,
     );
     expect(html).toContain('evidence-tabs');
-    expect(html.match(/aria-pressed="(true|false)"/g)).toHaveLength(2);
+    expect(html.match(/class="ink-button folder-tab/g)).toHaveLength(2);
+    expect(html.match(/aria-current="true"/g)).toHaveLength(1);
     expect(html).toMatch(/evidence-section[^>]*hidden/);
     expect(html).toContain('listening-task');
   });

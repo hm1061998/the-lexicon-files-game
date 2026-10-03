@@ -92,6 +92,8 @@ for (const viewport of [
 test('compact evidence scrolls internally and returns to a visible close control', async ({
   page,
 }) => {
+  // Two panels, ~35 focus steps with geometry checks each: slow on a busy software-GL host.
+  test.setTimeout(180_000);
   await page.setViewportSize({ width: 390, height: 300 });
   await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);

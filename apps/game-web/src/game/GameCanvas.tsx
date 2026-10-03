@@ -66,6 +66,7 @@ import {
 } from '../persistence/settingsRepository';
 import { createSettingsStore, type SettingsStore } from '../state/settingsStore';
 import { createUiSound } from '../audio/uiSound';
+import { UiSoundProvider } from '../audio/UiSoundContext';
 import { UI_SOUND_FILES } from '../audio/uiSoundManifest';
 import { useUiSoundDelegation } from '../audio/useUiSoundDelegation';
 import { SettingsStoreProvider } from '../state/SettingsStoreContext';
@@ -257,19 +258,21 @@ export function GameCanvas({
   }
 
   return (
-    <CaseFlow
-      key={selectedCaseId}
-      caseId={selectedCaseId}
-      strings={shell.content.strings}
-      repository={repository}
-      learningRepository={learningRepository}
-      learningLoad={learningLoad}
-      settings={settings}
-      settingsLoad={settingsLoad}
-      settingsWriteError={settingsWriteError}
-      commerceConfigProvider={commerceConfigProvider}
-      onChangeCase={() => setSelectedCaseId(null)}
-    />
+    <UiSoundProvider uiSound={uiSound}>
+      <CaseFlow
+        key={selectedCaseId}
+        caseId={selectedCaseId}
+        strings={shell.content.strings}
+        repository={repository}
+        learningRepository={learningRepository}
+        learningLoad={learningLoad}
+        settings={settings}
+        settingsLoad={settingsLoad}
+        settingsWriteError={settingsWriteError}
+        commerceConfigProvider={commerceConfigProvider}
+        onChangeCase={() => setSelectedCaseId(null)}
+      />
+    </UiSoundProvider>
   );
 }
 
@@ -907,6 +910,7 @@ function DialogueLogLayer({ strings }: { strings: UiStrings }) {
 }
 
 function EvidenceLayer({ strings }: { strings: UiStrings }) {
+  const reducedMotion = useSettingsStore((state) => state.settings.reducedMotion);
   const activeEvidenceId = useGameStore((state) => state.activeEvidenceId);
   const evidence = useGameStore((state) =>
     state.caseDefinition.evidences.find((item) => item.id === state.activeEvidenceId),
@@ -973,6 +977,7 @@ function EvidenceLayer({ strings }: { strings: UiStrings }) {
       listeningCompleted={Boolean(listeningTask && caseState.flags[listeningTask.completionFlag])}
       onListeningAnswer={onListeningAnswer}
       onListeningTelemetry={onListeningTelemetry}
+      reducedMotion={reducedMotion}
     />
   );
 }

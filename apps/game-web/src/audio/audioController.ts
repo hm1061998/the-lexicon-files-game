@@ -4,6 +4,10 @@ export type AudioPlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'en
 
 export type AudioController = {
   getSnapshot(): AudioPlaybackState;
+  /** Played share of the recording, 0..1 (0 when unknown, 1 once it has ended). */
+  getProgress(): number;
+  /** Length of the recording in seconds (0 until it is known). */
+  getDuration(): number;
   subscribe(listener: () => void): () => void;
   play(): void;
   pause(): void;
@@ -76,6 +80,27 @@ export function createAudioController(
 
   return {
     getSnapshot: () => state,
+    getDuration() {
+      if (disposed || !howl) return 0;
+      try {
+        const duration = howl.duration();
+        return duration > 0 ? duration : 0;
+      } catch {
+        return 0;
+      }
+    },
+    getProgress() {
+      if (disposed || !howl) return 0;
+      if (state === 'ended') return 1;
+      try {
+        const duration = howl.duration();
+        const position = howl.seek();
+        if (!(duration > 0) || typeof position !== 'number') return 0;
+        return Math.min(1, Math.max(0, position / duration));
+      } catch {
+        return 0;
+      }
+    },
     subscribe(listener) {
       subscribers.add(listener);
       return () => subscribers.delete(listener);

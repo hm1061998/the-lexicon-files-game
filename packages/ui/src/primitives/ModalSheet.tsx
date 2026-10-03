@@ -14,6 +14,7 @@ export function ModalSheet({
   className,
   overlayClassName,
   dialogRef,
+  backdrop,
   focusOnMount = false,
   tilt,
   children,
@@ -25,6 +26,8 @@ export function ModalSheet({
   className?: string;
   overlayClassName?: string;
   dialogRef?: Ref<HTMLDivElement>;
+  /** Decorative scene behind the sheet (the evidence desk); it fills the scrim. */
+  backdrop?: ReactNode;
   focusOnMount?: boolean;
   /** Degrees (-2..2). Off by default: a tilted sheet shifts focus rects past its scroll box. */
   tilt?: number;
@@ -43,6 +46,7 @@ export function ModalSheet({
   };
   return (
     <div className={['modal-scrim', overlayClassName].filter(Boolean).join(' ')}>
+      {backdrop}
       <PaperSheet
         as="div"
         {...(tilt === undefined ? {} : { tilt })}

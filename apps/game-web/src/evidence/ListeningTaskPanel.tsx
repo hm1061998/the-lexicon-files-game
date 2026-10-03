@@ -10,6 +10,10 @@ import { useAudioPlayback } from '../audio/useAudioPlayback';
 import { useOptionalPresentationAudio } from '../audio/PresentationAudioContext';
 import type { SubtitlePreference } from '../persistence/settingsSchema';
 import { resolveTranscriptBlock, resolveTranscriptVisibility } from './transcriptVisibility';
+import { Stamp } from '@lexicon/ui';
+import { CassetteRecorder } from './CassetteRecorder';
+import { usePeaks } from './peaks';
+import { useRecorderShortcuts } from './useRecorderShortcuts';
 
 type ListeningEvent = Extract<LearningAction, { type: 'recordListeningEvent' }>['event'];
 
@@ -21,6 +25,8 @@ export function ListeningTaskPanel({
   onAnswer,
   onTelemetry,
   strings,
+  reducedMotion = false,
+  active = true,
 }: {
   task: ListeningTaskDefinition;
   mode: TranslationMode;
@@ -29,6 +35,9 @@ export function ListeningTaskPanel({
   onAnswer(optionId: string): ListeningAnswerResult;
   onTelemetry(event: ListeningEvent, elapsedMs?: number): void;
   strings: UiStrings;
+  reducedMotion?: boolean;
+  /** False while the card shows its other section, so the recorder keys stay quiet. */
+  active?: boolean;
 }): JSX.Element {
   const presentationAudio = useOptionalPresentationAudio();
   const onPlayingChange = useCallback(
@@ -90,33 +99,42 @@ export function ListeningTaskPanel({
     setHintVisible(!hintVisible);
   };
 
+  const running = playback.state === 'playing' || playback.state === 'loading';
+  const togglePlayback = () => (running ? playback.pause() : beginPlayback(false));
+  const peaks = usePeaks(task.audioAsset);
+  const canHint = mode === 'Learning';
+  const canTranscript = mode !== 'Immersion' && visibility.transcriptToggle;
+  useRecorderShortcuts({
+    enabled: active,
+    optionCount: task.options.length,
+    onPlayPause: togglePlayback,
+    onRestart: () => beginPlayback(true),
+    ...(canHint ? { onHint: toggleHint } : {}),
+    ...(canTranscript ? { onTranscript: showTranscript } : {}),
+    onAnswer: (index) => {
+      const option = task.options[index];
+      if (option) submitAnswer(option.id);
+    },
+  });
+
   return (
     <section className="listening-task" aria-label={task.question}>
-      <p className="listening-timestamp">
-        <span>{strings.listeningTimestamp}</span> <time>{task.timestamp}</time>
-      </p>
-      <div className="listening-controls" aria-label={strings.listeningPlay}>
-        {playback.state === 'playing' || playback.state === 'loading' ? (
-          <button type="button" onClick={playback.pause} aria-label={strings.listeningPause}>
-            {strings.listeningPause}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => beginPlayback(false)}
-            aria-label={strings.listeningPlay}
-          >
-            {playback.state === 'ended' ? strings.listeningReplay : strings.listeningPlay}
-          </button>
-        )}
-        <button
-          type="button"
-          onClick={() => beginPlayback(true)}
-          aria-label={strings.listeningReplay}
-        >
-          {strings.listeningReplay}
-        </button>
-      </div>
+      <CassetteRecorder
+        state={playback.state}
+        progress={playback.progress}
+        elapsedSeconds={playback.progress * playback.duration}
+        timestamp={task.timestamp}
+        peaks={peaks}
+        reducedMotion={reducedMotion}
+        strings={strings}
+        hintOpen={hintVisible}
+        transcriptOpen={transcriptOpen}
+        initialFocus
+        onPlayPause={togglePlayback}
+        onRestart={() => beginPlayback(true)}
+        {...(canHint ? { onHint: toggleHint } : {})}
+        {...(canTranscript ? { onTranscript: showTranscript } : {})}
+      />
       <p className="listening-playback-state" role="status" aria-live="polite">
         {playback.state === 'loading' ? strings.listeningLoading : null}
         {playback.state === 'playing' ? strings.listeningPlaying : null}
@@ -129,41 +147,37 @@ export function ListeningTaskPanel({
           {strings.listeningRetry}
         </button>
       )}
-
+      {canHint && hintVisible && <p className="listening-hint">{task.keywordHints.join(' · ')}</p>}
       {block.transcript && (
         <TranscriptBlock task={task} strings={strings} translation={block.translation} />
       )}
-      {mode !== 'Immersion' && (
-        <div className="listening-support">
-          {mode === 'Learning' && (
-            <>
-              <button type="button" onClick={toggleHint} aria-expanded={hintVisible}>
-                {strings.listeningHint}
-              </button>
-              {hintVisible && <p>{task.keywordHints.join(' · ')}</p>}
-            </>
-          )}
-          {visibility.transcriptToggle && (
-            <button type="button" onClick={showTranscript} aria-expanded={transcriptOpen}>
-              {strings.listeningShowTranscript}
-            </button>
-          )}
-        </div>
-      )}
-
       <fieldset className="listening-question" disabled={completed || answeredCorrectly}>
         <legend>
           <span>{strings.listeningQuestion}: </span>
           {mode === 'Beginner' && task.questionVi ? task.questionVi : task.question}
         </legend>
         <div className="listening-options">
-          {task.options.map((option) => (
-            <button key={option.id} type="button" onClick={() => submitAnswer(option.id)}>
+          {task.options.map((option, index) => (
+            <button
+              key={option.id}
+              type="button"
+              className="listening-option"
+              data-sfx="pen"
+              onClick={() => submitAnswer(option.id)}
+            >
+              <span className="listening-option__key" aria-hidden="true">
+                {index + 1}
+              </span>
               {mode === 'Beginner' && option.textVi ? option.textVi : option.text}
             </button>
           ))}
         </div>
       </fieldset>
+      {(completed || answeredCorrectly) && (
+        <Stamp animate={!reducedMotion} className="listening-verified">
+          {strings.listeningVerified}
+        </Stamp>
+      )}
       {feedback && (
         <p className="listening-feedback" role="status" aria-live="polite">
           {feedback}

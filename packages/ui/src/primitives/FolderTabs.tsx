@@ -29,6 +29,7 @@ export function FolderTabs({
           className={['folder-tab', item.primary ? 'folder-tab--primary' : undefined]
             .filter(Boolean)
             .join(' ')}
+          sfx="tab"
           disabled={item.disabled}
           autoFocus={item.autoFocus}
           aria-current={item.current ? 'true' : undefined}

@@ -223,3 +223,52 @@ test('a collected recording can be reopened from the notebook to answer later', 
     .poll(async () => (await caseState(page))?.state?.evidenceIds)
     .toEqual(['leo_phone_recording']);
 });
+
+test('the recorder keys work from the keyboard and a number key answers', async ({ page }) => {
+  test.setTimeout(90_000);
+  await openInMode(page, 'Learning');
+  const dialog = page.getByRole('dialog');
+  const status = dialog.locator('.listening-playback-state');
+
+  await page.keyboard.press(' ');
+  await expect(status).toContainText('Đang phát bản ghi.', { timeout: 10_000 });
+  await page.keyboard.press(' ');
+  await expect(status).toContainText('Bản ghi đã tạm dừng.');
+  await page.keyboard.press('r');
+  await expect(status).toContainText('Đang phát bản ghi.', { timeout: 10_000 });
+
+  await page.keyboard.press('h');
+  await expect(dialog.locator('.listening-hint')).toBeVisible();
+  await page.keyboard.press('h');
+  await expect(dialog.locator('.listening-hint')).toHaveCount(0);
+  await page.keyboard.press('t');
+  await expect(dialog.locator('.listening-transcript')).toBeVisible();
+
+  await page.keyboard.press('1');
+  await expect(dialog.locator('.listening-feedback')).toContainText(
+    "This interpretation doesn't match the evidence.",
+  );
+  await expect(dialog.locator('.listening-verified')).toHaveCount(0);
+  await page.keyboard.press('2');
+  await expect(dialog.locator('.listening-verified')).toContainText('Đã xác minh');
+  await expect(dialog.locator('.listening-feedback')).toContainText(
+    'Bạn đã rút ra fact từ bản ghi này.',
+  );
+});
+
+test('recorder keys stay quiet on the evidence section and over a focused button', async ({
+  page,
+}) => {
+  await openInMode(page, 'Learning');
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: 'Chứng cứ', exact: true }).click();
+  await page.keyboard.press('1');
+  await expect(dialog.locator('.listening-feedback')).toHaveCount(0);
+  await dialog.getByRole('button', { name: 'Bài nghe của vụ án' }).click();
+  // Space on a focused key is the browser's click, so it must act exactly once.
+  await dialog.getByRole('button', { name: 'Phát bản ghi' }).focus();
+  await page.keyboard.press(' ');
+  await expect(dialog.locator('.listening-playback-state')).toContainText('Đang phát bản ghi.', {
+    timeout: 10_000,
+  });
+});

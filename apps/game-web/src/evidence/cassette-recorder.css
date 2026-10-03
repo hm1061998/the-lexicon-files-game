@@ -1,0 +1,117 @@
+/* The cassette recorder: a plastic body with a tape window, a display, a waveform and device keys. */
+.recorder {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'window display'
+    'keys keys';
+  gap: 10px 16px;
+  box-sizing: border-box;
+  padding: 14px 16px 16px;
+  border: 1px solid #231f1b;
+  border-radius: 10px;
+  background: linear-gradient(#6b6258, #4a423a);
+  box-shadow:
+    0 4px 0 #2a2521,
+    0 8px 10px rgb(42 37 33 / 25%);
+  color: #efe5cc;
+}
+
+.recorder__window {
+  grid-area: window;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 2px solid #2a2521;
+  border-radius: 6px;
+  background: #1d1915;
+}
+
+.recorder__reel {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: #cdba97;
+  stroke-width: 2;
+}
+
+.recorder__hub {
+  fill: #cdba97;
+}
+
+.recorder__reel--spin {
+  animation: recorder-reel 1.6s linear infinite;
+}
+
+@keyframes recorder-reel {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.recorder__display {
+  grid-area: display;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 2px solid #2a2521;
+  border-radius: 6px;
+  background: #b8c4a0;
+  color: #1f2a1a;
+  font-family: var(--lexicon-font-label);
+  font-size: 16px;
+}
+
+.recorder__stamp {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.recorder__caption {
+  font-size: 14px;
+}
+
+.recorder__elapsed {
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.recorder-wave {
+  flex: 1 0 100%;
+  height: 28px;
+}
+
+.recorder-wave__bar {
+  fill: rgb(31 42 26 / 38%);
+}
+
+.recorder-wave__bar--played {
+  fill: #1f2a1a;
+}
+
+.recorder__keys {
+  grid-area: keys;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+
+@media (max-width: 520px) {
+  .recorder {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'display'
+      'keys';
+  }
+
+  .recorder__window {
+    display: none;
+  }
+}

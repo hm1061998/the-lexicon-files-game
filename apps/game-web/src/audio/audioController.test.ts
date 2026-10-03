@@ -18,7 +18,14 @@ function fakeHowl() {
     play: vi.fn(() => 1),
     pause: vi.fn(() => howl),
     stop: vi.fn(() => howl),
-    seek: vi.fn(() => howl),
+    position: 0,
+    length: 0,
+    seek: vi.fn((to?: number) => {
+      if (to === undefined) return howl.position;
+      howl.position = to;
+      return howl;
+    }),
+    duration: vi.fn(() => howl.length),
     unload: vi.fn(() => null),
     callbacks,
   };
@@ -32,6 +39,36 @@ function setup() {
   const snapshot = (): AudioPlaybackState => controller.getSnapshot();
   return { controller, fake, factory, snapshot };
 }
+
+describe('createAudioController progress', () => {
+  it('is 0 before anything plays and when the length is unknown', () => {
+    const { controller, fake } = setup();
+    expect(controller.getProgress()).toBe(0);
+    controller.play();
+    expect(controller.getProgress()).toBe(0);
+    fake.howl.seek(5);
+    expect(controller.getProgress()).toBe(0);
+  });
+
+  it('is the played share of the recording, kept inside 0..1', () => {
+    const { controller, fake } = setup();
+    controller.play();
+    (fake.howl as unknown as { length: number }).length = 4;
+    fake.howl.seek(1);
+    expect(controller.getProgress()).toBeCloseTo(0.25);
+    fake.howl.seek(9);
+    expect(controller.getProgress()).toBe(1);
+  });
+
+  it('is 1 once the recording has ended and 0 after dispose', () => {
+    const { controller, fake } = setup();
+    controller.play();
+    fake.callbacks.get('end')?.(1);
+    expect(controller.getProgress()).toBe(1);
+    controller.dispose();
+    expect(controller.getProgress()).toBe(0);
+  });
+});
 
 describe('createAudioController', () => {
   it('starts idle and moves from loading to playing after a user request', () => {
