@@ -106,12 +106,62 @@ export async function seedOnboardingSeen(page: Page): Promise<void> {
 }
 
 /**
+ * Seeds settings with `textSpeed: 'instant'` so dialogue text is complete the moment it appears
+ * (the typewriter reveal would otherwise make every text assertion wait). Keeps any settings the
+ * test already stored. Tests of the reveal itself set `textSpeed: 'normal'` on their own.
+ */
+export async function useInstantText(page: Page): Promise<void> {
+  await page.route('**/favicon.ico', (route) => route.fulfill({ status: 204 }));
+  await page.goto('/@vite/env');
+  await page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('lexicon-settings', 1);
+      request.onupgradeneeded = () => {
+        request.result.createObjectStore('records');
+        request.result.createObjectStore('backups', { autoIncrement: true });
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction('records', 'readwrite');
+        const store = tx.objectStore('records');
+        const existing = store.get('local-settings');
+        existing.onsuccess = () => {
+          if (existing.result !== undefined) return;
+          store.put(
+            {
+              schemaVersion: 2,
+              translationMode: 'Learning',
+              volume: 80,
+              subtitles: 'auto',
+              reducedMotion: false,
+              textSpeed: 'instant',
+              uiSounds: true,
+            },
+            'local-settings',
+          );
+        };
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    } finally {
+      db.close();
+    }
+  });
+}
+
+/**
  * Enters the world through the real title flow: Continue when a save exists, otherwise a new
  * case (default support level, confirmation and briefing are accepted when they appear).
  */
 export async function openWorld(page: Page, options: OpenWorldOptions = {}): Promise<void> {
   const { coach = 'seen' } = options;
-  if (coach === 'seen') await seedOnboardingSeen(page);
+  if (coach === 'seen') {
+    await seedOnboardingSeen(page);
+    await useInstantText(page);
+  }
   await page.goto('/');
   await passTitle(page, options);
 }

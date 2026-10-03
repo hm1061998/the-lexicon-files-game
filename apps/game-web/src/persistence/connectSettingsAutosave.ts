@@ -1,9 +1,9 @@
 import type { SettingsStore } from '../state/settingsStore';
-import type { SettingsV1 } from './settingsSchema';
+import type { SettingsV2 } from './settingsSchema';
 
 export function connectSettingsAutosave(
   store: SettingsStore,
-  save: (settings: SettingsV1) => Promise<void>,
+  save: (settings: SettingsV2) => Promise<void>,
   onError: (error: unknown) => void,
 ): () => void {
   let chain = Promise.resolve();

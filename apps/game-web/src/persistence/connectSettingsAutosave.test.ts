@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { createDefaultSettings, type SettingsV1 } from './settingsSchema';
+import { createDefaultSettings, type SettingsV2 } from './settingsSchema';
 import { createSettingsStore } from '../state/settingsStore';
 import { connectSettingsAutosave } from './connectSettingsAutosave';
 
 describe('settings autosave', () => {
   it('writes once per change, in order, and skips identical values', async () => {
     const store = createSettingsStore(createDefaultSettings({ prefersReducedMotion: false }));
-    const saves: SettingsV1[] = [];
+    const saves: SettingsV2[] = [];
     const disconnect = connectSettingsAutosave(
       store,
       async (s) => {

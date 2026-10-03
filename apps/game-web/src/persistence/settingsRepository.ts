@@ -1,6 +1,6 @@
 import { openDB, type DBSchema } from 'idb';
 import type { TranslationMode } from '@lexicon/shared-types';
-import { createDefaultSettings, parseSettings, type SettingsV1 } from './settingsSchema';
+import { createDefaultSettings, parseSettings, type SettingsV2 } from './settingsSchema';
 
 interface SettingsDbSchema extends DBSchema {
   records: { key: string; value: unknown };
@@ -8,15 +8,15 @@ interface SettingsDbSchema extends DBSchema {
 }
 export type SettingsDatabase = {
   get(): Promise<unknown>;
-  put(record: SettingsV1): Promise<void>;
+  put(record: SettingsV2): Promise<void>;
   backup(raw: unknown): Promise<void>;
 };
 export type SettingsLoadResult =
-  | { status: 'loaded' | 'missing' | 'recovered'; settings: SettingsV1; notice?: string }
-  | { status: 'memory-only'; settings: SettingsV1; error: string };
+  | { status: 'loaded' | 'missing' | 'recovered'; settings: SettingsV2; notice?: string }
+  | { status: 'memory-only'; settings: SettingsV2; error: string };
 export type SettingsRepository = {
   loadSettings(seed: { translationMode?: TranslationMode }): Promise<SettingsLoadResult>;
-  saveSettings(settings: SettingsV1): Promise<void>;
+  saveSettings(settings: SettingsV2): Promise<void>;
 };
 
 async function openSettingsDb(): Promise<SettingsDatabase> {
@@ -56,7 +56,11 @@ export function createSettingsRepository(
           return { status: 'missing', settings: fresh };
         }
         try {
-          return { status: 'loaded', settings: parseSettings(raw) };
+          const settings = parseSettings(raw);
+          // A v1 record is stored again as v2 so the next read is already current.
+          if ((raw as { schemaVersion?: unknown }).schemaVersion !== settings.schemaVersion)
+            await db.put(settings);
+          return { status: 'loaded', settings };
         } catch (error) {
           await db.backup(raw);
           await db.put(fresh);

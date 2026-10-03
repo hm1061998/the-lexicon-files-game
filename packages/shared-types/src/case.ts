@@ -157,6 +157,11 @@ export interface UiStrings {
   readonly settingsSubtitlesOn: string;
   readonly settingsSubtitlesOff: string;
   readonly settingsReducedMotion: string;
+  readonly settingsTextSpeed: string;
+  readonly textSpeedInstant: string;
+  readonly textSpeedNormal: string;
+  readonly textSpeedFast: string;
+  readonly settingsUiSounds: string;
   readonly settingsRecovered: string;
   readonly settingsUnavailable: string;
   readonly listeningLoading: string;

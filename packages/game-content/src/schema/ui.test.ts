@@ -69,6 +69,8 @@ describe('parseUiStrings', () => {
     expect(strings.settingsSubtitlesOn).toBe('Luôn hiện');
     expect(strings.settingsSubtitlesOff).toBe('Tắt');
     expect(strings.settingsReducedMotion).toBe('Giảm chuyển động');
+    expect(strings.settingsTextSpeed).toBe('Tốc độ chữ');
+    expect(strings.settingsUiSounds).toBe('Âm thanh giao diện');
     expect(strings.settingsRecovered).toContain('khôi phục');
     expect(strings.settingsUnavailable).toContain('phiên này');
   });

@@ -36,6 +36,22 @@ describe('settings repository', () => {
     expect(await repo.loadSettings({})).toEqual({ status: 'loaded', settings: saved });
   });
 
+  it('writes the upgraded v2 record back after reading v1', async () => {
+    const v1 = {
+      schemaVersion: 1,
+      translationMode: 'Immersion',
+      volume: 20,
+      subtitles: 'off',
+      reducedMotion: false,
+    };
+    const store = memory(v1);
+    const repo = createSettingsRepository(async () => store.db);
+    const result = await repo.loadSettings({});
+    expect(result.status).toBe('loaded');
+    expect(result.settings).toMatchObject({ schemaVersion: 2, volume: 20, textSpeed: 'normal' });
+    expect(store.value()).toEqual(result.settings);
+  });
+
   it('backs up a corrupt record before writing defaults', async () => {
     const raw = { schemaVersion: 9 };
     const store = memory(raw);

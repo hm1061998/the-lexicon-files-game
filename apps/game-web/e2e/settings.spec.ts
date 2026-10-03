@@ -109,11 +109,12 @@ test('settings and progress survive reload', async ({ page }) => {
   await expect
     .poll(() => readRecord(page, 'lexicon-settings', 'records', 'local-settings'))
     .toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       translationMode: 'Immersion',
       volume: 40,
       subtitles: 'on',
       reducedMotion: true,
+      uiSounds: true,
     });
 
   const hotspot = scenePoint('main_office', 'phone_recording');

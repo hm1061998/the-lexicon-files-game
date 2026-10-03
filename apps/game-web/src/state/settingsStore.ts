@@ -1,17 +1,19 @@
 import { createStore, type StoreApi } from 'zustand/vanilla';
 import type { TranslationMode } from '@lexicon/shared-types';
-import type { SettingsV1, SubtitlePreference } from '../persistence/settingsSchema';
+import type { SettingsV2, SubtitlePreference, TextSpeed } from '../persistence/settingsSchema';
 
 export type SettingsStoreState = {
-  settings: SettingsV1;
+  settings: SettingsV2;
   setTranslationMode(mode: TranslationMode): void;
   setVolume(volume: number): void;
   setSubtitles(subtitles: SubtitlePreference): void;
   setReducedMotion(reducedMotion: boolean): void;
+  setTextSpeed(textSpeed: TextSpeed): void;
+  setUiSounds(uiSounds: boolean): void;
 };
 export type SettingsStore = StoreApi<SettingsStoreState>;
 
-export function createSettingsStore(initial: SettingsV1): SettingsStore {
+export function createSettingsStore(initial: SettingsV2): SettingsStore {
   return createStore<SettingsStoreState>((set) => ({
     settings: initial,
     setTranslationMode: (translationMode) =>
@@ -26,5 +28,7 @@ export function createSettingsStore(initial: SettingsV1): SettingsStore {
     setSubtitles: (subtitles) => set((s) => ({ settings: { ...s.settings, subtitles } })),
     setReducedMotion: (reducedMotion) =>
       set((s) => ({ settings: { ...s.settings, reducedMotion } })),
+    setTextSpeed: (textSpeed) => set((s) => ({ settings: { ...s.settings, textSpeed } })),
+    setUiSounds: (uiSounds) => set((s) => ({ settings: { ...s.settings, uiSounds } })),
   }));
 }

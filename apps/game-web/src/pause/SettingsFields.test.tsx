@@ -22,6 +22,13 @@ describe('SettingsFields', () => {
     expect(html).toContain(strings.settingsReducedMotion);
     expect(html).toContain(strings.vocabularyModeBeginner);
   });
+  it('offers text speed and UI sounds', () => {
+    expect(html).toContain(strings.settingsTextSpeed);
+    expect(html).toContain(strings.textSpeedInstant);
+    expect(html).toContain(strings.textSpeedNormal);
+    expect(html).toContain(strings.textSpeedFast);
+    expect(html).toContain(strings.settingsUiSounds);
+  });
   it('has no resume button', () => {
     expect(html).not.toContain(strings.resume);
   });
