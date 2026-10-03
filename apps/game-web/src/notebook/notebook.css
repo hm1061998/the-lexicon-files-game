@@ -436,6 +436,8 @@
 }
 .spread-reader {
   height: 100%;
+  /* A sideways touch is a page swipe, so the browser must not take it for a pan. */
+  touch-action: pan-y;
 }
 .spread-reader > .page-turn-surface {
   flex: 1;

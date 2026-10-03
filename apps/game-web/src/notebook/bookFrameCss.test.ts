@@ -27,4 +27,8 @@ describe('notebook book frame CSS guards', () => {
   it('keeps no reference to the removed PaperPanel', () => {
     expect(read('./notebook.css')).not.toContain('.paper-panel');
   });
+
+  it('lets a horizontal touch reach the page swipe instead of panning', () => {
+    expect(read('./notebook.css')).toMatch(/\.spread-reader\s*\{[^}]*touch-action:\s*pan-y/);
+  });
 });

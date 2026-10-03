@@ -106,6 +106,7 @@ export function SpreadReader({
 
   // A horizontal swipe turns the pair: left for the next pages, right for the previous ones.
   const swipe = useRef<{ x: number; y: number } | null>(null);
+  const swiped = useRef(false);
   const down = (event: ReactPointerEvent<HTMLElement>) => {
     swipe.current = { x: event.clientX, y: event.clientY };
   };
@@ -115,8 +116,28 @@ export function SpreadReader({
     if (!start) return;
     const dx = event.clientX - start.x;
     const dy = event.clientY - start.y;
-    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) change(dx < 0 ? 1 : -1);
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      change(dx < 0 ? 1 : -1);
+      // The click that ends a swipe must not open whatever row the pointer let go over.
+      swiped.current = true;
+      setTimeout(() => (swiped.current = false), 0);
+    }
   };
+  // The right leaf is not the one the layout is measured on: if its text still spills (markup that is
+  // taller than the measurement copy), hold back height on both leaves and lay out again.
+  const rightRef = useRef<HTMLDivElement>(null);
+  const signature = JSON.stringify(blocks) + revision;
+  const [reserved, setReserved] = useState({ key: signature, px: 0 });
+  const reserve = reserved.key === signature ? reserved.px : 0;
+  useEffect(() => {
+    const right = rightRef.current;
+    if (!right || !ready || reserve >= 240) return;
+    const frame = requestAnimationFrame(() => {
+      if (right.scrollHeight > right.clientHeight + 1)
+        setReserved({ key: signature, px: reserve + 24 });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [ready, layout, first, reserve, signature]);
 
   const position = strings.pagePosition
     .replace('{current}', last - first > 1 ? `${first + 1}–${last}` : String(first + 1))
@@ -157,6 +178,12 @@ export function SpreadReader({
       onPointerDown={down}
       onPointerUp={up}
       onPointerCancel={() => (swipe.current = null)}
+      onClickCapture={(event) => {
+        if (swiped.current) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }}
       onKeyDown={(e) => {
         if (e.key !== 'PageDown' && e.key !== 'PageUp') return;
         if (
@@ -186,14 +213,17 @@ export function SpreadReader({
             id={id}
             data-page-index={first}
             tabIndex={-1}
+            style={reserve ? { marginBottom: reserve } : undefined}
           >
             {body(first)}
           </div>
           {!single && (
             <div
+              ref={rightRef}
               className="page-viewport spread-leaf spread-leaf--right"
               data-page-index={first + 1}
               tabIndex={-1}
+              style={reserve ? { marginBottom: reserve } : undefined}
             >
               {body(first + 1)}
             </div>

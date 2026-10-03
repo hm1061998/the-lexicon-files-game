@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { InkButton, PaperButton, PinnedCard } from '@lexicon/ui';
 import type { ContradictionResult } from '@lexicon/shared-types';
 import type { InvestigationView } from '../investigation/selectInvestigationView';
@@ -24,6 +25,11 @@ export function ContradictionWorkspace({
   onSubmit: (id: string, factIds: readonly string[]) => ContradictionResult;
 }) {
   const s = learning.strings;
+  const results = useRef<HTMLDivElement>(null);
+  // The panel scrolls without a bar: bring a new result into view so a check always shows its answer.
+  useEffect(() => {
+    if (ui.feedback) results.current?.scrollIntoView?.({ block: 'nearest' });
+  }, [ui.feedback]);
   const picked = ui.selectedFactIds
     .map((id) => view.facts.find((f) => f.id === id))
     .filter((f): f is NonNullable<typeof f> => f !== undefined);
@@ -101,7 +107,7 @@ export function ContradictionWorkspace({
                 </PaperButton>
               ) : null}
             </div>
-            <div role="status" className="compare-results">
+            <div role="status" className="compare-results" ref={results}>
               {ui.feedback ? (
                 <p className="notebook-feedback compare-sticky">{ui.feedback}</p>
               ) : null}

@@ -128,4 +128,31 @@ test.describe('Notebook, board and accusation', () => {
     });
     expect(inside).toBe(true);
   });
+
+  test('a click that wobbles a pixel still picks a fact, and a vertical drag moves the list', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await investigationScreens.find((s) => s.name === 'board-compare')!.reach(page);
+    const board = page.locator('.deduction-board');
+    const fact = board.locator('.compare-fact').first();
+    const box = (await fact.boundingBox())!;
+    // Press near the right edge of the page and wobble one pixel: that is a click, not a drag.
+    await page.mouse.move(box.x + box.width - 10, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width - 10, box.y + box.height / 2 + 1);
+    await page.mouse.up();
+    await expect(fact).toHaveAttribute('aria-pressed', 'true');
+    // Dragging the list upwards scrolls it down by roughly the distance dragged.
+    const list = board.locator('.compare-facts .swipe-row');
+    const before = await list.evaluate((el) => el.scrollTop);
+    const listBox = (await list.boundingBox())!;
+    await page.mouse.move(listBox.x + 30, listBox.y + listBox.height - 20);
+    await page.mouse.down();
+    await page.mouse.move(listBox.x + 30, listBox.y + 20, { steps: 8 });
+    await page.mouse.up();
+    const after = await list.evaluate((el) => el.scrollTop);
+    const scrollable = await list.evaluate((el) => el.scrollHeight > el.clientHeight + 1);
+    if (scrollable) expect(after).toBeGreaterThan(before);
+  });
 });
