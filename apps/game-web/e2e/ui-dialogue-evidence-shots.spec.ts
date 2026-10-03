@@ -11,6 +11,7 @@ const viewports = [
   { w: 1280, h: 720 },
   { w: 760, h: 600 },
   { w: 390, h: 844 },
+  { w: 844, h: 390 },
 ] as const;
 
 test.describe('dialogue and evidence screenshots (opt-in)', () => {

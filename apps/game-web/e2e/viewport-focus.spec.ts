@@ -92,7 +92,7 @@ for (const viewport of [
 test('compact evidence scrolls internally and returns to a visible close control', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 760, height: 360 });
+  await page.setViewportSize({ width: 390, height: 300 });
   await openWorld(page);
   await page.waitForFunction(() => window.__lexiconDebug !== undefined);
   const point = scenePoint('main_office', 'meeting_minutes');

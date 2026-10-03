@@ -47,6 +47,31 @@ test.describe('Dialogue and evidence paper UI', () => {
         expect(pb.x, 'paper left').toBeGreaterThanOrEqual(-0.5);
         expect(pb.x + pb.width, 'paper right').toBeLessThanOrEqual(w + 0.5);
 
+        // No scrolling inside the paper (in-game overlays read like objects, not web pages).
+        const scrolls = await page.evaluate((selector) => {
+          const root = document.querySelector(selector) as HTMLElement | null;
+          const nodes = root ? [root, ...Array.from(root.querySelectorAll<HTMLElement>('*'))] : [];
+          return nodes
+            .filter((el) => {
+              const overflow = getComputedStyle(el).overflowY;
+              return (
+                (overflow === 'auto' || overflow === 'scroll') &&
+                el.scrollHeight - el.clientHeight > 1
+              );
+            })
+            .map((el) => `${el.className} ${el.scrollHeight}>${el.clientHeight}`);
+        }, paperSelector);
+        expect(scrolls, 'scrolling containers').toEqual([]);
+
+        // An open definition card lies entirely on the paper.
+        const card = page.locator('.dialogue-panel .vocabulary-popover');
+        if (await card.isVisible()) {
+          const cb = (await card.boundingBox())!;
+          expect(cb.y, 'card top').toBeGreaterThanOrEqual(pb.y - 0.5);
+          expect(cb.y + cb.height, 'card bottom').toBeLessThanOrEqual(pb.y + pb.height + 0.5);
+          expect(cb.x + cb.width, 'card right').toBeLessThanOrEqual(pb.x + pb.width + 0.5);
+        }
+
         const buttons = await page
           .locator(
             '.dialogue-panel button:not(.vocabulary-word), .evidence-modal button:not(.vocabulary-word)',
@@ -75,17 +100,15 @@ test.describe('Dialogue and evidence paper UI', () => {
     });
   }
 
-  test('the definition card never covers a dialogue choice', async ({ page }) => {
+  test('an open definition card replaces the choices instead of covering them', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await dialogueEvidenceScreens.find((s) => s.name === 'vocab-in-dialogue')!.reach(page);
-    const card = page.locator('.dialogue-panel .vocabulary-popover');
-    await expect(card).toHaveCSS('position', 'static');
-    const cardBox = (await card.boundingBox())!;
-    for (const choice of await page.locator('.dialogue-choice').all()) {
-      const box = (await choice.boundingBox())!;
-      const overlaps = box.y < cardBox.y + cardBox.height && box.y + box.height > cardBox.y;
-      expect(overlaps, await choice.innerText()).toBe(false);
-    }
+    await expect(page.locator('.dialogue-panel .vocabulary-popover')).toBeVisible();
+    await expect(page.locator('.dialogue-choice').first()).toBeHidden();
+    await page.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+    await expect(page.locator('.dialogue-choice').first()).toBeVisible();
   });
 
   // The OS preference path; the in-game setting uses the same selectors (see motion.css and its CSS tests).

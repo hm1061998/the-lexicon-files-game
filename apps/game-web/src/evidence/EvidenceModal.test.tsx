@@ -62,4 +62,29 @@ describe('EvidenceModal', () => {
     expect(html).toContain('ink-button evidence-close');
     expect(html).toContain(`aria-label="${strings.close}"`);
   });
+
+  it('splits a listening evidence card into two sections so nothing needs scrolling', () => {
+    const task = loadCaseDefinition('case-001').listeningTasks[0]!;
+    const audio = loadCaseDefinition('case-001').evidences.find((e) => e.category === 'audio')!;
+    const html = renderToString(
+      <EvidenceModal
+        evidence={audio}
+        strings={strings}
+        onClose={() => {}}
+        listeningTask={task}
+        onListeningAnswer={() => ({ correct: false }) as never}
+      />,
+    );
+    expect(html).toContain('evidence-tabs');
+    expect(html.match(/aria-pressed="(true|false)"/g)).toHaveLength(2);
+    expect(html).toMatch(/evidence-section[^>]*hidden/);
+    expect(html).toContain('listening-task');
+  });
+
+  it('keeps a plain evidence card in one section without tabs', () => {
+    const html = renderToString(
+      <EvidenceModal evidence={evidence} strings={strings} onClose={() => {}} />,
+    );
+    expect(html).not.toContain('evidence-tabs');
+  });
 });

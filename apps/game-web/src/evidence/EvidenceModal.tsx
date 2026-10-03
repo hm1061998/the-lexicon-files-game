@@ -61,6 +61,10 @@ export function EvidenceModal({
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const showImage = shouldShowEvidenceImage(evidence.image, failedImage);
+  const hasListening = evidence.category === 'audio' && !!listeningTask && !!onListeningAnswer;
+  // The recording is the point of an audio card, so it opens on the listening section.
+  const [section, setSection] = useState<'evidence' | 'listening'>('listening');
+  const showEvidence = !hasListening || section === 'evidence';
 
   useEffect(() => {
     const previousFocus =
@@ -74,7 +78,7 @@ export function EvidenceModal({
       if (!currentDialog || event.key !== 'Tab') return;
       const focusables = Array.from(
         currentDialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
+      ).filter((el) => !el.closest('[hidden]'));
       const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const target = getFocusTrapTarget(focusables, active, event.shiftKey);
       if (target) {
@@ -101,44 +105,68 @@ export function EvidenceModal({
       <InkButton className="evidence-close" autoFocus aria-label={strings.close} onClick={onClose}>
         {strings.close}
       </InkButton>
-      {showImage && (
-        <span className="evidence-photo">
-          <img
-            className="evidence-art"
-            src={evidence.image}
-            alt=""
-            onError={() => setFailedImage(nextImageFailureState('error', evidence.image))}
+      {hasListening && (
+        <div className="evidence-tabs" role="group" aria-label={evidence.name}>
+          <button
+            type="button"
+            className="evidence-tab"
+            aria-pressed={section === 'listening'}
+            onClick={() => setSection('listening')}
+          >
+            {strings.listeningTask}
+          </button>
+          <button
+            type="button"
+            className="evidence-tab"
+            aria-pressed={section === 'evidence'}
+            onClick={() => setSection('evidence')}
+          >
+            {strings.evidence}
+          </button>
+        </div>
+      )}
+      <div className="evidence-section" hidden={!showEvidence}>
+        {showImage && (
+          <span className="evidence-photo">
+            <img
+              className="evidence-art"
+              src={evidence.image}
+              alt=""
+              onError={() => setFailedImage(nextImageFailureState('error', evidence.image))}
+            />
+          </span>
+        )}
+        <p className="evidence-category">{strings.evidence}</p>
+        <p>
+          <VocabularyText
+            text={evidence.description}
+            translationVi={evidence.descriptionVi}
+            spans={evidence.vocabularySpans}
+            contextId={`evidence:${evidence.id}:description`}
+            catalogue={vocabulary}
+            mode={translationMode}
+            strings={strings}
+            onEncounter={onEncounter}
+            onInspect={onInspect}
+            onRevealTranslation={onRevealTranslation}
+            tutorialSeen={vocabularyTutorialSeen}
+            onTutorialSeen={onVocabularyTutorialSeen}
           />
-        </span>
-      )}
-      <p className="evidence-category">{strings.evidence}</p>
-      <p>
-        <VocabularyText
-          text={evidence.description}
-          translationVi={evidence.descriptionVi}
-          spans={evidence.vocabularySpans}
-          contextId={`evidence:${evidence.id}:description`}
-          catalogue={vocabulary}
-          mode={translationMode}
-          strings={strings}
-          onEncounter={onEncounter}
-          onInspect={onInspect}
-          onRevealTranslation={onRevealTranslation}
-          tutorialSeen={vocabularyTutorialSeen}
-          onTutorialSeen={onVocabularyTutorialSeen}
-        />
-      </p>
-      {evidence.category === 'audio' && listeningTask && onListeningAnswer && (
-        <ListeningTaskPanel
-          task={listeningTask}
-          mode={translationMode}
-          subtitles={subtitles}
-          completed={listeningCompleted}
-          onAnswer={(optionId) => onListeningAnswer(listeningTask.id, optionId)}
-          onTelemetry={(event, elapsedMs) => onListeningTelemetry?.(event, elapsedMs)}
-          strings={strings}
-        />
-      )}
+        </p>
+      </div>
+      <div className="evidence-listening" hidden={hasListening && section !== 'listening'}>
+        {evidence.category === 'audio' && listeningTask && onListeningAnswer && (
+          <ListeningTaskPanel
+            task={listeningTask}
+            mode={translationMode}
+            subtitles={subtitles}
+            completed={listeningCompleted}
+            onAnswer={(optionId) => onListeningAnswer(listeningTask.id, optionId)}
+            onTelemetry={(event, elapsedMs) => onListeningTelemetry?.(event, elapsedMs)}
+            strings={strings}
+          />
+        )}
+      </div>
     </ModalSheet>
   );
 }

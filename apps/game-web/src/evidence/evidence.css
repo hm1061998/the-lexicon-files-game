@@ -50,7 +50,7 @@
 
 .evidence-art {
   display: block;
-  width: 100%;
+  width: min(100%, 240px, 34vh);
   max-width: 240px;
   height: auto;
   aspect-ratio: 1;
@@ -179,4 +179,93 @@
   .listening-task {
     padding: 12px;
   }
+}
+
+/* Audio cards hold two sections (the recording, the evidence) so neither has to scroll. */
+.evidence-section[hidden],
+.evidence-listening[hidden] {
+  display: none;
+}
+
+.evidence-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.evidence-tab {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--lexicon-border);
+  border-radius: 3px 3px 0 0;
+  background: transparent;
+  color: var(--lexicon-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.evidence-tab[aria-pressed='true'] {
+  background: var(--lexicon-paper);
+  font-weight: 700;
+}
+
+.listening-support {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.listening-support p {
+  margin: 0;
+}
+
+/* Short wide screens: the card uses two columns instead of scrolling. */
+@media (max-height: 500px) and (min-width: 700px) {
+  .evidence-modal {
+    padding: 14px 18px 12px;
+  }
+
+  .evidence-modal .modal-sheet__heading {
+    font-size: 18px;
+  }
+
+  .evidence-tabs {
+    margin-top: 6px;
+  }
+
+  .evidence-section:not([hidden]) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    column-gap: 20px;
+  }
+
+  .evidence-section .evidence-photo {
+    grid-row: 1 / span 2;
+    margin: 12px 0 0;
+  }
+
+  .listening-task {
+    column-count: 2;
+    column-gap: 20px;
+    margin-top: 8px;
+    padding: 10px 14px;
+  }
+
+  .listening-task > * {
+    break-inside: avoid;
+  }
+
+  .listening-task .listening-question,
+  .listening-task .listening-transcript {
+    margin: 8px 0 0;
+  }
+}
+
+/* Last resort for very small screens: a thin ink scrollbar instead of the browser default. */
+.evidence-modal {
+  scrollbar-color: var(--lexicon-border) transparent;
+  scrollbar-width: thin;
 }

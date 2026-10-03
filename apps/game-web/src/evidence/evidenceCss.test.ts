@@ -33,4 +33,10 @@ describe('evidence CSS guards', () => {
     );
     expect(rule).toContain('var(--lexicon-dark-red)');
   });
+
+  it('lays the listening task out in two columns on short wide screens', () => {
+    expect(read('./evidence.css')).toMatch(
+      /@media \(max-height: 500px\) and \(min-width: 700px\)[^@]*\.listening-task\s*\{[^}]*column-count:\s*2/,
+    );
+  });
 });

@@ -33,4 +33,12 @@ describe('dialogue CSS guards', () => {
     expect(panel).not.toMatch(/overflow(-y)?:\s*auto/);
     expect(css).toMatch(/\.dialogue-panel > \[role='dialog'\]\s*\{[^}]*overflow-y:\s*auto/);
   });
+
+  it('swaps the choices for the definition card and splits the sheet on short wide screens', () => {
+    const css = read('./dialogue.css');
+    expect(css).toMatch(
+      /\.dialogue-panel:has\(\.vocabulary-popover\) \.dialogue-choices\s*\{[^}]*display:\s*none/,
+    );
+    expect(css).toMatch(/@media \(max-height: 500px\) and \(min-width: 700px\)/);
+  });
 });
