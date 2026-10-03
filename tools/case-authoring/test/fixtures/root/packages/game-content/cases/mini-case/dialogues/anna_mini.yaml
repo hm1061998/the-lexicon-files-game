@@ -1,0 +1,17 @@
+tree: anna_mini
+npc: anna
+done: anna_mini_done
+finish: [anna_topic_done]
+notes:
+  topic: anna_topic_read
+nodes:
+  entry:
+    say: 'Hello. Ask me about the [address].'
+    vi: 'Xin chào.'
+    ask:
+      - { id: ask_topic, say: 'What about it?', to: topic }
+  topic:
+    say: 'It is on the [package].'
+    do: [set anna_topic_read, give note]
+    ask:
+      - { id: done, say: 'Thanks.', to: entry, do: [set anna_topic_done] }

@@ -125,9 +125,11 @@ export function compileTree(source, ctx) {
   const completion =
     finish === undefined
       ? undefined
-      : Array.isArray(finish) && finish.every((f) => typeof f === 'string' && !/\s/.test(f))
-        ? flagsAll(finish)
-        : condition(finish, ['finish']);
+      : typeof finish === 'string' && !/\s/.test(finish)
+        ? flagsAll([finish])
+        : Array.isArray(finish) && finish.every((f) => typeof f === 'string' && !/\s/.test(f))
+          ? flagsAll(finish)
+          : condition(finish, ['finish']);
   const notes = isObject(doc.notes)
     ? Object.entries(doc.notes).map(([nodeId, value]) => ({
         nodeId,

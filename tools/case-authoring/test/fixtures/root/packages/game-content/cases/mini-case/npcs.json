@@ -1,0 +1,6 @@
+{
+  "npcs": [
+    { "id": "anna", "name": "Anna", "role": "Clerk", "dialogueTreeId": "anna_mini" },
+    { "id": "leo", "name": "Leo", "role": "Courier", "dialogueTreeId": "leo_mini" }
+  ]
+}

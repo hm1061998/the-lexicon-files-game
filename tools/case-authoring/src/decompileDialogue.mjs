@@ -48,7 +48,8 @@ export function decompileTree(tree, vocabulary) {
     ],
   });
   const out = { tree: tree.id, npc: tree.npcId, done: tree.completionFlag };
-  out.finish = shortCondition(tree.completionCondition);
+  const finish = shortCondition(tree.completionCondition);
+  out.finish = typeof finish === 'string' ? [finish] : finish;
   if (tree.notebookStatements?.length) {
     out.notes = Object.fromEntries(
       tree.notebookStatements.map((n) => [n.nodeId, shortCondition(n.recordedCondition)]),

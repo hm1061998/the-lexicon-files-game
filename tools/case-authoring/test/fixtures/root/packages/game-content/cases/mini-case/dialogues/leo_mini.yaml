@@ -1,0 +1,13 @@
+tree: leo_mini
+npc: leo
+done: leo_mini_done
+finish: [leo_topic_done]
+nodes:
+  entry:
+    say: 'Hi.'
+    ask:
+      - { id: ask, say: 'Where were you?', to: answer, needs: [evidence note] }
+  answer:
+    say: 'At my desk.'
+    ask:
+      - { id: done, say: 'Thanks.', to: entry, do: [set leo_topic_done] }

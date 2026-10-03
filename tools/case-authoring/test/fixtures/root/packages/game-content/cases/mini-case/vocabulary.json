@@ -1,0 +1,6 @@
+{
+  "vocabulary": [
+    { "id": "address", "lemma": "address", "surfaceForms": ["addresses"] },
+    { "id": "package", "lemma": "package", "surfaceForms": ["packages"] }
+  ]
+}
