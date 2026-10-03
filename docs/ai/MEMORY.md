@@ -1,8 +1,8 @@
 ---
 schema_version: 1
-updated_at: 2026-10-03T15:00:00+07:00
+updated_at: 2026-10-03T18:00:00+07:00
 phase: ui-dialogue-evidence
-status: in_progress
+status: complete
 result_commit: 904f6ff
 active_spec: docs/superpowers/specs/2026-10-03-ui-dialogue-evidence-design.md
 active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
@@ -15,11 +15,11 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
 
 ## Current Phase
 
-- UI phần 4 (hội thoại, vật chứng, bài nghe, thẻ từ vựng): Task 0–4 xong trên `dev`, chưa push. Chờ người dùng duyệt ảnh trước/sau (`docs/ai/playtests/2026-10-03-ui-dialogue-evidence/`). Phần 1–3 và PR-03 đã xong và đã push.
+- UI phần 4 (hội thoại, vật chứng, bài nghe, thẻ từ vựng): Task 0–4 xong. Người dùng đã duyệt ảnh trước/sau (`docs/ai/playtests/2026-10-03-ui-dialogue-evidence/`, 03/10/2026): phase hoàn tất, đã push `dev`. Phần 1–3 và PR-03 đã xong và đã push.
 
 ## Active Goal
 
-- Người dùng duyệt ảnh phần 4; không tự mở phase mới.
+- Chọn phase kế tiếp; không tự mở phase mới.
 
 ## Current Status
 
@@ -56,7 +56,7 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
 
 ## Next Actions
 
-1. Chờ người dùng duyệt ảnh phần 4; sau đó mới đánh dấu phase hoàn tất. Chưa push `dev`.
+1. Chọn việc kế tiếp (chờ người dùng); `dev` đã push, không còn việc push treo.
 2. Phần 5 UI (sổ tay, bảng suy luận, xóa alias `PaperPanel`) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor shell và phần 4.
 
