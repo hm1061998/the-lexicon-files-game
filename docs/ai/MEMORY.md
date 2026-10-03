@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-03T20:00:00+07:00
-phase: ui-game-feel
-status: approved
-result_commit: f160f4b
-active_spec: docs/superpowers/specs/2026-10-03-ui-game-feel-design.md
-active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
+updated_at: 2026-10-04T23:00:00+07:00
+phase: ui-investigation-desk
+status: in_progress
+result_commit: 18beb0c
+active_spec: docs/superpowers/specs/2026-10-04-ui-investigation-desk-design.md
+active_plan: docs/superpowers/plans/2026-10-04-ui-investigation-desk.md
 ---
 
 ## Metadata
@@ -15,11 +15,12 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Current Phase
 
+- UI phần 5 (sổ tay J, bảng suy luận B, bảng buộc tội): Task 0–7 xong, review độc lập đã xử lý, chờ người dùng duyệt ảnh `docs/ai/playtests/2026-10-04-ui-investigation/after/` rồi push `dev`. Sổ tay là cặp trang liền mạch (vuốt/nút lật cả cặp); bảng suy luận không phân trang (vuốt ngang/cuộn dọc không thanh cuộn); thẻ ghim, dây theo đinh, thẻ từ vựng giấy ghim; không bôi đen chữ toàn game. Báo cáo `docs/ai/2026-10-04-ui-investigation-desk-verification.md`.
 - UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 và 3b xong. Người dùng đã duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`, 04/10/2026): phase hoàn tất, đã push `dev`. Còn tùy chọn: thêm `tape-loop` CC0 và nghe thử âm giao diện. Phần 1–4 đã xong và đã push.
 
 ## Active Goal
 
-- Chọn phase kế tiếp; không tự mở phase mới.
+- Chờ người dùng duyệt ảnh phần 5; sau đó push `dev`, chọn phase kế tiếp (không tự mở phase mới).
 
 ## Current Status
 
@@ -56,12 +57,13 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Next Actions
 
-1. Chọn việc kế tiếp (chờ người dùng); `dev` đã push. Tùy chọn: thêm `tape-loop` CC0 vào `ui_sound_map.json` rồi chạy `import_ui_sounds.py`.
-2. Phần 5 UI (sổ tay, bảng suy luận, buộc tội, xóa alias `PaperPanel`, chuyển nút còn lại) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
-3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor phần 3/4/4b.
+1. Người dùng duyệt ảnh phần 5 (`docs/ai/playtests/2026-10-04-ui-investigation/after/`), rồi push `dev` và chuyển phase `ui-investigation-desk` sang complete.
+2. Chọn việc kế tiếp (chờ người dùng); PR-04 sau khi duyệt PR-03. Tùy chọn: thêm `tape-loop` CC0 vào `ui_sound_map.json` rồi chạy `import_ui_sounds.py`.
+3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor phần 3/4/4b/5 (phần 5: xem báo cáo verification).
 
 ## Verification
 
+- Phần 5 (04/10): lint, test (1245), build, typecheck, prettier, memory:check xanh; pytest 70 pass/1 đỏ có sẵn; E2E đầy đủ 335 pass, 21 đỏ = 17 có sẵn + 4 spec đã sửa và chạy lại xanh; một review opus: 1 Critical + 5 Important sửa. Chi tiết `docs/ai/2026-10-04-ui-investigation-desk-verification.md`.
 - Phần 4b (03–04/10): lint, test (game-web 789, content 281, core 59, ui 54), build, typecheck, format, pytest 70 pass/1 đỏ có sẵn, `node --test build_peaks` 6/6; E2E đầy đủ 277 pass/19 đỏ (17 có sẵn + 2 đã sửa). Chi tiết `docs/ai/2026-10-03-ui-game-feel-verification.md`.
 - Shell (02–03/10): lint, test (game-web 694, content 277, core 59, ui 49), build, typecheck, format, memory:check; E2E đầy đủ 220 pass/17 đỏ có sẵn; 93 test liên quan xanh sau review. Chi tiết `docs/ai/2026-10-02-ui-shell-verification.md`.
 - Gói 02/10 (`d357cbf`): lint 7 project, test (game-web 547, content 188), build, typecheck, prettier, memory:check PASS; nhóm E2E 61 passed (21,1 phút). Chi tiết: report 2026-10-02-investigation-pagination.
