@@ -23,6 +23,9 @@
 - Font ≥ 14px, focus visible, modal có focus trap, điều khiển được bằng bàn phím.
 - UI diegetic (notebook, case file, paper) — không giống dashboard LMS.
 - Text/ID hiển thị lấy từ content, không hardcode.
+- Nút: chỉ ba loại trong `packages/ui` — `InkButton` (thao tác phụ), `PaperButton` (thao tác chính), `DeviceKey` (phím trên thiết bị như máy ghi âm); từ vựng nội dòng `.vocabulary-word` là ngoại lệ. Không thêm `<button>` thô ở các màn phần 1–4b (`button-guard.spec.ts` canh); sổ tay/bảng suy luận/buộc tội chờ phần 5.
+- Âm thanh giao diện là âm chung của game, không thuộc `case.audio`: nút gắn `data-sfx` (`press`, `paper-open`, `paper-close`, `pen`, `stamp`, `tab`, `device-click`), một listener ở `document` phát qua `audio/uiSound.ts`; nút `disabled`/`aria-disabled` im, `uiSounds=false` hoặc volume 0 im, file nhạc nằm trong `public/audio/ui/` kèm `provenance.json` (CC0 kiểm giấy phép từng file).
+- Hội thoại là dải thẩm vấn (phím 1–9, Space/E/Enter, L mở nhật ký); chữ hiện dần theo `textSpeed` (E2E mặc định `instant` qua `useInstantText`). Tilt/animation mới phải đăng ký trong `packages/ui/src/primitives/motion.css` cho cả `lexicon-motion-off` và `prefers-reduced-motion`.
 
 ## State & persistence
 

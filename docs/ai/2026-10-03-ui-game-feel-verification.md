@@ -16,3 +16,33 @@ Ngày: 03/10/2026. Plan: `docs/superpowers/plans/2026-10-03-ui-game-feel.md`. Sp
 ## Task 3b — âm thanh CC0 (chờ người dùng)
 
 `assets/_incoming/audio/` chưa tồn tại (03/10/2026). Cần người dùng tải Kenney Interface Sounds và Kenney RPG Audio (CC0) vào `assets/_incoming/audio/kenney-interface-sounds/` và `kenney-rpg-audio/` (tuỳ chọn một tiếng băng chạy CC0 vào `oga-tape/` kèm URL nguồn). Cho đến lúc đó `UI_SOUND_FILES` rỗng: dịch vụ âm thanh UI (Task 3a) đã nối nhưng game im lặng, không lỗi. Task này chưa hoàn tất.
+
+## Ảnh sau và so sánh
+
+`docs/ai/playtests/2026-10-03-ui-game-feel/after/` — 6 màn × 4 kích thước (thêm `dialogue-log`).
+Trước → sau: hội thoại từ tờ giấy dưới đáy thành dải thẩm vấn tối có chân dung ảnh dán, chữ Literata 24px hiện dần, lựa chọn đánh số 1–9 và ghi chú tay "Ghi chú điều tra"; camera đẩy vào ×1,2; nhật ký hội thoại (phím L) là cột giấy bên phải; bài nghe là máy ghi âm cassette (hai cuộn, màn hình LCD, sóng âm thật 64 cột, bốn phím); vật chứng đặt trên mặt bàn gỗ với hai mục dạng tab hồ sơ; mọi nút thuộc ba loại (ink, paper, device) có trạng thái hover/nhấn/focus và gắn `data-sfx`.
+
+## Kết quả đo
+
+| Hạng mục | Trước | Sau |
+| --- | --- | --- |
+| FPS `main_office` đứng yên (GL phần mềm) | 10,8 / 11,5 / 11,5 lúc ghi baseline | 10,5 / 10,7 / 8,5 và 10,1 / 9,8 / 8,9 |
+| FPS đo lại cùng điều kiện máy lúc đo "sau" | commit baseline `859c447`: 9,7 / 10,3 | code mới: trung bình ≈ 9,8 |
+
+Máy chậm hơn lúc ghi baseline (cùng commit baseline đo lại chỉ còn ≈ 10,0), nên so sánh công bằng là baseline đo lại ≈ 10,0 và code mới ≈ 9,8: chênh ≈ 2%, trong ngưỡng 10%. Không đụng Phaser ở cảnh đứng yên.
+
+## Lệnh Definition of Done
+
+- `npm run lint`: 0 lỗi. `npm run test`: game-web 787, content 281, core 59, ui 54, 18 + 1 ở project khác, đều pass. `npm run build`, `npm run typecheck`, `prettier --check .`: đạt. `build_ui_materials.py --check`: không drift.
+- `python -m pytest tools/art-codegen -q`: 70 pass, 1 đỏ có sẵn (`test_chair_directions`). `node --test tools/audio-codegen/build_peaks.test.mjs`: 6/6.
+- `npm run test:e2e` đầy đủ: 277 pass, 85 skipped, 19 đỏ = 17 đỏ có sẵn + 2 do phase này (`feedback-audio` lời đọc và lỗi tải giọng đọc: vùng đọc ẩn của dải hội thoại làm `getByText` trùng). Đã sửa (vùng đọc ẩn chỉ chứa câu khi đang hiện dần) và chạy lại: cả hai xanh; `dialogue`, `dialogue-band`, `ui-dialogue-evidence` xanh (37).
+- E2E mới: `dialogue-band` (6), `button-guard` (15), `listening` (+2), `ui-dialogue-evidence` (đo không cuộn, thẻ nằm trên giấy).
+
+## Ruling của executor
+
+Xem `Ruling:` trong ledger. Tóm tắt: nghe `document` thay vì `App.tsx`; `useTextReveal(text, speed)` không có tham số `reducedMotion` (tốc độ chữ là lựa chọn riêng); không thêm `revealedChars` cho `VocabularyText`; vòng focus màu giấy trên dải tối; thẻ vật chứng giữ `ModalSheet` thay vì `FolderCover` (cuộn); thẻ bài nghe mở với focus ở phím Phát để Space phát; `button-guard` cho phép `.vocabulary-word`; `:where()` cho nền nút; animation đóng 160ms hoãn; Task 3b chờ người dùng.
+
+## Việc còn chờ
+
+- **Âm thanh giao diện:** chưa có file CC0 (Task 3b chờ người dùng đặt Kenney Interface Sounds / RPG Audio vào `assets/_incoming/audio/`). Mọi cơ chế đã nối; game im lặng cho đến khi có file.
+- Animation đóng 160ms (cần giữ phần tử khi thoát).

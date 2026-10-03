@@ -81,8 +81,9 @@ export function DialogueBand({
           </div>
           <div className="dialogue-body">
             <p ref={textRef} tabIndex={-1} lang="en" className="dialogue-text">
+              {/* The whole line is announced while it types; once shown, the visible text is the only copy. */}
               <span className="dialogue-sr-only" aria-live="polite">
-                {node.text}
+                {done ? null : node.text}
               </span>
               <span aria-hidden={done ? undefined : 'true'}>{renderText()}</span>
             </p>
