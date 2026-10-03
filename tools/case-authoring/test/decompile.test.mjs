@@ -3,6 +3,7 @@ import test from 'node:test';
 import { parse } from 'yaml';
 
 import { compileTree } from '../src/compileDialogue.mjs';
+import { errorsOf } from './util.mjs';
 import { decompileTree } from '../src/decompileDialogue.mjs';
 
 const vocabulary = [
@@ -93,7 +94,7 @@ test('a tree becomes short YAML with the documented keys', () => {
 test('decompiling then compiling gives the tree back', () => {
   const { yaml } = decompileTree(tree, vocabulary);
   const back = compileTree(yaml, ctx);
-  assert.deepEqual(back.issues, []);
+  assert.deepEqual(errorsOf(back.issues), []);
   assert.deepEqual(back.tree, tree);
 });
 

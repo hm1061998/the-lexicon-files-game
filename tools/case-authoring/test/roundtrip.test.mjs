@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { compileTree } from '../src/compileDialogue.mjs';
 import { decompileTree } from '../src/decompileDialogue.mjs';
 import { loadCase } from '../src/io.mjs';
+import { errorsOf } from './util.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
@@ -22,7 +23,7 @@ for (const caseId of ['case-001', 'case-002']) {
         file: `${original.id}.yaml`,
         vocabulary: loaded.vocabulary,
       });
-      assert.deepEqual(back.issues, []);
+      assert.deepEqual(errorsOf(back.issues), []);
       assert.deepEqual(back.tree, original);
       // And YAML -> JSON -> YAML is stable.
       const again = decompileTree(back.tree, loaded.vocabulary);

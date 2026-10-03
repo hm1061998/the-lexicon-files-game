@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { compileTree } from '../src/compileDialogue.mjs';
+import { errorsOf } from './util.mjs';
 
 const vocabulary = [
   { id: 'address', lemma: 'address', surfaceForms: ['addresses'] },
@@ -39,7 +40,7 @@ nodes:
 
 test('a tree compiles to the engine shape in the fixed key order', () => {
   const { tree, issues } = compileTree(SOURCE, ctx);
-  assert.deepEqual(issues, []);
+  assert.deepEqual(errorsOf(issues), []);
   assert.deepEqual(Object.keys(tree), [
     'id',
     'npcId',
@@ -170,5 +171,5 @@ test('a bad do item is a bad-form error pointing at that item', () => {
     ctx,
   );
   assert.equal(tree, null);
-  assert.equal(issues[0].code, 'bad-form');
+  assert.ok(issues.some((i) => i.code === 'bad-form'));
 });

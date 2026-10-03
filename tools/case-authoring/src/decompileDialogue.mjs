@@ -93,10 +93,11 @@ export function decompileTree(tree, vocabulary) {
   const yaml = document.toString({ lineWidth: 0 });
 
   const again = compileTree(yaml, { file: `${tree.id}.yaml`, vocabulary });
-  if (again.issues.length || !isDeepStrictEqual(again.tree, tree))
+  const errors = again.issues.filter((issue) => issue.level === 'error');
+  if (errors.length || !isDeepStrictEqual(again.tree, tree))
     return fail(
       `cây "${tree.id}": dạng rút gọn không tái tạo đúng cây, khác ở "${firstDifference(again.tree ?? {}, tree) ?? '?'}"` +
-        (again.issues.length ? ` (${again.issues[0].code}: ${again.issues[0].message})` : ''),
+        (errors.length ? ` (${errors[0].code}: ${errors[0].message})` : ''),
     );
   return { yaml, issues: [] };
 }

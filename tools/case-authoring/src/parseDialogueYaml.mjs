@@ -26,7 +26,7 @@ export function parseDialogueYaml(source, file) {
   const issues = document.errors.map((error) => ({
     file,
     ...offsetAt(error.pos?.[0] ?? 0),
-    code: 'yaml-syntax',
+    code: error.code === 'DUPLICATE_KEY' ? 'duplicate-id' : 'yaml-syntax',
     level: 'error',
     message: error.message.split('\n')[0] ?? 'YAML sai cú pháp',
   }));

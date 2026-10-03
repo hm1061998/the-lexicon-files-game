@@ -1,3 +1,4 @@
+import { checkTree } from './checkDialogue.mjs';
 import { FormError, parseDo, parseNeeds } from './forms.mjs';
 import { parseDialogueYaml } from './parseDialogueYaml.mjs';
 import { extractSpans } from './vocab.mjs';
@@ -14,7 +15,9 @@ function put(target, key, value) {
 /**
  * Compiles one dialogue YAML file to the engine's dialogue tree.
  * @param {string} source
- * @param {{ file: string; vocabulary: { id: string; lemma: string; surfaceForms?: string[] }[] }} ctx
+ * @param {{ file: string; vocabulary: { id: string; lemma: string; surfaceForms?: string[] }[];
+ *   refs?: { evidence: Set<string>; fact: Set<string>; objective: Set<string> } | null;
+ *   externalSets?: Set<string>; externalReads?: Set<string> }} ctx
  * @returns {{ tree: object | null; issues: Issue[] }}
  */
 export function compileTree(source, ctx) {
@@ -22,6 +25,7 @@ export function compileTree(source, ctx) {
   /** @type {Issue[]} */
   const issues = [...parsed.issues];
   if (parsed.doc === null) return { tree: null, issues };
+  issues.push(...checkTree(parsed, ctx));
 
   const error = (path, part, code, message, hint) => {
     const { line, col } = parsed.at(path, part);
