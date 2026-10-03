@@ -84,7 +84,7 @@ describe('DeductionBoard as a pinboard', () => {
       [definition.conclusion!.objectiveId]: 'active' as const,
     },
   };
-  const faces = ['clues', 'timeline', 'compare'] as const;
+  const faces = ['clues', 'timeline', 'compare', 'conclusion'] as const;
   const bare =
     /<button(?![^>]*class="[^"]*(ink-button|paper-button|device-key|folder-tab|vocabulary-word|pinned-card))/g;
 

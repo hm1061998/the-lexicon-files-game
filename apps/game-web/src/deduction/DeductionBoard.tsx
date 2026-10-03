@@ -10,6 +10,7 @@ import type {
   TranslationMode,
 } from '@lexicon/shared-types';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
+import { resolveInvestigationArtwork } from '../investigation/resolveInvestigationArtwork';
 import { selectInvestigationView } from '../investigation/selectInvestigationView';
 import { useInvestigationDialogFocus } from '../investigation/useInvestigationDialogFocus';
 import { initialDeductionUi, deductionUiReducer, type DeductionFace } from './deductionUiReducer';
@@ -74,6 +75,12 @@ export function DeductionBoard({
   useEffect(() => {
     dispatch({ type: 'reconcile', ...JSON.parse(valid) });
   }, [valid]);
+  const portraits = Object.fromEntries(
+    view.suspects.flatMap((x) => {
+      const url = resolveInvestigationArtwork(caseDefinition, x.id);
+      return url ? [[x.id, url] as const] : [];
+    }),
+  );
   const learning = {
     catalogue: caseDefinition.vocabulary,
     strings,
@@ -159,6 +166,7 @@ export function DeductionBoard({
                 onSelectionChange={(id) => dispatch({ type: 'selectSuspect', id })}
                 feedback={ui.feedback}
                 onFeedbackChange={(text) => dispatch({ type: 'setFeedback', text })}
+                portraits={portraits}
               />
             ) : (
               <section className="paginated-workspace single-reading">

@@ -40,8 +40,36 @@
   margin: 8px 0 12px;
 }
 
-.accusation-suspects button[aria-pressed='true'] {
-  outline: 2px solid var(--lexicon-border);
-  outline-offset: 2px;
-  font-weight: 700;
+/* Suspect cards: a portrait and a name on a pinned card, side by side so a page holds all of them. */
+.suspect-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(100%, 460px);
+  margin: 8px auto 0;
+  padding: 8px 14px;
+  text-align: left;
+}
+
+.suspect-card .investigation-portrait {
+  width: 52px;
+  height: 66px;
+  flex: none;
+}
+
+.suspect-card strong {
+  font-size: 18px;
+}
+
+@media (max-height: 500px) {
+  .suspect-card {
+    gap: 10px;
+    margin-top: 8px;
+    padding: 6px 10px;
+  }
+
+  .suspect-card .investigation-portrait {
+    width: 40px;
+    height: 50px;
+  }
 }
