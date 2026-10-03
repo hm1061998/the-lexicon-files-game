@@ -15,11 +15,11 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Current Phase
 
-- UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 và 3b xong trên `dev`, chưa push. Chờ người dùng duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`) và nghe thử âm thanh. Phần 1–4 đã xong và đã push.
+- UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 và 3b xong. Người dùng đã duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`, 04/10/2026): phase hoàn tất, đã push `dev`. Còn tùy chọn: thêm `tape-loop` CC0 và nghe thử âm giao diện. Phần 1–4 đã xong và đã push.
 
 ## Active Goal
 
-- Người dùng duyệt ảnh phần 4b và nghe thử âm giao diện; không tự mở phase mới.
+- Chọn phase kế tiếp; không tự mở phase mới.
 
 ## Current Status
 
@@ -56,7 +56,7 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Next Actions
 
-1. Người dùng duyệt ảnh phần 4b và nghe thử âm giao diện (có thể thêm `tape-loop` CC0 vào `ui_sound_map.json` rồi chạy `import_ui_sounds.py`); chưa push `dev`.
+1. Chọn việc kế tiếp (chờ người dùng); `dev` đã push. Tùy chọn: thêm `tape-loop` CC0 vào `ui_sound_map.json` rồi chạy `import_ui_sounds.py`.
 2. Phần 5 UI (sổ tay, bảng suy luận, buộc tội, xóa alias `PaperPanel`, chuyển nút còn lại) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor phần 3/4/4b.
 
