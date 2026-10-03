@@ -1,5 +1,9 @@
 import { useEffect, useState, type RefObject } from 'react';
 import type { InvestigationRelationship } from '../investigation/selectInvestigationView';
+/** Cables are tied to the pin of a card (its head), or to the card's middle when it has no pin. */
+function anchorOf(node: HTMLElement): DOMRect {
+  return (node.querySelector('.pinned-card__pin') ?? node).getBoundingClientRect();
+}
 export function connectionCoordinates(
   a: { left: number; top: number; width: number; height: number },
   b: { left: number; top: number; width: number; height: number },
@@ -11,6 +15,13 @@ export function connectionCoordinates(
     x2: b.left + b.width / 2 - origin.left + (origin.scrollLeft ?? 0),
     y2: b.top + b.height / 2 - origin.top + (origin.scrollTop ?? 0),
   };
+}
+/** A string hung between two pins: it sags a little under its own weight, more the further apart they are. */
+export function cablePath(c: { x1: number; y1: number; x2: number; y2: number }): string {
+  const sag = Math.min(60, 12 + Math.hypot(c.x2 - c.x1, c.y2 - c.y1) * 0.08);
+  const mx = (c.x1 + c.x2) / 2;
+  const my = Math.max(c.y1, c.y2) + sag;
+  return `M ${c.x1} ${c.y1} Q ${mx} ${my} ${c.x2} ${c.y2}`;
 }
 export function DeductionConnections({
   relationships,
@@ -40,9 +51,7 @@ export function DeductionConnections({
         relationships.flatMap((r) => {
           const a = nodes.get(r.from),
             b = nodes.get(r.to);
-          return a && b
-            ? [connectionCoordinates(a.getBoundingClientRect(), b.getBoundingClientRect(), origin)]
-            : [];
+          return a && b ? [connectionCoordinates(anchorOf(a), anchorOf(b), origin)] : [];
         }),
       );
     };
@@ -74,7 +83,7 @@ export function DeductionConnections({
   return (
     <svg className="deduction-connections" aria-hidden="true">
       {lines.map((line, i) => (
-        <line key={i} {...line} />
+        <path key={i} d={cablePath(line)} />
       ))}
     </svg>
   );
