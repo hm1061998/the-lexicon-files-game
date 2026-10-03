@@ -1,6 +1,7 @@
 /** Vocabulary markup of a spoken line: `[word]` or `[surface|vocab_id]`, `\[` for a literal bracket. */
 
-const norm = (s) => s.toLowerCase();
+/** Same word whatever the Unicode form it was typed in (é as one character or as e + accent). */
+const norm = (s) => s.normalize('NFC').toLowerCase();
 
 /** Entries a written form can mean: the lemma or one of the surface forms (no case). */
 function candidates(surface, vocabulary) {

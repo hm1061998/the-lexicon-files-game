@@ -132,3 +132,12 @@ test('an authored empty vocabularySpans list survives as spans: []', () => {
     undefined,
   );
 });
+
+test('a bracket in the text of a choice survives the round trip as an escaped bracket', () => {
+  const withBracket = JSON.parse(JSON.stringify(tree));
+  withBracket.nodes[0].choices[0].text = 'Press [A] to go';
+  const { yaml, issues } = decompileTree(withBracket, vocabulary);
+  assert.deepEqual(issues, []);
+  assert.equal(parse(yaml).nodes.entry.ask[0].say, 'Press \\[A] to go');
+  assert.deepEqual(compileTree(yaml, ctx).tree, withBracket);
+});

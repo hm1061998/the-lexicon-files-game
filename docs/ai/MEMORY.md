@@ -2,7 +2,7 @@
 schema_version: 1
 updated_at: 2026-10-04T23:50:00+07:00
 phase: pr-04-case-authoring
-status: in_progress
+status: verified
 result_commit: f58c0b5
 active_spec: docs/superpowers/specs/2026-10-04-case-authoring-dialogue-yaml-design.md
 active_plan: docs/superpowers/plans/2026-10-04-case-authoring-dialogue-yaml.md
@@ -15,7 +15,7 @@ active_plan: docs/superpowers/plans/2026-10-04-case-authoring-dialogue-yaml.md
 
 ## Current Phase
 
-- PR-04 (công cụ soạn hội thoại bằng YAML): Task 0–6 xong, đang xác minh. `dialogues.json` của mỗi case sinh từ `packages/game-content/cases/CASE/dialogues/TREE.yaml`; lệnh `npm run case:build -- CASE [--check]`, `npm run case:import -- CASE [--force]`; Case #001/#002 đã chuyển (JSON bằng nhau sâu với bản cũ). Công cụ ở `tools/case-authoring` (dependency `yaml`); cú pháp ở `.claude/skills/authoring-case-content/references/dialogue-yaml.md`.
+- PR-04 (công cụ soạn hội thoại bằng YAML): Task 0–7 xong và đã review độc lập; chờ người dùng duyệt rồi push. `dialogues.json` của mỗi case sinh từ `packages/game-content/cases/CASE/dialogues/TREE.yaml`; lệnh `npm run case:build -- CASE [--check]`, `npm run case:import -- CASE [--force]`; Case #001/#002 đã chuyển (JSON bằng nhau sâu với bản cũ). Công cụ ở `tools/case-authoring` (dependency `yaml`); cú pháp ở `.claude/skills/authoring-case-content/references/dialogue-yaml.md`.
 - UI phần 5 (sổ tay J, bảng suy luận B, bảng buộc tội): Task 0–7 xong, review độc lập đã xử lý, người dùng đã duyệt ảnh `docs/ai/playtests/2026-10-04-ui-investigation/after/` (04/10/2026), phase hoàn tất, đã push `dev`. Sổ tay là cặp trang liền mạch (vuốt/nút lật cả cặp); bảng suy luận không phân trang (vuốt ngang/cuộn dọc không thanh cuộn); thẻ ghim, dây theo đinh, thẻ từ vựng giấy ghim; không bôi đen chữ toàn game. Báo cáo `docs/ai/2026-10-04-ui-investigation-desk-verification.md`.
 - UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 và 3b xong. Người dùng đã duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`, 04/10/2026): phase hoàn tất, đã push `dev`. Còn tùy chọn: thêm `tape-loop` CC0 và nghe thử âm giao diện. Phần 1–4 đã xong và đã push.
 

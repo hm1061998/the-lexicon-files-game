@@ -1,11 +1,26 @@
 /** Short forms of the dialogue YAML: `do` effects and `needs` conditions. */
 
 export class FormError extends Error {
-  /** @param {string} message @param {number} [index] position of the bad item in its list */
-  constructor(message, index = 0) {
+  /**
+   * @param {string} message
+   * @param {number} [index] position of the bad item in its list
+   * @param {(string | number)[]} [path] where the bad item is, relative to the whole value
+   */
+  constructor(message, index = 0, path = [index]) {
     super(message);
     this.name = 'FormError';
     this.index = index;
+    this.path = path;
+  }
+}
+
+/** Runs `run`; a FormError it throws gets `prefix` in front of its path, so the caller sees the full way in. */
+function within(prefix, run) {
+  try {
+    return run();
+  } catch (e) {
+    if (e instanceof FormError) throw new FormError(e.message, e.index, [...prefix, ...e.path]);
+    throw e;
   }
 }
 
@@ -70,37 +85,51 @@ const LEAF_VERBS = {
 
 const isGroupObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
-function parseItem(item, index) {
+function parseItem(item, index = 0) {
   if (typeof item === 'string') {
-    const [verb, arg] = splitItem(item, index);
+    // Paths inside an item are relative to the item itself: the caller adds where the item sits.
+    let verb;
+    let arg;
+    try {
+      [verb, arg] = splitItem(item, index);
+    } catch (e) {
+      throw new FormError(e.message, index, []);
+    }
     const make = LEAF_VERBS[verb];
     if (!make)
       throw new FormError(
         `điều kiện "${verb}" không có trong needs (dùng: ${Object.keys(LEAF_VERBS).join(', ')})`,
         index,
+        [],
       );
     return make(arg);
   }
   if (isGroupObject(item)) return parseGroup(item, index);
-  throw new FormError('mục needs phải là chuỗi hoặc nhóm all/any', index);
+  throw new FormError('mục needs phải là chuỗi hoặc nhóm all/any', index, []);
 }
 
 function parseGroup(group, index) {
   const keys = Object.keys(group);
   const key = keys[0];
   if (keys.length !== 1 || (key !== 'all' && key !== 'any'))
-    throw new FormError('nhóm needs chỉ có một khóa: all hoặc any', index);
+    throw new FormError('nhóm needs chỉ có một khóa: all hoặc any', index, []);
   const children = group[key];
-  if (!Array.isArray(children)) throw new FormError(`${key} phải là một danh sách`, index);
-  return { type: key, conditions: children.map((child, i) => parseItem(child, i)) };
+  if (!Array.isArray(children)) throw new FormError(`${key} phải là một danh sách`, index, []);
+  return {
+    type: key,
+    conditions: children.map((child, i) => within([key, i], () => parseItem(child, i))),
+  };
 }
 
 /** @param {unknown} spec list of items, or an explicit `{ all: [...] }` / `{ any: [...] }` @returns {object} */
 export function parseNeeds(spec) {
   if (Array.isArray(spec)) {
     if (spec.length === 0) throw new FormError('needs không được rỗng', 0);
-    if (spec.length === 1) return parseItem(spec[0], 0);
-    return { type: 'all', conditions: spec.map((item, i) => parseItem(item, i)) };
+    if (spec.length === 1) return within([0], () => parseItem(spec[0], 0));
+    return {
+      type: 'all',
+      conditions: spec.map((item, i) => within([i], () => parseItem(item, i))),
+    };
   }
   if (isGroupObject(spec)) return parseGroup(spec, 0);
   throw new FormError('needs phải là danh sách hoặc nhóm all/any', 0);

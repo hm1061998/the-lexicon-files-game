@@ -89,9 +89,9 @@ test('unknown-node: a choice target and the entry, pointing at the value, with t
   assert.ok(found.some((i) => /entry/.test(i.hint ?? '')));
 });
 
-test('duplicate-id: a node key twice and a choice id twice in one node', () => {
+test('duplicate-key and duplicate-id: a node key twice, and a choice id twice in one node', () => {
   const dupNode = BASE + '  entry:\n    say: "again"\n';
-  const nodeIssues = only(issuesOf(dupNode), 'duplicate-id');
+  const nodeIssues = only(issuesOf(dupNode), 'duplicate-key');
   assert.equal(nodeIssues.length, 1);
   const dupChoice = BASE.replace(
     '      - { id: ask_a, say: "Topic A?", to: topic_a }',

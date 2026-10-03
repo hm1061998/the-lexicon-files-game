@@ -6,7 +6,8 @@ import { format, resolveConfig } from 'prettier';
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
 /** `\r\n` -> `\n`, so a file checked out with CRLF compares equal to one written with LF. */
-export const normalizeEol = (text) => text.replaceAll('\r\n', '\n');
+export const normalizeEol = (text) =>
+  (text.charCodeAt(0) === 0xfeff ? text.slice(1) : text).replaceAll('\r\n', '\n');
 
 /**
  * Prettier-formatted JSON text for `filePath` (the repo prettier config decides the style).
@@ -21,6 +22,12 @@ export async function formatJson(value, filePath) {
     endOfLine: 'lf',
   });
   return text.endsWith('\n') ? text : `${text}\n`;
+}
+
+/** Prettier formatted YAML text for `filePath`, so imported files already pass `format:check`. */
+export async function formatYaml(text, filePath) {
+  const config = (await resolveConfig(filePath)) ?? {};
+  return format(text, { ...config, filepath: filePath, endOfLine: 'lf' });
 }
 
 /** Writes beside the target and renames over it, so a failure never leaves a half written file. */

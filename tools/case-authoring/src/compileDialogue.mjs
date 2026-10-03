@@ -6,6 +6,8 @@ import { extractSpans } from './vocab.mjs';
 /** @typedef {import('./parseDialogueYaml.mjs').Issue} Issue */
 
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+const INTEGER_LIKE = /^(0|[1-9]\d*)$/;
+const UNESCAPED_BRACKET = /(?<!\\)\[/;
 
 /** Adds `key: value` only when the value is defined, so optional keys stay out of the JSON. */
 function put(target, key, value) {
@@ -17,7 +19,8 @@ function put(target, key, value) {
  * @param {string} source
  * @param {{ file: string; vocabulary: { id: string; lemma: string; surfaceForms?: string[] }[];
  *   refs?: { evidence: Set<string>; fact: Set<string>; objective: Set<string> } | null;
- *   externalSets?: Set<string>; externalReads?: Set<string> }} ctx
+ *   externalSets?: Set<string>; externalReads?: Set<string>;
+ *   expect?: { treeId: string; npcId: string } }} ctx
  * @returns {{ tree: object | null; issues: Issue[] }}
  */
 export function compileTree(source, ctx) {
@@ -39,13 +42,12 @@ export function compileTree(source, ctx) {
       ...(hint ? { hint } : {}),
     });
   };
-  const guard = (path, value, run) => {
+  const guard = (path, run) => {
     try {
       return run();
     } catch (e) {
       if (!(e instanceof FormError)) throw e;
-      // A list reports the item that is wrong; a group is reported as a whole.
-      error(Array.isArray(value) ? [...path, e.index] : path, 'value', 'bad-form', e.message);
+      error([...path, ...e.path], 'value', 'bad-form', e.message);
       return undefined;
     }
   };
@@ -56,47 +58,114 @@ export function compileTree(source, ctx) {
     }
     return object[key];
   };
-  const condition = (value, path) => guard(path, value, () => parseNeeds(value));
-  const effects = (value, path) => guard(path, value, () => parseDo(value));
+  /** A value that must be a text; anything else is reported where it is written. */
+  const text = (value, path, what) => {
+    if (value === undefined) return undefined;
+    if (typeof value === 'string') return value;
+    error(
+      path,
+      'value',
+      'bad-form',
+      `${what} phải là chuỗi, không phải ${value === null ? 'rỗng' : typeof value}`,
+    );
+    return undefined;
+  };
+  const condition = (value, path) => guard(path, () => parseNeeds(value));
+  const effects = (value, path) => guard(path, () => parseDo(value));
 
   const doc = parsed.doc;
   if (!isObject(doc)) {
     error([], 'value', 'bad-form', 'file phải là một bảng khóa: giá trị (tree, npc, nodes…)');
     return { tree: null, issues };
   }
-  const id = need(doc, 'tree', []);
-  const npc = need(doc, 'npc', []);
-  const done = need(doc, 'done', []);
+  const id = text(need(doc, 'tree', []), ['tree'], 'tree');
+  const npc = text(need(doc, 'npc', []), ['npc'], 'npc');
+  const done = text(need(doc, 'done', []), ['done'], 'done');
   const finish = need(doc, 'finish', []);
+  const entry = text(doc.entry, ['entry'], 'entry');
   const nodesIn = need(doc, 'nodes', []);
+  if (ctx.expect) {
+    if (id !== undefined && id !== ctx.expect.treeId)
+      error(
+        ['tree'],
+        'value',
+        'tree-mismatch',
+        `tree: "${id}" nhưng npcs.json đặt dialogueTreeId "${ctx.expect.treeId}" cho file này`,
+      );
+    if (npc !== undefined && npc !== ctx.expect.npcId)
+      error(
+        ['npc'],
+        'value',
+        'tree-mismatch',
+        `npc: "${npc}" nhưng npcs.json gán cây này cho "${ctx.expect.npcId}"`,
+      );
+  }
   if (!isObject(nodesIn) || !Object.keys(nodesIn).length) {
     if (nodesIn !== undefined)
       error(['nodes'], 'value', 'bad-form', 'nodes phải có ít nhất một node');
     return { tree: null, issues };
   }
+  if (doc.notes !== undefined && !isObject(doc.notes))
+    error(['notes'], 'value', 'bad-form', 'notes phải là bảng "node: cờ"');
 
   const nodes = [];
   for (const [nodeId, raw] of Object.entries(nodesIn)) {
     const base = ['nodes', nodeId];
+    if (INTEGER_LIKE.test(nodeId)) {
+      // JavaScript lists integer keys first and in numeric order: the node order would change silently.
+      error(
+        base,
+        'key',
+        'bad-form',
+        `id node "${nodeId}" là số nguyên; đặt tên có chữ (ví dụ "n${nodeId}")`,
+      );
+      continue;
+    }
     if (!isObject(raw)) {
       error(base, 'value', 'bad-form', `node "${nodeId}" phải là một bảng khóa: giá trị`);
       continue;
     }
-    const markup = need(raw, 'say', base);
-    let text = markup;
+    const markup = text(need(raw, 'say', base), [...base, 'say'], 'say');
+    let line = markup;
     let spans = [];
-    if (typeof markup === 'string') {
+    if (markup !== undefined) {
       const result = extractSpans(markup, ctx.vocabulary);
-      text = result.text;
+      line = result.text;
       spans = result.spans;
-      for (const issue of result.issues)
-        error([...base, 'say'], 'value', issue.code, issue.message, issue.hint);
+      for (const issue of result.issues) {
+        // Point at the bracket when the value sits on one line, else at the start of the value.
+        const at = parsed.at([...base, 'say'], 'value');
+        const close = markup.indexOf(']', issue.at);
+        const bracket = markup.slice(issue.at, close === -1 ? undefined : close + 1);
+        const column = parsed.lineText(at.line).indexOf(bracket);
+        issues.push({
+          file: ctx.file,
+          line: at.line,
+          col: column >= 0 ? column + 1 : at.col,
+          code: issue.code,
+          level: 'error',
+          message: issue.message,
+          ...(issue.hint ? { hint: issue.hint } : {}),
+        });
+      }
     }
+    if (raw.ask !== undefined && !Array.isArray(raw.ask))
+      error([...base, 'ask'], 'value', 'bad-form', 'ask phải là danh sách các lựa chọn');
+    if (raw.spans !== undefined && !(Array.isArray(raw.spans) && raw.spans.length === 0))
+      error(
+        [...base, 'spans'],
+        'value',
+        'bad-form',
+        'spans chỉ nhận []; đánh dấu từ vựng bằng [từ] trong say',
+      );
     const asks = Array.isArray(raw.ask) ? raw.ask : [];
-    const node = { id: nodeId, speakerId: raw.speaker ?? npc };
-    put(node, 'text', text);
+    const node = {
+      id: nodeId,
+      speakerId: text(raw.speaker, [...base, 'speaker'], 'speaker') ?? npc,
+    };
+    put(node, 'text', line);
     put(node, 'audio', raw.audio);
-    put(node, 'translationVi', raw.vi);
+    put(node, 'translationVi', text(raw.vi, [...base, 'vi'], 'vi'));
     // An authored empty list (`spans: []`) is kept as `vocabularySpans: []`; no marks and no key means no key.
     if (spans.length) node.vocabularySpans = spans;
     else if (Array.isArray(raw.spans) && raw.spans.length === 0) node.vocabularySpans = [];
@@ -104,10 +173,24 @@ export function compileTree(source, ctx) {
     node.choices = asks.map((choice, index) => {
       const path = [...base, 'ask', index];
       const out = {};
-      put(out, 'id', need(choice, 'id', path));
-      put(out, 'text', need(choice, 'say', path));
-      put(out, 'translationVi', choice.vi);
-      put(out, 'nextNodeId', need(choice, 'to', path));
+      if (!isObject(choice)) {
+        error(path, 'value', 'bad-form', 'lựa chọn phải là bảng khóa: giá trị (id, say, to…)');
+        return out;
+      }
+      put(out, 'id', text(need(choice, 'id', path), [...path, 'id'], 'id'));
+      const say = text(need(choice, 'say', path), [...path, 'say'], 'say');
+      if (say !== undefined) {
+        if (UNESCAPED_BRACKET.test(say))
+          error(
+            [...path, 'say'],
+            'value',
+            'bad-form',
+            'lời của lựa chọn không đánh dấu từ vựng; bỏ [ ] hoặc viết \\[ cho dấu [ thật',
+          );
+        put(out, 'text', say.replaceAll('\\[', '['));
+      }
+      put(out, 'translationVi', text(choice.vi, [...path, 'vi'], 'vi'));
+      put(out, 'nextNodeId', text(need(choice, 'to', path), [...path, 'to'], 'to'));
       if (choice.needs !== undefined)
         put(out, 'condition', condition(choice.needs, [...path, 'needs']));
       if (choice.do !== undefined) put(out, 'effects', effects(choice.do, [...path, 'do']));
@@ -144,7 +227,7 @@ export function compileTree(source, ctx) {
   const tree = {};
   put(tree, 'id', id);
   put(tree, 'npcId', npc);
-  put(tree, 'entryNodeId', doc.entry ?? nodes[0].id);
+  put(tree, 'entryNodeId', entry ?? nodes[0].id);
   tree.nodes = nodes;
   put(tree, 'completionFlag', done);
   put(tree, 'completionCondition', completion);

@@ -9,7 +9,13 @@
       "options": {
         "command": "node --test \"tools/case-authoring/test/*.test.mjs\"",
         "cwd": "."
-      }
+      },
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/packages/game-content/cases/**/*",
+        "{workspaceRoot}/package.json"
+      ]
     },
     "lint": {
       "executor": "nx:run-commands",

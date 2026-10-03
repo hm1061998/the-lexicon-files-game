@@ -14,7 +14,11 @@ import { LineCounter, isMap, isSeq, parseDocument } from 'yaml';
  */
 export function parseDialogueYaml(source, file) {
   const lines = new LineCounter();
-  const document = parseDocument(source.replaceAll('\r\n', '\n'), {
+  const text = (source.charCodeAt(0) === 0xfeff ? source.slice(1) : source).replaceAll(
+    '\r\n',
+    '\n',
+  );
+  const document = parseDocument(text, {
     lineCounter: lines,
     prettyErrors: false,
   });
@@ -26,9 +30,12 @@ export function parseDialogueYaml(source, file) {
   const issues = document.errors.map((error) => ({
     file,
     ...offsetAt(error.pos?.[0] ?? 0),
-    code: error.code === 'DUPLICATE_KEY' ? 'duplicate-id' : 'yaml-syntax',
+    code: error.code === 'DUPLICATE_KEY' ? 'duplicate-key' : 'yaml-syntax',
     level: 'error',
-    message: error.message.split('\n')[0] ?? 'YAML sai cú pháp',
+    message:
+      error.code === 'DUPLICATE_KEY'
+        ? 'khóa bị viết hai lần trong cùng một bảng'
+        : (error.message.split('\n')[0] ?? 'YAML sai cú pháp'),
   }));
 
   const at = (path, part = 'value') => {
@@ -57,6 +64,7 @@ export function parseDialogueYaml(source, file) {
   return {
     doc: issues.length ? null : document.toJS(),
     at,
+    lineText: (line) => text.split('\n')[line - 1] ?? '',
     issues,
     offsetAt,
   };

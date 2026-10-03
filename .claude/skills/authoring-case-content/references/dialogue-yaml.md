@@ -67,21 +67,26 @@ nodes:
 
 `needs`: danh sách `evidence <id>`, `fact <id>`, `objective <id>` (đã hoàn thành), `flag <cờ>` (đúng `true`), `no-flag <cờ>` (`false`). Một mục là điều kiện đơn; nhiều mục là "tất cả". Nhóm tường minh: `{ any: [...] }` hoặc `{ all: [...] }`, kể cả `all` một mục; nhóm lồng được trong danh sách.
 
-Từ vựng: viết `[từ]` trong `say`. Công cụ tra `vocabulary.json` theo `lemma` và `surfaceForms` (không phân biệt hoa thường), tự tính offset và bỏ ngoặc. Chọn tường minh bằng `[chữ|vocab_id]`. Ký tự `[` thật: `\[`.
+Viết câu thoại trong **dấu nháy đơn** (`say: 'I checked the [address].'`): YAML hiểu câu bắt đầu bằng `[` là danh sách và hiểu `\[` trong nháy kép là ký tự thoát của YAML. Đặt nháy đơn quanh câu có `[từ]` hoặc `: `; viết `''` cho một dấu nháy đơn thật.
+
+Từ vựng: viết `[từ]` trong `say` của **node** (lời của lựa chọn không đánh dấu từ vựng). Công cụ tra `vocabulary.json` theo `lemma` và `surfaceForms` (không phân biệt hoa thường), tự tính offset và bỏ ngoặc. Chọn tường minh bằng `[chữ|vocab_id]`. Ký tự `[` thật: `\[`.
 
 ## Mã lỗi và cách sửa
 
 | Mã | Mức | Ý nghĩa và cách sửa |
 | --- | --- | --- |
-| `yaml-syntax` | lỗi | YAML sai cú pháp (thụt lề, dấu nháy, dấu hai chấm trong câu: đặt câu trong dấu nháy) |
+| `yaml-syntax` | lỗi | YAML sai cú pháp (thụt lề, dấu nháy, dấu hai chấm trong câu, câu bắt đầu bằng `[`: đặt câu trong dấu nháy đơn) |
+| `duplicate-key` | lỗi | cùng một khóa (kể cả id node) viết hai lần trong một bảng |
 | `unknown-key` | lỗi | khóa lạ; xem gợi ý "ý bạn là" |
-| `bad-form` | lỗi | `do`/`needs` sai dạng, hoặc thiếu khóa bắt buộc |
+| `bad-form` | lỗi | `do`/`needs` sai dạng, thiếu khóa bắt buộc, giá trị sai kiểu (id/say/to phải là chuỗi), `ask` không phải danh sách, id node là số nguyên (đặt tên có chữ), `spans` khác `[]`, `[ ]` trong lời lựa chọn |
 | `unknown-node` | lỗi | `to` hoặc `entry` trỏ node không tồn tại |
 | `duplicate-id` | lỗi | node hoặc lựa chọn trùng id trong cùng cây/node |
 | `unknown-word` | lỗi | từ trong `[ ]` không có trong `vocabulary.json`: thêm mục hoặc bỏ ngoặc |
 | `ambiguous-word` | lỗi | một chữ khớp nhiều mục: chọn bằng `[chữ\|id]` |
 | `unknown-ref` | lỗi | evidence/fact/objective không có trong JSON của case |
 | `missing-tree` | lỗi | NPC có `dialogueTreeId` nhưng thiếu file YAML |
+| `unused-tree` | lỗi | có file `dialogues/*.yaml` mà không NPC nào trong `npcs.json` dùng |
+| `tree-mismatch` | lỗi | `tree:` hoặc `npc:` trong file khác với `dialogueTreeId` / NPC trong `npcs.json` |
 | `orphan-node` | cảnh báo | không lựa chọn nào trỏ tới node |
 | `flag-never-set` | cảnh báo | cờ được đọc mà không nơi nào đặt (trong cây, các cây khác hoặc JSON của case) |
 | `flag-never-read` | cảnh báo | cờ được đặt mà không điều kiện nào đọc |

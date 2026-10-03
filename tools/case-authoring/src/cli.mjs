@@ -1,4 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { resolve } from 'node:path';
 import process from 'node:process';
 import { isDeepStrictEqual } from 'node:util';
@@ -7,7 +15,7 @@ import { pathToFileURL } from 'node:url';
 import { collectFlags, scanJsonFlags } from './checkDialogue.mjs';
 import { compileTree } from './compileDialogue.mjs';
 import { decompileTree } from './decompileDialogue.mjs';
-import { formatJson, loadCase, normalizeEol, writeAtomic } from './io.mjs';
+import { formatJson, formatYaml, loadCase, normalizeEol, writeAtomic } from './io.mjs';
 import { parseDialogueYaml } from './parseDialogueYaml.mjs';
 
 const USAGE = [
@@ -15,6 +23,12 @@ const USAGE = [
   '  npm run case:build -- <case-id> [--check]   biên dịch dialogues/*.yaml -> dialogues.json',
   '  npm run case:import -- <case-id> [--force]  chuyển dialogues.json cũ sang YAML',
 ].join('\n');
+
+/** A case id or tree id is one plain name: it can never point outside the cases folder. */
+const PLAIN_NAME = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
+
+/** Flags the game engine itself sets, which no JSON of the case mentions. */
+const ENGINE_FLAG_SETS = ['david_contradiction_found'];
 
 const NEXT = 'Tiếp theo: npm run test -w @lexicon/game-content';
 
@@ -40,10 +54,10 @@ function jsonFilesOf(dir) {
 
 /** Flags the rest of the case (objectives, scenes, facts…) sets and reads. */
 function caseFlags(dir) {
-  const sets = new Set();
+  const sets = new Set(ENGINE_FLAG_SETS);
   const reads = new Set();
   for (const file of jsonFilesOf(dir)) {
-    const found = scanJsonFlags(JSON.parse(readFileSync(file, 'utf8')));
+    const found = scanJsonFlags(JSON.parse(normalizeEol(readFileSync(file, 'utf8'))));
     found.sets.forEach((flag) => sets.add(flag));
     found.reads.forEach((flag) => reads.add(flag));
   }
@@ -76,13 +90,15 @@ function compileCase(root, caseId, out) {
   const loaded = loadCase(root, caseId);
   const flags = caseFlags(loaded.dir);
   const sources = loaded.npcs.map((npc) => {
-    const file = `dialogues/${npc.dialogueTreeId}.yaml`;
+    const file = `dialogues/${PLAIN_NAME.test(npc.dialogueTreeId) ? npc.dialogueTreeId : '(tên không hợp lệ)'}.yaml`;
     const path = resolve(loaded.dir, file);
     return {
       id: npc.dialogueTreeId,
+      npcId: npc.id,
       file,
       path,
-      source: existsSync(path) ? readFileSync(path, 'utf8') : null,
+      source:
+        PLAIN_NAME.test(npc.dialogueTreeId) && existsSync(path) ? readFileSync(path, 'utf8') : null,
     };
   });
   const own = new Map(
@@ -92,6 +108,23 @@ function compileCase(root, caseId, out) {
   );
   const issues = [];
   const trees = [];
+  // A YAML file no npc points at would be ignored for ever: name it.
+  const dialoguesDir = resolve(loaded.dir, 'dialogues');
+  if (existsSync(dialoguesDir)) {
+    const used = new Set(sources.map((s) => `${s.id}.yaml`));
+    for (const name of readdirSync(dialoguesDir).filter((n) => n.endsWith('.yaml'))) {
+      if (!used.has(name))
+        issues.push({
+          file: `dialogues/${name}`,
+          line: 0,
+          col: 0,
+          code: 'unused-tree',
+          level: 'error',
+          message: `không NPC nào trong npcs.json có dialogueTreeId "${name.replace(/\.yaml$/, '')}"`,
+          hint: 'thêm dialogueTreeId vào npcs.json hoặc xóa file',
+        });
+    }
+  }
   for (const entry of sources) {
     if (entry.source === null) {
       issues.push({
@@ -118,6 +151,7 @@ function compileCase(root, caseId, out) {
       refs: loaded.refs,
       externalSets,
       externalReads,
+      expect: { treeId: entry.id, npcId: entry.npcId },
     });
     issues.push(...result.issues);
     if (result.tree) {
@@ -167,10 +201,17 @@ async function build(root, caseId, flags, io) {
 
 async function importCase(root, caseId, flags, io) {
   const loaded = loadCase(root, caseId);
-  const source = JSON.parse(readFileSync(resolve(loaded.dir, 'dialogues.json'), 'utf8'));
+  const source = JSON.parse(
+    normalizeEol(readFileSync(resolve(loaded.dir, 'dialogues.json'), 'utf8')),
+  );
   const outputs = [];
   let failed = false;
   for (const tree of source.dialogues) {
+    if (!PLAIN_NAME.test(String(tree.id))) {
+      io.err(`cây "${tree.id}": id phải là một tên đơn giản (chữ, số, _ hoặc -) để làm tên file`);
+      failed = true;
+      continue;
+    }
     const file = `dialogues/${tree.id}.yaml`;
     const path = resolve(loaded.dir, file);
     if (existsSync(path) && !flags.force) {
@@ -181,10 +222,24 @@ async function importCase(root, caseId, flags, io) {
     const { yaml, issues } = decompileTree(tree, loaded.vocabulary);
     for (const issue of issues) io.err(formatIssue(issue));
     if (yaml === null) failed = true;
-    else outputs.push({ file, path, yaml });
+    else outputs.push({ file, path, yaml: await formatYaml(yaml, path) });
   }
   if (failed) return 1;
   mkdirSync(resolve(loaded.dir, 'dialogues'), { recursive: true });
+  // Remember what was there, so a failed check can put the folder back as it was.
+  const previous = new Map(
+    outputs.map((item) => [
+      item.path,
+      existsSync(item.path) ? readFileSync(item.path, 'utf8') : null,
+    ]),
+  );
+  const restore = () => {
+    for (const [path, before] of previous) {
+      if (before === null) {
+        if (existsSync(path)) unlinkSync(path);
+      } else writeFileSync(path, before, 'utf8');
+    }
+  };
   for (const item of outputs) {
     await writeAtomic(item.path, item.yaml);
     io.out(`wrote ${item.file}`);
@@ -195,7 +250,8 @@ async function importCase(root, caseId, flags, io) {
   errors.forEach((issue) => io.err(formatIssue(issue)));
   const drift = errors.length ? 'còn lỗi' : firstDrift({ dialogues: trees }, source);
   if (drift) {
-    io.err(`verify: KHÔNG khớp (${drift})`);
+    restore();
+    io.err(`verify: KHÔNG khớp (${drift}); các file YAML vừa ghi đã được hoàn lại`);
     return 1;
   }
   io.out(`verify: case:build tái tạo đúng dialogues.json (${source.dialogues.length} cây) → ok`);
@@ -214,13 +270,28 @@ export async function run(argv, env = {}) {
     out(USAGE);
     return 0;
   }
-  const [command, caseId] = argv;
+  const command = argv[0];
   if (command !== 'build' && command !== 'import') {
     err(`Lệnh không hợp lệ: ${command ?? '(trống)'}\n${USAGE}`);
     return 1;
   }
-  if (!caseId || caseId.startsWith('--')) {
+  const rest = argv.slice(1);
+  const allowed = command === 'build' ? ['--check'] : ['--force'];
+  const unknown = rest.filter((a) => a.startsWith('--') && !allowed.includes(a));
+  if (unknown.length) {
+    err(
+      `Cờ không hợp lệ cho ${command}: ${unknown.join(', ')} (dùng: ${allowed.join(', ')})\n${USAGE}`,
+    );
+    return 1;
+  }
+  const names = rest.filter((a) => !a.startsWith('--'));
+  const caseId = names[0];
+  if (!caseId) {
     err(`Thiếu <case-id>.\n${USAGE}`);
+    return 1;
+  }
+  if (names.length > 1 || !PLAIN_NAME.test(caseId)) {
+    err(`<case-id> phải là một tên đơn giản như case-001 (nhận: ${names.join(' ')})`);
     return 1;
   }
   const root = env.cwd ?? process.cwd();
@@ -229,7 +300,7 @@ export async function run(argv, env = {}) {
     err(`Không có case "${caseId}" (${casesDir})`);
     return 1;
   }
-  const flags = { check: argv.includes('--check'), force: argv.includes('--force') };
+  const flags = { check: rest.includes('--check'), force: rest.includes('--force') };
   const io = { out, err };
   return command === 'build' ? build(root, caseId, flags, io) : importCase(root, caseId, flags, io);
 }

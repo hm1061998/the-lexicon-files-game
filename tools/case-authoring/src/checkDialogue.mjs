@@ -259,9 +259,9 @@ export function checkTree(parsed, ctx) {
       });
       if (hit[0]) return hit[0];
     }
-    return doc.finish !== undefined && JSON.stringify(doc.finish).includes(flag)
-      ? ['finish']
-      : ['notes'];
+    const inFinish =
+      doc.finish === flag || (Array.isArray(doc.finish) && doc.finish.includes(flag));
+    return inFinish ? ['finish'] : ['notes'];
   };
   for (const flag of reads) {
     if (!reachableSets.has(flag) && flag !== doc.done)

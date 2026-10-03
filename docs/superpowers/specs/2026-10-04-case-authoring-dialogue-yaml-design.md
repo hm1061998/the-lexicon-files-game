@@ -96,7 +96,9 @@ Mọi thông báo có dạng `đường/dẫn.yaml:dòng:cột  mã  mô tả` k
 | `unknown-key` | lỗi | khóa lạ ở cây, node, lựa chọn; gợi ý khóa gần nhất |
 | `bad-form` | lỗi | chuỗi `do`/`needs` sai dạng (động từ lạ, thiếu tham số) |
 | `unknown-node` | lỗi | `to` hoặc `entry` trỏ node không tồn tại |
-| `duplicate-id` | lỗi | node hoặc lựa chọn trùng id trong cây |
+| `duplicate-key` | lỗi | khóa YAML (kể cả id node) viết hai lần trong một bảng (do trình đọc YAML phát hiện) |
+| `duplicate-id` | lỗi | lựa chọn trùng id trong cùng một node |
+| `unused-tree` / `tree-mismatch` | lỗi | file YAML không NPC nào dùng; `tree:`/`npc:` khác `npcs.json` |
 | `unknown-word` | lỗi | từ trong `[ ]` không có trong vocabulary |
 | `ambiguous-word` | lỗi | nhiều mục vocabulary phù hợp; liệt kê id |
 | `unknown-ref` | lỗi | evidence/fact/objective không có trong JSON của case (khi file tồn tại) |

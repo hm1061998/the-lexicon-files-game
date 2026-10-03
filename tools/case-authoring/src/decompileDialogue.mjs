@@ -72,7 +72,7 @@ export function decompileTree(tree, vocabulary) {
     if (node.effects) item.do = formatDo(node.effects);
     if (node.choices.length) {
       item.ask = node.choices.map((choice) => {
-        const c = { id: choice.id, say: choice.text };
+        const c = { id: choice.id, say: choice.text.replaceAll('[', '\\[') };
         put(c, 'vi', choice.translationVi);
         c.to = choice.nextNodeId;
         if (choice.condition) c.needs = formatNeeds(choice.condition);
