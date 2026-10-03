@@ -1,11 +1,11 @@
 ---
 schema_version: 1
-updated_at: 2026-10-03T18:00:00+07:00
-phase: ui-dialogue-evidence
-status: complete
+updated_at: 2026-10-03T20:00:00+07:00
+phase: ui-game-feel
+status: proposed
 result_commit: 904f6ff
-active_spec: docs/superpowers/specs/2026-10-03-ui-dialogue-evidence-design.md
-active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
+active_spec: docs/superpowers/specs/2026-10-03-ui-game-feel-design.md
+active_plan: none
 ---
 
 ## Metadata
@@ -19,7 +19,7 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
 
 ## Active Goal
 
-- Chọn phase kế tiếp; không tự mở phase mới.
+- UI phần 4b "cảm giác game" (hội thoại dải đáy + nhật ký L, máy ghi âm, ba loại nút, âm thanh UI CC0, con trỏ): spec `docs/superpowers/specs/2026-10-03-ui-game-feel-design.md` chờ người dùng duyệt; sau đó `writing-plans`. Quyết định G-1…G-6 ghi trong spec. Phần 4 đã duyệt làm bước nền.
 
 ## Current Status
 
@@ -56,7 +56,7 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
 
 ## Next Actions
 
-1. Chọn việc kế tiếp (chờ người dùng); `dev` đã push, không còn việc push treo.
+1. Người dùng duyệt spec phần 4b (`2026-10-03-ui-game-feel-design.md`), rồi viết plan bằng `writing-plans` và chọn cách thực thi.
 2. Phần 5 UI (sổ tay, bảng suy luận, xóa alias `PaperPanel`) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor shell và phần 4.
 
