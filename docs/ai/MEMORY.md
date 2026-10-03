@@ -2,7 +2,7 @@
 schema_version: 1
 updated_at: 2026-10-04T23:00:00+07:00
 phase: ui-investigation-desk
-status: in_progress
+status: complete
 result_commit: 18beb0c
 active_spec: docs/superpowers/specs/2026-10-04-ui-investigation-desk-design.md
 active_plan: docs/superpowers/plans/2026-10-04-ui-investigation-desk.md
@@ -15,12 +15,12 @@ active_plan: docs/superpowers/plans/2026-10-04-ui-investigation-desk.md
 
 ## Current Phase
 
-- UI phần 5 (sổ tay J, bảng suy luận B, bảng buộc tội): Task 0–7 xong, review độc lập đã xử lý, chờ người dùng duyệt ảnh `docs/ai/playtests/2026-10-04-ui-investigation/after/` rồi push `dev`. Sổ tay là cặp trang liền mạch (vuốt/nút lật cả cặp); bảng suy luận không phân trang (vuốt ngang/cuộn dọc không thanh cuộn); thẻ ghim, dây theo đinh, thẻ từ vựng giấy ghim; không bôi đen chữ toàn game. Báo cáo `docs/ai/2026-10-04-ui-investigation-desk-verification.md`.
+- UI phần 5 (sổ tay J, bảng suy luận B, bảng buộc tội): Task 0–7 xong, review độc lập đã xử lý, người dùng đã duyệt ảnh `docs/ai/playtests/2026-10-04-ui-investigation/after/` (04/10/2026), phase hoàn tất, đã push `dev`. Sổ tay là cặp trang liền mạch (vuốt/nút lật cả cặp); bảng suy luận không phân trang (vuốt ngang/cuộn dọc không thanh cuộn); thẻ ghim, dây theo đinh, thẻ từ vựng giấy ghim; không bôi đen chữ toàn game. Báo cáo `docs/ai/2026-10-04-ui-investigation-desk-verification.md`.
 - UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 và 3b xong. Người dùng đã duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`, 04/10/2026): phase hoàn tất, đã push `dev`. Còn tùy chọn: thêm `tape-loop` CC0 và nghe thử âm giao diện. Phần 1–4 đã xong và đã push.
 
 ## Active Goal
 
-- Chờ người dùng duyệt ảnh phần 5; sau đó push `dev`, chọn phase kế tiếp (không tự mở phase mới).
+- Chọn phase kế tiếp; không tự mở phase mới.
 
 ## Current Status
 
@@ -57,8 +57,7 @@ active_plan: docs/superpowers/plans/2026-10-04-ui-investigation-desk.md
 
 ## Next Actions
 
-1. Người dùng duyệt ảnh phần 5 (`docs/ai/playtests/2026-10-04-ui-investigation/after/`), rồi push `dev` và chuyển phase `ui-investigation-desk` sang complete.
-2. Chọn việc kế tiếp (chờ người dùng); PR-04 sau khi duyệt PR-03. Tùy chọn: thêm `tape-loop` CC0 vào `ui_sound_map.json` rồi chạy `import_ui_sounds.py`.
+1. Chọn việc kế tiếp (chờ người dùng); `dev` đã push. PR-04 sau khi duyệt PR-03. Tùy chọn: thêm `tape-loop` CC0 vào `ui_sound_map.json` rồi chạy `import_ui_sounds.py`.
 3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor phần 3/4/4b/5 (phần 5: xem báo cáo verification).
 
 ## Verification
