@@ -172,10 +172,9 @@ for (const viewport of VIEWPORTS) {
     }
     // Compare face: every discovered fact is reachable and the pair can be picked.
     await board.getByRole('button', { name: strings.deductionCompareFace, exact: true }).click();
-    const facts = board.locator('.deduction-facts');
     for (const fact of definition.facts.slice(0, 2)) {
       const button = board.getByRole('button', { name: fact.text, exact: true });
-      await (await turnToVisible(facts.locator('.measured-page'), button)).click();
+      await button.click();
     }
     await expect(board.locator('.deduction-selection-count')).toContainText('2/2');
     await page.keyboard.press('Escape');

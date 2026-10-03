@@ -49,7 +49,7 @@ test('board paginated faces keep the selected fact pair', async ({ page }) => {
   const board = page.locator('.deduction-board');
   await expect(board.locator('.deduction-face-tabs button')).toHaveCount(4);
   await board.getByRole('button', { name: strings.deductionCompareFace, exact: true }).click();
-  const first = board.locator('.deduction-facts .swipe-choice').first();
+  const first = board.locator('.compare-fact').first();
   await first.click();
   await board.getByRole('button', { name: strings.deductionTimelineFace, exact: true }).click();
   await board.getByRole('button', { name: strings.deductionCompareFace, exact: true }).click();
@@ -85,7 +85,7 @@ for (const viewport of [
     const popup = dialog.locator('.investigation-vocabulary-popover');
     await expect(popup).toBeVisible();
     await expect(popup).toBeFocused();
-    await expect(popup.locator('.page-viewport')).not.toContainText(strings.pagePreparing);
+    await expect(popup.locator('.page-controls')).toHaveCount(0);
     await page.screenshot({
       path: fileURLToPath(
         new URL(
@@ -109,28 +109,12 @@ for (const viewport of [
     expect(close.height).toBeGreaterThanOrEqual(44);
     await expectNoInvestigationScroll(page, popup);
 
-    // PageDown inside the popover turns only the popover, never the page underneath it.
-    const underneath = person.locator('.page-controls span');
-    const position = await underneath.innerText();
-    const own = popup.locator('.page-controls span');
-    const ownPosition = await own.innerText();
-    const ownNext = popup.getByRole('button', { name: /Trang sau/ });
-    const paged = await ownNext.isEnabled();
-    // Whether the card needs a second page depends on the room the dialog gives it; turning is checked when it does.
-    await popup.focus();
-    await page.keyboard.press('PageDown');
-    expect(await underneath.innerText()).toBe(position);
-    if (paged) {
-      await expect(own).not.toHaveText(ownPosition);
-      await page.keyboard.press('PageUp');
-      await expect(own).toHaveText(ownPosition);
-    }
-
-    // The whole definition card stays reachable by turning the popover's own pages.
+    // The whole definition card is reachable: long entries scroll inside the note, with no pages and no bar.
     const entry = definition.vocabulary.find((w) => w.lemma === 'leave')!;
-    const text = await readAllPages(popup.locator('.measured-page'));
+    const text = (await popup.innerText()).replace(/\s+/g, ' ');
     expect(text).toContain(entry.definitionEn);
     expect(text).toContain(entry.examples[0]!);
+    await expect(popup.locator('.swipe-row')).toHaveCSS('overflow-y', 'auto');
 
     await page.keyboard.press('Escape');
     await expect(popup).toHaveCount(0);

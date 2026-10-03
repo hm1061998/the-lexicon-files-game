@@ -106,7 +106,6 @@ test.describe.serial('Case #001 journey', () => {
         .locator('.notebook-feedback')
         .filter({ hasText: "This interpretation doesn't match the evidence." }),
     ).toBeVisible();
-    await openFace(page, 'Dữ kiện đã thu thập');
     await (await reveal(page, annaName)).click();
     await (await reveal(page, davidName)).click();
     await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).click();

@@ -2,9 +2,9 @@ import { createPortal } from 'react-dom';
 import { InkButton } from '@lexicon/ui';
 import { useMemo, type RefObject } from 'react';
 import type { TranslationMode, UiStrings, VocabularyEntry } from '@lexicon/shared-types';
-import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import type { ReaderBlock } from '../investigation/pagination/pageTypes';
-import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
+import { textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeRow } from '../deduction/swipe/SwipeRow';
 
 const noop = () => undefined;
 
@@ -64,15 +64,8 @@ export function InvestigationVocabularyPopover({
     () => buildPopoverBlocks(entry, mode, strings, revealed, showTutorial),
     [entry, mode, strings, revealed, showTutorial],
   );
-  // Definition text carries no vocabulary spans, so the reader never fires learning callbacks.
-  const learning: InvestigationLearningProps = {
-    catalogue: [],
-    strings,
-    translationMode: mode,
-    onEncounter: noop,
-    onInspect: noop,
-    onRevealTranslation: noop,
-  };
+  const textOf = (block: ReaderBlock): string => (block.kind === 'text' ? block.text : '');
+  // The card is a pinned note, not a paged sheet: a long entry scrolls up and down under a finger or a drag.
   const popover = (
     <div
       id={popupId}
@@ -81,34 +74,46 @@ export function InvestigationVocabularyPopover({
       role="dialog"
       tabIndex={-1}
       aria-label={entry.lemma}
-      onKeyDown={(event) => {
-        // Focus on the card itself (or its close button) is outside the paged reader's own handler.
-        if (event.key !== 'PageDown' && event.key !== 'PageUp') return;
-        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-        const [previous, next] =
-          event.currentTarget.querySelectorAll<HTMLButtonElement>('.page-controls button');
-        const turn = event.key === 'PageDown' ? next : previous;
-        event.preventDefault();
-        event.stopPropagation();
-        if (turn && !turn.disabled) turn.click();
-      }}
     >
-      <div className="investigation-vocabulary-pages">
-        <ReadDocument
-          blocks={blocks}
-          fixed={{
-            [`${entry.id}:reveal`]: (
-              <InkButton onClick={onReveal}>{strings.revealTranslation}</InkButton>
-            ),
-          }}
-          label={entry.lemma}
-          learning={learning}
-          revision={`${mode}:${revealed}:${showTutorial}`}
-        />
-      </div>
+      <span className="vocab-card__pin" aria-hidden="true" />
       <InkButton className="investigation-vocabulary-close" sfx="paper-close" onClick={onClose}>
         {strings.close}
       </InkButton>
+      <SwipeRow axis="y" label={entry.lemma} className="vocab-card__body">
+        {blocks.map((block) => {
+          const kind = block.id.slice(entry.id.length + 1);
+          const text = textOf(block);
+          if (kind === 'reveal')
+            return (
+              <InkButton key={block.id} className="vocab-card__reveal" onClick={onReveal}>
+                {strings.revealTranslation}
+              </InkButton>
+            );
+          if (kind === 'title')
+            return (
+              <h3 key={block.id} className="vocab-card__word">
+                {text}
+              </h3>
+            );
+          if (kind === 'part')
+            return (
+              <span key={block.id} className="vocab-card__part">
+                {text}
+              </span>
+            );
+          if (kind.startsWith('example'))
+            return (
+              <p key={block.id} className="vocab-card__example">
+                {text}
+              </p>
+            );
+          return (
+            <p key={block.id} className={`vocab-card__${kind}`}>
+              {text}
+            </p>
+          );
+        })}
+      </SwipeRow>
     </div>
   );
   return host ? createPortal(popover, host) : popover;

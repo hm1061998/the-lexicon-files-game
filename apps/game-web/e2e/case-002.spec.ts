@@ -58,7 +58,6 @@ async function revealFromStart(page: Page, name: string) {
 
 async function compare(page: Page, first: string, second: string): Promise<void> {
   await openFace(page, 'Đối chiếu');
-  await openFace(page, 'Dữ kiện đã thu thập');
   await (await revealFromStart(page, first)).click();
   await (await revealFromStart(page, second)).click();
   await page.getByRole('button', { name: 'Kiểm tra mâu thuẫn' }).click();
@@ -220,7 +219,7 @@ test.describe.serial('Case #002 journey', () => {
       'Leo says he was at his desk all afternoon.',
       'Leo entered the mail room at 16:40.',
     );
-    await expect(page.locator('.contradiction-confirmed')).toContainText(
+    await expect(page.locator('.contradiction-confirmed').first()).toContainText(
       'Mâu thuẫn đã được xác nhận.',
     );
     await compare(
@@ -228,7 +227,7 @@ test.describe.serial('Case #002 journey', () => {
       'Leo says Anna wrote the wrong house number.',
       "A label for 41 Bridge Street was printed from Leo's account at 16:44.",
     );
-    await expect(page.locator('.contradiction-confirmed')).toContainText(
+    await expect(page.locator('.contradiction-confirmed').first()).toContainText(
       'Mâu thuẫn đã được xác nhận.',
     );
     await expect

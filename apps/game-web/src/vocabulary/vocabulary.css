@@ -80,37 +80,98 @@
   box-shadow: 2px 2px 0 0 var(--lexicon-border);
 }
 
-/* Investigation reading surfaces: the definition card is a paged sheet inside the dialog. */
+/* Investigation reading surfaces: the definition card is a note pinned inside the dialog. */
 .investigation-vocabulary-popover {
-  inset: auto 12px 12px;
-  width: auto;
+  --card-tilt: 1deg;
+  display: flex;
+  flex-direction: column;
+  inset: auto 24px 24px auto;
+  width: min(420px, calc(100% - 24px));
   min-width: 0;
-  height: min(62%, 24rem);
-  max-height: calc(100% - 24px);
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 6px;
-  overflow: hidden;
+  max-height: min(72%, 26rem);
+  padding: 22px 24px 18px;
   box-sizing: border-box;
+  overflow: visible;
   z-index: 30;
+  color: var(--lexicon-ink);
+  background: #e6d9b8 url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
+  border: 1px solid rgb(62 52 43 / 35%);
+  border-radius: 2px;
+  box-shadow: 0 8px 16px rgb(0 0 0 / 45%);
+  rotate: var(--card-tilt);
 }
-.investigation-vocabulary-pages {
+.vocab-card__pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #c9644f, var(--lexicon-dark-red) 62%, #3d1812);
+  box-shadow: 1px 3px 3px rgb(0 0 0 / 45%);
+}
+.investigation-vocabulary-popover .investigation-vocabulary-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  z-index: 1;
+}
+.vocab-card__body.swipe-row {
+  height: auto;
+  flex: 1 1 auto;
   min-height: 0;
+  cursor: default;
+  padding-right: 4px;
 }
-.investigation-vocabulary-pages button,
-.investigation-vocabulary-close {
-  min-width: 44px;
-  min-height: 44px;
+.investigation-vocabulary-popover .vocab-card__word {
+  margin: 0 40px 2px 0;
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--lexicon-ink);
 }
-.investigation-vocabulary-close {
-  justify-self: end;
+.vocab-card__part {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 2px 8px;
+  border: 1px solid rgb(62 52 43 / 55%);
+  font: 500 13px var(--lexicon-font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.investigation-vocabulary-popover p {
+  margin: 0 0 10px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+.investigation-vocabulary-popover .vocab-card__example {
+  padding-left: 12px;
+  border-left: 3px solid rgb(62 52 43 / 35%);
+  font-style: italic;
+}
+.investigation-vocabulary-popover .vocab-card__tutorial {
+  font-size: 16px;
+  font-style: italic;
+}
+.vocab-card__reveal {
+  display: block;
+  margin: 0 0 6px -8px;
 }
 
-/* Short landscape screens: give the definition card most of the dialog so each page holds more lines. */
-@media (max-height: 500px) {
+/* Short or narrow: the note takes the width of the dialog, lies flat and hugs the bottom. */
+@media (max-width: 719px), (max-height: 500px) {
   .investigation-vocabulary-popover {
+    --card-tilt: 0deg;
     inset: auto 8px 8px;
-    height: min(86%, 24rem);
+    width: auto;
     max-height: calc(100% - 16px);
+    padding: 16px 16px 10px;
+  }
+  .vocab-card__word {
+    font-size: 24px;
+  }
+  .investigation-vocabulary-popover p {
+    font-size: 16px;
   }
 }
 

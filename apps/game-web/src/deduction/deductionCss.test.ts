@@ -31,9 +31,9 @@ describe('deduction board CSS guards', () => {
     expect(css).not.toMatch(/\.deduction-face-tabs\s+button/);
   });
 
-  it('keeps red out of the board chrome (only the selected card and the contradiction line use it)', () => {
+  it('keeps red out of the board chrome (pins, the timeline string and a selection use it)', () => {
     const hits = css.match(/#a4412d|#743026|investigation-red|dark-red/gi) ?? [];
-    expect(hits.length).toBeLessThanOrEqual(6);
+    expect(hits.length).toBeLessThanOrEqual(14);
   });
 
   it('keeps a mouse drag on the swipe row from selecting text', () => {

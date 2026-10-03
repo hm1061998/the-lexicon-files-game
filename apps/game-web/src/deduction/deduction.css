@@ -648,3 +648,333 @@
   outline: 3px solid var(--lexicon-dark-red);
   outline-offset: -3px;
 }
+
+/* Timeline: a string of pins, one per slot; the events still to place wait in a tray below. */
+.timeline-board {
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 6px 8px 8px;
+}
+.timeline-rail.swipe-row {
+  height: auto;
+  flex: none;
+  cursor: grab;
+}
+.timeline-slots {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  padding: 0 0 6px;
+  list-style: none;
+}
+.timeline-slot {
+  position: relative;
+  flex: 1 0 110px;
+  padding-top: 4px;
+}
+.timeline-slot__time {
+  display: block;
+  text-align: center;
+  font: 20px var(--lexicon-font-hand);
+  color: var(--lexicon-ink);
+}
+/* The string sags from this pin to the next one. */
+.timeline-slot:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 37px;
+  width: 100%;
+  height: 12px;
+  border-bottom: 3px solid #a4412d;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  pointer-events: none;
+}
+.timeline-slot__pin {
+  position: absolute;
+  top: 31px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #d4684f, var(--lexicon-dark-red) 70%);
+  box-shadow: 0 2px 3px rgb(0 0 0 / 45%);
+  z-index: 1;
+}
+.timeline-slot .timeline-slot__target {
+  position: static;
+  display: block;
+  width: calc(100% - 10px);
+  min-height: 84px;
+  margin: 31px 5px 0;
+  padding: 8px 4px 4px;
+  border: 2px dashed rgb(42 37 33 / 45%);
+  border-radius: 2px;
+  text-decoration: none;
+  text-align: left;
+}
+.timeline-slot .timeline-slot__target:has(.timeline-placed) {
+  border-color: transparent;
+}
+.timeline-slot .timeline-slot__target:hover:not(:disabled) {
+  background: rgb(255 255 255 / 25%);
+}
+.timeline-slot .timeline-slot__target[aria-pressed='true'] {
+  border: 2px solid var(--lexicon-investigation-red);
+  background: rgb(255 255 255 / 30%);
+}
+.timeline-slot .timeline-slot__target:disabled {
+  opacity: 1;
+}
+.timeline-placed {
+  display: block;
+  margin: 8px 0 0;
+  padding: 8px 8px;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--lexicon-ink);
+  background: #e6d9b8 url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
+  box-shadow: 0 4px 7px rgb(0 0 0 / 35%);
+}
+.timeline-tray {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  padding: 20px 12px 8px;
+  background: rgb(60 44 30 / 35%);
+  border: 2px solid rgb(40 28 18 / 55%);
+  box-shadow: inset 0 0 14px rgb(0 0 0 / 45%);
+}
+.deduction-board .timeline-tray__title {
+  position: absolute;
+  left: 14px;
+  top: -14px;
+  margin: 0;
+  padding: 2px 12px;
+  font: 500 14px var(--lexicon-font-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lexicon-ink);
+  background: #e6d9b8;
+  border: 1px solid rgb(62 52 43 / 50%);
+}
+.timeline-events,
+.compare-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 22px;
+  padding: 14px 6px 10px;
+}
+.timeline-events .timeline-event {
+  width: 236px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+.timeline-event small {
+  margin: 0;
+  opacity: 0.8;
+}
+.timeline-empty {
+  margin: 4px;
+  color: var(--lexicon-paper);
+}
+.timeline-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.timeline-hint {
+  margin: 0;
+  font: 18px var(--lexicon-font-hand);
+  color: var(--lexicon-ink);
+}
+.timeline-sticky,
+.compare-sticky {
+  margin: 0;
+  padding: 10px 14px;
+  background: #f1df8e;
+  border: 0;
+  box-shadow: 0 4px 7px rgb(0 0 0 / 32%);
+  color: var(--lexicon-ink);
+  font: 17px var(--lexicon-font-hand);
+  line-height: 1.3;
+  rotate: -0.8deg;
+}
+
+/* Compare: pinned facts on the left, frames A and B with the check and its result on the right. */
+.compare-board {
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 18px;
+  padding: 6px 8px 8px;
+}
+.compare-facts {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.deduction-board .compare-heading {
+  margin: 0;
+  font: 22px var(--lexicon-font-hand);
+  color: var(--lexicon-ink);
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.compare-grid .compare-fact {
+  min-height: 84px;
+  text-align: left;
+}
+.compare-panel {
+  min-height: 0;
+  padding: 10px 6px 10px 14px;
+  background: #e6d9b8 url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
+  box-shadow: 0 5px 8px rgb(0 0 0 / 35%);
+}
+.compare-panel__body {
+  padding-right: 8px;
+}
+.compare-frame {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  min-height: 72px;
+  border: 2px dashed rgb(42 37 33 / 50%);
+  background: rgb(255 255 255 / 18%);
+  line-height: 1.4;
+}
+.compare-frame.is-filled {
+  border-style: solid;
+  background: rgb(255 255 255 / 35%);
+}
+.compare-frame__label {
+  display: block;
+  font: 500 13px var(--lexicon-font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+.compare-frame__empty {
+  font-size: 14px;
+  opacity: 0.7;
+}
+.compare-panel .workspace-actions {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 14px;
+}
+.compare-results {
+  display: grid;
+  gap: 12px;
+}
+.compare-results p,
+.compare-results strong {
+  margin: 0;
+}
+.compare-results .compare-sticky:nth-child(even) {
+  rotate: 0.8deg;
+}
+@media (max-width: 1099px) {
+  .compare-board {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 48%);
+    gap: 10px;
+  }
+}
+@media (max-height: 500px) {
+  .compare-board {
+    grid-template-columns: minmax(0, 1fr) 290px;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .timeline-board {
+    gap: 6px;
+  }
+  .timeline-slot .timeline-slot__target {
+    min-height: 44px;
+    margin-top: 31px;
+  }
+  .timeline-placed {
+    padding: 4px 6px;
+  }
+  .timeline-tray {
+    padding-top: 18px;
+  }
+  .timeline-hint {
+    display: none;
+  }
+}
+
+/* Narrow: frames A and B sit side by side so the check button stays in view. */
+@media (max-width: 1099px) {
+  .compare-panel__body {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 10px;
+  }
+  .compare-panel__body > .deduction-selection-count,
+  .compare-panel__body > .workspace-actions,
+  .compare-panel__body > .compare-results {
+    grid-column: 1 / -1;
+  }
+  .compare-frame {
+    min-height: 60px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+  }
+}
+
+/* Short landscape: rail across the top, the tray beside the confirm button. */
+@media (max-height: 500px) {
+  .timeline-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 170px;
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 12px;
+  }
+  .timeline-rail.swipe-row {
+    grid-column: 1 / -1;
+  }
+  .timeline-tray {
+    margin-top: 12px;
+  }
+  .timeline-actions {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+  .timeline-events .timeline-event {
+    width: 200px;
+  }
+}
+
+@media (max-height: 500px) {
+  .timeline-slot .timeline-slot__target {
+    max-height: 44px;
+    overflow: hidden;
+  }
+  .timeline-placed {
+    margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

@@ -18,7 +18,8 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
 
   await openFace(page, 'Dòng thời gian');
   const missingReport = await reveal(page, 'The report was discovered missing.');
-  await expect(page.getByRole('button', { name: 'Mốc 21:05' })).toHaveCount(0);
+  // The slots are on the string from the start but cannot be picked before an event is.
+  await expect(page.getByRole('button', { name: 'Mốc 21:05' })).toBeDisabled();
   await missingReport.click();
   await expect(await reveal(page, 'Mốc 21:05')).toBeVisible();
   await (await reveal(page, 'Mốc 20:45')).click();
@@ -26,7 +27,6 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(
     page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
   ).toContainText('Something in the timeline is inconsistent.');
-  await openFace(page, 'Chọn mốc thời gian');
   await (await reveal(page, 'Mốc 21:05')).click();
   await page.getByRole('button', { name: 'Đặt sự kiện' }).click();
   await expect(
@@ -97,7 +97,6 @@ test('Archive, timeline, contradiction, conclusion and case report survive reloa
   await expect(
     page.locator('.notebook-feedback').filter({ hasText: /inconsistent|ghi vào|doesn't match/ }),
   ).toContainText("This interpretation doesn't match the evidence.");
-  await openFace(page, 'Dữ kiện đã thu thập');
   await (await reveal(page, annaName)).click();
   await (await reveal(page, davidEntryName)).focus();
   await page.keyboard.press('Enter');
