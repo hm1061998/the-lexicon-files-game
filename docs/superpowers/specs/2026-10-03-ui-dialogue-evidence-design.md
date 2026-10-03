@@ -65,6 +65,16 @@ E2E đang bám các class: `.dialogue-panel`, `.dialogue-text`, `.dialogue-tools
 - Mọi tilt/animation mới (tờ lời khai, tờ ghi chú lựa chọn, ảnh vật chứng) nằm trong danh sách của `motion.css` cho cả `lexicon-motion-off` và `prefers-reduced-motion` **ngay trong cùng commit** (bài học review phần 3), kèm test CSS như `shellCss.test.ts`.
 - Giữ: focus trap, trả focus, `aria-modal`, tên truy cập, mục tiêu ≥44px, không tràn ngang ở 1280×720, 760×600, 390×844, 844×390; giấy nằm trong màn hoặc cuộn bên trong.
 
+### 3.6 Bổ sung sau duyệt: overlay không cuộn (03/10/2026)
+
+Người dùng chỉ ra modal bài nghe còn thanh cuộn trắng mặc định, trái tiêu chí overlay trong game không cuộn. Quy tắc thay thế các chỗ ở trên cho phép "cuộn bên trong":
+
+- Hội thoại, vật chứng, bài nghe và thẻ định nghĩa nằm trọn trong giấy ở 1280×720, 760×600, 390×844, 844×390; E2E đo mọi container `overflow: auto` trong giấy phải không tràn.
+- Thẻ vật chứng có bài nghe chia hai mục (nút "Bài nghe của vụ án" mở mặc định, "Chứng cứ"); mục ẩn dùng `hidden` để trạng thái phát và telemetry không mất.
+- Màn thấp và rộng (`max-height: 500px` và `min-width: 700px`): bài nghe chia hai cột, hội thoại chia hai cột (lời khai bên trái, lựa chọn hoặc thẻ định nghĩa bên phải), ảnh vật chứng đứng cạnh mô tả.
+- Thẻ định nghĩa trong hội thoại thay chỗ các lựa chọn khi mở thay vì đẩy chúng xuống.
+- Cuộn chỉ còn là phương án cuối ở màn cực nhỏ (390×300), thanh cuộn mảnh màu mực.
+
 ## 4. Kiểm chứng
 
 - Test đơn vị: cấu trúc `DialogueView`/`EvidenceModal`/`ListeningTaskPanel` (class giữ nguyên, lựa chọn, focus), test CSS motion và luật thẻ từ vựng.

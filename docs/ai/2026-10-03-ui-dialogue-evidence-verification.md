@@ -41,3 +41,12 @@ Sau: hội thoại là tờ lời khai torn có kẹp giấy, lựa chọn là t
 
 Một review toàn nhánh (opus): không Critical; hai Important đã sửa RED→GREEN (độ tương phản nhãn đỏ; kẹp giấy bị cắt) với test CSS trong `evidenceCss.test.ts` và `dialogueCss.test.ts`.
 Minor chưa sửa: màu nền ghi chú/phiếu bị texture đục che nên không hiện (chỉ viền và bóng phân biệt); CSS thẻ từ vựng lặp giữa `.modal-sheet` và `.dialogue-panel` (có thể gộp bằng `:is`); vài luật cân specificity bằng thứ tự nạp CSS (`.evidence-modal` vs `.modal-sheet`, focus ring); nút đóng vật chứng cuộn mất khi cuộn thẻ rất dài; lề phải 56px của tiêu đề chỉ vừa nhãn tiếng Việt hiện tại; thiếu ảnh 844×390 và test 760×240; chưa có fallback forced-colors cho nút đóng không viền; có thể có tràn ngang dưới 1px do tilt trong `.dialogue-panel`.
+
+## Sửa sau duyệt: overlay không cuộn (03/10/2026)
+
+Người dùng báo modal bài nghe cuộn với thanh cuộn trắng mặc định. Đã sửa (commit `fix(ui): dialogue and evidence overlays fit without scrolling`):
+- E2E `ui-dialogue-evidence` thêm kiểm tra không có container cuộn nào tràn trong giấy (đỏ ở 9 test trước khi sửa), và thẻ định nghĩa nằm trọn trên giấy; spec chụp ảnh thêm 844×390 (20 ảnh mỗi bên, ảnh trước 844×390 chụp từ `42083ab`).
+- Thẻ vật chứng có bài nghe chia hai mục; bài nghe và hội thoại chia hai cột ở màn thấp; thẻ định nghĩa thay chỗ các lựa chọn; cuộn chỉ còn ở 390×300 với thanh cuộn mảnh.
+- `viewport-focus` "compact evidence" đổi sang 390×300 (ở 760×360 thẻ không còn cần cuộn).
+- Ruling: spec §3.6 thay quy tắc "cuộn bên trong" bằng "không cuộn" vì tiêu chí của người dùng.
+- Kiểm chứng lại: unit game-web 708; lint/build/typecheck/format đạt; E2E đầy đủ 256 pass, 61 skipped, 17 đỏ, đúng 17 test đỏ có sẵn.

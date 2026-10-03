@@ -23,8 +23,8 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-dialogue-evidence.md
 
 ## Current Status
 
-- Phần 4: hội thoại là tờ lời khai torn có kẹp giấy với lựa chọn là tờ ghi chú; vật chứng là `ModalSheet` với ảnh dán nghiêng, nhãn "Vật chứng" đỏ đậm `#743026`; bài nghe là phiếu trong thẻ; thẻ từ vựng nằm trong luồng ở hội thoại. Báo cáo `docs/ai/2026-10-03-ui-dialogue-evidence-verification.md`. E2E đầy đủ: 256 pass, 17 đỏ đều có sẵn; sau review sửa 2 Important (tương phản nhãn đỏ, kẹp giấy bị cắt) và các spec liên quan xanh. Unit game-web 704. FPS 12,2 so với 12,8 (nhiễu).
-- Minor chưa sửa (xem báo cáo): màu nền ghi chú bị texture che, CSS thẻ từ vựng lặp, specificity phụ thuộc thứ tự nạp, thiếu forced-colors cho nút đóng, thiếu ảnh 844×390.
+- Phần 4: hội thoại là tờ lời khai torn có kẹp giấy với lựa chọn là tờ ghi chú; vật chứng là `ModalSheet` với ảnh dán nghiêng, nhãn "Vật chứng" đỏ đậm `#743026`; bài nghe là phiếu trong thẻ; thẻ từ vựng nằm trong luồng ở hội thoại. Báo cáo `docs/ai/2026-10-03-ui-dialogue-evidence-verification.md`. E2E đầy đủ: 256 pass, 17 đỏ đều có sẵn; sau review sửa 2 Important (tương phản nhãn đỏ, kẹp giấy bị cắt) và các spec liên quan xanh. Unit game-web 708; sau duyệt đã sửa để overlay không cuộn (bài nghe chia hai mục, hai cột ở màn thấp, thẻ định nghĩa thay chỗ lựa chọn; E2E đầy đủ 256 pass/17 đỏ có sẵn). FPS 12,2 so với 12,8 (nhiễu).
+- Minor chưa sửa (xem báo cáo): màu nền ghi chú bị texture che, CSS thẻ từ vựng lặp, specificity phụ thuộc thứ tự nạp, thiếu forced-colors cho nút đóng.
 
 ## Completed
 
