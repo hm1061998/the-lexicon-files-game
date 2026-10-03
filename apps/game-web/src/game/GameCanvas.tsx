@@ -63,6 +63,9 @@ import {
   type SettingsLoadResult,
 } from '../persistence/settingsRepository';
 import { createSettingsStore, type SettingsStore } from '../state/settingsStore';
+import { createUiSound } from '../audio/uiSound';
+import { UI_SOUND_FILES } from '../audio/uiSoundManifest';
+import { useUiSoundDelegation } from '../audio/useUiSoundDelegation';
 import { SettingsStoreProvider } from '../state/SettingsStoreContext';
 import { useMasterVolume } from '../audio/useMasterVolume';
 import { useSettingsStore } from '../state/SettingsStoreContext';
@@ -171,6 +174,19 @@ export function GameCanvas({
   const [settingsWriteError, setSettingsWriteError] = useState<string | null>(null);
   const settingsStrings = shell.ok ? shell.content.strings : null;
   const reducedMotion = useReducedMotion(settings);
+  const uiSound = useMemo(
+    () =>
+      settings
+        ? createUiSound({
+            files: UI_SOUND_FILES,
+            enabled: () => settings.getState().settings.uiSounds,
+            volume: () => settings.getState().settings.volume,
+          })
+        : null,
+    [settings],
+  );
+  useEffect(() => () => uiSound?.dispose(), [uiSound]);
+  useUiSoundDelegation(typeof document === 'undefined' ? null : document, uiSound);
 
   useEffect(() => {
     if (!settings || !settingsLoad || !settingsStrings || settingsLoad.status === 'memory-only')
