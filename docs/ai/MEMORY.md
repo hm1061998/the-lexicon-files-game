@@ -3,7 +3,7 @@ schema_version: 1
 updated_at: 2026-10-04T23:50:00+07:00
 phase: pr-04-case-authoring
 status: in_progress
-result_commit: HEAD
+result_commit: f58c0b5
 active_spec: docs/superpowers/specs/2026-10-04-case-authoring-dialogue-yaml-design.md
 active_plan: docs/superpowers/plans/2026-10-04-case-authoring-dialogue-yaml.md
 ---
