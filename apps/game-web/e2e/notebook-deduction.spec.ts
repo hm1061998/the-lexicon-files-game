@@ -140,9 +140,7 @@ for (const viewport of [
     ).click();
     await expect(board.locator('.deduction-detail')).toContainText('Meeting Minutes');
     await board.getByRole('button', { name: strings.investigationRelations, exact: true }).click();
-    await expect(board.locator('.deduction-detail .page-viewport')).toContainText(
-      'Meeting Minutes',
-    );
+    await expect(board.locator('.deduction-detail')).toContainText('Meeting Minutes');
     const box = (await board.boundingBox())!;
     const margin = viewport.width <= 800 ? 8 : 12;
     expect(box.x).toBeGreaterThanOrEqual(margin);
@@ -242,9 +240,7 @@ test('portrait artwork keeps every character head inside its frame', async ({ pa
     flags: { anna_q1_read: true, leo_q1_read: true, david_statement_read: true },
   });
   await page.keyboard.press('b');
-  const frames = page.locator(
-    '.clues-cards .page-viewport .deduction-card .investigation-portrait',
-  );
+  const frames = page.locator('.clues-cards .deduction-card .investigation-portrait');
   await expect(frames).toHaveCount(3);
   for (const frame of await frames.all()) {
     const img = frame.locator('img');

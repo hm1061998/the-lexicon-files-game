@@ -1,7 +1,8 @@
 import type { CaseDefinition, GameState, UiStrings } from '@lexicon/shared-types';
 import type { ReaderBlock } from '../investigation/pagination/pageTypes';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
-import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
+import { textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeDocument } from './swipe/SwipeDocument';
 export function buildCaseFileBlocks(
   definition: CaseDefinition,
   state: GameState,
@@ -35,5 +36,5 @@ export function DeductionCaseFile({
 }) {
   const s = learning.strings;
   const blocks = buildCaseFileBlocks(definition, state, s);
-  return <ReadDocument blocks={blocks} learning={learning} label={s.investigationCaseFile} />;
+  return <SwipeDocument blocks={blocks} learning={learning} label={s.investigationCaseFile} />;
 }

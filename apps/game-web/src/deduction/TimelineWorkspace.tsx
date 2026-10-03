@@ -4,8 +4,9 @@ import type { CaseDefinition, TimelinePlacementResult } from '@lexicon/shared-ty
 import type { InvestigationView } from '../investigation/selectInvestigationView';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import type { DeductionUi, DeductionUiAction } from './deductionUiReducer';
-import { ChoicePages } from '../investigation/pagination/ChoicePages';
-import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeChoices } from './swipe/SwipeChoices';
+import { textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeDocument } from './swipe/SwipeDocument';
 export function TimelineWorkspace({
   definition,
   view,
@@ -61,7 +62,7 @@ export function TimelineWorkspace({
       </nav>
       <div className="workspace-reading">
         {current === 'events' ? (
-          <ChoicePages
+          <SwipeChoices
             choices={view.availableEvents.map((e) => ({
               id: e.id,
               label: e.text,
@@ -79,7 +80,7 @@ export function TimelineWorkspace({
             }}
           />
         ) : current === 'slots' ? (
-          <ChoicePages
+          <SwipeChoices
             choices={definition.timeline.slots.map((s) => ({
               id: s.id,
               label: strings.timelineSlotLabel + ' ' + s.time,
@@ -93,7 +94,7 @@ export function TimelineWorkspace({
             }}
           />
         ) : current === 'confirm' ? (
-          <ReadDocument
+          <SwipeDocument
             blocks={[
               textBlock('event:title', event!.text),
               textBlock('event:slot', strings.timelineSlotLabel + ' ' + slot!.time),
@@ -102,7 +103,7 @@ export function TimelineWorkspace({
             label={strings.timelineConfirmSelection}
           />
         ) : current === 'recorded' ? (
-          <ReadDocument
+          <SwipeDocument
             blocks={recorded}
             learning={learning}
             label={strings.timeline}
@@ -110,7 +111,7 @@ export function TimelineWorkspace({
           />
         ) : (
           <div className="notebook-feedback" role="status">
-            <ReadDocument
+            <SwipeDocument
               blocks={[textBlock('timeline:feedback', ui.feedback)]}
               learning={learning}
               label={strings.investigationResults}

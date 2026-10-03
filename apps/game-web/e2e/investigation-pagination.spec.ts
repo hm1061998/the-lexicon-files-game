@@ -49,8 +49,7 @@ test('board paginated faces keep the selected fact pair', async ({ page }) => {
   const board = page.locator('.deduction-board');
   await expect(board.locator('.deduction-face-tabs button')).toHaveCount(4);
   await board.getByRole('button', { name: strings.deductionCompareFace, exact: true }).click();
-  await expect(board.locator('.page-viewport').first()).not.toContainText(strings.pagePreparing);
-  const first = board.locator('.deduction-facts .page-viewport button').first();
+  const first = board.locator('.deduction-facts .swipe-choice').first();
   await first.click();
   await board.getByRole('button', { name: strings.deductionTimelineFace, exact: true }).click();
   await board.getByRole('button', { name: strings.deductionCompareFace, exact: true }).click();

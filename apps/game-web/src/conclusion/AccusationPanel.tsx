@@ -1,8 +1,9 @@
 import './conclusion.css';
 import { InkButton, PaperButton, PinnedCard } from '@lexicon/ui';
 import { InvestigationArtwork } from '../investigation/InvestigationArtwork';
-import { MeasuredPage } from '../investigation/pagination/MeasuredPage';
-import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeRow } from '../deduction/swipe/SwipeRow';
+import { SwipeDocument } from '../deduction/swipe/SwipeDocument';
+import { textBlock } from '../investigation/pagination/ReadDocument';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import { useId, useState } from 'react';
 import type { AccusationResult, UiStrings } from '@lexicon/shared-types';
@@ -21,14 +22,12 @@ function SuspectCard({
   index,
   portrait,
   selected,
-  passive = false,
   onSelect,
 }: {
   suspect: AccusationSuspect;
   index: number;
   portrait?: string | undefined;
   selected: boolean;
-  passive?: boolean;
   onSelect?: (() => void) | undefined;
 }): JSX.Element {
   return (
@@ -40,8 +39,7 @@ function SuspectCard({
       selected={selected}
       aria-label={suspect.name}
       aria-pressed={selected}
-      tabIndex={passive ? -1 : undefined}
-      onClick={passive ? undefined : onSelect}
+      onClick={onSelect}
     >
       <InvestigationArtwork url={portrait} name={suspect.name} portrait />
       <strong>{suspect.name}</strong>
@@ -82,16 +80,16 @@ export function AccusationPanel({
 
   if (learning) {
     const chosen = selection ?? null;
-    const card = (id: string, passive: boolean) => {
+    const card = (id: string) => {
       const index = suspects.findIndex((x) => x.id === id);
       const suspect = suspects[index];
       return suspect ? (
         <SuspectCard
+          key={id}
           suspect={suspect}
           index={index}
           portrait={portraits?.[id]}
           selected={chosen === id}
-          passive={passive}
           onSelect={() => onSelectionChange?.(id)}
         />
       ) : null;
@@ -102,20 +100,16 @@ export function AccusationPanel({
         <div className="workspace-reading">
           {controlledFeedback ? (
             <div className="notebook-feedback" role="status">
-              <ReadDocument
+              <SwipeDocument
                 blocks={[textBlock('accusation:feedback', controlledFeedback)]}
                 learning={learning}
                 label={strings.investigationResults}
               />
             </div>
           ) : (
-            <MeasuredPage
-              blocks={suspects.map((x) => ({ kind: 'fixed' as const, id: x.id }))}
-              renderFragment={(f) => card(f.blockId, false)}
-              renderMeasurement={(f) => card(f.blockId, true)}
-              strings={strings}
-              controlsLabel={strings.conclusion}
-            />
+            <SwipeRow label={strings.conclusion}>
+              <div className="swipe-track">{suspects.map((x) => card(x.id))}</div>
+            </SwipeRow>
           )}
         </div>
         <footer className="workspace-actions">

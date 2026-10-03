@@ -18,7 +18,8 @@ import { DeductionCluesFace } from './DeductionCluesFace';
 import { TimelineWorkspace } from './TimelineWorkspace';
 import { ContradictionWorkspace } from './ContradictionWorkspace';
 import { AccusationPanel } from '../conclusion/AccusationPanel';
-import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
+import { textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeDocument } from './swipe/SwipeDocument';
 import './deduction.css';
 export interface DeductionBoardProps {
   caseDefinition: CaseDefinition;
@@ -171,7 +172,7 @@ export function DeductionBoard({
             ) : (
               <section className="paginated-workspace single-reading">
                 <div className="workspace-reading">
-                  <ReadDocument
+                  <SwipeDocument
                     blocks={[textBlock('conclusion:unavailable', strings.conclusionUnavailable)]}
                     learning={learning}
                     label={strings.conclusion}

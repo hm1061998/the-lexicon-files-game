@@ -76,3 +76,21 @@ body {
 .save-recovery-screen {
   font-family: var(--lexicon-font-body, Georgia, serif);
 }
+
+/* Nothing in the game is selectable text: dragging or double-clicking never paints a selection. */
+html,
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea,
+[contenteditable='true'] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+img {
+  -webkit-user-drag: none;
+}

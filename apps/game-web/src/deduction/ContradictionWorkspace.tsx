@@ -4,8 +4,9 @@ import type { ContradictionResult } from '@lexicon/shared-types';
 import type { InvestigationView } from '../investigation/selectInvestigationView';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import type { DeductionUi, DeductionUiAction } from './deductionUiReducer';
-import { ChoicePages } from '../investigation/pagination/ChoicePages';
-import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeChoices } from './swipe/SwipeChoices';
+import { textBlock } from '../investigation/pagination/ReadDocument';
+import { SwipeDocument } from './swipe/SwipeDocument';
 import { pickContradiction } from './pickContradiction';
 export function ContradictionWorkspace({
   view,
@@ -46,7 +47,7 @@ export function ContradictionWorkspace({
       </p>
       <div className="workspace-reading deduction-facts">
         {mode === 'facts' ? (
-          <ChoicePages
+          <SwipeChoices
             choices={view.facts.map((f) => ({ id: f.id, label: f.text }))}
             selected={ui.selectedFactIds}
             onSelect={(id) => dispatch({ type: 'toggleFact', id })}
@@ -66,7 +67,7 @@ export function ContradictionWorkspace({
             }
             role={mode === 'results' ? 'status' : undefined}
           >
-            <ReadDocument
+            <SwipeDocument
               blocks={
                 mode === 'selected'
                   ? selected.map((f) => textBlock(f.id + ':text', f.text))

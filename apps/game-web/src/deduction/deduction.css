@@ -253,9 +253,12 @@
   height: 100%;
   min-height: 0;
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr) 300px;
+  grid-template-columns: 220px minmax(0, 1fr);
   grid-template-rows: 44px minmax(0, 1fr);
   gap: 12px;
+}
+.deduction-clues-face.has-detail {
+  grid-template-columns: 220px minmax(0, 1fr) 300px;
 }
 .deduction-clues-toolbar {
   grid-column: 1/-1;
@@ -274,23 +277,63 @@
 .clues-cards {
   position: relative;
   min-height: 0;
+  min-width: 0;
 }
-.deduction-clues-face .deduction-card {
+/* The clues hang on the cork in one row: swipe it sideways (no scroll bar, no pages). */
+.swipe-row {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: clip;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  cursor: grab;
+  /* Dragging with the mouse must not select the card text or drag the pictures out. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.swipe-row img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+.swipe-row::-webkit-scrollbar {
+  display: none;
+}
+.swipe-track {
   position: relative;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  width: min(100%, 460px);
+  align-items: flex-start;
+  gap: 26px;
+  width: max-content;
+  min-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 18px 20px 12px;
+}
+.deduction-clues-face .deduction-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  flex: none;
+  width: 230px;
+  padding: 16px 14px 14px;
   text-align: left;
-  height: 100px;
-  padding: 10px;
-  margin: 8px auto 0;
+  scroll-snap-align: center;
+  cursor: pointer;
 }
 .deduction-clues-face .deduction-card .investigation-artwork {
-  width: 64px;
-  height: 80px;
-  flex: none;
+  width: 100%;
+  height: 180px;
   margin: 0;
+}
+.deduction-clues-face .deduction-card .investigation-portrait {
+  width: 144px;
+  height: 180px;
+  aspect-ratio: auto;
+  margin: 0 auto;
 }
 .deduction-card strong {
   font-size: 16px;
@@ -443,7 +486,7 @@
     grid-column: 1;
   }
   .deduction-clues-face .deduction-card {
-    height: 94px;
+    width: 168px;
   }
   .deduction-overlay {
     padding: 8px;
@@ -526,12 +569,79 @@
   }
 }
 
-/* The cork surface is dark: keep the pager readable on its own paper chip. */
-.clues-cards .page-controls {
-  width: max-content;
-  margin: 0 auto;
-  padding: 0 10px;
-  background: var(--lexicon-paper);
-  border: 1px solid var(--lexicon-border);
+/* Short landscape screens: a clue is a compact card (picture beside its name) so the row keeps its height. */
+@media (max-height: 500px) {
+  .deduction-clues-face .deduction-card {
+    flex-direction: row;
+    align-items: center;
+    width: 210px;
+    padding: 10px 10px 8px;
+  }
+  .deduction-clues-face .deduction-card .investigation-artwork,
+  .deduction-clues-face .deduction-card .investigation-portrait {
+    width: 48px;
+    height: 60px;
+    flex: none;
+    margin: 0;
+  }
+  .swipe-track {
+    gap: 18px;
+    padding-top: 14px;
+  }
+}
+
+/* The instructions are a yellow sticky note stuck low on the cork, not a panel. */
+.clues-sticky {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: min(300px, 70%);
+  margin: 0;
+  padding: 14px 16px;
+  background: #f1df8e;
+  box-shadow: 0 4px 7px rgb(0 0 0 / 32%);
   color: var(--lexicon-ink);
+  font-family: var(--lexicon-font-hand);
+  font-size: 18px;
+  line-height: 1.3;
+  rotate: 1.2deg;
+}
+@media (max-height: 500px) {
+  .clues-sticky {
+    display: none;
+  }
+}
+
+/* Readings on the board scroll up and down (no bar); choices are slips in a row to swipe. */
+.swipe-row--y {
+  overflow-x: clip;
+  overflow-y: auto;
+  touch-action: pan-y;
+  cursor: default;
+  scroll-snap-type: none;
+}
+.swipe-document {
+  padding: 2px 4px;
+  box-sizing: border-box;
+}
+.swipe-choices {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 6px 4px 10px;
+  box-sizing: border-box;
+}
+.swipe-choices .swipe-choice {
+  flex: none;
+  width: 250px;
+  min-height: 88px;
+  scroll-snap-align: start;
+  white-space: pre-wrap;
+}
+.swipe-empty {
+  padding: 4px;
+}
+.swipe-row:focus-visible {
+  outline: 3px solid var(--lexicon-dark-red);
+  outline-offset: -3px;
 }

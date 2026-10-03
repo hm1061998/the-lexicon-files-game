@@ -11,6 +11,7 @@ describe('deduction board CSS guards', () => {
   it('levels pinned cards, tabs and the board under the motion switch and the OS preference', () => {
     for (const part of [off, os]) {
       expect(part).toContain('.pinned-card');
+      expect(part).toContain('.clues-sticky');
       expect(part).toContain('.deduction-board');
     }
   });
@@ -33,5 +34,9 @@ describe('deduction board CSS guards', () => {
   it('keeps red out of the board chrome (only the selected card and the contradiction line use it)', () => {
     const hits = css.match(/#a4412d|#743026|investigation-red|dark-red/gi) ?? [];
     expect(hits.length).toBeLessThanOrEqual(6);
+  });
+
+  it('keeps a mouse drag on the swipe row from selecting text', () => {
+    expect(css).toMatch(/\.swipe-row\s*\{[^}]*user-select:\s*none/);
   });
 });

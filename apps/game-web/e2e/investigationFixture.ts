@@ -117,7 +117,10 @@ export async function seedInvestigation(
 export async function expectNoInvestigationScroll(page: Page, dialog: Locator): Promise<void> {
   const offsets = () =>
     dialog.evaluate((el) =>
-      Array.from(el.querySelectorAll('*')).map((n) => ({ top: n.scrollTop, left: n.scrollLeft })),
+      // Swipe rows are meant to move under a wheel or a drag; nothing else is.
+      Array.from(el.querySelectorAll('*'))
+        .filter((n) => !n.matches('.swipe-row'))
+        .map((n) => ({ top: n.scrollTop, left: n.scrollLeft })),
     );
   const before = await offsets();
   await dialog.hover();
@@ -126,21 +129,29 @@ export async function expectNoInvestigationScroll(page: Page, dialog: Locator): 
   expect(await offsets()).toEqual(before);
   const overflow = await dialog.evaluate((el) => {
     const frame = el.getBoundingClientRect();
-    return Array.from(
-      el.querySelectorAll<HTMLElement>(
-        '.page-viewport .page-fragment,button,.page-controls button',
-      ),
-    )
-      .filter((n) => n.getClientRects().length && !n.closest('.page-measurement'))
-      .map((n) => ({ box: n.getBoundingClientRect(), text: n.textContent }))
-      .filter(
-        ({ box }) =>
-          box.bottom > frame.bottom + 1 ||
-          box.right > frame.right + 1 ||
-          box.top < frame.top - 1 ||
-          box.left < frame.left - 1,
+    return (
+      Array.from(
+        el.querySelectorAll<HTMLElement>(
+          '.page-viewport .page-fragment,button,.page-controls button',
+        ),
       )
-      .map(({ text }) => text);
+        // Cards in a swipe row are meant to run past the frame: they are reached by swiping.
+        .filter(
+          (n) =>
+            n.getClientRects().length &&
+            !n.closest('.page-measurement') &&
+            !n.closest('.swipe-row'),
+        )
+        .map((n) => ({ box: n.getBoundingClientRect(), text: n.textContent }))
+        .filter(
+          ({ box }) =>
+            box.bottom > frame.bottom + 1 ||
+            box.right > frame.right + 1 ||
+            box.top < frame.top - 1 ||
+            box.left < frame.left - 1,
+        )
+        .map(({ text }) => text)
+    );
   });
   expect(overflow).toEqual([]);
   // Measured pages must really fit: no fragment may run past the bottom of its own page.

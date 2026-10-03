@@ -40,21 +40,22 @@
   margin: 8px 0 12px;
 }
 
-/* Suspect cards: a portrait and a name on a pinned card, side by side so a page holds all of them. */
+/* Suspect cards: pinned in a row to swipe, a portrait over a name. */
 .suspect-card {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  width: min(100%, 460px);
-  margin: 8px auto 0;
-  padding: 8px 14px;
+  flex-direction: column;
+  align-items: stretch;
+  flex: none;
+  gap: 6px;
+  width: 230px;
+  padding: 16px 14px 14px;
   text-align: left;
 }
 
 .suspect-card .investigation-portrait {
-  width: 52px;
-  height: 66px;
-  flex: none;
+  width: 144px;
+  height: 180px;
+  margin: 0 auto;
 }
 
 .suspect-card strong {
@@ -63,13 +64,15 @@
 
 @media (max-height: 500px) {
   .suspect-card {
-    gap: 10px;
-    margin-top: 8px;
-    padding: 6px 10px;
+    flex-direction: row;
+    align-items: center;
+    width: 210px;
+    padding: 10px;
   }
 
   .suspect-card .investigation-portrait {
-    width: 40px;
-    height: 50px;
+    width: 48px;
+    height: 60px;
+    margin: 0;
   }
 }

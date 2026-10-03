@@ -55,7 +55,7 @@ export function ReadDocument({
   );
 }
 
-function ReaderTextFragment({
+export function ReaderTextFragment({
   block,
   fragment,
   passive,
