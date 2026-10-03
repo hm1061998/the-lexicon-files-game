@@ -51,13 +51,23 @@ export function DeductionConnections({
     observer?.observe(root);
     root.querySelectorAll('[data-board-node]').forEach((n) => observer?.observe(n));
     const mutation = new MutationObserver(update);
-    mutation.observe(root, { childList: true, subtree: true });
+    mutation.observe(root, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['aria-pressed'],
+    });
+    // Pinned cards settle (enter animation, hover lift) after layout: re-aim the lines when they stop.
+    root.addEventListener('animationend', update);
+    root.addEventListener('transitionend', update);
     window.addEventListener('resize', update);
     root.addEventListener('scroll', update, true);
     return () => {
       observer?.disconnect();
       mutation.disconnect();
       window.removeEventListener('resize', update);
+      root.removeEventListener('animationend', update);
+      root.removeEventListener('transitionend', update);
       root.removeEventListener('scroll', update, true);
     };
   }, [relationships, surface]);

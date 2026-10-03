@@ -1,3 +1,4 @@
+import { InkButton, PaperButton } from '@lexicon/ui';
 import { useState } from 'react';
 import type { ContradictionResult } from '@lexicon/shared-types';
 import type { InvestigationView } from '../investigation/selectInvestigationView';
@@ -34,15 +35,11 @@ export function ContradictionWorkspace({
   return (
     <section className="paginated-workspace compare-workspace">
       <nav className="workspace-steps">
-        <button type="button" onClick={() => setMode('facts')}>
-          {s.deductionFactsHeading}
-        </button>
-        <button type="button" disabled={!selected.length} onClick={() => setMode('selected')}>
+        <InkButton onClick={() => setMode('facts')}>{s.deductionFactsHeading}</InkButton>
+        <InkButton disabled={!selected.length} onClick={() => setMode('selected')}>
           {s.investigationReadFull}
-        </button>
-        <button type="button" onClick={() => setMode('results')}>
-          {s.investigationResults}
-        </button>
+        </InkButton>
+        <InkButton onClick={() => setMode('results')}>{s.investigationResults}</InkButton>
       </nav>
       <p className="deduction-selection-count">
         {s.contradictionSelectedCount}: {selected.length}/2
@@ -85,16 +82,11 @@ export function ContradictionWorkspace({
         )}
       </div>
       <footer className="workspace-actions">
-        <button
-          type="button"
-          disabled={!selected.length}
-          onClick={() => dispatch({ type: 'clearFacts' })}
-        >
+        <InkButton disabled={!selected.length} onClick={() => dispatch({ type: 'clearFacts' })}>
           {s.deductionClearSelection}
-        </button>
+        </InkButton>
         {view.availableContradictions.length > 0 ? (
-          <button
-            type="button"
+          <PaperButton
             disabled={selected.length !== 2}
             onClick={() => {
               const target = pickContradiction(view.availableContradictions, ui.selectedFactIds);
@@ -112,7 +104,7 @@ export function ContradictionWorkspace({
             }}
           >
             {s.contradictionSubmit}
-          </button>
+          </PaperButton>
         ) : null}
       </footer>
     </section>

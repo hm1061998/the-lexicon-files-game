@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { InkButton, PaperButton } from '@lexicon/ui';
 import type { CaseDefinition, TimelinePlacementResult } from '@lexicon/shared-types';
 import type { InvestigationView } from '../investigation/selectInvestigationView';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
@@ -52,15 +53,11 @@ export function TimelineWorkspace({
   return (
     <section className="timeline-workspace paginated-workspace">
       <nav className="workspace-steps">
-        <button type="button" onClick={() => setStep('events')}>
-          {strings.timelineSelectEvent}
-        </button>
-        <button type="button" disabled={!event} onClick={() => setStep('slots')}>
+        <InkButton onClick={() => setStep('events')}>{strings.timelineSelectEvent}</InkButton>
+        <InkButton disabled={!event} onClick={() => setStep('slots')}>
           {strings.timelineSelectSlot}
-        </button>
-        <button type="button" onClick={() => setStep('recorded')}>
-          {strings.investigationResults}
-        </button>
+        </InkButton>
+        <InkButton onClick={() => setStep('recorded')}>{strings.investigationResults}</InkButton>
       </nav>
       <div className="workspace-reading">
         {current === 'events' ? (
@@ -122,9 +119,9 @@ export function TimelineWorkspace({
         )}
       </div>
       {current === 'confirm' && (
-        <button type="button" className="workspace-submit" onClick={onSubmit}>
+        <PaperButton className="workspace-submit" onClick={onSubmit}>
           {strings.timelinePlace}
-        </button>
+        </PaperButton>
       )}
     </section>
   );

@@ -23,6 +23,7 @@
 .lexicon-motion-off .notebook-overlay,
 .lexicon-motion-off .book-frame,
 .lexicon-motion-off .book-leaf,
+.lexicon-motion-off .deduction-board,
 .lexicon-motion-off .folder-tabs--book .folder-tab,
 .lexicon-motion-off .folder-tabs--board .folder-tab {
   transform: none !important;
@@ -43,6 +44,7 @@
   .evidence-photo,
   .pinned-card,
   .book-frame,
+  .deduction-board,
   .ink-button,
   .stamp,
   .index-tab {
@@ -65,6 +67,7 @@
   .notebook-overlay,
   .book-frame,
   .book-leaf,
+  .deduction-board,
   .folder-tabs--book .folder-tab,
   .folder-tabs--board .folder-tab {
     transform: none !important;

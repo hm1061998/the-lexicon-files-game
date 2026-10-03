@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useRef } from 'react';
+import { FolderTabs, InkButton, PaperButton, PaperSheet } from '@lexicon/ui';
 import type {
   CaseDefinition,
   GameState,
@@ -97,28 +98,28 @@ export function DeductionBoard({
         aria-label={strings.deductionBoard}
       >
         <header className="deduction-header">
-          <h2>{strings.deductionBoard}</h2>
+          <PaperSheet className="deduction-title" tone="aged" clip tilt={-0.4}>
+            <h2>{strings.deductionBoard}</h2>
+          </PaperSheet>
           <div>
-            <button type="button" aria-label={strings.close} onClick={onClose}>
-              ×
-            </button>
-            <button type="button" onClick={onOpenNotebook}>
-              {strings.openNotebookFromBoard}
-            </button>
+            <InkButton sfx="paper-close" aria-label={strings.close} onClick={onClose}>
+              {strings.close}
+            </InkButton>
+            <PaperButton onClick={onOpenNotebook}>{strings.openNotebookFromBoard}</PaperButton>
           </div>
         </header>
-        <nav className="deduction-face-tabs" aria-label={strings.deductionBoard}>
-          {faces.map(([id, label]) => (
-            <button
-              type="button"
-              key={id}
-              aria-pressed={ui.face === id}
-              onClick={() => dispatch({ type: 'selectFace', face: id })}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
+        <FolderTabs
+          variant="board"
+          ariaCurrent="page"
+          className="deduction-face-tabs"
+          label={strings.deductionBoard}
+          items={faces.map(([id, label]) => ({
+            id,
+            label,
+            current: ui.face === id,
+            onSelect: () => dispatch({ type: 'selectFace', face: id }),
+          }))}
+        />
         <div className="deduction-surface fixed-surface">
           <div className="deduction-face" key={ui.face}>
             {ui.face === 'clues' ? (

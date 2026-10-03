@@ -15,32 +15,48 @@
   max-height: 950px;
   display: flex;
   flex-direction: column;
-  border: 6px double #564537;
-  background: #59452f;
+  border-radius: 6px;
+  background:
+    linear-gradient(rgb(78 62 47 / 86%), rgb(78 62 47 / 86%)),
+    url('/assets/ui/desk_wood.png') 0 0 / 256px 256px;
   color: #332b24;
-  box-shadow: 0 8px 40px #0009;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 55%);
   font: 16px var(--lexicon-font-body);
-  padding: 10px;
+  padding: 8px 16px 16px;
   box-sizing: border-box;
+  animation: board-open 220ms ease-out backwards;
 }
 .deduction-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: #eee0c1;
-  padding: 8px 16px;
+  padding: 10px 0 0 18px;
   flex-shrink: 0;
+}
+/* The title is a scrap of paper clipped to the top of the frame. */
+.deduction-header .deduction-title {
+  margin: 0;
+  padding: 8px 26px 8px 34px;
 }
 .deduction-header h2 {
   margin: 0;
-  color: #743026;
-  font-size: 23px;
+  color: var(--lexicon-ink);
+  font-size: 22px;
 }
 .deduction-header > div {
   display: flex;
   flex-direction: row-reverse;
-  gap: 8px;
+  align-items: center;
+  gap: 14px;
+}
+/* The close button sits on the dark frame, not on paper. */
+.deduction-header .ink-button {
+  color: var(--lexicon-paper);
+  text-decoration-color: transparent;
+}
+.deduction-header .ink-button:hover:not(:disabled) {
+  text-decoration-color: var(--lexicon-paper);
 }
 .deduction-surface {
   position: relative;
@@ -51,9 +67,6 @@
   grid-template-columns: 240px minmax(0, 1fr) 320px;
   gap: 16px;
   padding: 16px;
-  background:
-    radial-gradient(#987f57 1px, transparent 1px) 0 0/5px 5px,
-    #7d6345;
   align-items: start;
 }
 .deduction-case,
@@ -79,27 +92,9 @@
 .deduction-reasoning p {
   line-height: 1.5;
 }
-.deduction-board button {
-  font: inherit;
-  min-height: 44px;
-  min-width: 44px;
-  padding: 9px 12px;
-  border: 1px solid #8f7e60;
-  background: #f4e7cc;
-  color: #332b24;
-  cursor: pointer;
-}
-.deduction-board button:disabled {
-  cursor: default;
-  opacity: 0.6;
-}
-.deduction-board button[aria-pressed='true'] {
-  border: 2px solid #a4412d;
-  background: #ead0af;
-}
-.deduction-board button:focus-visible,
+
 .deduction-board summary:focus-visible {
-  outline: 3px solid #743026;
+  outline: 3px solid var(--lexicon-dark-red);
   outline-offset: 3px;
 }
 .deduction-board small {
@@ -112,11 +107,7 @@
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 14px;
 }
-.deduction-card {
-  position: relative;
-  text-align: left;
-  box-shadow: 2px 3px 4px #30271d88;
-}
+
 .deduction-card .investigation-artwork {
   width: 100%;
   height: 130px;
@@ -139,9 +130,6 @@
 .deduction-facts {
   display: grid;
   gap: 10px;
-}
-.deduction-facts button {
-  text-align: left;
 }
 .deduction-reasoning section + section {
   border-top: 1px solid #ac9673;
@@ -196,15 +184,24 @@
 }
 @media (max-width: 599px) {
   .deduction-header {
-    flex-wrap: wrap;
-    padding: 8px;
+    padding: 6px 0 0 8px;
+    gap: 6px;
+  }
+  .deduction-header .deduction-title {
+    padding: 6px 12px 6px 26px;
   }
   .deduction-header h2 {
-    font-size: 20px;
+    font-size: 16px;
+    white-space: nowrap;
   }
   .deduction-header > div {
-    width: 100%;
-    justify-content: space-between;
+    gap: 4px;
+  }
+  .deduction-header .paper-button,
+  .deduction-header .ink-button {
+    padding: 4px 10px;
+    font-size: 14px;
+    white-space: nowrap;
   }
   .deduction-surface {
     padding: 12px;
@@ -227,32 +224,25 @@
   margin-inline: auto;
 }
 
-/* Fixed game board: a single paginated working face. */
-.deduction-board button {
-  font: inherit;
-  min-width: 44px;
-  min-height: 44px;
-  color: var(--lexicon-ink);
-  background: var(--lexicon-paper);
-  border: 1px solid var(--lexicon-border);
-  padding: 6px 10px;
-}
-.deduction-board button[aria-pressed='true'] {
-  border: 2px solid var(--lexicon-dark-red);
-  color: var(--lexicon-dark-red);
-}
+/* Fixed game board: a single paginated working face on a cork surface. */
 .deduction-face-tabs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-  padding: 8px 0;
+  position: relative;
+  z-index: 2;
   flex: none;
+  margin-top: 6px;
+  margin-bottom: -2px;
+}
+.deduction-face-tabs .folder-tab {
+  flex: 0 1 190px;
 }
 .fixed-surface {
   overflow: clip;
   display: block;
   padding: 12px;
   min-height: 0;
+  border: 2px solid #3b2d21;
+  background: #a88b63 url('/assets/ui/cork_board.png') 0 0 / 256px 256px;
+  box-shadow: inset 0 0 18px rgb(0 0 0 / 50%);
 }
 .deduction-face {
   height: 100%;
@@ -290,11 +280,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
+  width: min(100%, 460px);
   text-align: left;
   height: 100px;
   padding: 10px;
-  margin: 8px 0 0;
+  margin: 8px auto 0;
 }
 .deduction-clues-face .deduction-card .investigation-artwork {
   width: 64px;
@@ -328,10 +318,6 @@
 .workspace-steps {
   margin-bottom: 8px;
 }
-.workspace-steps button,
-.workspace-actions button {
-  font-size: 14px;
-}
 .workspace-reading {
   flex: 1;
   min-height: 0;
@@ -358,10 +344,43 @@
   justify-content: flex-end;
   margin-top: 6px;
 }
+/* A choice is a paper slip; the one picked is outlined in red (a selected node). */
 .paginated-choice {
   width: 100%;
   text-align: left;
   box-sizing: border-box;
+  padding: 6px 10px;
+  border: 1px solid var(--lexicon-border);
+  background: rgb(255 255 255 / 35%);
+  text-decoration: none;
+}
+.paginated-choice:hover:not(:disabled) {
+  background: rgb(255 255 255 / 55%);
+}
+.paginated-choice[aria-pressed='true'] {
+  color: var(--lexicon-dark-red);
+  box-shadow: inset 0 0 0 2px var(--lexicon-investigation-red);
+}
+/* Steps and actions are quiet ink buttons set in a row. */
+.workspace-steps .ink-button,
+.workspace-actions .ink-button {
+  padding: 4px 10px;
+  font-size: 14px;
+}
+.workspace-steps .ink-button {
+  border-bottom: 2px solid rgb(62 52 43 / 25%);
+}
+.clues-toggle {
+  padding: 4px 12px;
+  font-size: 14px;
+  background: var(--lexicon-paper);
+  border: 1px solid rgb(62 52 43 / 50%);
+  text-decoration: none;
+}
+.clues-toggle[aria-pressed='true'] {
+  font-weight: 600;
+  text-decoration: underline 1px;
+  text-underline-offset: 4px;
 }
 .paginated-choice .page-text {
   white-space: pre-wrap;
@@ -380,6 +399,16 @@
 .deduction-connections {
   z-index: 2;
   pointer-events: none;
+}
+@keyframes board-open {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 @keyframes board-face-enter {
   from {
@@ -429,23 +458,8 @@
   .deduction-header h2 {
     font-size: 18px;
   }
-  .deduction-header button {
-    font-size: 14px;
-  }
-  .deduction-face-tabs {
-    gap: 2px;
-    padding: 4px 0;
-  }
-  .deduction-face-tabs button {
-    font-size: 14px;
-    padding: 4px 2px;
-  }
   .fixed-surface {
     padding: 8px;
-  }
-  .workspace-steps button {
-    font-size: 14px;
-    padding: 4px 6px;
   }
   .paginated-choice .page-text {
     font-size: 14px;
@@ -455,13 +469,6 @@
   }
   .workspace-steps {
     flex-wrap: nowrap;
-  }
-  .workspace-steps button {
-    flex: 1;
-  }
-  .deduction-board .decoration-pushpin {
-    width: 25px;
-    height: 31px;
   }
 }
 
@@ -487,7 +494,7 @@
     flex-wrap: nowrap;
     margin: 0;
   }
-  .paginated-workspace > .workspace-steps button {
+  .paginated-workspace > .workspace-steps .ink-button {
     flex: none;
   }
   .paginated-workspace > .deduction-selection-count {

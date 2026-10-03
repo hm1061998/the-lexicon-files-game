@@ -73,3 +73,63 @@ describe('DeductionBoard disclosure', () => {
     expect(conclusion).toContain(strings.conclusionSubmit);
   });
 });
+
+describe('DeductionBoard as a pinboard', () => {
+  const full = {
+    ...state,
+    evidenceIds: definition.evidences.map((e) => e.id),
+    discoveredFactIds: definition.facts.map((f) => f.id),
+    objectiveStatuses: {
+      ...state.objectiveStatuses,
+      [definition.conclusion!.objectiveId]: 'active' as const,
+    },
+  };
+  const faces = ['clues', 'timeline', 'compare'] as const;
+  const bare =
+    /<button(?![^>]*class="[^"]*(ink-button|paper-button|device-key|folder-tab|vocabulary-word|pinned-card))/g;
+
+  it('has the four faces as board tabs with exactly one current page', () => {
+    const html = renderToStaticMarkup(<DeductionBoard {...props} caseState={full} />);
+    expect(html).toContain('folder-tabs--board');
+    expect(html.match(/aria-current="page"/g)).toHaveLength(1);
+    expect(html).toMatch(/aria-current="page"[^>]*>Manh mối</);
+    expect(html).not.toContain('deduction-face-tabs"><button');
+  });
+
+  it('opens each face with its own tab current', () => {
+    for (const [face, label] of [
+      ['timeline', strings.deductionTimelineFace],
+      ['compare', strings.deductionCompareFace],
+      ['conclusion', strings.deductionConclusionFace],
+    ] as const) {
+      const html = renderToStaticMarkup(
+        <DeductionBoard {...props} caseState={full} initialFace={face} />,
+      );
+      expect(html).toContain(`aria-current="page"`);
+      expect(html).toContain(`>${label}</button>`);
+    }
+  });
+
+  it('pins every clue as a card that is a pinned card', () => {
+    const html = renderToStaticMarkup(<DeductionBoard {...props} caseState={full} />);
+    expect(html).toMatch(/<button[^>]*class="[^"]*pinned-card[^"]*deduction-card/);
+    expect(html).toContain('pinned-card__pin');
+  });
+
+  it('keeps no raw button on any face: only ink, paper, pinned, tab and word buttons', () => {
+    for (const face of faces) {
+      const html = renderToStaticMarkup(
+        <DeductionBoard {...props} caseState={full} initialFace={face} />,
+      );
+      expect(html.match(bare)).toBeNull();
+    }
+  });
+
+  it('closes with an ink button and opens the notebook with a paper button', () => {
+    const html = renderToStaticMarkup(<DeductionBoard {...props} caseState={full} />);
+    expect(html).toMatch(/<button[^>]*class="ink-button[^"]*"[^>]*aria-label="Đóng"/);
+    expect(html).toMatch(
+      new RegExp(`class="paper-button[^"]*"[^>]*>${strings.openNotebookFromBoard}<`),
+    );
+  });
+});

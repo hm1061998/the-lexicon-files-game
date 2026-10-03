@@ -1,15 +1,17 @@
 import { useRef } from 'react';
+import { InkButton, PinnedCard } from '@lexicon/ui';
 import type { CaseDefinition, GameState } from '@lexicon/shared-types';
 import type { InvestigationView } from '../investigation/selectInvestigationView';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import { InvestigationArtwork } from '../investigation/InvestigationArtwork';
-import { InvestigationDecoration } from '../investigation/art/InvestigationDecoration';
 import { MeasuredPage } from '../investigation/pagination/MeasuredPage';
 import { ReadDocument, textBlock } from '../investigation/pagination/ReadDocument';
 import { buildNotebookBlocks } from '../notebook/buildNotebookBlocks';
 import { DeductionConnections } from './DeductionConnections';
 import { DeductionCaseFile } from './DeductionCaseFile';
 import type { DeductionUi, DeductionUiAction } from './deductionUiReducer';
+/** Cards hang slightly off-square, alternating, so the board does not look like a grid. */
+const tiltFor = (index: number): number => (index % 2 === 0 ? -0.6 : 0.6);
 export function DeductionCluesFace({
   definition,
   state,
@@ -57,20 +59,22 @@ export function DeductionCluesFace({
     const c = cards.find((c) => c.node === id);
     if (!c) return null;
     return (
-      <button
-        className="deduction-card"
+      <PinnedCard
+        as="button"
         type="button"
+        className="deduction-card"
+        tilt={tiltFor(cards.indexOf(c))}
+        selected={ui.selectedNode === c.node}
         aria-label={c.name}
         aria-pressed={ui.selectedNode === c.node}
         data-board-node={passive ? undefined : c.node}
         tabIndex={passive ? -1 : undefined}
         onClick={passive ? undefined : () => dispatch({ type: 'selectNode', id: c.node })}
       >
-        <InvestigationDecoration kind="pushpin" variant={c.portrait ? 'dark' : 'brass'} />
         <InvestigationArtwork url={c.image} name={c.name} portrait={c.portrait} />
         <strong>{c.name}</strong>
         <small>{c.subtitle}</small>
-      </button>
+      </PinnedCard>
     );
   };
   const chosen = cards.find((c) => c.node === ui.selectedNode);
@@ -88,13 +92,11 @@ export function DeductionCluesFace({
     Object.entries(detail?.fixed ?? {}).map(([id, f]) => [
       id,
       f.kind === 'image' ? (
-        <div className="notebook-profile-art">
+        <PinnedCard className="notebook-profile-art" pin="tape" tilt={-2}>
           <InvestigationArtwork url={f.url} name={f.name} portrait={f.portrait} />
-        </div>
+        </PinnedCard>
       ) : (
-        <button type="button" onClick={() => onReviewEvidence?.(f.target)}>
-          {f.label}
-        </button>
+        <InkButton onClick={() => onReviewEvidence?.(f.target)}>{f.label}</InkButton>
       ),
     ]),
   );
@@ -104,15 +106,20 @@ export function DeductionCluesFace({
   return (
     <div className={`deduction-clues-face ${ui.selectedNode ? 'has-detail' : ''}`}>
       <div className="deduction-clues-toolbar">
-        <button
-          type="button"
+        <InkButton
+          className="clues-toggle"
+          aria-pressed={ui.selectedNode === 'case'}
           onClick={() => dispatch({ type: 'selectNode', id: ui.selectedNode ? null : 'case' })}
         >
           {ui.selectedNode ? strings.investigationBack : strings.investigationCaseFile}
-        </button>
-        <button type="button" onClick={() => dispatch({ type: 'selectNode', id: 'relations' })}>
+        </InkButton>
+        <InkButton
+          className="clues-toggle"
+          aria-pressed={ui.selectedNode === 'relations'}
+          onClick={() => dispatch({ type: 'selectNode', id: 'relations' })}
+        >
           {strings.investigationRelations}
-        </button>
+        </InkButton>
       </div>
       <aside className="deduction-case desktop-case">
         <DeductionCaseFile definition={definition} state={state} learning={learning} />
