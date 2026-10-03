@@ -1,0 +1,33 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "case-authoring",
+  "sourceRoot": "tools/case-authoring/src",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --test \"tools/case-authoring/test/*.test.mjs\"",
+        "cwd": "."
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint \"tools/case-authoring/**/*.mjs\"",
+        "cwd": "."
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/case-authoring/src/cli.mjs build case-001 --check",
+          "node tools/case-authoring/src/cli.mjs build case-002 --check"
+        ],
+        "parallel": false,
+        "cwd": "."
+      }
+    }
+  }
+}
