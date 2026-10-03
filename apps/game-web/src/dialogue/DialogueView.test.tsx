@@ -49,12 +49,12 @@ describe('DialogueView', () => {
     expect(html).toContain('dialogue-panel');
     expect(html).not.toContain('paper-panel');
     expect(html).toContain('ink-button dialogue-close');
-    expect(html.match(/class="dialogue-choice[ "]/g)).toHaveLength(node.choices.length);
+    expect(html.match(/class="ink-button dialogue-choice[ "]/g)).toHaveLength(node.choices.length);
   });
 
   it('types a line out at a normal speed and holds the choices back until it is shown', () => {
     const html = renderToString(<DialogueView {...props} textSpeed="normal" />);
-    expect(html).not.toContain('class="dialogue-choice');
+    expect(html).not.toContain('ink-button dialogue-choice');
     expect(html).toContain(node.text); // the live region carries the whole line
   });
 });

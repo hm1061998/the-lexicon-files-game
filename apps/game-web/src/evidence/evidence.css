@@ -429,6 +429,7 @@
 
 /* An answer is a slip of paper with its key number; the number key picks it. */
 .listening-option {
+  text-decoration: none;
   display: inline-flex;
   align-items: baseline;
   gap: 8px;

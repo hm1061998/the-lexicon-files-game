@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { InkButton } from '@lexicon/ui';
 import type {
   CaseDefinition,
   GameEventMap,
@@ -766,8 +767,7 @@ function GameRoot({
                   <p>
                     {strings.vocabularyLearningError} {learningRecoveryRequired}
                   </p>
-                  <button
-                    type="button"
+                  <InkButton
                     onClick={() => {
                       void learningRepository
                         .createFreshLearningAfterConfirmation()
@@ -786,10 +786,10 @@ function GameRoot({
                     }}
                   >
                     {strings.vocabularyResetTitle}
-                  </button>
-                  <button type="button" onClick={() => setShowLearningRecovery(false)}>
+                  </InkButton>
+                  <InkButton onClick={() => setShowLearningRecovery(false)}>
                     {strings.cancel}
-                  </button>
+                  </InkButton>
                 </aside>
               )}
               {(learningPersistenceError || learningWriteError) && (

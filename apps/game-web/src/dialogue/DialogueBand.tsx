@@ -1,4 +1,4 @@
-import type { ReactNode, RefObject } from 'react';
+import type { CSSProperties, ReactNode, RefObject } from 'react';
 import { InkButton } from '@lexicon/ui';
 import type {
   DialogueChoice,
@@ -94,11 +94,11 @@ export function DialogueBand({
             {done && (
               <div className="dialogue-choices">
                 {choices.map(({ choice, seen }, index) => (
-                  <button
-                    type="button"
+                  <InkButton
                     key={choice.id}
                     className={seen ? 'dialogue-choice dialogue-choice--seen' : 'dialogue-choice'}
                     data-sfx="pen"
+                    style={{ '--i': index } as CSSProperties}
                     onClick={(event) => onChoose(choice.id, event)}
                   >
                     <span className="dialogue-choice__key" aria-hidden="true">
@@ -115,7 +115,7 @@ export function DialogueBand({
                     {seen && (
                       <span className="dialogue-choice__seen">{strings.dialogueChoiceSeen}</span>
                     )}
-                  </button>
+                  </InkButton>
                 ))}
               </div>
             )}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Keycap, PaperSheet } from '@lexicon/ui';
+import { Keycap, PaperSheet, InkButton } from '@lexicon/ui';
 import type { EventBus, GameEventMap, UiStrings } from '@lexicon/shared-types';
 import { canAnchorBubble, placeBubble, type Point, type Rect } from '../game/systems/anchorScreen';
 import { useGameStore } from '../state/GameStoreContext';
@@ -155,8 +155,7 @@ export function InteractionPrompt({
     >
       <PaperSheet as="div" className="hud-interaction-paper">
         <div role="status" aria-live="polite">
-          <button
-            type="button"
+          <InkButton
             className="hud-interact-button"
             onClick={() => {
               if (!locked) bus?.emit('interaction:triggered', { interactableId: nearby.id });
@@ -166,7 +165,7 @@ export function InteractionPrompt({
             <span className="hud-interaction-prompt-text" aria-label={strings.interact}>
               {nearby.prompt}
             </span>
-          </button>
+          </InkButton>
         </div>
       </PaperSheet>
     </div>

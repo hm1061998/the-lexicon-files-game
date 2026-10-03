@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { PaperSheet } from '@lexicon/ui';
+import { PaperSheet, InkButton } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import { useGameStore } from '../state/GameStoreContext';
 import { clearLeaving, nextObjectiveDisplay, type ObjectiveDisplay } from './objectiveTransition';
@@ -44,24 +44,22 @@ export function ObjectivePanel({ strings }: { strings: UiStrings }): JSX.Element
 
   if (!visible) {
     return (
-      <button
+      <InkButton
         className="hud-panel-launcher hud-objective-launcher"
-        type="button"
         aria-expanded={false}
         aria-label={strings.expandObjective}
         onClick={toggle}
       >
         <span aria-hidden="true">◎</span>
         <span className="hud-panel-launcher-text">{strings.objectiveHeading}</span>
-      </button>
+      </InkButton>
     );
   }
 
   return (
     <PaperSheet edge="torn" clip tilt={-1} className="hud-objective-panel">
-      <button
+      <InkButton
         className="hud-panel-collapse"
-        type="button"
         aria-expanded={true}
         aria-label={strings.collapseObjective}
         onClick={toggle}

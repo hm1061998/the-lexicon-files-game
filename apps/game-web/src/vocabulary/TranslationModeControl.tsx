@@ -1,4 +1,5 @@
 import type { TranslationMode, UiStrings } from '@lexicon/shared-types';
+import { InkButton } from '@lexicon/ui';
 import './vocabulary.css';
 
 const MODES: readonly { value: TranslationMode; label: keyof UiStrings }[] = [
@@ -21,14 +22,9 @@ export function TranslationModeControl({
       <span className="translation-mode-label">{strings.vocabularyMode}</span>
       <span className="translation-mode-options" role="group" aria-label={strings.vocabularyMode}>
         {MODES.map(({ value, label }) => (
-          <button
-            type="button"
-            key={value}
-            aria-pressed={mode === value}
-            onClick={() => onChange(value)}
-          >
+          <InkButton key={value} aria-pressed={mode === value} onClick={() => onChange(value)}>
             {strings[label]}
-          </button>
+          </InkButton>
         ))}
       </span>
     </span>

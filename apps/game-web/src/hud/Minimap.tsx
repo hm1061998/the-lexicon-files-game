@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { PaperSheet } from '@lexicon/ui';
+import { PaperSheet, InkButton } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import { useGameStore } from '../state/GameStoreContext';
 import { buildMinimapModel } from './minimapModel';
@@ -20,16 +20,15 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
   );
   if (!visible) {
     return (
-      <button
+      <InkButton
         className="hud-panel-launcher hud-map-launcher"
-        type="button"
         aria-expanded={false}
         aria-label={strings.expandMap}
         onClick={toggle}
       >
         <span aria-hidden="true">▦</span>
         <span className="hud-panel-launcher-text">{strings.minimapTitle}</span>
-      </button>
+      </InkButton>
     );
   }
   if (!model || !scene) return null;
@@ -40,9 +39,8 @@ export function Minimap({ strings }: { strings: UiStrings }): JSX.Element | null
   });
   return (
     <PaperSheet tape="tl" tilt={0.6} className="hud-minimap">
-      <button
+      <InkButton
         className="hud-panel-collapse"
-        type="button"
         aria-expanded={true}
         aria-label={strings.collapseMap}
         onClick={toggle}

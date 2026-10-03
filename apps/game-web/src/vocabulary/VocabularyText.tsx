@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState, type RefObject } from 'react';
+import { InkButton } from '@lexicon/ui';
 import type {
   TranslationMode,
   UiStrings,
@@ -156,19 +157,17 @@ export function VocabularyText({
             translationRevealed ? (
               <span>{entry.translationVi}</span>
             ) : (
-              <button
-                type="button"
+              <InkButton
                 onClick={() => {
                   onRevealTranslation(entry.id, contextId);
                   setTranslationRevealed(true);
                 }}
               >
                 {strings.revealTranslation}
-              </button>
+              </InkButton>
             )
           ) : null}
-          <button
-            type="button"
+          <InkButton
             onClick={() => {
               setActive(null);
               setShowTutorial(false);
@@ -176,7 +175,7 @@ export function VocabularyText({
             }}
           >
             {strings.close}
-          </button>
+          </InkButton>
         </span>
       )}
     </span>

@@ -1,4 +1,5 @@
 import type { TranslationMode, UiStrings } from '@lexicon/shared-types';
+import { InkButton, PaperButton } from '@lexicon/ui';
 import { ShellCover } from './ShellCover';
 
 export function SupportPicker({
@@ -33,20 +34,19 @@ export function SupportPicker({
         className="support-notes"
       >
         {options.map(({ mode, label, hint }) => (
-          <button
+          <PaperButton
             key={mode}
-            type="button"
             className="support-option"
             autoFocus={mode === 'Learning'}
             onClick={() => onChoose(mode)}
           >
             <strong>{label}</strong>
             <span>{hint}</span>
-          </button>
+          </PaperButton>
         ))}
-        <button type="button" className="title-link" onClick={() => onChoose('Learning')}>
+        <InkButton className="title-link" onClick={() => onChoose('Learning')}>
           {strings.supportUseDefault}
-        </button>
+        </InkButton>
       </div>
     </ShellCover>
   );

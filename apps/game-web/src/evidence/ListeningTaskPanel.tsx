@@ -10,7 +10,7 @@ import { useAudioPlayback } from '../audio/useAudioPlayback';
 import { useOptionalPresentationAudio } from '../audio/PresentationAudioContext';
 import type { SubtitlePreference } from '../persistence/settingsSchema';
 import { resolveTranscriptBlock, resolveTranscriptVisibility } from './transcriptVisibility';
-import { Stamp } from '@lexicon/ui';
+import { InkButton, Stamp } from '@lexicon/ui';
 import { CassetteRecorder } from './CassetteRecorder';
 import { usePeaks } from './peaks';
 import { useRecorderShortcuts } from './useRecorderShortcuts';
@@ -143,9 +143,7 @@ export function ListeningTaskPanel({
         {playback.state === 'error' ? strings.listeningPlaybackError : null}
       </p>
       {playback.state === 'error' && (
-        <button type="button" onClick={() => beginPlayback(false)}>
-          {strings.listeningRetry}
-        </button>
+        <InkButton onClick={() => beginPlayback(false)}>{strings.listeningRetry}</InkButton>
       )}
       {canHint && hintVisible && <p className="listening-hint">{task.keywordHints.join(' · ')}</p>}
       {block.transcript && (
@@ -158,9 +156,8 @@ export function ListeningTaskPanel({
         </legend>
         <div className="listening-options">
           {task.options.map((option, index) => (
-            <button
+            <InkButton
               key={option.id}
-              type="button"
               className="listening-option"
               data-sfx="pen"
               onClick={() => submitAnswer(option.id)}
@@ -169,7 +166,7 @@ export function ListeningTaskPanel({
                 {index + 1}
               </span>
               {mode === 'Beginner' && option.textVi ? option.textVi : option.text}
-            </button>
+            </InkButton>
           ))}
         </div>
       </fieldset>

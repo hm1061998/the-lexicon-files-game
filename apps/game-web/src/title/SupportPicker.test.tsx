@@ -28,7 +28,8 @@ describe('SupportPicker', () => {
       if (Array.isArray(node)) return node.forEach(walk);
       if (!isValidElement(node)) return;
       const el = node as ReactElement<{ onClick?: () => void; children?: unknown }>;
-      if (el.type === 'button') buttons.push(el);
+      // The default link is an InkButton now; the support levels are PaperButtons.
+      if (typeof el.type === 'function' && el.props.onClick !== undefined) buttons.push(el);
       walk(el.props.children);
     };
     walk(tree);

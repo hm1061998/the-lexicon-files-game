@@ -47,13 +47,13 @@ describe('DialogueBand', () => {
     );
     expect(typing).toMatch(/aria-live="polite"[^>]*>[^<]*I left/);
     expect(typing).toContain('aria-hidden="true"');
-    expect(typing).not.toContain('dialogue-choice"');
+    expect(typing).not.toContain('dialogue-choice ');
   });
 
   it('numbers the choices and marks the ones already asked', () => {
     const html = renderToString(<DialogueBand {...base} />);
     expect(html).toContain('dialogue-choice__key');
-    expect(html.match(/class="dialogue-choice[ "]/g)?.length).toBe(node.choices.length);
+    expect(html.match(/class="ink-button dialogue-choice[ "]/g)?.length).toBe(node.choices.length);
     expect(html.match(/dialogue-choice--seen/g)).toHaveLength(1);
     expect(html).toContain(strings.dialogueChoiceSeen);
   });

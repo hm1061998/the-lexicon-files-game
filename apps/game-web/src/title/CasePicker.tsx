@@ -1,4 +1,4 @@
-import { DeskBackdrop, Stamp } from '@lexicon/ui';
+import { DeskBackdrop, Stamp, PaperButton } from '@lexicon/ui';
 import type { UiStrings } from '@lexicon/shared-types';
 import type { CaseCardModel } from './caseCardModel';
 import './case-picker.css';
@@ -23,8 +23,7 @@ export function CasePicker({
           <ul className="case-list">
             {cards.map((card) => (
               <li key={card.id}>
-                <button
-                  type="button"
+                <PaperButton
                   className="case-card"
                   autoFocus={card.id === focusId}
                   onClick={() => onSelect(card.id)}
@@ -44,7 +43,7 @@ export function CasePicker({
                       </span>
                     ))}
                   </span>
-                </button>
+                </PaperButton>
               </li>
             ))}
           </ul>

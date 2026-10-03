@@ -15,6 +15,7 @@
 }
 
 .modal-sheet {
+  animation: modal-sheet-in 220ms ease-out backwards;
   box-sizing: border-box;
   max-width: 100%;
   max-height: 100%;
@@ -38,4 +39,13 @@
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* A modal sheet slides up and turns into place; motion-off and reduced-motion remove it. */
+@keyframes modal-sheet-in {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+    rotate: -1.5deg;
+  }
 }

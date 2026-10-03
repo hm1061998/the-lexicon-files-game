@@ -26,6 +26,12 @@
   line-height: 1.5;
   animation: dialogue-band-in 220ms ease-out backwards;
 }
+@keyframes dialogue-choice-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
 @keyframes dialogue-band-in {
   from {
     opacity: 0;
@@ -111,6 +117,9 @@
 }
 /* A choice is a numbered line; hover or focus inks an underline across it. */
 .dialogue-choice {
+  animation: dialogue-choice-in 220ms ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 40ms);
+  text-decoration: none;
   display: flex;
   align-items: baseline;
   gap: 12px;
