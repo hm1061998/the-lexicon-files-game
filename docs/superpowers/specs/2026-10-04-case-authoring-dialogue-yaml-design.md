@@ -78,6 +78,7 @@ Quy tắc:
 
 - **Node:** khóa `say` (→ `text`), `vi` (→ `translationVi`), `speaker` (→ `speakerId`, mặc định `npc`), `needs` (điều kiện vào node), `do` (effects của node), `ask` (lựa chọn), `audio` (đi qua). `terminal` suy ra: không có `ask` thì `true`, có thì `false`.
 - **Lựa chọn:** `id`, `say`, `vi`, `to` (→ `nextNodeId`), `needs`, `do`.
+- **Danh sách span rỗng:** dữ liệu cũ có node mang `vocabularySpans: []` (khóa có mặt, rỗng); viết `spans: []` ở node để giữ đúng điều đó (không có khóa này và không có `[ ]` thì không sinh khóa). Cần cho vòng tròn Case #002.
 - **Từ vựng:** `[từ]` trong `say`. Bộ biên dịch tra `vocabulary.json` của case theo `lemma` và `surfaceForms` (không phân biệt hoa thường), tính offset UTF-16 của đoạn đã bỏ dấu ngoặc, sinh `vocabularySpans`, rồi bỏ `[` `]` khỏi `text`. Một từ ứng với nhiều mục thì lỗi, liệt kê ứng viên; chọn bằng `[chữ|vocab_id]`. Ký tự `[` thật trong câu viết `\[`.
 - **Điều kiện** (`needs`, luôn là danh sách chuỗi hoặc một nhóm): `evidence <id>`, `fact <id>`, `objective <id>` (đã hoàn thành), `flag <key>` (giá trị true), `no-flag <key>` (giá trị false). Danh sách một phần tử cho ra điều kiện đơn; nhiều phần tử cho ra `{type:'all'}`. Nhóm tường minh: `needs: { any: [...] }` hoặc `{ all: [...] }`, kể cả `all` chỉ một phần tử (để biên dịch ngược giữ đúng hình dạng).
 - **Hiệu ứng** (`do`, danh sách chuỗi giữ **đúng thứ tự**): `set <key>`, `clear <key>` (setFlag false), `give <evidenceId>`, `unlock <factId>`, `activate <objectiveId>`, `complete <objectiveId>`.

@@ -93,7 +93,9 @@ export function compileTree(source, ctx) {
     put(node, 'text', text);
     put(node, 'audio', raw.audio);
     put(node, 'translationVi', raw.vi);
+    // An authored empty list (`spans: []`) is kept as `vocabularySpans: []`; no marks and no key means no key.
     if (spans.length) node.vocabularySpans = spans;
+    else if (Array.isArray(raw.spans) && raw.spans.length === 0) node.vocabularySpans = [];
     node.terminal = asks.length === 0;
     node.choices = asks.map((choice, index) => {
       const path = [...base, 'ask', index];
