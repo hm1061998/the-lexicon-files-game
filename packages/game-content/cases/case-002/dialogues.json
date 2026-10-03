@@ -166,17 +166,17 @@
               ]
             }
           ],
+          "condition": {
+            "type": "hasEvidence",
+            "evidenceId": "chat_messages"
+          },
           "effects": [
             {
               "type": "setFlag",
               "key": "anna_chat_confirmation_read",
               "value": true
             }
-          ],
-          "condition": {
-            "type": "hasEvidence",
-            "evidenceId": "chat_messages"
-          }
+          ]
         }
       ],
       "completionFlag": "anna_interviewed",
@@ -377,13 +377,6 @@
               ]
             }
           ],
-          "effects": [
-            {
-              "type": "setFlag",
-              "key": "leo_blame_statement_read",
-              "value": true
-            }
-          ],
           "condition": {
             "type": "all",
             "conditions": [
@@ -397,7 +390,14 @@
                 "value": true
               }
             ]
-          }
+          },
+          "effects": [
+            {
+              "type": "setFlag",
+              "key": "leo_blame_statement_read",
+              "value": true
+            }
+          ]
         }
       ],
       "completionFlag": "leo_interviewed",

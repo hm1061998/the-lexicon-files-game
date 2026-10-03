@@ -86,8 +86,9 @@ export function decompileTree(tree, vocabulary) {
   const document = new Document(out);
   // Short lists read best on one line.
   visit(document, {
-    Seq(key, seq) {
-      const name = key?.value;
+    Seq(_key, seq, path) {
+      const pair = path[path.length - 1];
+      const name = pair && 'key' in pair ? pair.key?.value : undefined;
       if (name === 'do' || name === 'needs' || name === 'finish') seq.flow = true;
     },
   });

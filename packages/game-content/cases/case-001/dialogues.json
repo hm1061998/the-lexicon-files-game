@@ -9,6 +9,10 @@
           "id": "entry",
           "speakerId": "anna",
           "text": "I left the meeting early. I had a call with a client.",
+          "audio": {
+            "url": "/audio/case-001/anna/anna_initial__entry.wav",
+            "textSha256": "1f51da8b0a6316e71017325a7ea55e27c392ae6356ec02442f81b2a4e72ff47d"
+          },
           "translationVi": "Tôi rời cuộc họp sớm. Tôi có cuộc gọi với một khách hàng.",
           "vocabularySpans": [
             {
@@ -52,16 +56,16 @@
               "translationVi": "Ai vẫn còn ở trong phòng?",
               "nextNodeId": "answer3"
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/anna/anna_initial__entry.wav",
-            "textSha256": "1f51da8b0a6316e71017325a7ea55e27c392ae6356ec02442f81b2a4e72ff47d"
-          }
+          ]
         },
         {
           "id": "answer1",
           "speakerId": "anna",
           "text": "A little after eight fifteen.",
+          "audio": {
+            "url": "/audio/case-001/anna/anna_initial__answer1.wav",
+            "textSha256": "62ee9f954a6ae9477b2aa5eeb760619c03edc2d0bfe7ef5177ff55570c548390"
+          },
           "terminal": false,
           "choices": [
             {
@@ -76,16 +80,16 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/anna/anna_initial__answer1.wav",
-            "textSha256": "62ee9f954a6ae9477b2aa5eeb760619c03edc2d0bfe7ef5177ff55570c548390"
-          }
+          ]
         },
         {
           "id": "answer2",
           "speakerId": "anna",
           "text": "No. I went directly to my desk.",
+          "audio": {
+            "url": "/audio/case-001/anna/anna_initial__answer2.wav",
+            "textSha256": "c4eaeb5adba9a1219c34520613e3bc479a20af7f2f0bbb24e24b1fe2f33d1163"
+          },
           "terminal": false,
           "choices": [
             {
@@ -100,16 +104,16 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/anna/anna_initial__answer2.wav",
-            "textSha256": "c4eaeb5adba9a1219c34520613e3bc479a20af7f2f0bbb24e24b1fe2f33d1163"
-          }
+          ]
         },
         {
           "id": "answer3",
           "speakerId": "anna",
           "text": "Leo and the team were still there.",
+          "audio": {
+            "url": "/audio/case-001/anna/anna_initial__answer3.wav",
+            "textSha256": "506e834be9114e44d641d7966342d73202e8fd5812eb96194b5aaaf065eef58b"
+          },
           "terminal": false,
           "choices": [
             {
@@ -124,11 +128,7 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/anna/anna_initial__answer3.wav",
-            "textSha256": "506e834be9114e44d641d7966342d73202e8fd5812eb96194b5aaaf065eef58b"
-          }
+          ]
         }
       ],
       "completionFlag": "anna_interviewed",
@@ -211,6 +211,10 @@
           "id": "entry",
           "speakerId": "leo",
           "text": "I stepped outside to take a phone call.",
+          "audio": {
+            "url": "/audio/case-001/leo/leo_initial__entry.wav",
+            "textSha256": "716b7aa3ca402ebac9333b58ff7867b6e9c5903284ca82a41ae8a62f03459135"
+          },
           "terminal": false,
           "choices": [
             {
@@ -228,16 +232,16 @@
               "text": "Did you see David?",
               "nextNodeId": "answer3"
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/leo/leo_initial__entry.wav",
-            "textSha256": "716b7aa3ca402ebac9333b58ff7867b6e9c5903284ca82a41ae8a62f03459135"
-          }
+          ]
         },
         {
           "id": "answer1",
           "speakerId": "leo",
           "text": "Around eight twenty-five.",
+          "audio": {
+            "url": "/audio/case-001/leo/leo_initial__answer1.wav",
+            "textSha256": "216d7f9949d551696afad419971eb42066038e3233624d45d0a5ff072184ab30"
+          },
           "terminal": false,
           "choices": [
             {
@@ -252,16 +256,16 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/leo/leo_initial__answer1.wav",
-            "textSha256": "216d7f9949d551696afad419971eb42066038e3233624d45d0a5ff072184ab30"
-          }
+          ]
         },
         {
           "id": "answer2",
           "speakerId": "leo",
           "text": "Around eight forty.",
+          "audio": {
+            "url": "/audio/case-001/leo/leo_initial__answer2.wav",
+            "textSha256": "009a168973b7dc12b99f80242c2b0e221c038760ced2e8cce7984b1486267fe3"
+          },
           "terminal": false,
           "choices": [
             {
@@ -276,16 +280,16 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/leo/leo_initial__answer2.wav",
-            "textSha256": "009a168973b7dc12b99f80242c2b0e221c038760ced2e8cce7984b1486267fe3"
-          }
+          ]
         },
         {
           "id": "answer3",
           "speakerId": "leo",
           "text": "I saw him in the hallway before I went outside.",
+          "audio": {
+            "url": "/audio/case-001/leo/leo_initial__answer3.wav",
+            "textSha256": "1aa0fc561cc44b651bab4c874fc41537daf8055192aa68caf11f46e41bd5c1e9"
+          },
           "terminal": false,
           "choices": [
             {
@@ -300,11 +304,7 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/leo/leo_initial__answer3.wav",
-            "textSha256": "1aa0fc561cc44b651bab4c874fc41537daf8055192aa68caf11f46e41bd5c1e9"
-          }
+          ]
         }
       ],
       "completionFlag": "leo_interviewed",
@@ -387,6 +387,10 @@
           "id": "entry",
           "speakerId": "david",
           "text": "I didn't enter the meeting room after eight.",
+          "audio": {
+            "url": "/audio/case-001/david/david_initial__entry.wav",
+            "textSha256": "4d5de8cf0e95bcefc1cdc213a9ce1fce534b5703d986153b99993cfd083b0010"
+          },
           "terminal": false,
           "choices": [
             {
@@ -436,16 +440,16 @@
               "key": "david_statement_read",
               "value": true
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/david/david_initial__entry.wav",
-            "textSha256": "4d5de8cf0e95bcefc1cdc213a9ce1fce534b5703d986153b99993cfd083b0010"
-          }
+          ]
         },
         {
           "id": "answer1",
           "speakerId": "david",
           "text": "I was working at my desk.",
+          "audio": {
+            "url": "/audio/case-001/david/david_initial__answer1.wav",
+            "textSha256": "2261e18dc750c20ec5864617a3d5b37849660296445b68d4d12b1be305cef837"
+          },
           "terminal": false,
           "choices": [
             {
@@ -460,16 +464,16 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/david/david_initial__answer1.wav",
-            "textSha256": "2261e18dc750c20ec5864617a3d5b37849660296445b68d4d12b1be305cef837"
-          }
+          ]
         },
         {
           "id": "answer2",
           "speakerId": "david",
           "text": "I saw it during the meeting, but not afterward.",
+          "audio": {
+            "url": "/audio/case-001/david/david_initial__answer2.wav",
+            "textSha256": "3506f39d0384fd8063e963ba59b178bcbe980f147b0fe59f5916f423c9ef247f"
+          },
           "terminal": false,
           "choices": [
             {
@@ -484,16 +488,16 @@
                 }
               ]
             }
-          ],
-          "audio": {
-            "url": "/audio/case-001/david/david_initial__answer2.wav",
-            "textSha256": "3506f39d0384fd8063e963ba59b178bcbe980f147b0fe59f5916f423c9ef247f"
-          }
+          ]
         },
         {
           "id": "answer3",
           "speakerId": "david",
           "text": "Yes. I'm certain.",
+          "audio": {
+            "url": "/audio/case-001/david/david_initial__answer3.wav",
+            "textSha256": "9ccb9cd564b05398d8ba82cf2da4cab676a1cade109762b580ea80af10a74f7b"
+          },
           "terminal": false,
           "choices": [
             {
@@ -518,16 +522,16 @@
             "type": "flag",
             "key": "david_contradiction_found",
             "value": false
-          },
-          "audio": {
-            "url": "/audio/case-001/david/david_initial__answer3.wav",
-            "textSha256": "9ccb9cd564b05398d8ba82cf2da4cab676a1cade109762b580ea80af10a74f7b"
           }
         },
         {
           "id": "answer3_unlocked",
           "speakerId": "david",
           "text": "...I may have gone in for a moment.",
+          "audio": {
+            "url": "/audio/case-001/david/david_initial__answer3_unlocked.wav",
+            "textSha256": "1939b3c20c82dee9180030609decc675f5117aa35c77c6aee25b2bb1190735e3"
+          },
           "terminal": false,
           "choices": [
             {
@@ -552,16 +556,16 @@
             "type": "flag",
             "key": "david_contradiction_found",
             "value": true
-          },
-          "audio": {
-            "url": "/audio/case-001/david/david_initial__answer3_unlocked.wav",
-            "textSha256": "1939b3c20c82dee9180030609decc675f5117aa35c77c6aee25b2bb1190735e3"
           }
         },
         {
           "id": "collect_folder",
           "speakerId": "david",
           "text": "I only went in to collect a folder.",
+          "audio": {
+            "url": "/audio/case-001/david/david_initial__collect_folder.wav",
+            "textSha256": "a142ac91021d4d1cb0adf7a41aaa32b82579a29e0d672afc176fc82a081f6c20"
+          },
           "terminal": false,
           "choices": [
             {
@@ -570,45 +574,41 @@
               "nextNodeId": "confession"
             }
           ],
+          "condition": {
+            "type": "flag",
+            "key": "david_contradiction_found",
+            "value": true
+          },
           "effects": [
             {
               "type": "setFlag",
               "key": "david_folder_statement_read",
               "value": true
             }
-          ],
-          "condition": {
-            "type": "flag",
-            "key": "david_contradiction_found",
-            "value": true
-          },
-          "audio": {
-            "url": "/audio/case-001/david/david_initial__collect_folder.wav",
-            "textSha256": "a142ac91021d4d1cb0adf7a41aaa32b82579a29e0d672afc176fc82a081f6c20"
-          }
+          ]
         },
         {
           "id": "confession",
           "speakerId": "david",
           "text": "The Quarterly Risk Report. I found an error I had missed and panicked. I took it to correct it before anyone noticed.",
+          "audio": {
+            "url": "/audio/case-001/david/david_initial__confession.wav",
+            "textSha256": "07fbf4dc517f8fddda8ea802c2de982d49a284b0999aded3183a4ccf721bec84"
+          },
           "terminal": true,
           "choices": [],
+          "condition": {
+            "type": "flag",
+            "key": "david_contradiction_found",
+            "value": true
+          },
           "effects": [
             {
               "type": "setFlag",
               "key": "david_confession_read",
               "value": true
             }
-          ],
-          "condition": {
-            "type": "flag",
-            "key": "david_contradiction_found",
-            "value": true
-          },
-          "audio": {
-            "url": "/audio/case-001/david/david_initial__confession.wav",
-            "textSha256": "07fbf4dc517f8fddda8ea802c2de982d49a284b0999aded3183a4ccf721bec84"
-          }
+          ]
         }
       ],
       "completionFlag": "david_interviewed",

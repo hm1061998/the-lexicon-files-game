@@ -1,0 +1,63 @@
+tree: anna_initial
+npc: anna
+done: anna_interviewed
+finish: [anna_q1_read, anna_q2_read, anna_q3_read]
+notes:
+  entry:
+    any:
+      - flag anna_q1_read
+      - flag anna_q2_read
+      - flag anna_q3_read
+  answer1: anna_q1_read
+  answer2: anna_q2_read
+  answer3: anna_q3_read
+nodes:
+  entry:
+    say: I [left] the [meeting] [early]. I had a call with a [client].
+    vi: Tôi rời cuộc họp sớm. Tôi có cuộc gọi với một khách hàng.
+    audio:
+      url: /audio/case-001/anna/anna_initial__entry.wav
+      textSha256: 1f51da8b0a6316e71017325a7ea55e27c392ae6356ec02442f81b2a4e72ff47d
+    ask:
+      - id: q1
+        say: What time did you leave?
+        vi: Bạn rời đi lúc mấy giờ?
+        to: answer1
+      - id: q2
+        say: Did you return later?
+        vi: Sau đó bạn có quay lại không?
+        to: answer2
+      - id: q3
+        say: Who was still in the room?
+        vi: Ai vẫn còn ở trong phòng?
+        to: answer3
+  answer1:
+    say: A little after eight fifteen.
+    audio:
+      url: /audio/case-001/anna/anna_initial__answer1.wav
+      textSha256: 62ee9f954a6ae9477b2aa5eeb760619c03edc2d0bfe7ef5177ff55570c548390
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set anna_q1_read]
+  answer2:
+    say: No. I went directly to my desk.
+    audio:
+      url: /audio/case-001/anna/anna_initial__answer2.wav
+      textSha256: c4eaeb5adba9a1219c34520613e3bc479a20af7f2f0bbb24e24b1fe2f33d1163
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set anna_q2_read]
+  answer3:
+    say: Leo and the team were still there.
+    audio:
+      url: /audio/case-001/anna/anna_initial__answer3.wav
+      textSha256: 506e834be9114e44d641d7966342d73202e8fd5812eb96194b5aaaf065eef58b
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set anna_q3_read]

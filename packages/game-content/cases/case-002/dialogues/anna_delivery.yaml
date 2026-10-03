@@ -1,0 +1,57 @@
+tree: anna_delivery
+npc: anna
+done: anna_interviewed
+finish: [anna_address_question_done, anna_schedule_question_done]
+notes:
+  checked_address: anna_address_checked_read
+  delivery_schedule: anna_schedule_read
+  chat_confirmation: anna_chat_confirmation_read
+nodes:
+  entry:
+    say: I prepared the delivery for Harper & Co. What would you like to check?
+    vi: Tôi chuẩn bị chuyến giao hàng cho Harper & Co. Bạn muốn kiểm tra điều gì?
+    ask:
+      - id: check_address
+        say: What address did you check at 16:10?
+        vi: Bạn kiểm tra địa chỉ nào lúc 16:10?
+        to: checked_address
+      - id: ask_schedule
+        say: What was the delivery schedule?
+        vi: Lịch trình giao hàng thế nào?
+        to: delivery_schedule
+      - id: confirm_chat
+        say: Your message says 14. Can you confirm that?
+        vi: Tin nhắn của bạn ghi số 14. Bạn xác nhận được không?
+        to: chat_confirmation
+        needs: [evidence chat_messages]
+  checked_address:
+    say: I checked the [address] when I [signed] the [package] into the mail room at 16:10. It was 14 Bridge Street.
+    vi: Tôi kiểm tra địa chỉ khi ký nhận gói hàng vào phòng thư lúc 16:10. Địa chỉ là 14 Bridge Street.
+    do: [set anna_address_checked_read]
+    ask:
+      - id: continue
+        say: Continue asking
+        vi: Tiếp tục hỏi
+        to: entry
+        do: [set anna_address_question_done]
+  delivery_schedule:
+    say: The [courier] was due at 17:00. The [client] needed the [package] before 17:30. It was [urgent], so I checked the number carefully.
+    vi: Người chuyển phát dự kiến đến lúc 17:00. Khách hàng cần gói hàng trước 17:30. Việc này gấp nên tôi kiểm tra số nhà cẩn thận.
+    do: [set anna_schedule_read]
+    ask:
+      - id: continue
+        say: Continue asking
+        vi: Tiếp tục hỏi
+        to: entry
+        do: [set anna_schedule_question_done]
+  chat_confirmation:
+    say: Yes, I confirmed 14 Bridge Street in the chat. Leo asked me to check the [address], and I replied before the [courier] arrived.
+    vi: Đúng, tôi xác nhận 14 Bridge Street trong tin nhắn. Leo nhờ tôi kiểm tra địa chỉ và tôi trả lời trước khi người chuyển phát đến.
+    needs: [evidence chat_messages]
+    do: [set anna_chat_confirmation_read]
+    ask:
+      - id: continue
+        say: Continue asking
+        vi: Tiếp tục hỏi
+        to: entry
+        do: [set anna_chat_question_done]

@@ -1,0 +1,58 @@
+tree: leo_delivery
+npc: leo
+done: leo_interviewed
+finish: [leo_whereabouts_question_done, leo_work_question_done]
+notes:
+  desk_statement: leo_desk_statement_read
+  unfinished_sample: leo_sample_read
+  blame_anna: leo_blame_statement_read
+nodes:
+  entry:
+    say: I worked on the sample for this delivery. What do you want to know?
+    vi: Tôi làm phần mẫu cho chuyến giao hàng này. Bạn muốn biết điều gì?
+    ask:
+      - id: ask_whereabouts
+        say: Where were you this afternoon?
+        vi: Chiều nay bạn ở đâu?
+        to: desk_statement
+      - id: ask_work
+        say: Was your sample ready for the client?
+        vi: Phần mẫu của bạn đã sẵn sàng cho khách hàng chưa?
+        to: unfinished_sample
+      - id: challenge_log
+        say: The access log shows you entered the mail room at 16:40. Why?
+        vi: Nhật ký ghi bạn vào phòng thư lúc 16:40. Vì sao?
+        to: blame_anna
+        needs: [evidence mailroom_access_log, flag leo_desk_statement_read]
+  desk_statement:
+    say: I was at my desk all afternoon. I did not go into the mail room.
+    spans: []
+    vi: Tôi ở bàn làm việc cả chiều. Tôi không vào phòng thư.
+    do: [set leo_desk_statement_read]
+    ask:
+      - id: continue
+        say: Continue asking
+        vi: Tiếp tục hỏi
+        to: entry
+        do: [set leo_whereabouts_question_done]
+  unfinished_sample:
+    say: The [client] wanted the sample today. I still had some work to finish, but the [courier] [schedule] had already been agreed.
+    vi: Khách hàng muốn phần mẫu trong hôm nay. Tôi vẫn còn việc phải làm cho xong, nhưng lịch trình chuyển phát đã được thống nhất.
+    do: [set leo_sample_read]
+    ask:
+      - id: continue
+        say: Continue asking
+        vi: Tiếp tục hỏi
+        to: entry
+        do: [set leo_work_question_done]
+  blame_anna:
+    say: All right, I went in briefly. Anna wrote the wrong house number on the [label]. The [address] was her responsibility.
+    vi: Được rồi, tôi có vào một lúc. Anna viết sai số nhà trên nhãn. Địa chỉ là trách nhiệm của cô ấy.
+    needs: [evidence mailroom_access_log, flag leo_desk_statement_read]
+    do: [set leo_blame_statement_read]
+    ask:
+      - id: continue
+        say: Continue asking
+        vi: Tiếp tục hỏi
+        to: entry
+        do: [set leo_challenge_question_done]

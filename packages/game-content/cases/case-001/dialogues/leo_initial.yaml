@@ -1,0 +1,59 @@
+tree: leo_initial
+npc: leo
+done: leo_interviewed
+finish: [leo_q1_read, leo_q2_read, leo_q3_read]
+notes:
+  entry:
+    any:
+      - flag leo_q1_read
+      - flag leo_q2_read
+      - flag leo_q3_read
+  answer1: leo_q1_read
+  answer2: leo_q2_read
+  answer3: leo_q3_read
+nodes:
+  entry:
+    say: I stepped outside to take a phone call.
+    audio:
+      url: /audio/case-001/leo/leo_initial__entry.wav
+      textSha256: 716b7aa3ca402ebac9333b58ff7867b6e9c5903284ca82a41ae8a62f03459135
+    ask:
+      - id: q1
+        say: When did you leave?
+        to: answer1
+      - id: q2
+        say: When did you return?
+        to: answer2
+      - id: q3
+        say: Did you see David?
+        to: answer3
+  answer1:
+    say: Around eight twenty-five.
+    audio:
+      url: /audio/case-001/leo/leo_initial__answer1.wav
+      textSha256: 216d7f9949d551696afad419971eb42066038e3233624d45d0a5ff072184ab30
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set leo_q1_read]
+  answer2:
+    say: Around eight forty.
+    audio:
+      url: /audio/case-001/leo/leo_initial__answer2.wav
+      textSha256: 009a168973b7dc12b99f80242c2b0e221c038760ced2e8cce7984b1486267fe3
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set leo_q2_read]
+  answer3:
+    say: I saw him in the hallway before I went outside.
+    audio:
+      url: /audio/case-001/leo/leo_initial__answer3.wav
+      textSha256: 1aa0fc561cc44b651bab4c874fc41537daf8055192aa68caf11f46e41bd5c1e9
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set leo_q3_read]

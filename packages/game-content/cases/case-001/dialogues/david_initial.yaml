@@ -1,0 +1,98 @@
+tree: david_initial
+npc: david
+done: david_interviewed
+finish: [david_q1_read, david_q2_read, david_q3_read]
+notes:
+  entry: david_statement_read
+  answer1: david_q1_read
+  answer2: david_q2_read
+  answer3: david_answer3_recorded
+  answer3_unlocked: david_answer3_unlocked_recorded
+  collect_folder: david_folder_statement_read
+  confession: david_confession_read
+nodes:
+  entry:
+    say: I didn't enter the meeting room after eight.
+    audio:
+      url: /audio/case-001/david/david_initial__entry.wav
+      textSha256: 4d5de8cf0e95bcefc1cdc213a9ce1fce534b5703d986153b99993cfd083b0010
+    do: [set david_statement_read]
+    ask:
+      - id: q1
+        say: Where were you?
+        to: answer1
+      - id: q2
+        say: Did you see the report?
+        to: answer2
+      - id: q3
+        say: Are you sure you didn't enter the room?
+        to: answer3
+        needs: [no-flag david_contradiction_found]
+      - id: q3_unlocked
+        say: Are you sure you didn't enter the room?
+        to: answer3_unlocked
+        needs: [flag david_contradiction_found]
+      - id: challenge
+        say: But the security log shows that you entered at 8:32.
+        to: collect_folder
+        needs: [flag david_contradiction_found]
+  answer1:
+    say: I was working at my desk.
+    audio:
+      url: /audio/case-001/david/david_initial__answer1.wav
+      textSha256: 2261e18dc750c20ec5864617a3d5b37849660296445b68d4d12b1be305cef837
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set david_q1_read]
+  answer2:
+    say: I saw it during the meeting, but not afterward.
+    audio:
+      url: /audio/case-001/david/david_initial__answer2.wav
+      textSha256: 3506f39d0384fd8063e963ba59b178bcbe980f147b0fe59f5916f423c9ef247f
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set david_q2_read]
+  answer3:
+    say: Yes. I'm certain.
+    audio:
+      url: /audio/case-001/david/david_initial__answer3.wav
+      textSha256: 9ccb9cd564b05398d8ba82cf2da4cab676a1cade109762b580ea80af10a74f7b
+    needs: [no-flag david_contradiction_found]
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set david_q3_read, set david_answer3_recorded]
+  answer3_unlocked:
+    say: ...I may have gone in for a moment.
+    audio:
+      url: /audio/case-001/david/david_initial__answer3_unlocked.wav
+      textSha256: 1939b3c20c82dee9180030609decc675f5117aa35c77c6aee25b2bb1190735e3
+    needs: [flag david_contradiction_found]
+    ask:
+      - id: continue
+        say: Tiếp tục hỏi
+        to: entry
+        do: [set david_q3_read, set david_answer3_unlocked_recorded]
+  collect_folder:
+    say: I only went in to collect a folder.
+    audio:
+      url: /audio/case-001/david/david_initial__collect_folder.wav
+      textSha256: a142ac91021d4d1cb0adf7a41aaa32b82579a29e0d672afc176fc82a081f6c20
+    needs: [flag david_contradiction_found]
+    do: [set david_folder_statement_read]
+    ask:
+      - id: which_folder
+        say: Which folder?
+        to: confession
+  confession:
+    say: The Quarterly Risk Report. I found an error I had missed and panicked. I took it to correct it before anyone noticed.
+    audio:
+      url: /audio/case-001/david/david_initial__confession.wav
+      textSha256: 07fbf4dc517f8fddda8ea802c2de982d49a284b0999aded3183a4ccf721bec84
+    needs: [flag david_contradiction_found]
+    do: [set david_confession_read]
