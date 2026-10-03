@@ -4,6 +4,8 @@ import { PaperPanel } from './PaperPanel';
 import { Keycap } from './Keycap';
 import { PaperSheet } from './PaperSheet';
 import { InkButton } from './InkButton';
+import { PaperButton } from './PaperButton';
+import { DeviceKey } from './DeviceKey';
 import { IndexTab } from './IndexTab';
 import { Stamp } from './Stamp';
 import { KeyHintLine } from './KeyHintLine';
@@ -259,5 +261,46 @@ describe('shell CSS guardrails', () => {
     expect(css).toMatch(/\.lexicon-motion-off\s+\.folder-cover/);
     expect(css).toMatch(/\.lexicon-motion-off\s+\.modal-sheet/);
     expect(css).toMatch(/\.lexicon-motion-off\s+\.case-card/);
+  });
+});
+
+describe('button kinds and their sounds', () => {
+  it('InkButton defaults to the press sound and accepts an override', () => {
+    expect(renderToString(<InkButton>Go</InkButton>)).toContain('data-sfx="press"');
+    expect(renderToString(<InkButton sfx="paper-close">Go</InkButton>)).toContain(
+      'data-sfx="paper-close"',
+    );
+  });
+
+  it('PaperButton is a paper-button with the press sound by default', () => {
+    const html = renderToString(<PaperButton>Vụ án mới</PaperButton>);
+    expect(html).toContain('paper-button');
+    expect(html).toContain('data-sfx="press"');
+    expect(html).toContain('Vụ án mới');
+    expect(renderToString(<PaperButton sfx="stamp">x</PaperButton>)).toContain('data-sfx="stamp"');
+  });
+
+  it('a disabled button still carries its sound id (the listener skips it)', () => {
+    const html = renderToString(<PaperButton disabled>x</PaperButton>);
+    expect(html).toContain('disabled=""');
+    expect(html).toContain('data-sfx="press"');
+  });
+
+  it('DeviceKey shows its icon and label, a device click sound and aria-pressed', () => {
+    const html = renderToString(
+      <DeviceKey icon={<svg data-icon="play" />} label="Phát" pressed>
+        {null}
+      </DeviceKey>,
+    );
+    expect(html).toContain('device-key');
+    expect(html).toContain('data-sfx="device-click"');
+    expect(html).toContain('aria-pressed="true"');
+    expect(html).toContain('data-icon="play"');
+    expect(html).toContain('Phát');
+  });
+
+  it('DeviceKey omits aria-pressed when it is not a toggle', () => {
+    const html = renderToString(<DeviceKey icon={<svg />} label="Phát" />);
+    expect(html).not.toContain('aria-pressed');
   });
 });

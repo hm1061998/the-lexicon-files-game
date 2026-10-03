@@ -1,0 +1,36 @@
+@import '../theme/palette.css';
+
+.paper-button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 1px solid rgb(62 52 43 / 45%);
+  border-radius: 2px;
+  background: #e6d9b8 url('/assets/ui/paper_sheet_fresh.png') 0 0 / 256px 256px;
+  color: var(--lexicon-ink);
+  font: inherit;
+  font-weight: 600;
+  filter: drop-shadow(var(--lexicon-shadow-paper));
+  transition:
+    transform 120ms ease-out,
+    filter 120ms ease-out;
+}
+
+.paper-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: drop-shadow(var(--lexicon-shadow-lift));
+}
+
+.paper-button:active:not(:disabled) {
+  transform: translateY(2px);
+  filter: drop-shadow(0 1px 2px rgb(42 37 33 / 25%));
+}
+
+.paper-button:focus-visible {
+  outline: var(--lexicon-focus);
+  outline-offset: 3px;
+}
+
+.paper-button:disabled {
+  opacity: 0.45;
+}

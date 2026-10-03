@@ -21,6 +21,9 @@ EXPECTED = {
     "folder_cover.png",
     "folder_tab.png",
     "scrim_vignette.png",
+    "cursor_magnifier.png",
+    "cursor_pen.png",
+    "cursor_hand.png",
 }
 
 
@@ -202,6 +205,23 @@ class WorldMaterialTests(unittest.TestCase):
         step = np.abs(a[:, 128:256, :3] - first).mean()
         wrap = np.abs(first - last).mean()
         self.assertLess(wrap, step * 1.5 + 1)
+
+    def test_cursors_are_32_by_32_with_a_visible_hotspot(self):
+        hotspots = {"magnifier": (11, 11), "pen": (2, 30), "hand": (10, 2)}
+        for kind, (hx, hy) in hotspots.items():
+            image = Image.open(self.out / f"cursor_{kind}.png")
+            self.assertEqual(image.size, (32, 32), kind)
+            alpha = np.asarray(image.convert("RGBA"))[:, :, 3]
+            self.assertGreater(alpha.max(), 200, kind)
+            near = alpha[max(0, hy - 3):hy + 4, max(0, hx - 3):hx + 4]
+            self.assertGreater(near.max(), 0, f"{kind} hotspot area is empty")
+            corners = [alpha[0, 0], alpha[0, 31], alpha[31, 0], alpha[31, 31]]
+            self.assertGreaterEqual(sum(1 for c in corners if c == 0), 2, kind)
+
+    def test_cursor_render_is_deterministic(self):
+        a = b.render_cursor("pen")
+        c = b.render_cursor("pen")
+        self.assertEqual(a.tobytes(), c.tobytes())
 
 
 if __name__ == "__main__":

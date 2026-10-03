@@ -8,10 +8,15 @@
   background: transparent;
   color: var(--lexicon-ink);
   font: inherit;
-  cursor: pointer;
   text-decoration: underline 1px transparent;
   text-underline-offset: 4px;
-  transition: text-decoration-color 120ms ease-out;
+  transition:
+    text-decoration-color 120ms ease-out,
+    transform 80ms ease-out;
+}
+
+.ink-button:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .ink-button:hover:not(:disabled),
@@ -25,6 +30,5 @@
 }
 
 .ink-button:disabled {
-  cursor: default;
-  opacity: 0.55;
+  opacity: 0.45;
 }

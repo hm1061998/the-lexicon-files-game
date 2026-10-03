@@ -1,10 +1,10 @@
 import type { ButtonHTMLAttributes } from 'react';
 import type { SfxId } from './sfx';
-import './ink-button.css';
+import './paper-button.css';
 import './cursors.css';
 
-/** The quiet button: ink text, underlined on hover or focus. Secondary actions (close, back). */
-export function InkButton({
+/** The primary button: a scrap of paper with a soft shadow that presses 2px (new case, continue, confirm). */
+export function PaperButton({
   className,
   type = 'button',
   sfx = 'press',
@@ -13,7 +13,7 @@ export function InkButton({
   return (
     <button
       type={type}
-      className={['ink-button', className].filter(Boolean).join(' ')}
+      className={['paper-button', className].filter(Boolean).join(' ')}
       data-sfx={sfx}
       {...rest}
     />

@@ -329,6 +329,45 @@ def render_scrim_vignette() -> Image.Image:
     return to_image(np.concatenate([rgb, alpha[:, :, None]], axis=2))
 
 
+def render_cursor(kind: Literal["magnifier", "pen", "hand"]) -> Image.Image:
+    """A 32x32 cursor drawn at 8x and reduced: ink shape with a paper-colored rim for legibility.
+
+    Hotspots (declared in packages/ui cursors.css): magnifier 11,11; pen 2,30; hand 10,2.
+    """
+    scale = 8
+    size = 32 * scale
+    ink = INK + (255,)
+    rim = (244, 239, 226, 255)
+
+    def layer(width_extra: int) -> Image.Image:
+        img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        k = scale
+        w = width_extra * k
+        if kind == "magnifier":
+            d.line((17 * k, 17 * k, 28 * k, 28 * k), fill=ink, width=4 * k + w)
+            d.ellipse((3 * k - w // 2, 3 * k - w // 2, 19 * k + w // 2, 19 * k + w // 2),
+                      outline=ink, width=2 * k + w)
+        elif kind == "pen":
+            d.polygon([(2 * k, 30 * k), (5 * k, 22 * k), (10 * k, 27 * k)], fill=ink)
+            d.line((7.5 * k, 24.5 * k, 27 * k, 5 * k), fill=ink, width=5 * k + w)
+        else:  # hand: pointing finger, hotspot at the fingertip
+            d.rounded_rectangle((7.5 * k - w // 2, 2 * k - w // 2, 12.5 * k + w // 2, 16 * k),
+                                radius=2 * k, fill=ink)
+            d.rounded_rectangle((5 * k - w // 2, 13 * k, 24 * k + w // 2, 28 * k + w // 2),
+                                radius=4 * k, fill=ink)
+        return img
+
+    outline = layer(2)
+    body = layer(0)
+    # Rim: the wider shape in paper color under the ink shape.
+    alpha = np.asarray(outline)[:, :, 3] > 0
+    base = np.zeros((size, size, 4), np.uint8)
+    base[alpha] = rim
+    composed = Image.alpha_composite(to_image(base.astype(float)), body)
+    return composed.resize((32, 32), Image.LANCZOS)
+
+
 def build(out_dir: Path) -> list[Path]:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -346,6 +385,9 @@ def build(out_dir: Path) -> list[Path]:
         "folder_cover": render_folder_cover(12),
         "folder_tab": render_folder_tab(13),
         "scrim_vignette": render_scrim_vignette(),
+        "cursor_magnifier": render_cursor("magnifier"),
+        "cursor_pen": render_cursor("pen"),
+        "cursor_hand": render_cursor("hand"),
     }
     paths = []
     for name, image in images.items():

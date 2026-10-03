@@ -2,6 +2,7 @@ import type { CSSProperties, ElementType, HTMLAttributes, ReactNode } from 'reac
 import { PaperClip } from './PaperClip';
 import './paper-sheet.css';
 import './motion.css';
+import './cursors.css';
 
 export type PaperSheetProps = Omit<
   HTMLAttributes<HTMLElement>,

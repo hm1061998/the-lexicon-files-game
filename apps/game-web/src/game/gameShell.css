@@ -23,6 +23,9 @@ body {
 }
 
 .game-root canvas {
+  cursor:
+    url('/assets/ui/cursor_magnifier.png') 11 11,
+    auto;
   display: block;
 }
 
