@@ -11,7 +11,7 @@ Thư mục: `packages/game-content/cases/<case-id>/`. Schema: `packages/game-con
 | `contradictions.json` | `contradictions` | `id`, `factIds: [a, b]`, `explanation`, `objectiveId` | Hai fact khác nhau |
 | `listening-tasks.json` | `tasks` | `id`, `evidenceId` (audio), `audioAsset`, `transcript`, `question`, `options`, `correctOptionId`, `keywordHints`, `completionFlag`, `correctEffects` | |
 | `npcs.json` | `npcs` | `id`, `name`, `role`, `dialogueTreeId` | Tree phải có `npcId` trùng |
-| `dialogues.json` | `dialogues` | tree: `id`, `npcId`, `entryNodeId`, `nodes`, `completionFlag`, `completionCondition`, `notebookStatements?` | Entry không có `condition`; node `terminal` không có choice và ngược lại |
+| `dialogues.json` | `dialogues` (**sinh từ `dialogues/*.yaml`**, không sửa tay; xem `dialogue-yaml.md`) | tree: `id`, `npcId`, `entryNodeId`, `nodes`, `completionFlag`, `completionCondition`, `notebookStatements?` | Entry không có `condition`; node `terminal` không có choice và ngược lại |
 | `vocabulary.json` | `vocabulary` | `id`, `lemma`, `partOfSpeech`, `cefr`, `definitionEn`, `translationVi`, `examples`, `tags`, `surfaceForms`, `synonyms?` | Span là offset UTF-16, phải khớp surface form |
 | `scenes/<scene>.json` | object | `id`, `spawnPoints.default`, `assets[].interaction`, `assets[].cue`, `walls`, ... | Scene phải nằm trong `sceneIds`; start scene cần spawn `default` |
 

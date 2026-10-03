@@ -23,9 +23,10 @@ Case là **dữ liệu**, engine là **chung**. Zod và validator đã bắt l�
 
 1. **Đọc hợp đồng:** docs/03 (mẫu Case #001), spec của case trong `docs/superpowers/specs/`, `references/engine-semantics.md`.
 2. **Thiết kế giấy trước JSON:** bảng sự thật (ai, lúc nào, ở đâu), danh sách evidence → fact → contradiction → nghi phạm. Mỗi kết luận đúng phải suy ra được **chỉ từ** evidence và lời khai; red herring phải có lời giải thích hợp lý.
-3. **Viết JSON** theo `references/file-map.md`. ID dạng `snake_case`; tree id **duy nhất toàn dự án** (vd. `anna_delivery`, không dùng lại `anna_initial`) vì learning context `dialogue:<treeId>:<nodeId>:text` chưa gắn caseId (F-2).
+3. **Viết hội thoại bằng YAML** (`dialogues/<tree-id>.yaml`, cú pháp trong `references/dialogue-yaml.md`) rồi `npm run case:build -- <case-id>` sinh `dialogues.json`; **không sửa tay `dialogues.json`** (`case:build --check` trong `npm run test` sẽ báo lệch). Các file còn lại viết JSON theo `references/file-map.md`. ID dạng `snake_case`; tree id **duy nhất toàn dự án** (vd. `anna_delivery`, không dùng lại `anna_initial`) vì learning context `dialogue:<treeId>:<nodeId>:text` chưa gắn caseId (F-2).
 4. **Kiểm tra:**
    ```bash
+   npm run case:build -- <case-id>                # YAML hội thoại -> dialogues.json (lỗi có dòng/cột)
    npm run test -w @lexicon/game-content          # Zod + validator tham chiếu
    node .claude/skills/authoring-case-content/scripts/check-case-flow.mjs <case-id>
    node .claude/skills/authoring-case-content/scripts/suggest-vocab-spans.mjs <case-id>
