@@ -33,21 +33,25 @@ async function seedFull(page: Page): Promise<void> {
   );
 }
 
-const notebookTab = (name: string): Screen['reach'] => async (page) => {
-  await seedFull(page);
-  await page.keyboard.press('j');
-  const dialog = page.getByRole('dialog', { name: strings.notebook, exact: true });
-  await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name, exact: true }).click();
-};
+const notebookTab =
+  (name: string): Screen['reach'] =>
+  async (page) => {
+    await seedFull(page);
+    await page.keyboard.press('j');
+    const dialog = page.getByRole('dialog', { name: strings.notebook, exact: true });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name, exact: true }).click();
+  };
 
-const boardFace = (name: string): Screen['reach'] => async (page) => {
-  await seedFull(page);
-  await page.keyboard.press('b');
-  const board = page.locator('.deduction-board');
-  await expect(board).toBeVisible();
-  await board.getByRole('button', { name, exact: true }).click();
-};
+const boardFace =
+  (name: string): Screen['reach'] =>
+  async (page) => {
+    await seedFull(page);
+    await page.keyboard.press('b');
+    const board = page.locator('.deduction-board');
+    await expect(board).toBeVisible();
+    await board.getByRole('button', { name, exact: true }).click();
+  };
 
 /** Notebook (J) tabs and deduction board (B) faces; seeded so none of them is empty. */
 export const investigationScreens: readonly Screen[] = [
