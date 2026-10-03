@@ -43,12 +43,18 @@ describe('DialogueView', () => {
     expect(html).toContain('effectFailed: unknown ID');
     expect(html).toContain(strings.close);
   });
-  it('is a torn paper sheet with note-style choices and an ink close button', () => {
+  it('is the interrogation band with numbered choices and an ink close button', () => {
     const html = renderToString(<DialogueView {...props} />);
-    expect(html).toContain('paper-sheet');
+    expect(html).toContain('dialogue-band');
     expect(html).toContain('dialogue-panel');
     expect(html).not.toContain('paper-panel');
     expect(html).toContain('ink-button dialogue-close');
-    expect(html.match(/dialogue-choice"/g)?.length).toBe(node.choices.length);
+    expect(html.match(/class="dialogue-choice[ "]/g)).toHaveLength(node.choices.length);
+  });
+
+  it('types a line out at a normal speed and holds the choices back until it is shown', () => {
+    const html = renderToString(<DialogueView {...props} textSpeed="normal" />);
+    expect(html).not.toContain('class="dialogue-choice');
+    expect(html).toContain(node.text); // the live region carries the whole line
   });
 });

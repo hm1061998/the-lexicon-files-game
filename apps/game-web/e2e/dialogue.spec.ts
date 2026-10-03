@@ -235,8 +235,9 @@ test('dialogue traps focus, blocks gameplay, restores focus and fits desktop vie
   await openWorld(page);
   await talk(page, 'anna');
   await expect(page.locator('.dialogue-text')).toBeFocused();
+  // The text is not tabbable, so Tab enters the dialog at its first control (the voice replay).
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'Đóng', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Phát lại giọng đọc' })).toBeFocused();
   await page.keyboard.press('Shift+Tab');
   await expect(
     page.getByRole('button', { name: 'Who was still in the room?', exact: true }),

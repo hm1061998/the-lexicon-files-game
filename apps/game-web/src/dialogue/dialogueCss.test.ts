@@ -24,14 +24,14 @@ describe('dialogue CSS guards', () => {
     expect(css).not.toMatch(/^\.vocabulary-popover button/m);
   });
 
-  it('scrolls an inner wrapper so the paper clip on the sheet edge is never clipped', () => {
+  it('keeps the band a dark gradient strip that lets the world show above it', () => {
     const css = read('./dialogue.css');
     const panel = css.slice(
       css.indexOf('.dialogue-panel {'),
       css.indexOf('}', css.indexOf('.dialogue-panel {')),
     );
+    expect(panel).toContain('linear-gradient');
     expect(panel).not.toMatch(/overflow(-y)?:\s*auto/);
-    expect(css).toMatch(/\.dialogue-panel > \[role='dialog'\]\s*\{[^}]*overflow-y:\s*auto/);
   });
 
   it('swaps the choices for the definition card and splits the sheet on short wide screens', () => {

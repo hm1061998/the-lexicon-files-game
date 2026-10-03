@@ -158,6 +158,10 @@ export interface UiStrings {
   readonly settingsSubtitlesOff: string;
   readonly settingsReducedMotion: string;
   readonly settingsTextSpeed: string;
+  readonly dialogueInterrogating: string;
+  readonly dialogueChoiceSeen: string;
+  readonly dialogueNotesHeading: string;
+  readonly dialogueNotesEmpty: string;
   readonly textSpeedInstant: string;
   readonly textSpeedNormal: string;
   readonly textSpeedFast: string;

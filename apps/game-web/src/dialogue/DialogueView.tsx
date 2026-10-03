@@ -1,5 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
-import { InkButton, PaperSheet } from '@lexicon/ui';
+import { useCallback, useEffect, useId, useRef } from 'react';
 import type {
   DialogueAction,
   DialogueChoice,
@@ -8,9 +7,11 @@ import type {
   UiStrings,
 } from '@lexicon/shared-types';
 import { getFocusTrapTarget } from '../pause/focusTrap';
-import './dialogue.css';
+import type { TextSpeed } from '../persistence/settingsSchema';
 import { VocabularyText } from '../vocabulary/VocabularyText';
-import { DialogueVoiceControls } from './DialogueVoiceControls';
+import { DialogueBand } from './DialogueBand';
+import { dialogueKeyAction } from './dialogueKeys';
+import { useTextReveal } from './useTextReveal';
 const FOCUSABLE =
   'button:not(:disabled), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 export type DialogueViewProps = {
@@ -31,6 +32,14 @@ export type DialogueViewProps = {
   onRevealTranslation?(vocabularyId: string, contextId: string): void;
   vocabularyTutorialSeen?: boolean;
   onVocabularyTutorialSeen?(): void;
+  /** Typing speed of the line; `instant` (the default here) shows it whole. */
+  textSpeed?: TextSpeed;
+  reducedMotion?: boolean;
+  portraitSrc?: string | undefined;
+  /** Statements already recorded from this person, shown as the handwritten note. */
+  notes?: readonly string[];
+  /** Whether a choice was already asked (dims it; it stays selectable). */
+  isChoiceSeen?(choice: DialogueChoice): boolean;
 };
 export function DialogueView({
   speakerName,
@@ -50,10 +59,39 @@ export function DialogueView({
   onRevealTranslation = () => undefined,
   vocabularyTutorialSeen = true,
   onVocabularyTutorialSeen,
+  textSpeed = 'instant',
+  reducedMotion = false,
+  portraitSrc,
+  notes = [],
+  isChoiceSeen = () => false,
 }: DialogueViewProps): JSX.Element {
   const title = useId(),
     dialogRef = useRef<HTMLDivElement>(null),
     textRef = useRef<HTMLParagraphElement>(null);
+  const { shown, done, finish } = useTextReveal(node.text, textSpeed);
+
+  // One handler for every way of choosing, so the revision guard and the double-click guard hold.
+  const choose = useCallback(
+    (choiceId: string) =>
+      onChoose({ nodeId: session.nodeId, revision: session.revision, choiceId }),
+    [onChoose, session.nodeId, session.revision],
+  );
+  const latest = useRef({ done, choices, choose, finish });
+  latest.current = { done, choices, choose, finish };
+
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      const { done: lineDone, choices: list, choose: pick, finish: complete } = latest.current;
+      const action = dialogueKeyAction(event, { done: lineDone, choiceCount: list.length });
+      if (!action) return;
+      event.preventDefault();
+      if (action.type === 'finish') complete();
+      else pick(list[action.index]!.id);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   useEffect(() => {
     const fallbackFocus = returnFocusRef.current;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -80,69 +118,49 @@ export function DialogueView({
     textRef.current?.focus({ preventScroll: true });
   }, [session.nodeId, session.revision]);
   return (
-    <div className="dialogue-overlay">
-      <PaperSheet as="div" edge="torn" clip className="dialogue-panel">
-        <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={title}>
-          <div className="dialogue-header">
-            <div>
-              <p className="dialogue-label">{strings.dialogue}</p>
-              <h2 id={title}>{speakerName}</h2>
-              <p className="dialogue-role">{speakerRole}</p>
-            </div>
-            <InkButton className="dialogue-close" onClick={onClose}>
-              {strings.close}
-            </InkButton>
-          </div>
-          <div className="dialogue-tools">
-            <DialogueVoiceControls audio={node.audio} strings={strings} />
-          </div>
-          <p ref={textRef} tabIndex={-1} lang="en" className="dialogue-text">
-            <VocabularyText
-              text={node.text}
-              translationVi={node.translationVi}
-              spans={node.vocabularySpans}
-              contextId={`dialogue:${session.treeId}:${node.id}:text`}
-              catalogue={vocabulary}
-              mode={translationMode}
-              strings={strings}
-              onEncounter={onEncounter}
-              onInspect={onInspect}
-              onRevealTranslation={onRevealTranslation}
-              tutorialSeen={vocabularyTutorialSeen}
-              onTutorialSeen={onVocabularyTutorialSeen}
-            />
-          </p>
-          {error && (
-            <p role="alert">
-              {strings.dialogueError} {error}
-            </p>
-          )}
-          <div className="dialogue-choices">
-            {choices.map((choice) => (
-              <button
-                type="button"
-                key={choice.id}
-                className="dialogue-choice"
-                onClick={(event) => {
-                  // A replacement choice can occupy the same spot during a double click.
-                  // Keyboard activation has detail 0 and remains available immediately.
-                  if (event.detail > 1) return;
-                  onChoose({
-                    nodeId: session.nodeId,
-                    revision: session.revision,
-                    choiceId: choice.id,
-                  });
-                }}
-              >
-                {choice.text}
-                {translationMode === 'Beginner' && choice.translationVi && (
-                  <small className="dialogue-choice-translation">{choice.translationVi}</small>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      </PaperSheet>
-    </div>
+    <DialogueBand
+      speakerName={speakerName}
+      speakerRole={speakerRole}
+      portraitSrc={portraitSrc}
+      strings={strings}
+      node={node}
+      shown={shown}
+      done={done}
+      choices={choices.map((choice) => ({ choice, seen: isChoiceSeen(choice) }))}
+      notes={notes}
+      translationMode={translationMode}
+      reducedMotion={reducedMotion}
+      titleId={title}
+      error={error}
+      textRef={textRef}
+      dialogRef={dialogRef}
+      renderText={() =>
+        done ? (
+          <VocabularyText
+            text={node.text}
+            translationVi={node.translationVi}
+            spans={node.vocabularySpans}
+            contextId={`dialogue:${session.treeId}:${node.id}:text`}
+            catalogue={vocabulary}
+            mode={translationMode}
+            strings={strings}
+            onEncounter={onEncounter}
+            onInspect={onInspect}
+            onRevealTranslation={onRevealTranslation}
+            tutorialSeen={vocabularyTutorialSeen}
+            onTutorialSeen={onVocabularyTutorialSeen}
+          />
+        ) : (
+          node.text.slice(0, shown)
+        )
+      }
+      onChoose={(choiceId, event) => {
+        // A replacement choice can occupy the same spot during a double click.
+        // Keyboard activation has detail 0 and remains available immediately.
+        if (event.detail > 1) return;
+        choose(choiceId);
+      }}
+      onClose={onClose}
+    />
   );
 }

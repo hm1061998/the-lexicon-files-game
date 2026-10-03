@@ -355,3 +355,8 @@
     bottom: 64px;
   }
 }
+
+/* While a conversation is open the band owns the screen; the HUD keeps its place but is not shown. */
+.hud--quiet {
+  visibility: hidden;
+}

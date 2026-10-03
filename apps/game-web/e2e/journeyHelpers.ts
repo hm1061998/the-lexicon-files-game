@@ -33,6 +33,8 @@ export type OpenWorldOptions = {
   coach?: 'seen' | 'fresh';
   /** Case picked on the case picker; defaults to Case #001. */
   caseId?: string;
+  /** Dialogue typing speed; tests default to `instant` so text is complete when it appears. */
+  textSpeed?: 'instant' | 'normal' | 'fast';
 };
 
 const CASE_TITLES: Record<string, string> = {
@@ -107,13 +109,16 @@ export async function seedOnboardingSeen(page: Page): Promise<void> {
 
 /**
  * Seeds settings with `textSpeed: 'instant'` so dialogue text is complete the moment it appears
- * (the typewriter reveal would otherwise make every text assertion wait). Keeps any settings the
+ * (the typewriter reveal would otherwise make every text assertion wait). Keeps every other setting the
  * test already stored. Tests of the reveal itself set `textSpeed: 'normal'` on their own.
  */
-export async function useInstantText(page: Page): Promise<void> {
+export async function useInstantText(
+  page: Page,
+  speed: 'instant' | 'normal' | 'fast' = 'instant',
+): Promise<void> {
   await page.route('**/favicon.ico', (route) => route.fulfill({ status: 204 }));
   await page.goto('/@vite/env');
-  await page.evaluate(async () => {
+  await page.evaluate(async (textSpeed) => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open('lexicon-settings', 1);
       request.onupgradeneeded = () => {
@@ -129,16 +134,18 @@ export async function useInstantText(page: Page): Promise<void> {
         const store = tx.objectStore('records');
         const existing = store.get('local-settings');
         existing.onsuccess = () => {
-          if (existing.result !== undefined) return;
+          // Keep whatever the test or the app already stored; only the typing speed is forced.
+          const current = (existing.result ?? {}) as Record<string, unknown>;
           store.put(
             {
-              schemaVersion: 2,
               translationMode: 'Learning',
               volume: 80,
               subtitles: 'auto',
               reducedMotion: false,
-              textSpeed: 'instant',
               uiSounds: true,
+              ...current,
+              schemaVersion: 2,
+              textSpeed,
             },
             'local-settings',
           );
@@ -149,7 +156,7 @@ export async function useInstantText(page: Page): Promise<void> {
     } finally {
       db.close();
     }
-  });
+  }, speed);
 }
 
 /**
@@ -160,7 +167,7 @@ export async function openWorld(page: Page, options: OpenWorldOptions = {}): Pro
   const { coach = 'seen' } = options;
   if (coach === 'seen') {
     await seedOnboardingSeen(page);
-    await useInstantText(page);
+    await useInstantText(page, options.textSpeed);
   }
   await page.goto('/');
   await passTitle(page, options);

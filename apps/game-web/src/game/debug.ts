@@ -34,6 +34,10 @@ export type LexiconDebug = {
   textureCount(): number;
   /** Listeners on the scene's events and input plus the scale manager and game events it subscribes to. */
   listenerCount(): number;
+  /** Current camera zoom, including the conversation push-in. */
+  cameraZoom(): number;
+  /** Camera zoom without the push-in. */
+  cameraBaseZoom(): number;
   /** Visible world cue markers currently owned by the active scene. */
   worldCueCount(): number;
   /** Which arch drawing a portal asset uses: `ne`, `nw`, or the mirrored `-flip` copy. */

@@ -1,0 +1,4 @@
+/* The band's layout lives in dialogue.css; this file is kept for the portrait spacing only. */
+.dialogue-band .portrait {
+  margin: 0;
+}

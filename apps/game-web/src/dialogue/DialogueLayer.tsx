@@ -5,6 +5,9 @@ import { DialogueView } from './DialogueView';
 import { useLearningStore } from '../state/LearningStoreContext';
 import { useTranslationMode } from '../state/useTranslationMode';
 import { useCallback } from 'react';
+import { selectNotebookPeople } from '../notebook/selectNotebookPeople';
+import { useSettingsStore } from '../state/SettingsStoreContext';
+import { isChoiceSeen } from './isChoiceSeen';
 export function DialogueLayer({
   strings,
   returnFocusRef,
@@ -15,6 +18,8 @@ export function DialogueLayer({
   const state = useGameStore((s) => s);
   const dispatchLearning = useLearningStore((s) => s.dispatchLearning);
   const [translationMode] = useTranslationMode();
+  const textSpeed = useSettingsStore((s) => s.settings.textSpeed);
+  const reducedMotion = useSettingsStore((s) => s.settings.reducedMotion);
   const vocabularyTutorialSeen = useLearningStore((s) => s.vocabularyTutorialSeen);
   const markVocabularyTutorialSeen = useLearningStore((s) => s.markVocabularyTutorialSeen);
   const onEncounter = useCallback(
@@ -48,6 +53,10 @@ export function DialogueLayer({
       </div>
     );
   const speaker = state.caseDefinition.npcs.find((n) => n.id === node.speakerId);
+  const notes =
+    selectNotebookPeople(state.caseDefinition, state.caseState)
+      .find((person) => person.npc.id === session.npcId)
+      ?.statements.map((statement) => statement.text) ?? [];
   return (
     <DialogueView
       speakerName={speaker?.name ?? strings.investigator}
@@ -67,6 +76,17 @@ export function DialogueLayer({
       onRevealTranslation={onRevealTranslation}
       vocabularyTutorialSeen={vocabularyTutorialSeen}
       onVocabularyTutorialSeen={markVocabularyTutorialSeen}
+      textSpeed={textSpeed}
+      reducedMotion={reducedMotion}
+      portraitSrc={speaker?.portrait?.default}
+      notes={notes}
+      isChoiceSeen={(choice) =>
+        isChoiceSeen(
+          choice,
+          tree?.nodes.find((n) => n.id === choice.nextNodeId),
+          state.caseState.flags,
+        )
+      }
     />
   );
 }

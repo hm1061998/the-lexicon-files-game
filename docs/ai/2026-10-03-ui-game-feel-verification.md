@@ -12,3 +12,7 @@ Ngày: 03/10/2026. Plan: `docs/superpowers/plans/2026-10-03-ui-game-feel.md`. Sp
 ## Ảnh trước
 
 `docs/ai/playtests/2026-10-03-ui-game-feel/before/` — `dialogue`, `listening`, `evidence`, `title`, `pause` × 4 kích thước (1920×1080, 1280×720, 760×600, 390×844) bằng `e2e/ui-game-feel-shots.spec.ts` (`UI_SHOTS_DIR`, `UI_SHOTS_PHASE=before`). `dialogue-log` chỉ chụp ở ảnh sau.
+
+## Task 3b — âm thanh CC0 (chờ người dùng)
+
+`assets/_incoming/audio/` chưa tồn tại (03/10/2026). Cần người dùng tải Kenney Interface Sounds và Kenney RPG Audio (CC0) vào `assets/_incoming/audio/kenney-interface-sounds/` và `kenney-rpg-audio/` (tuỳ chọn một tiếng băng chạy CC0 vào `oga-tape/` kèm URL nguồn). Cho đến lúc đó `UI_SOUND_FILES` rỗng: dịch vụ âm thanh UI (Task 3a) đã nối nhưng game im lặng, không lỗi. Task này chưa hoàn tất.

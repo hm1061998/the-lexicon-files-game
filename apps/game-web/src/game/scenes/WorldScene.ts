@@ -53,6 +53,7 @@ import { breathing } from '../systems/breathing';
 import { nameTagPosition } from '../systems/nameTagLayout';
 import { nameplateVisible } from '../systems/nameplateVisibility';
 import { cameraFollowConfig } from '../systems/cameraFollow';
+import { DIALOGUE_ZOOM_FACTOR, dialogueCameraTarget } from '../systems/dialogueCamera';
 import { createNavigationController } from '../systems/navigationController';
 import { createGameInputGate } from '../systems/gameInputGate';
 import { advanceNavigationMovement } from '../systems/navigationMovement';
@@ -110,6 +111,7 @@ const NPC_FIGURE_ASPECT = 0.45;
 type Bounds = { x: number; y: number; width: number; height: number };
 const MARKER_FLOAT_DISTANCE = 4;
 const MARKER_FLOAT_DURATION_MS = 1000;
+const DIALOGUE_CAMERA_MS = 400;
 
 export class WorldScene extends Phaser.Scene {
   static readonly KEY = 'World';
@@ -229,6 +231,9 @@ export class WorldScene extends Phaser.Scene {
   private unsubscribeDialogueStarted: (() => void) | null = null;
   private unsubscribeDialogueEnded: (() => void) | null = null;
   private dialogueNpcId: string | null = null;
+  /** Camera zoom without the conversation push-in (what `refreshCanvasSize` last computed). */
+  private baseZoom = 1;
+  private dialogueCameraActive = false;
   private facingTweens = new Map<Phaser.GameObjects.GameObject, Phaser.Tweens.Tween>();
 
   constructor() {
@@ -571,6 +576,8 @@ export class WorldScene extends Phaser.Scene {
           0,
         ),
       portalFacing: (id) => this.portalFacings.get(id),
+      cameraZoom: () => this.cameras.main.zoom,
+      cameraBaseZoom: () => this.baseZoom,
       worldCueCount: () => this.cueLayer?.activeCount ?? 0,
       offscreenCueIds: () => this.cueLayer?.offscreenIds() ?? [],
       alphaOf: (id) => this.occluders.find((o) => o.id === id)?.sprite.alpha ?? Number.NaN,
@@ -614,6 +621,7 @@ export class WorldScene extends Phaser.Scene {
     );
     this.unsubscribeDialogueStarted = this.bus.on('dialogue:started', ({ npcId }) => {
       this.dialogueNpcId = npcId;
+      this.beginDialogueCamera(npcId);
       const visual = this.npcVisuals.get(npcId);
       if (!visual || !this.logicalPosition) return;
       const du = visual.point.u - this.logicalPosition.u;
@@ -641,6 +649,7 @@ export class WorldScene extends Phaser.Scene {
     });
     this.unsubscribeDialogueEnded = this.bus.on('dialogue:ended', ({ npcId }) => {
       if (this.dialogueNpcId === npcId) this.dialogueNpcId = null;
+      this.endDialogueCamera(false);
     });
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
@@ -655,9 +664,11 @@ export class WorldScene extends Phaser.Scene {
     this.publishPlayerPosition(delta);
     this.syncTargetVisuals(delta);
     this.clearUnavailableInteraction();
+    // While a conversation is open the cue markers and edge pointers step aside.
+    const inDialogue = this.dialogueNpcId !== null;
     this.cueLayer?.sync(
-      this.options.worldCueIds?.() ?? new Set(),
-      this.interactionTracker.current,
+      inDialogue ? new Set() : (this.options.worldCueIds?.() ?? new Set()),
+      inDialogue ? null : this.interactionTracker.current,
       this.options.motion.reducedMotion(),
     );
     this.syncOffscreenCues();
@@ -776,12 +787,14 @@ export class WorldScene extends Phaser.Scene {
     const pointer = this.input.activePointer;
     const hovered =
       this.input.isOver && visual.sprite.getBounds().contains(pointer.worldX, pointer.worldY);
-    const shown = nameplateVisible({
-      player: { x: this.player.x, y: this.player.y },
-      npcFeet: { x: visual.sprite.x, y: visual.sprite.y },
-      interactionRadius: visual.interactionRadius,
-      hovered,
-    });
+    const shown =
+      this.dialogueNpcId === null &&
+      nameplateVisible({
+        player: { x: this.player.x, y: this.player.y },
+        npcFeet: { x: visual.sprite.x, y: visual.sprite.y },
+        interactionRadius: visual.interactionRadius,
+        hovered,
+      });
     if (shown === visual.tagShown) return;
     visual.tagShown = shown;
     visual.tagTween?.stop();
@@ -1166,9 +1179,52 @@ export class WorldScene extends Phaser.Scene {
       this.canvasSize = { width: rect.width, height: rect.height };
     const camera = this.cameras.main;
     const follow = cameraFollowConfig(this.canvasSize, camera, this.screenBounds);
-    camera.setZoom(follow.zoom);
+    this.baseZoom = follow.zoom;
+    camera.setZoom(this.dialogueCameraActive ? follow.zoom * DIALOGUE_ZOOM_FACTOR : follow.zoom);
     camera.setLerp(follow.lerpX, follow.lerpY);
     camera.setDeadzone(follow.deadZoneWidth, follow.deadZoneHeight);
+  }
+
+  /** Pushes the camera in on the conversation: 400 ms (instant when motion is reduced). */
+  private beginDialogueCamera(npcId: string): void {
+    const visual = this.npcVisuals.get(npcId);
+    if (!visual) return;
+    const camera = this.cameras.main;
+    const zoom = this.baseZoom * DIALOGUE_ZOOM_FACTOR;
+    this.dialogueCameraActive = true;
+    camera.stopFollow();
+    camera.panEffect.reset();
+    camera.zoomEffect.reset();
+    const target = dialogueCameraTarget({
+      player: { x: this.player.x, y: this.player.y },
+      npc: { x: visual.sprite.x, y: visual.sprite.y - CHARACTER_FIGURE_HEIGHT / 2 },
+      view: { width: camera.width, height: camera.height },
+      bounds: this.screenBounds,
+      zoom,
+    });
+    if (this.options.motion.reducedMotion()) {
+      camera.setZoom(zoom);
+      camera.centerOn(target.x, target.y);
+      return;
+    }
+    camera.zoomTo(zoom, DIALOGUE_CAMERA_MS, 'Sine.easeInOut', true);
+    camera.pan(target.x, target.y, DIALOGUE_CAMERA_MS, 'Sine.easeInOut', true);
+  }
+
+  /**
+   * Returns the camera to its normal zoom and follows the player again. Safe to call mid-tween
+   * (the effects are reset first) and when no conversation camera is active.
+   */
+  private endDialogueCamera(immediate: boolean): void {
+    if (!this.dialogueCameraActive) return;
+    this.dialogueCameraActive = false;
+    const camera = this.cameras?.main;
+    if (!camera) return;
+    camera.panEffect.reset();
+    camera.zoomEffect.reset();
+    if (immediate || this.options.motion.reducedMotion()) camera.setZoom(this.baseZoom);
+    else camera.zoomTo(this.baseZoom, DIALOGUE_CAMERA_MS, 'Sine.easeInOut', true);
+    camera.startFollow(this.player, true, 0.08, 0.08);
   }
 
   private drawOutline(box: Bounds): void {
@@ -1341,6 +1397,7 @@ export class WorldScene extends Phaser.Scene {
     this.unsubscribeDialogueStarted = null;
     this.unsubscribeDialogueEnded?.();
     this.unsubscribeDialogueEnded = null;
+    this.endDialogueCamera(true);
     for (const visual of this.npcVisuals.values()) visual.tag.destroy();
     this.npcVisuals.clear();
     this.dialogueNpcId = null;
