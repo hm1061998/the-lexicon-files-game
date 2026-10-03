@@ -3,7 +3,7 @@ schema_version: 1
 updated_at: 2026-10-03T20:00:00+07:00
 phase: ui-game-feel
 status: approved
-result_commit: 5bf16f0
+result_commit: f160f4b
 active_spec: docs/superpowers/specs/2026-10-03-ui-game-feel-design.md
 active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 ---
