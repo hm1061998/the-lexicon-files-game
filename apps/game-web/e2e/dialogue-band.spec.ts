@@ -120,4 +120,13 @@ test.describe('Dialogue band', () => {
     await page.keyboard.press('l');
     await expect(page.locator('.dialogue-log')).toHaveCount(0);
   });
+
+  test('a click on the line finishes it, so a mouse-only player never has to wait', async ({
+    page,
+  }) => {
+    await startAnna(page);
+    await expect(page.locator('.dialogue-choice')).toHaveCount(0);
+    await page.locator('.dialogue-text').click();
+    await expect(page.locator('.dialogue-choice')).toHaveCount(3);
+  });
 });

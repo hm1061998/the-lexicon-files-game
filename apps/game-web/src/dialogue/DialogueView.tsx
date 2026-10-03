@@ -165,6 +165,9 @@ export function DialogueView({
         choose(choiceId);
       }}
       onClose={onClose}
+      onAdvance={() => {
+        if (!latest.current.done) latest.current.finish();
+      }}
     />
   );
 }

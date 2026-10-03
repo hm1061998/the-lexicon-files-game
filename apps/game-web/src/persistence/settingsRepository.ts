@@ -57,9 +57,15 @@ export function createSettingsRepository(
         }
         try {
           const settings = parseSettings(raw);
-          // A v1 record is stored again as v2 so the next read is already current.
-          if ((raw as { schemaVersion?: unknown }).schemaVersion !== settings.schemaVersion)
-            await db.put(settings);
+          // A v1 record is stored again as v2 so the next read is already current. Best effort:
+          // a failed write must not turn valid settings into a "corrupt record" reset.
+          if ((raw as { schemaVersion?: unknown }).schemaVersion !== settings.schemaVersion) {
+            try {
+              await db.put(settings);
+            } catch {
+              /* The upgrade is repeated on the next load. */
+            }
+          }
           return { status: 'loaded', settings };
         } catch (error) {
           await db.backup(raw);

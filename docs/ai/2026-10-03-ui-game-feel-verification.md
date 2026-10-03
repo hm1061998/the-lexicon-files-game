@@ -46,3 +46,11 @@ Xem `Ruling:` trong ledger. Tóm tắt: nghe `document` thay vì `App.tsx`; `use
 
 - **Âm thanh giao diện:** chưa có file CC0 (Task 3b chờ người dùng đặt Kenney Interface Sounds / RPG Audio vào `assets/_incoming/audio/`). Mọi cơ chế đã nối; game im lặng cho đến khi có file.
 - Animation đóng 160ms (cần giữ phần tử khi thoát).
+
+## Review độc lập và sửa
+
+Một review toàn nhánh (opus): không Critical; năm mục Review Focus đạt. Sửa (RED→GREEN, `npm run test` game-web 789):
+1. Bấm vào vùng lời thoại không hiện hết câu (spec §4.3) → `onAdvance` trên `.dialogue-body`, kèm E2E "a click on the line finishes it".
+2. Migration settings v1→v2 reset cả cài đặt hợp lệ nếu chỉ lần ghi lại bị lỗi (nâng thành Important theo ảnh hưởng) → ghi lại là best-effort.
+
+Minor chưa sửa (ledger): nút trong `<fieldset disabled>` (đáp án bài nghe đã giải) vẫn phát tiếng bút; viền focus giấy hiện quanh dòng khi chọn bằng phím (luật `:focus-visible` đè `outline: none`); lời thoại có thể được đọc hai lần khi đang hiện dần; phím 1–9 không chạy khi một nút trong dải đang giữ focus; camera có thể kẹt zoom cũ nếu đổi cỡ cửa sổ giữa lúc tween; `key` trùng và nhóm theo `npcId` thay vì `speakerId` trong nhật ký; tab vật chứng dùng `nav` + `aria-current` thay cho nhóm nút bật tắt; `build_peaks.mjs` chưa xử lý `channels = 0` và WAV `EXTENSIBLE`; `build_portraits.py` lỗi trên sprite trong suốt hoàn toàn; còn CSS chết (`.listening-timestamp`, `.listening-support`, `.evidence-tab`, `dialogue-band.css`), prop `shown` thừa ở `DialogueBand`, lerp 0,08 viết cứng hai nơi; chọn bằng phím không phát tiếng "tích bút"/"click".

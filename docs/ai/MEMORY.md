@@ -15,16 +15,16 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Current Phase
 
-- UI phần 4 (hội thoại, vật chứng, bài nghe, thẻ từ vựng): Task 0–4 xong. Người dùng đã duyệt ảnh trước/sau (`docs/ai/playtests/2026-10-03-ui-dialogue-evidence/`, 03/10/2026): phase hoàn tất, đã push `dev`. Phần 1–3 và PR-03 đã xong và đã push.
+- UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 xong trên `dev` (trừ Task 3b chờ file âm thanh), chưa push. Chờ người dùng duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`) và cung cấp bộ âm CC0. Phần 1–4 đã xong và đã push.
 
 ## Active Goal
 
-- UI phần 4b "cảm giác game" (hội thoại dải đáy + nhật ký L, máy ghi âm, ba loại nút, âm thanh UI CC0, con trỏ): spec `docs/superpowers/specs/2026-10-03-ui-game-feel-design.md` chờ người dùng duyệt; sau đó `writing-plans`. Quyết định G-1…G-6 ghi trong spec. Phần 4 đã duyệt làm bước nền.
+- Người dùng duyệt ảnh phần 4b và đặt Kenney Interface Sounds / RPG Audio (CC0) vào `assets/_incoming/audio/` để làm Task 3b; không tự mở phase mới.
 
 ## Current Status
 
-- Phần 4: hội thoại là tờ lời khai torn có kẹp giấy với lựa chọn là tờ ghi chú; vật chứng là `ModalSheet` với ảnh dán nghiêng, nhãn "Vật chứng" đỏ đậm `#743026`; bài nghe là phiếu trong thẻ; thẻ từ vựng nằm trong luồng ở hội thoại. Báo cáo `docs/ai/2026-10-03-ui-dialogue-evidence-verification.md`. E2E đầy đủ: 256 pass, 17 đỏ đều có sẵn; sau review sửa 2 Important (tương phản nhãn đỏ, kẹp giấy bị cắt) và các spec liên quan xanh. Unit game-web 708; sau duyệt đã sửa để overlay không cuộn (bài nghe chia hai mục, hai cột ở màn thấp, thẻ định nghĩa thay chỗ lựa chọn; E2E đầy đủ 256 pass/17 đỏ có sẵn). FPS 12,2 so với 12,8 (nhiễu).
-- Minor chưa sửa (xem báo cáo): màu nền ghi chú bị texture che, CSS thẻ từ vựng lặp, specificity phụ thuộc thứ tự nạp, thiếu forced-colors cho nút đóng.
+- Phần 4b: settings v2 (`textSpeed`, `uiSounds`); `PaperButton`/`DeviceKey`/con trỏ; dịch vụ âm thanh UI (`data-sfx`, `UI_SOUND_FILES` rỗng nên im); chân dung NPC sinh từ sprite; dải hội thoại (chữ hiện dần, phím 1–9/Space/E/Enter, click hiện hết câu, camera ×1,2); nhật ký hội thoại (L); máy ghi âm cassette với sóng âm thật (`build_peaks.mjs`) và bàn vật chứng; mọi nút phần 1–4b là ba loại (`button-guard.spec.ts`). Báo cáo `docs/ai/2026-10-03-ui-game-feel-verification.md`. E2E đầy đủ: 277 pass, 19 đỏ (17 có sẵn + 2 do vùng đọc ẩn, đã sửa và chạy lại xanh). Unit game-web 789. FPS trong ngưỡng so với baseline đo lại cùng điều kiện.
+- Review độc lập: không Critical; 2 sửa RED→GREEN (click hiện hết câu; migration settings). Minor chưa sửa: xem báo cáo.
 
 ## Completed
 
@@ -56,12 +56,13 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Next Actions
 
-1. Spec phần 4b đã duyệt (03/10/2026); plan `docs/superpowers/plans/2026-10-03-ui-game-feel.md` chờ người dùng duyệt và chọn cách thực thi. Task 3b (âm CC0) cần người dùng tải gói Kenney vào `assets/_incoming/audio/` vì proxy chặn kenney.nl/opengameart.org.
-2. Phần 5 UI (sổ tay, bảng suy luận, xóa alias `PaperPanel`) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
-3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor shell và phần 4.
+1. Người dùng duyệt ảnh phần 4b và cung cấp file âm thanh CC0 → làm Task 3b (`tools/audio-codegen/import_ui_sounds.py`, `ui_sound_map.json`, `public/audio/ui/`, `UI_SOUND_FILES`); chưa push `dev`.
+2. Phần 5 UI (sổ tay, bảng suy luận, buộc tội, xóa alias `PaperPanel`, chuyển nút còn lại) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
+3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor phần 3/4/4b.
 
 ## Verification
 
+- Phần 4b (03–04/10): lint, test (game-web 789, content 281, core 59, ui 54), build, typecheck, format, pytest 70 pass/1 đỏ có sẵn, `node --test build_peaks` 6/6; E2E đầy đủ 277 pass/19 đỏ (17 có sẵn + 2 đã sửa). Chi tiết `docs/ai/2026-10-03-ui-game-feel-verification.md`.
 - Shell (02–03/10): lint, test (game-web 694, content 277, core 59, ui 49), build, typecheck, format, memory:check; E2E đầy đủ 220 pass/17 đỏ có sẵn; 93 test liên quan xanh sau review. Chi tiết `docs/ai/2026-10-02-ui-shell-verification.md`.
 - Gói 02/10 (`d357cbf`): lint 7 project, test (game-web 547, content 188), build, typecheck, prettier, memory:check PASS; nhóm E2E 61 passed (21,1 phút). Chi tiết: report 2026-10-02-investigation-pagination.
 - Task6 partial: deduction/conclusion unit subset28/28 pass; `npm run typecheck` exit0; `investigation-pagination.spec.ts`2/2 pass, gồm ghép fact qua đổi mặt và no-scroll. Timeline browser regression và full acceptance chưa chạy.

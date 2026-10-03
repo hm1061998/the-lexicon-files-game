@@ -1,3 +1,4 @@
+import { isValidElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { loadCaseDefinition, loadUiStrings } from '@lexicon/game-content';
@@ -71,5 +72,28 @@ describe('DialogueBand', () => {
     expect(html).toContain('aria-modal="true"');
     expect(html).toContain('role="alert"');
     expect(html).toContain('effectFailed: x');
+  });
+
+  it('lets a click anywhere in the line area ask to finish the line', () => {
+    const calls: string[] = [];
+    const tree = DialogueBand({ ...base, done: false, onAdvance: () => calls.push('advance') });
+    const find = (node: unknown): { props: { onClick?: () => void } } | null => {
+      if (!isValidElement(node)) return null;
+      const el = node as {
+        props: { className?: string; onClick?: () => void; children?: unknown };
+      };
+      if (el.props.className === 'dialogue-body') return el;
+      for (const child of Array.isArray(el.props.children)
+        ? el.props.children
+        : [el.props.children]) {
+        const hit = find(child);
+        if (hit) return hit;
+      }
+      return null;
+    };
+    const body = find(tree);
+    expect(body).not.toBeNull();
+    body!.props.onClick?.();
+    expect(calls).toEqual(['advance']);
   });
 });

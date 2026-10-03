@@ -52,6 +52,32 @@ describe('settings repository', () => {
     expect(store.value()).toEqual(result.settings);
   });
 
+  it('keeps valid v1 settings when only the write-back of the upgrade fails', async () => {
+    const v1 = {
+      schemaVersion: 1,
+      translationMode: 'Beginner',
+      volume: 55,
+      subtitles: 'on',
+      reducedMotion: true,
+    };
+    const store = memory(v1);
+    const failing: SettingsDatabase = {
+      ...store.db,
+      async put() {
+        throw new Error('disk full');
+      },
+    };
+    const repo = createSettingsRepository(async () => failing);
+    const result = await repo.loadSettings({});
+    expect(result.status).toBe('loaded');
+    expect(result.settings).toMatchObject({
+      translationMode: 'Beginner',
+      volume: 55,
+      schemaVersion: 2,
+    });
+    expect(store.backups).toHaveLength(0);
+  });
+
   it('backs up a corrupt record before writing defaults', async () => {
     const raw = { schemaVersion: 9 };
     const store = memory(raw);

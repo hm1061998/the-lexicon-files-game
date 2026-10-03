@@ -36,6 +36,7 @@ export function DialogueBand({
   renderText,
   onChoose,
   onClose,
+  onAdvance,
 }: {
   speakerName: string;
   speakerRole: string;
@@ -56,6 +57,8 @@ export function DialogueBand({
   renderText(): ReactNode;
   onChoose(choiceId: string, event: { detail: number }): void;
   onClose(): void;
+  /** A click on the line area: while the line is still typing, finish it. */
+  onAdvance?(): void;
 }): JSX.Element {
   return (
     <div
@@ -79,7 +82,7 @@ export function DialogueBand({
               {strings.close}
             </InkButton>
           </div>
-          <div className="dialogue-body">
+          <div className="dialogue-body" onClick={onAdvance}>
             <p ref={textRef} tabIndex={-1} lang="en" className="dialogue-text">
               {/* The whole line is announced while it types; once shown, the visible text is the only copy. */}
               <span className="dialogue-sr-only" aria-live="polite">
