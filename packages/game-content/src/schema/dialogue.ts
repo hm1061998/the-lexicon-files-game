@@ -2,8 +2,12 @@ import { z } from 'zod';
 import { conditionSchema, effectSchema } from './caseEngine';
 import { vocabularySpanSchema } from './learning';
 import { dialogueAudioSchema } from './audio';
+import { assetPathSchema } from './assetPath';
 const id = z.string().min(1);
-export const npcSchema = z.object({ id, name: id, role: id, dialogueTreeId: id }).strict();
+const portraitSchema = z.object({ default: assetPathSchema }).catchall(assetPathSchema);
+export const npcSchema = z
+  .object({ id, name: id, role: id, dialogueTreeId: id, portrait: portraitSchema.optional() })
+  .strict();
 const choiceSchema = z
   .object({
     id,

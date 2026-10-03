@@ -1,0 +1,31 @@
+/* A portrait photo pinned to the file: white border, soft paper shadow. */
+.portrait {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 120px;
+  padding: 6px;
+  background: #f4efe2;
+  filter: drop-shadow(var(--lexicon-shadow-paper));
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 240 / 300;
+  object-fit: cover;
+}
+
+.portrait--initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 240 / 300;
+  background: #cdba97;
+  color: var(--lexicon-ink);
+}
+
+.portrait__initials {
+  font-family: var(--lexicon-font-display);
+  font-size: 40px;
+}

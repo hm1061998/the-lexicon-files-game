@@ -4,19 +4,22 @@
       "id": "anna",
       "name": "Anna Reed",
       "role": "Project Coordinator",
-      "dialogueTreeId": "anna_initial"
+      "dialogueTreeId": "anna_initial",
+      "portrait": { "default": "/assets/portraits/anna.png" }
     },
     {
       "id": "leo",
       "name": "Leo Tran",
       "role": "Operations Analyst",
-      "dialogueTreeId": "leo_initial"
+      "dialogueTreeId": "leo_initial",
+      "portrait": { "default": "/assets/portraits/leo.png" }
     },
     {
       "id": "david",
       "name": "David Cole",
       "role": "Office Manager",
-      "dialogueTreeId": "david_initial"
+      "dialogueTreeId": "david_initial",
+      "portrait": { "default": "/assets/portraits/david.png" }
     }
   ]
 }

@@ -6,6 +6,8 @@ export interface NPCDefinition {
   readonly name: string;
   readonly role: string;
   readonly dialogueTreeId: string;
+  /** Public image paths by expression; only `default` is used so far. */
+  readonly portrait?: ({ readonly default: string } & Readonly<Record<string, string>>) | undefined;
 }
 export interface DialogueChoice {
   readonly id: string;
