@@ -1,4 +1,5 @@
 import type { UiStrings } from '@lexicon/shared-types';
+import { InkButton } from '@lexicon/ui';
 export function PageControls({
   index,
   count,
@@ -14,27 +15,27 @@ export function PageControls({
 }) {
   return (
     <nav className="page-controls" aria-label={label}>
-      <button
-        type="button"
+      <InkButton
+        sfx="paper-close"
         aria-label={`${label}: ${strings.pagePrevious}`}
         disabled={index <= 0}
         onClick={() => onChange(index - 1)}
       >
         ‹
-      </button>
-      <span aria-live="polite">
+      </InkButton>
+      <span className="page-controls__label" aria-live="polite">
         {strings.pagePosition
           .replace('{current}', String(index + 1))
           .replace('{total}', String(Math.max(1, count)))}
       </span>
-      <button
-        type="button"
+      <InkButton
+        sfx="paper-open"
         aria-label={`${label}: ${strings.pageNext}`}
         disabled={index >= count - 1}
         onClick={() => onChange(index + 1)}
       >
         ›
-      </button>
+      </InkButton>
     </nav>
   );
 }

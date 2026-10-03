@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { UiStrings } from '@lexicon/shared-types';
+import { InkButton } from '@lexicon/ui';
 import type { PageAnchor, ReaderBlock, PageFragment } from './pageTypes';
 import { MeasuredPage } from './MeasuredPage';
 export function ChoicePages({
@@ -38,8 +39,7 @@ export function ChoicePages({
     const b = blocks.find((b) => b.id === f.blockId);
     if (!c || b?.kind !== 'text') return null;
     return (
-      <button
-        type="button"
+      <InkButton
         className="paginated-choice"
         data-board-node={!passive && boardPrefix ? boardPrefix + c.id : undefined}
         aria-label={c.label}
@@ -51,7 +51,7 @@ export function ChoicePages({
         <span className="page-text" data-measure-text={passive ? 'true' : undefined}>
           {b.text.slice(f.start, f.end)}
         </span>
-      </button>
+      </InkButton>
     );
   };
   return (

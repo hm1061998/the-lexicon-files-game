@@ -59,14 +59,26 @@
   height: 48px;
   font-size: 14px;
 }
-.page-controls button {
+/* Hand-lettered turn marks: ink, no box, no underline. */
+.page-controls .ink-button {
   width: 44px;
   height: 44px;
-  font-size: 25px;
+  font-family: var(--lexicon-font-hand);
+  font-size: 22px;
+  line-height: 1;
   padding: 0;
+  text-decoration: none;
 }
-.page-controls button:disabled {
-  opacity: 0.4;
+.page-controls .ink-button:hover:not(:disabled) {
+  background: rgb(62 52 43 / 8%);
+  border-radius: 4px;
+}
+.page-controls .ink-button:disabled {
+  opacity: 0.35;
+}
+.page-controls__label {
+  font-family: var(--lexicon-font-hand);
+  font-size: 16px;
 }
 .page-viewport button:focus-visible {
   outline: 2px solid var(--lexicon-ink);
