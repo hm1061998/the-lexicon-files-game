@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { InkButton } from '@lexicon/ui';
 import { useMemo, type RefObject } from 'react';
 import type { TranslationMode, UiStrings, VocabularyEntry } from '@lexicon/shared-types';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
@@ -97,9 +98,7 @@ export function InvestigationVocabularyPopover({
           blocks={blocks}
           fixed={{
             [`${entry.id}:reveal`]: (
-              <button type="button" onClick={onReveal}>
-                {strings.revealTranslation}
-              </button>
+              <InkButton onClick={onReveal}>{strings.revealTranslation}</InkButton>
             ),
           }}
           label={entry.lemma}
@@ -107,9 +106,9 @@ export function InvestigationVocabularyPopover({
           revision={`${mode}:${revealed}:${showTutorial}`}
         />
       </div>
-      <button type="button" className="investigation-vocabulary-close" onClick={onClose}>
+      <InkButton className="investigation-vocabulary-close" sfx="paper-close" onClick={onClose}>
         {strings.close}
-      </button>
+      </InkButton>
     </div>
   );
   return host ? createPortal(popover, host) : popover;

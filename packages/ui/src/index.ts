@@ -1,6 +1,5 @@
 export { PALETTE } from './theme/palette';
 export { contrastRatio } from './theme/contrast';
-export { PaperPanel } from './primitives/PaperPanel';
 export { Keycap } from './primitives/Keycap';
 export { PaperSheet } from './primitives/PaperSheet';
 export type { PaperSheetProps } from './primitives/PaperSheet';

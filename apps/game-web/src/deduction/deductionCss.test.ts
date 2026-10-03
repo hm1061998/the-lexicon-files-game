@@ -17,9 +17,11 @@ describe('deduction board CSS guards', () => {
 
   it('never tilts the surface that holds the connection lines, only the cards', () => {
     for (const selector of ['.deduction-surface', '.clues-cards', '.deduction-connections']) {
-      const rule = new RegExp(`${selector.replace('.', '\.')}\s*\{[^}]*\}`, 'g');
-      for (const block of css.match(rule) ?? [])
-        expect(block).not.toMatch(/rotate|transform:\s*rotate/);
+      const rule = new RegExp(
+        String.raw`${selector.replace('.', String.raw`\.`)}\s*\{[^}]*\}`,
+        'g',
+      );
+      for (const block of css.match(rule) ?? []) expect(block).not.toMatch(/rotate|transform/);
     }
   });
 

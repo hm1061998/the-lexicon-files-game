@@ -1,11 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 import { dialogueEvidenceScreens } from './dialogueEvidenceScreens';
+import { investigationScreens } from './investigationScreens';
 import { openWorld } from './journeyHelpers';
 import { shellScreens, type Screen } from './shellScreens';
 
 // Every visible button on the screens of parts 1-4b is one of the three kinds (ink, paper,
 // device) or a control of a checked primitive. Inline vocabulary words are text-sized by design.
-// The notebook, the board and the accusation panel belong to part 5 and are not covered here.
+// The notebook, the board and the accusation panel (part 5) are covered too: their cards are paper
+// buttons and pinned cards.
 const ALLOWED = [
   '.ink-button',
   '.paper-button',
@@ -13,6 +15,7 @@ const ALLOWED = [
   '.folder-tabs button',
   '.key-hint-line button',
   '.vocabulary-word',
+  '.pinned-card',
 ].join(', ');
 
 const byName = (list: readonly Screen[], name: string): Screen =>
@@ -30,6 +33,7 @@ const screens: readonly Screen[] = [
     },
   },
   ...dialogueEvidenceScreens,
+  ...investigationScreens,
 ];
 
 test.describe('Button kinds', () => {

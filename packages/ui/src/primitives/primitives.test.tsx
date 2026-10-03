@@ -1,6 +1,5 @@
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { PaperPanel } from './PaperPanel';
 import { Keycap } from './Keycap';
 import { PaperSheet } from './PaperSheet';
 import { InkButton } from './InkButton';
@@ -15,17 +14,6 @@ import { FolderTabs } from './FolderTabs';
 import { PinnedCard } from './PinnedCard';
 import { ModalSheet } from './ModalSheet';
 import { readFileSync } from 'node:fs';
-
-describe('PaperPanel', () => {
-  it('renders children', () => {
-    const html = renderToString(<PaperPanel>hello</PaperPanel>);
-    expect(html).toContain('hello');
-  });
-
-  it('keeps the legacy paper-panel class', () => {
-    expect(renderToString(<PaperPanel className="x">a</PaperPanel>)).toContain('paper-panel');
-  });
-});
 
 describe('PaperSheet', () => {
   it('renders edge, tone and a clamped tilt', () => {

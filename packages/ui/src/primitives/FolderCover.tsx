@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import './form-controls.css';
 import './folder-cover.css';
 
 /** A manila folder cover: case label, title, handwritten tagline, content and a tab column. */

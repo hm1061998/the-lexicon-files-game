@@ -235,7 +235,13 @@ export async function reveal(page: Page, name: string): Promise<Locator> {
 export async function expectComfortableControls(dialog: Locator): Promise<void> {
   const small = await dialog.evaluate((el) =>
     Array.from(el.querySelectorAll<HTMLElement>('button, [role=button], select, input'))
-      .filter((n) => n.getClientRects().length && !n.closest('.page-measurement'))
+      // Inline vocabulary words are text-sized by design (see button-guard).
+      .filter(
+        (n) =>
+          n.getClientRects().length &&
+          !n.closest('.page-measurement') &&
+          !n.matches('.vocabulary-word'),
+      )
       .map((n) => ({ box: n.getBoundingClientRect(), n }))
       .filter(
         ({ box, n }) =>
