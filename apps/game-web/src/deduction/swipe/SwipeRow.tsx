@@ -55,6 +55,12 @@ export function SwipeRow({
       role="group"
       aria-label={label}
       tabIndex={0}
+      onFocus={(event) => {
+        // Keyboard focus must bring a half-hidden card into view; the browser does not do it for us here.
+        const target = event.target as HTMLElement;
+        if (target !== event.currentTarget)
+          target.scrollIntoView?.({ inline: 'nearest', block: 'nearest' });
+      }}
       onPointerDown={down}
       onPointerMove={move}
       onPointerUp={up}

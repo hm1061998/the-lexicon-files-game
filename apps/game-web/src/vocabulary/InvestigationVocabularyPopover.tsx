@@ -6,8 +6,6 @@ import type { ReaderBlock } from '../investigation/pagination/pageTypes';
 import { textBlock } from '../investigation/pagination/ReadDocument';
 import { SwipeRow } from '../deduction/swipe/SwipeRow';
 
-const noop = () => undefined;
-
 export interface InvestigationVocabularyPopoverProps {
   entry: VocabularyEntry;
   mode: TranslationMode;

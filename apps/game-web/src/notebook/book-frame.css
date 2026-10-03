@@ -80,6 +80,15 @@
     17px 16px 22px rgb(0 0 0 / 60%);
 }
 
+/* Ruled lines, so a leaf that is only partly written still reads as notebook paper. */
+.book-leaf::before {
+  content: '';
+  position: absolute;
+  inset: 120px 20px 54px;
+  background: repeating-linear-gradient(transparent 0 36px, rgb(110 90 60 / 16%) 36px 37px);
+  pointer-events: none;
+}
+
 /* The page curves down into the gutter: shadow deepens towards the spine. */
 .book-leaf--left::after,
 .book-leaf--right::after {

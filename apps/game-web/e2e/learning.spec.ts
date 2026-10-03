@@ -128,7 +128,7 @@ test('visible dialogue records only annotated contexts and persists mode/progres
   await page.keyboard.press('j');
   await page.getByRole('button', { name: 'Từ vựng', exact: true }).click();
   await page
-    .locator('.notebook-index .page-viewport')
+    .locator('.notebook-detail .page-viewport')
     .getByRole('button', { name: 'leave', exact: true })
     .click();
   await expect(

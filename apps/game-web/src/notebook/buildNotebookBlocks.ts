@@ -56,7 +56,15 @@ export function buildNotebookBlocks(
               image: undefined,
               portrait: false,
             }))
-          : [];
+          : tab === 'timeline'
+            ? view.placedEvents.map((e) => ({
+                id: e.id,
+                name: e.text,
+                subtitle: `${e.time} · ${e.location}`,
+                image: undefined,
+                portrait: false,
+              }))
+            : [];
   const selected = items.find((i) => i.id === selectedId) ?? items[0];
   const blocks: ReaderBlock[] = [];
   const fixed: Record<string, NotebookFixed> = {};
@@ -150,20 +158,12 @@ export function buildNotebookBlocks(
     if (sources.length) add(w.id + ':sources', strings.notebookVocabularySources);
     sources.forEach((s, i) => add(w.id + ':source:' + i, s));
   }
-  if (tab === 'timeline') {
-    view.placedEvents.forEach((e) => {
-      add(e.id + ':title', e.time + ' — ' + e.text);
-      add(e.id + ':source', e.location + ' · ' + e.source);
-    });
-    if (!blocks.length) {
-      add('timeline:empty', strings.timelineEmpty);
-      addFixed('timeline:board', {
-        kind: 'action',
-        action: 'board',
-        target: '',
-        label: strings.openDeductionBoard,
-      });
-    }
+  if (tab === 'timeline' && selected) {
+    const e = view.placedEvents.find((e) => e.id === selected.id)!;
+    const confidence = definition.timeline.events.find((x) => x.id === e.id)?.confidence;
+    add(e.id + ':time', e.time);
+    add(e.id + ':source', e.location + ' · ' + e.source);
+    add(e.id + ':confidence', confidence ?? '');
   }
   return { items, selected, blocks, fixed };
 }

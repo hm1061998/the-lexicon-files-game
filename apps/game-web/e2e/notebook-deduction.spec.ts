@@ -179,7 +179,7 @@ test('notebook reveal is scoped to the chosen word and board popover Escape stay
   await page.keyboard.press('j');
   const notebook = page.locator('.notebook-panel');
   await notebook.getByRole('button', { name: strings.vocabulary, exact: true }).click();
-  const cards = notebook.locator('.notebook-index .page-viewport .notebook-index-card');
+  const cards = notebook.locator('.notebook-detail .page-viewport .notebook-index-card');
   expect(await cards.count()).toBeGreaterThan(1);
   const detail = notebook.locator('.notebook-word-detail .measured-page');
   const translationOf = async (card: Locator) => {
@@ -188,6 +188,11 @@ test('notebook reveal is scoped to the chosen word and board popover Escape stay
   };
   const firstTranslation = await translationOf(cards.first());
   const secondTranslation = await translationOf(cards.nth(1));
+  const backToContents = notebook.getByRole('button', {
+    name: strings.notebookBackToContents,
+    exact: true,
+  });
+  await cards.first().click();
   expect(await readAllPages(detail)).not.toContain(firstTranslation);
   const reveal = await turnToVisible(
     detail,
@@ -195,10 +200,12 @@ test('notebook reveal is scoped to the chosen word and board popover Escape stay
   );
   await reveal.click();
   expect(await readAllPages(detail)).toContain(firstTranslation);
+  await backToContents.click();
   await cards.nth(1).click();
   const afterSecond = await readAllPages(detail);
   expect(afterSecond).not.toContain(firstTranslation);
   expect(afterSecond).not.toContain(secondTranslation);
+  await backToContents.click();
   await cards.first().click();
   expect(await readAllPages(detail)).not.toContain(firstTranslation);
   await page.keyboard.press('b');

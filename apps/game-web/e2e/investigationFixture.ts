@@ -175,7 +175,8 @@ export async function readAllPages(scope: Locator): Promise<string> {
   for (let i = 0; i < 40 && (await previous.isEnabled()); i += 1) await previous.click();
   const pages: string[] = [];
   for (let i = 0; i < 40; i += 1) {
-    pages.push(await scope.locator('.page-viewport').innerText());
+    // An open spread has two leaves: read both, left then right.
+    pages.push((await scope.locator('.page-viewport').allInnerTexts()).join(' '));
     if (!(await next.isEnabled())) break;
     await next.click();
   }

@@ -63,7 +63,7 @@ async function openCard(dialog: Locator, name: string): Promise<void> {
     const back = dialog.getByRole('button', { name: strings.notebookBackToContents, exact: true });
     if (await back.isVisible()) await back.click();
   }
-  await turnToVisible(dialog.locator('.notebook-index .measured-page'), card);
+  await turnToVisible(dialog.locator('.notebook-detail .measured-page'), card);
   await card.click();
 }
 
@@ -112,7 +112,7 @@ for (const viewport of VIEWPORTS) {
 
     // Vocabulary: the definition of each collected word is complete.
     await dialog.getByRole('button', { name: strings.vocabulary, exact: true }).click();
-    const wordCards = dialog.locator('.notebook-index .page-viewport .notebook-index-card');
+    const wordCards = dialog.locator('.notebook-detail .page-viewport .notebook-index-card');
     expect(await wordCards.count()).toBeGreaterThan(0);
     const lemma = (await wordCards.first().getAttribute('aria-label'))!;
     await wordCards.first().click();

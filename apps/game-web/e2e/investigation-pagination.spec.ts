@@ -131,6 +131,7 @@ test('Tab stays inside the notebook on a one-page evidence sheet', async ({ page
   await page.keyboard.press('j');
   const dialog = page.getByRole('dialog', { name: strings.notebook, exact: true });
   await dialog.getByRole('button', { name: strings.evidence, exact: true }).click();
+  await dialog.locator('.notebook-index-card').first().click();
   const review = dialog.getByRole('button', { name: strings.evidenceReview, exact: true });
   await expect(review).toBeVisible();
   const inside = () => dialog.evaluate((el) => el.contains(document.activeElement));
@@ -198,7 +199,7 @@ test('each valid page turn plays one paper cue and an edge press plays none', as
   await previous.click();
   await expect.poll(cues).toBe(start + 2);
   // Pressing PageUp on the first page is not a turn.
-  await scope.locator('.page-viewport').focus();
+  await scope.locator('.page-viewport').first().focus();
   await page.keyboard.press('PageUp');
   await page.waitForTimeout(150);
   expect(await cues()).toBe(start + 2);

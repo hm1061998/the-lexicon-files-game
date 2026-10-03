@@ -4,9 +4,17 @@ import { createCaseState } from '@lexicon/game-core';
 import { loadCaseDefinition, loadUiStrings } from '@lexicon/game-content';
 import { createInitialLanguageProfile } from '@lexicon/learning-engine';
 import { NotebookPanel } from './NotebookPanel';
+import { createNotebookReadingState } from './notebookReadingState';
+import type { NotebookTab } from '../state/gameStore';
 const definition = loadCaseDefinition('case-001');
 const strings = loadUiStrings('vi');
 const initial = createCaseState(definition);
+/** The notebook opened on the write-up of the first entry of a tab (the contents view is the default). */
+const detailOf = (tab: NotebookTab) => {
+  const reading = createNotebookReadingState(definition.id);
+  reading.tabs[tab].view = 'detail';
+  return reading;
+};
 const props = {
   caseDefinition: definition,
   caseState: initial,
@@ -40,9 +48,18 @@ describe('NotebookPanel reading pages', () => {
         {...props}
         caseState={{ ...initial, evidenceIds: ['meeting_minutes', 'leo_phone_recording'] }}
         activeTab="evidence"
+        reading={detailOf('evidence')}
       />,
     );
-    expect(html).toContain('/assets/evidence/evidence_meeting_minutes.png');
+    const contents = renderToStaticMarkup(
+      <NotebookPanel
+        {...props}
+        caseState={{ ...initial, evidenceIds: ['meeting_minutes', 'leo_phone_recording'] }}
+        activeTab="evidence"
+      />,
+    );
+    expect(contents).toContain('/assets/evidence/evidence_meeting_minutes.png');
+    expect(contents).toContain('/assets/evidence/evidence_leo_phone_recording.png');
     expect(html).toContain('A phone recording Leo left at 20:29.');
     expect(html).not.toContain('vocabulary-word');
     expect(html).not.toContain('Security Access Log');
@@ -58,6 +75,7 @@ describe('NotebookPanel reading pages', () => {
         }}
         caseState={{ ...initial, evidenceIds: ['meeting_minutes'] }}
         activeTab="evidence"
+        reading={detailOf('evidence')}
       />,
     );
     expect(html).toContain('Meeting Minutes');
@@ -78,18 +96,31 @@ describe('NotebookPanel reading pages', () => {
     );
     expect(html).toContain('21:05');
     expect(html).toContain('The report was discovered missing.');
-    expect(html).toContain('Case introduction');
+    const opened = renderToStaticMarkup(
+      <NotebookPanel
+        {...props}
+        activeTab="timeline"
+        caseState={{ ...initial, timelineEventIds: ['report_missing_21_05'] }}
+        reading={detailOf('timeline')}
+      />,
+    );
+    expect(opened).toContain('Case introduction');
   });
   it('shows recorded names but mounts only the selected person statements', () => {
+    const caseState = { ...initial, flags: { anna_q1_read: true, leo_q1_read: true } };
+    const contents = renderToStaticMarkup(
+      <NotebookPanel {...props} activeTab="people" caseState={caseState} />,
+    );
+    expect(contents).toContain('Anna Reed');
+    expect(contents).toContain('Leo Tran');
     const html = renderToStaticMarkup(
       <NotebookPanel
         {...props}
         activeTab="people"
-        caseState={{ ...initial, flags: { anna_q1_read: true, leo_q1_read: true } }}
+        caseState={caseState}
+        reading={detailOf('people')}
       />,
     );
-    expect(html).toContain('Anna Reed');
-    expect(html).toContain('Leo Tran');
     expect(html).not.toContain(
       definition.dialogues.find((t) => t.npcId === 'leo')!.nodes.find((n) => n.id === 'answer1')!
         .text,
@@ -109,7 +140,12 @@ describe('NotebookPanel reading pages', () => {
       contextsSeen: ['evidence:meeting_minutes:description', 'stale:unknown'],
     };
     const html = renderToStaticMarkup(
-      <NotebookPanel {...props} activeTab="vocabulary" profile={profile} />,
+      <NotebookPanel
+        {...props}
+        activeTab="vocabulary"
+        profile={profile}
+        reading={detailOf('vocabulary')}
+      />,
     );
     expect(html).toContain(word.lemma);
     expect(html).toContain(word.definitionEn);

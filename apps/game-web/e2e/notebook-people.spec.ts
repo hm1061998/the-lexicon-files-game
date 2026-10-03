@@ -106,6 +106,9 @@ async function people(page: Page): Promise<Locator> {
     panel.locator('.notebook-header').getByRole('button', { name: strings.close, exact: true }),
   ).toBeFocused();
   await panel.getByRole('button', { name: strings.people, exact: true }).click();
+  // The contents list comes first; open the first person's write-up (it stays open across reopenings).
+  const first = panel.locator('.notebook-index-card').first();
+  if (await first.count()) await first.click();
   return panel;
 }
 async function closePeople(page: Page): Promise<void> {

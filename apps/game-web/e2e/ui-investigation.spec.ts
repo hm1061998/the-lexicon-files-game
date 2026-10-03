@@ -79,4 +79,53 @@ test.describe('Notebook, board and accusation', () => {
     await expect(card).toHaveCSS('transform', 'none');
     await expect(page.locator('.deduction-board')).toHaveCSS('animation-name', 'none');
   });
+
+  test('a horizontal swipe turns the notebook page, and the turn plays on the whole spread', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 844, height: 390 });
+    await investigationScreens.find((s) => s.name === 'notebook-vocabulary')!.reach(page);
+    const dialog = dialogOf(page, 'notebook-vocabulary');
+    const label = dialog.locator('.page-controls__label');
+    await expect(label).toHaveText(/^Trang 1\/\d+$/);
+    const area = (await dialog.locator('.spread-leaves').boundingBox())!;
+    const y = area.y + area.height / 2;
+    // A short or vertical drag is not a swipe.
+    await page.mouse.move(area.x + 300, y);
+    await page.mouse.down();
+    await page.mouse.move(area.x + 280, y + 4);
+    await page.mouse.up();
+    await expect(label).toHaveText(/^Trang 1\/\d+$/);
+    await page.mouse.move(area.x + 400, y);
+    await page.mouse.down();
+    await page.mouse.move(area.x + 200, y + 6, { steps: 6 });
+    await page.mouse.up();
+    await expect(label).toHaveText(/^Trang 2\/\d+$/);
+    await page.mouse.move(area.x + 200, y);
+    await page.mouse.down();
+    await page.mouse.move(area.x + 400, y + 6, { steps: 6 });
+    await page.mouse.up();
+    await expect(label).toHaveText(/^Trang 1\/\d+$/);
+  });
+
+  test('the two leaves of an open notebook hold one reading, and the turn sweeps both', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await investigationScreens.find((s) => s.name === 'notebook-people')!.reach(page);
+    const dialog = dialogOf(page, 'notebook-people');
+    await expect(dialog.locator('.spread-leaf--left')).toBeVisible();
+    await expect(dialog.locator('.spread-leaf--right')).toBeVisible();
+    // One pager for the pair, and one page-turn surface around both leaves.
+    await expect(dialog.locator('.page-controls')).toHaveCount(1);
+    expect(await dialog.locator('.page-turn-surface').count()).toBe(1);
+    const inside = await dialog.evaluate((el) => {
+      const surface = el.querySelector('.page-turn-surface')!;
+      return (
+        surface.contains(el.querySelector('.spread-leaf--left')) &&
+        surface.contains(el.querySelector('.spread-leaf--right'))
+      );
+    });
+    expect(inside).toBe(true);
+  });
 });

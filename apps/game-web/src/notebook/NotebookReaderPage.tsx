@@ -5,9 +5,9 @@ import type { NotebookTab } from '../state/gameStore';
 import type { InvestigationView } from '../investigation/selectInvestigationView';
 import type { InvestigationLearningProps } from '../investigation/RecordedStatements';
 import { InvestigationArtwork } from '../investigation/InvestigationArtwork';
-import { MeasuredPage } from '../investigation/pagination/MeasuredPage';
-import { ReadDocument } from '../investigation/pagination/ReadDocument';
-import { PageTurnSurface } from '../investigation/pagination/PageTurnSurface';
+import { ReaderTextFragment, textBlock } from '../investigation/pagination/ReadDocument';
+import type { PageFragment, ReaderBlock } from '../investigation/pagination/pageTypes';
+import { SpreadReader } from './SpreadReader';
 import { buildNotebookBlocks } from './buildNotebookBlocks';
 import type { NotebookReadingState } from './notebookReadingState';
 export function NotebookReaderPage({
@@ -33,8 +33,7 @@ export function NotebookReaderPage({
   onOpenDeduction: () => void;
   onPaperCue?: (() => void) | undefined;
 }) {
-  const [revealed, setRevealed] = useState<string | null>(null),
-    [turn, setTurn] = useState(0);
+  const [revealed, setRevealed] = useState<string | null>(null);
   useEffect(() => setRevealed(null), [tab, learning.translationMode]);
   const state = reading.tabs[tab],
     { strings } = learning;
@@ -90,7 +89,6 @@ export function NotebookReaderPage({
         : tab === 'vocabulary'
           ? strings.notebookVocabularyHeading
           : strings.timeline;
-  const itemBlocks = data.items.map((i) => ({ kind: 'fixed' as const, id: i.id }));
   const card = (id: string, passive: boolean) => {
     const i = data.items.find((i) => i.id === id)!;
     return (
@@ -98,7 +96,7 @@ export function NotebookReaderPage({
         className="notebook-index-card"
         tabIndex={passive ? -1 : undefined}
         aria-label={i.name}
-        aria-pressed={i.id === data.selected?.id}
+        aria-pressed={i.id === state.selectedId}
         onClick={passive ? undefined : () => select(i.id)}
       >
         {i.image && <InvestigationArtwork url={i.image} name={i.name} portrait={i.portrait} />}
@@ -114,56 +112,64 @@ export function NotebookReaderPage({
       ? strings.notebookEmptyPeople
       : tab === 'evidence'
         ? strings.evidenceEmpty
-        : strings.notebookEmptyVocabulary;
+        : tab === 'timeline'
+          ? strings.timelineEmpty
+          : strings.notebookEmptyVocabulary;
+  const detail = state.view === 'detail' && data.items.length > 0;
+  // Contents: one list that runs from the left leaf to the right one. Detail: one write-up that does too.
+  const contentsBlocks: ReaderBlock[] = [
+    textBlock(`${tab}:title`, heading),
+    ...(data.items.length
+      ? data.items.map((i) => ({ kind: 'fixed' as const, id: i.id }))
+      : [
+          textBlock(`${tab}:empty`, empty),
+          ...(tab === 'timeline' ? [{ kind: 'fixed' as const, id: 'timeline:board' }] : []),
+        ]),
+  ];
+  const fragment = (f: PageFragment, passive: boolean) => {
+    const block = (detail ? data.blocks : contentsBlocks).find((b) => b.id === f.blockId);
+    if (!block) return null;
+    if (block.kind === 'fixed')
+      return detail ? (
+        (fixed[block.id] ?? null)
+      ) : block.id === 'timeline:board' ? (
+        <PaperButton onClick={onOpenDeduction} tabIndex={passive ? -1 : undefined}>
+          {strings.openDeductionBoard}
+        </PaperButton>
+      ) : (
+        card(block.id, passive)
+      );
+    return <ReaderTextFragment block={block} fragment={f} passive={passive} learning={learning} />;
+  };
   return (
-    <div className={`notebook-spread paginated-spread view-${state.view} tab-${tab}`}>
-      {tab === 'timeline' && (
-        <section className="notebook-index notebook-timeline-cover" aria-hidden="true">
-          <h3>{heading}</h3>
-        </section>
-      )}
-      {tab !== 'timeline' && (
-        <section className="notebook-index">
-          <h3>{heading}</h3>
-          <MeasuredPage
-            blocks={itemBlocks}
-            anchor={state.contentsAnchor}
-            onAnchorChange={(a) => patch({ contentsAnchor: a })}
-            renderFragment={(f) => card(f.blockId, false)}
-            renderMeasurement={(f) => card(f.blockId, true)}
-            strings={strings}
-            controlsLabel={strings.notebookContents}
-            empty={<p>{empty}</p>}
-            onPageTurn={() => setTurn((n) => n + 1)}
-          />
-        </section>
+    <div className={`notebook-spread spread-view view-${state.view} tab-${tab}`}>
+      {detail && (
+        <InkButton
+          className="notebook-back-contents"
+          aria-label={strings.notebookBackToContents}
+          sfx="paper-close"
+          onClick={() => patch({ view: 'contents' })}
+        >
+          ‹ {strings.notebookBackToContents}
+        </InkButton>
       )}
       <article
         className={`notebook-detail ${tab === 'people' ? 'notebook-person' : tab === 'evidence' ? 'notebook-evidence-detail' : tab === 'vocabulary' ? 'notebook-word-detail' : 'notebook-timeline-detail'}`}
-        aria-label={data.selected?.name ?? heading}
+        aria-label={detail ? (data.selected?.name ?? heading) : heading}
       >
-        {tab !== 'timeline' && (
-          <InkButton
-            className="notebook-back-contents"
-            sfx="paper-close"
-            onClick={() => patch({ view: 'contents' })}
-          >
-            {strings.notebookBackToContents}
-          </InkButton>
-        )}
-        <PageTurnSurface pageKey={String(turn)} onPaperCue={onPaperCue}>
-          <ReadDocument
-            blocks={data.blocks}
-            fixed={fixed}
-            label={data.selected?.name ?? heading}
-            anchor={state.detailAnchor}
-            onAnchorChange={(a) => patch({ detailAnchor: a })}
-            learning={learning}
-            revision={learning.translationMode + String(revealed)}
-            onPageTurn={() => setTurn((n) => n + 1)}
-            empty={<p>{empty}</p>}
-          />
-        </PageTurnSurface>
+        <SpreadReader
+          key={detail ? `detail:${data.selected?.id}` : 'contents'}
+          blocks={detail ? data.blocks : contentsBlocks}
+          anchor={detail ? state.detailAnchor : state.contentsAnchor}
+          onAnchorChange={(a) => patch(detail ? { detailAnchor: a } : { contentsAnchor: a })}
+          renderFragment={(f) => fragment(f, false)}
+          renderMeasurement={(f) => fragment(f, true)}
+          strings={strings}
+          label={detail ? (data.selected?.name ?? heading) : strings.notebookContents}
+          revision={learning.translationMode + String(revealed) + state.view}
+          empty={<p>{empty}</p>}
+          onPaperCue={onPaperCue}
+        />
       </article>
     </div>
   );
