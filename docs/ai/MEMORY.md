@@ -2,10 +2,10 @@
 schema_version: 1
 updated_at: 2026-10-03T20:00:00+07:00
 phase: ui-game-feel
-status: proposed
+status: approved
 result_commit: 904f6ff
 active_spec: docs/superpowers/specs/2026-10-03-ui-game-feel-design.md
-active_plan: none
+active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 ---
 
 ## Metadata
@@ -56,7 +56,7 @@ active_plan: none
 
 ## Next Actions
 
-1. Người dùng duyệt spec phần 4b (`2026-10-03-ui-game-feel-design.md`), rồi viết plan bằng `writing-plans` và chọn cách thực thi.
+1. Spec phần 4b đã duyệt (03/10/2026); plan `docs/superpowers/plans/2026-10-03-ui-game-feel.md` chờ người dùng duyệt và chọn cách thực thi. Task 3b (âm CC0) cần người dùng tải gói Kenney vào `assets/_incoming/audio/` vì proxy chặn kenney.nl/opengameart.org.
 2. Phần 5 UI (sổ tay, bảng suy luận, xóa alias `PaperPanel`) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor shell và phần 4.
 

@@ -1,6 +1,6 @@
 # Phần 4b — Cảm giác game: hội thoại, bài nghe, hệ thống nút và âm thanh UI
 
-Ngày: 03/10/2026. Trạng thái: **chờ người dùng duyệt spec**. Chưa sửa code.
+Ngày: 03/10/2026. Trạng thái: **đã duyệt (03/10/2026)**. Plan: `docs/superpowers/plans/2026-10-03-ui-game-feel.md`. Chưa sửa code.
 
 Phân loại theo `brainstorming`: **architectural** — đổi bố cục hội thoại và bài nghe, thêm trường content `portrait`, nâng settings lên v2, thêm hệ thống âm thanh UI chung, thêm primitive dùng chung và chuyển mọi nút của các màn phần 1–4 sang hệ thống mới. Sau khi spec được duyệt mới chuyển sang `writing-plans`.
 
