@@ -11,18 +11,29 @@ export type FolderTabItem = {
   autoFocus?: boolean;
 };
 
-/** Index tabs sticking out of a folder cover; one button each, in reading order. */
+/**
+ * Index tabs sticking out of a folder cover (`folder`), down the edge of a notebook (`book`) or along the
+ * top of a board (`board`); one button each, in reading order. `ariaCurrent="page"` is for tabs that
+ * switch the page being read.
+ */
 export function FolderTabs({
   items,
   label,
   className,
+  variant = 'folder',
+  ariaCurrent = 'true',
 }: {
   items: readonly FolderTabItem[];
   label: string;
   className?: string;
+  variant?: 'folder' | 'book' | 'board';
+  ariaCurrent?: 'page' | 'true';
 }): JSX.Element {
   return (
-    <nav className={['folder-tabs', className].filter(Boolean).join(' ')} aria-label={label}>
+    <nav
+      className={['folder-tabs', `folder-tabs--${variant}`, className].filter(Boolean).join(' ')}
+      aria-label={label}
+    >
       {items.map((item) => (
         <InkButton
           key={item.id}
@@ -32,7 +43,7 @@ export function FolderTabs({
           sfx="tab"
           disabled={item.disabled}
           autoFocus={item.autoFocus}
-          aria-current={item.current ? 'true' : undefined}
+          aria-current={item.current ? ariaCurrent : undefined}
           onClick={item.onSelect}
         >
           {item.label}

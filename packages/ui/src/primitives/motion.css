@@ -18,7 +18,10 @@
 .lexicon-motion-off .case-card-flag,
 .lexicon-motion-off .support-option,
 .lexicon-motion-off .dialogue-choice,
-.lexicon-motion-off .evidence-photo {
+.lexicon-motion-off .evidence-photo,
+.lexicon-motion-off .pinned-card,
+.lexicon-motion-off .folder-tabs--book .folder-tab,
+.lexicon-motion-off .folder-tabs--board .folder-tab {
   transform: none !important;
   rotate: none !important;
   translate: none !important;
@@ -35,6 +38,7 @@
   .dialogue-panel,
   .dialogue-choice,
   .evidence-photo,
+  .pinned-card,
   .ink-button,
   .stamp,
   .index-tab {
@@ -52,7 +56,10 @@
   .case-card,
   .support-option,
   .dialogue-choice,
-  .evidence-photo {
+  .evidence-photo,
+  .pinned-card,
+  .folder-tabs--book .folder-tab,
+  .folder-tabs--board .folder-tab {
     transform: none !important;
     rotate: none !important;
     translate: none !important;

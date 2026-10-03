@@ -16,6 +16,8 @@ export type { KeyHintItem } from './primitives/KeyHintLine';
 export { FONT_FAMILIES } from './theme/fonts';
 export { DeskBackdrop } from './primitives/DeskBackdrop';
 export { FolderCover } from './primitives/FolderCover';
+export { PinnedCard } from './primitives/PinnedCard';
+export type { PinnedCardProps } from './primitives/PinnedCard';
 export { FolderTabs } from './primitives/FolderTabs';
 export type { FolderTabItem } from './primitives/FolderTabs';
 export { ModalSheet } from './primitives/ModalSheet';

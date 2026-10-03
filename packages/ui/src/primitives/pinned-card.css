@@ -1,0 +1,49 @@
+@import '../theme/palette.css';
+
+.pinned-card {
+  box-sizing: border-box;
+  padding: 12px 14px 10px;
+  text-align: left;
+  font-family: inherit;
+  transition: translate 120ms ease-out;
+}
+
+.pinned-card--selected {
+  border: 3px solid var(--lexicon-investigation-red);
+  translate: 0 -6px;
+}
+
+.pinned-card__pin {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #c9644f, var(--lexicon-dark-red) 62%, #3d1812);
+  box-shadow:
+    1px 3px 3px rgb(0 0 0 / 45%),
+    inset -1px -1px 2px rgb(0 0 0 / 35%);
+  pointer-events: none;
+}
+
+.pinned-card__tape {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 52px;
+  height: 22px;
+  margin-left: -26px;
+  background: url('/assets/ui/tape_corner.png') center / contain no-repeat;
+  pointer-events: none;
+}
+
+button.pinned-card:hover:not(:disabled),
+button.pinned-card:focus-visible {
+  translate: 0 -3px;
+}
+
+button.pinned-card.pinned-card--selected:hover:not(:disabled) {
+  translate: 0 -6px;
+}

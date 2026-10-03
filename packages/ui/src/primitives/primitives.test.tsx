@@ -12,6 +12,7 @@ import { KeyHintLine } from './KeyHintLine';
 import { DeskBackdrop } from './DeskBackdrop';
 import { FolderCover } from './FolderCover';
 import { FolderTabs } from './FolderTabs';
+import { PinnedCard } from './PinnedCard';
 import { ModalSheet } from './ModalSheet';
 import { readFileSync } from 'node:fs';
 
@@ -197,6 +198,75 @@ describe('FolderTabs', () => {
     expect(html).toContain('aria-current="true"');
     expect(html).toContain('disabled=""');
     expect(html).toContain('autofocus');
+  });
+});
+
+describe('PinnedCard', () => {
+  it('is a clean fresh paper card with a pin by default', () => {
+    const html = renderToString(<PinnedCard>Note</PinnedCard>);
+    expect(html).toContain('pinned-card');
+    expect(html).toContain('paper-sheet--clean');
+    expect(html).toContain('pinned-card__pin');
+    expect(html).not.toContain('pinned-card--selected');
+    expect(html).toContain('Note');
+  });
+
+  it('marks the selected card and clamps the tilt', () => {
+    expect(renderToString(<PinnedCard selected>x</PinnedCard>)).toContain('pinned-card--selected');
+    expect(renderToString(<PinnedCard tilt={5}>x</PinnedCard>)).toContain('--paper-tilt:2deg');
+  });
+
+  it('holds the card with tape instead of a pin', () => {
+    const html = renderToString(<PinnedCard pin="tape">x</PinnedCard>);
+    expect(html).toContain('pinned-card__tape');
+    expect(html).not.toContain('pinned-card__pin');
+  });
+
+  it('renders as another element and keeps its attributes', () => {
+    const html = renderToString(
+      <PinnedCard as="button" type="button" aria-pressed="true">
+        x
+      </PinnedCard>,
+    );
+    expect(html).toMatch(/^<button[^>]*aria-pressed="true"/);
+  });
+});
+
+describe('FolderTabs variants', () => {
+  const items = [
+    { id: 'a', label: 'A', onSelect: () => undefined, current: true },
+    { id: 'b', label: 'B', onSelect: () => undefined },
+  ];
+
+  it('defaults to the folder variant and aria-current="true"', () => {
+    const html = renderToString(<FolderTabs label="Menu" items={items} />);
+    expect(html).toContain('folder-tabs--folder');
+    expect(html.match(/aria-current="true"/g)).toHaveLength(1);
+  });
+
+  it('book and board variants add their class; ariaCurrent="page" marks the current page', () => {
+    const book = renderToString(
+      <FolderTabs label="Sổ" items={items} variant="book" ariaCurrent="page" />,
+    );
+    expect(book).toContain('folder-tabs--book');
+    expect(book.match(/aria-current="page"/g)).toHaveLength(1);
+    expect(renderToString(<FolderTabs label="B" items={items} variant="board" />)).toContain(
+      'folder-tabs--board',
+    );
+  });
+});
+
+describe('investigation desk motion guards', () => {
+  const motion = readFileSync(new URL('./motion.css', import.meta.url), 'utf8');
+  const off = motion.slice(motion.indexOf('Shell paper never tilts'), motion.indexOf('@media'));
+  const os = motion.slice(motion.indexOf('@media (prefers-reduced-motion'));
+
+  it('levels pinned cards and lifts the tab variants under both switches', () => {
+    for (const part of [off, os]) {
+      expect(part).toContain('.pinned-card');
+      expect(part).toContain('.folder-tabs--book .folder-tab');
+      expect(part).toContain('.folder-tabs--board .folder-tab');
+    }
   });
 });
 

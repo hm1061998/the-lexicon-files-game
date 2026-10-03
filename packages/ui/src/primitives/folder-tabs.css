@@ -39,7 +39,8 @@
   min-width: 172px;
 }
 
-.folder-tabs .folder-tab[aria-current='true'] {
+.folder-tabs .folder-tab[aria-current='true'],
+.folder-tabs .folder-tab[aria-current='page'] {
   translate: 10px 0;
 }
 
@@ -61,8 +62,75 @@
 
   .folder-tabs .folder-tab:hover:not(:disabled),
   .folder-tabs .folder-tab:focus-visible,
-  .folder-tabs .folder-tab[aria-current='true'] {
+  .folder-tabs .folder-tab[aria-current='true'],
+  .folder-tabs .folder-tab[aria-current='page'] {
     /* Lift upwards: moving down would push the last row past the cover and add scroll. */
+    translate: 0 -4px;
+  }
+}
+
+/* Book: index tabs glued to the right edge of the leaves, the open one sticking out further. */
+.folder-tabs--book {
+  gap: 6px;
+  margin: 0;
+}
+
+.folder-tabs--book .folder-tab {
+  min-width: 0;
+  width: 128px;
+  padding: 6px 10px 6px 12px;
+  font-size: var(--lexicon-text-min);
+  border-radius: 0 4px 4px 0;
+}
+
+.folder-tabs--book .folder-tab[aria-current='page'] {
+  translate: 10px 0;
+  font-weight: 600;
+}
+
+/* Board: a row of tabs standing on the top edge of the board, the open one rising above the rest. */
+.folder-tabs--board {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0 6px;
+}
+
+.folder-tabs--board .folder-tab {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  border-width: 8px 8px 0 8px;
+  border-image-width: 8px 8px 0 8px;
+}
+
+.folder-tabs--board .folder-tab:hover:not(:disabled),
+.folder-tabs--board .folder-tab:focus-visible,
+.folder-tabs--board .folder-tab[aria-current='page'] {
+  translate: 0 -4px;
+}
+
+.folder-tabs--board .folder-tab[aria-current='page'] {
+  font-weight: 600;
+}
+
+@media (max-width: 959px), (max-height: 639px) {
+  /* Narrow or low: the book's tabs lie along the top edge of the leaves instead of down the side. */
+  .folder-tabs--book {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0 4px;
+  }
+
+  .folder-tabs--book .folder-tab {
+    flex: 1 1 0;
+    width: auto;
+    text-align: center;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .folder-tabs--book .folder-tab[aria-current='page'] {
     translate: 0 -4px;
   }
 }
