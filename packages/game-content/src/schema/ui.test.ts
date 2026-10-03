@@ -72,6 +72,7 @@ describe('parseUiStrings', () => {
     expect(strings.settingsTextSpeed).toBe('Tốc độ chữ');
     expect(strings.dialogueInterrogating).toBe('Đang thẩm vấn');
     expect(strings.dialogueChoiceSeen).toBe('đã hỏi');
+    expect(strings.dialogueLogHeading).toBe('Nhật ký hội thoại');
     expect(strings.settingsUiSounds).toBe('Âm thanh giao diện');
     expect(strings.settingsRecovered).toContain('khôi phục');
     expect(strings.settingsUnavailable).toContain('phiên này');

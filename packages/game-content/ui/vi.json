@@ -111,6 +111,8 @@
   "dialogueChoiceSeen": "đã hỏi",
   "dialogueNotesHeading": "Ghi chú điều tra",
   "dialogueNotesEmpty": "Chưa có lời khai nào được ghi.",
+  "dialogueLogHeading": "Nhật ký hội thoại",
+  "dialogueLogEmpty": "Chưa có lời thoại nào.",
   "textSpeedInstant": "Hiện ngay",
   "textSpeedNormal": "Vừa",
   "textSpeedFast": "Nhanh",

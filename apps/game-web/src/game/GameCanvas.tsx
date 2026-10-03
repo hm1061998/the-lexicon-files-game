@@ -41,6 +41,8 @@ import { DeductionBoard } from '../deduction/DeductionBoard';
 import { PaperCueContext } from '../investigation/pagination/PaperCueContext';
 import { useDeductionShortcut } from '../deduction/useDeductionShortcut';
 import { useNotebookShortcut } from '../notebook/useNotebookShortcut';
+import { DialogueLog, groupDialogueLog } from '../dialogue/DialogueLog';
+import { useDialogueLogShortcut } from '../dialogue/useDialogueLogShortcut';
 import { useMinimapShortcut } from '../hud/useMinimapShortcut';
 import { EvidenceModal } from '../evidence/EvidenceModal';
 import { NotebookPanel } from '../notebook/NotebookPanel';
@@ -627,6 +629,7 @@ function GameRoot({
   useEffect(() => () => presentationAudio.dispose(), [presentationAudio]);
   usePauseShortcut(store);
   useNotebookShortcut(store);
+  useDialogueLogShortcut(store);
   useDeductionShortcut(store);
   useMinimapShortcut(store);
   // Dev-only: `?noPaperOverlay` lets perf measurements compare with and without the grain.
@@ -796,6 +799,7 @@ function GameRoot({
               <CoachLayer strings={strings} bus={bus} store={store} learning={learning} />
               <PersistenceNotice strings={strings} />
               <DialogueLayer strings={strings} returnFocusRef={containerRef} />
+              <DialogueLogLayer strings={strings} />
               <PaperCueContext.Provider value={paperCue}>
                 <BriefingLayer strings={strings} returnFocusRef={containerRef} />
               </PaperCueContext.Provider>
@@ -888,6 +892,17 @@ function BriefingLayer({
       onAccept={closeBriefing}
       returnFocusRef={returnFocusRef}
     />
+  );
+}
+
+function DialogueLogLayer({ strings }: { strings: UiStrings }) {
+  const open = useGameStore((state) => state.dialogueLogOpen);
+  const definition = useGameStore((state) => state.caseDefinition);
+  const entries = useGameStore((state) => state.dialogueLog);
+  const close = useGameStore((state) => state.closeDialogueLog);
+  if (!open) return null;
+  return (
+    <DialogueLog strings={strings} groups={groupDialogueLog(definition, entries)} onClose={close} />
   );
 }
 

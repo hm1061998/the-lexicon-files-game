@@ -78,4 +78,46 @@ test.describe('Dialogue band', () => {
     await page.getByRole('button', { name: 'Đóng', exact: true }).click();
     await expect(page.locator('.hud')).toHaveCSS('visibility', 'visible');
   });
+
+  test('L opens the conversation log during a conversation and the band ignores keys behind it', async ({
+    page,
+  }) => {
+    await startAnna(page);
+    await page.keyboard.press(' ');
+    await expect(page.locator('.dialogue-choice')).toHaveCount(3);
+    await page.keyboard.press('l');
+    const log = page.locator('.dialogue-log');
+    await expect(log).toBeVisible();
+    await expect(log).toContainText('Anna Reed');
+    await expect(log).toContainText('I left the meeting early.');
+    // A number key must not choose a line while the log has the keyboard.
+    await page.keyboard.press('1');
+    await expect(page.locator('.dialogue-log li')).toHaveCount(1);
+    await page.keyboard.press('Escape');
+    await expect(log).toHaveCount(0);
+    await expect(page.locator('.dialogue-panel')).toBeVisible();
+    await page.keyboard.press('2');
+    await page.keyboard.press('l');
+    await expect(page.locator('.dialogue-log li')).toHaveCount(2);
+    await page.keyboard.press('l');
+    await expect(log).toHaveCount(0);
+  });
+
+  test('L works in the world too, and not over an evidence card', async ({ page }) => {
+    await openWorld(page);
+    await page.keyboard.press('l');
+    await expect(page.locator('.dialogue-log')).toBeVisible();
+    await expect(page.locator('.dialogue-log')).toContainText('Chưa có lời thoại nào.');
+    await page.keyboard.press('l');
+    await expect(page.locator('.dialogue-log')).toHaveCount(0);
+    await page.evaluate(
+      ({ x, y }) => window.__lexiconDebug!.teleport(x, y),
+      scenePoint('main_office', 'meeting_minutes'),
+    );
+    await expect(page.getByText('Đọc biên bản cuộc họp')).toBeVisible();
+    await pressInteract(page);
+    await expect(page.locator('.evidence-modal')).toBeVisible();
+    await page.keyboard.press('l');
+    await expect(page.locator('.dialogue-log')).toHaveCount(0);
+  });
 });

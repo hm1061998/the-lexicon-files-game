@@ -38,6 +38,8 @@ export type DialogueViewProps = {
   portraitSrc?: string | undefined;
   /** Statements already recorded from this person, shown as the handwritten note. */
   notes?: readonly string[];
+  /** Another layer (the conversation log) owns the keyboard for now. */
+  keysDisabled?: boolean;
   /** Whether a choice was already asked (dims it; it stays selectable). */
   isChoiceSeen?(choice: DialogueChoice): boolean;
 };
@@ -64,6 +66,7 @@ export function DialogueView({
   portraitSrc,
   notes = [],
   isChoiceSeen = () => false,
+  keysDisabled = false,
 }: DialogueViewProps): JSX.Element {
   const title = useId(),
     dialogRef = useRef<HTMLDivElement>(null),
@@ -76,12 +79,13 @@ export function DialogueView({
       onChoose({ nodeId: session.nodeId, revision: session.revision, choiceId }),
     [onChoose, session.nodeId, session.revision],
   );
-  const latest = useRef({ done, choices, choose, finish });
-  latest.current = { done, choices, choose, finish };
+  const latest = useRef({ done, choices, choose, finish, keysDisabled });
+  latest.current = { done, choices, choose, finish, keysDisabled };
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       const { done: lineDone, choices: list, choose: pick, finish: complete } = latest.current;
+      if (latest.current.keysDisabled) return;
       const action = dialogueKeyAction(event, { done: lineDone, choiceCount: list.length });
       if (!action) return;
       event.preventDefault();
@@ -96,7 +100,7 @@ export function DialogueView({
     const fallbackFocus = returnFocusRef.current;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     function trap(event: KeyboardEvent) {
-      if (event.key !== 'Tab') return;
+      if (event.key !== 'Tab' || latest.current.keysDisabled) return;
       const focusables = Array.from(
         dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [],
       );

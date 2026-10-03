@@ -18,6 +18,7 @@ export function DialogueLayer({
   const state = useGameStore((s) => s);
   const dispatchLearning = useLearningStore((s) => s.dispatchLearning);
   const [translationMode] = useTranslationMode();
+  const logOpen = useGameStore((s) => s.dialogueLogOpen);
   const textSpeed = useSettingsStore((s) => s.settings.textSpeed);
   const reducedMotion = useSettingsStore((s) => s.settings.reducedMotion);
   const vocabularyTutorialSeen = useLearningStore((s) => s.vocabularyTutorialSeen);
@@ -77,6 +78,7 @@ export function DialogueLayer({
       vocabularyTutorialSeen={vocabularyTutorialSeen}
       onVocabularyTutorialSeen={markVocabularyTutorialSeen}
       textSpeed={textSpeed}
+      keysDisabled={logOpen}
       reducedMotion={reducedMotion}
       portraitSrc={speaker?.portrait?.default}
       notes={notes}

@@ -162,6 +162,8 @@ export interface UiStrings {
   readonly dialogueChoiceSeen: string;
   readonly dialogueNotesHeading: string;
   readonly dialogueNotesEmpty: string;
+  readonly dialogueLogHeading: string;
+  readonly dialogueLogEmpty: string;
   readonly textSpeedInstant: string;
   readonly textSpeedNormal: string;
   readonly textSpeedFast: string;

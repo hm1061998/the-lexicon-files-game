@@ -28,6 +28,8 @@ import {
   submitAccusation as submitAccusationCore,
 } from '@lexicon/game-core';
 export type NotebookTab = 'people' | 'evidence' | 'vocabulary' | 'timeline';
+/** One line of the conversation log: which person said which node of which tree. */
+export type DialogueLogEntry = { npcId: string; treeId: string; nodeId: string };
 export type GameStoreState = {
   caseDefinition: CaseDefinition;
   caseState: CaseState;
@@ -59,6 +61,11 @@ export type GameStoreState = {
   setNotebookReading(reading: NotebookReadingState): void;
   dialogueSession: DialogueSession | null;
   dialogueError: string | null;
+  /** Lines shown this session, oldest first. Lives only here: never part of a save. */
+  dialogueLog: readonly DialogueLogEntry[];
+  dialogueLogOpen: boolean;
+  toggleDialogueLog(): void;
+  closeDialogueLog(): void;
   inputLocked: boolean;
   persistenceError: string | null;
   setNearby(n: { id: string; prompt: string } | null): void;
@@ -106,6 +113,7 @@ function inputLocked(
     | 'notebookOpen'
     | 'deductionOpen'
     | 'dialogueSession'
+    | 'dialogueLogOpen'
     | 'caseState'
   >,
 ): boolean {
@@ -116,8 +124,19 @@ function inputLocked(
     s.notebookOpen ||
     s.deductionOpen ||
     s.dialogueSession !== null ||
+    s.dialogueLogOpen ||
     caseClosed(s)
   );
+}
+
+/** A line joins the conversation log once; reopening a conversation does not repeat it. */
+function withLine(
+  log: readonly DialogueLogEntry[],
+  entry: DialogueLogEntry,
+): readonly DialogueLogEntry[] {
+  return log.some((e) => e.treeId === entry.treeId && e.nodeId === entry.nodeId)
+    ? log
+    : [...log, entry];
 }
 export function createGameStore(init: {
   caseDefinition: CaseDefinition;
@@ -159,6 +178,8 @@ export function createGameStore(init: {
       })),
     dialogueSession: null,
     dialogueError: null,
+    dialogueLog: [],
+    dialogueLogOpen: false,
     // A closed case never resumes free movement; the report replaces play.
     inputLocked: initialCaseState.flags.case_closed === true || init.initialBriefingOpen === true,
     persistenceError: init.initialPersistenceError ?? null,
@@ -192,7 +213,8 @@ export function createGameStore(init: {
             caseClosed(s))
         )
           return s;
-        return { paused, inputLocked: inputLocked({ ...s, paused }) };
+        const next = { ...s, paused, dialogueLogOpen: paused ? false : s.dialogueLogOpen };
+        return { paused, dialogueLogOpen: next.dialogueLogOpen, inputLocked: inputLocked(next) };
       });
     },
     closeBriefing() {
@@ -234,13 +256,13 @@ export function createGameStore(init: {
       const s = get();
       if (s.paused || s.briefingOpen || s.activeEvidenceId || s.dialogueSession || caseClosed(s))
         return;
-      set({ notebookOpen: true, deductionOpen: false, inputLocked: true });
+      set({ notebookOpen: true, deductionOpen: false, dialogueLogOpen: false, inputLocked: true });
     },
     openDeduction() {
       const s = get();
       if (s.paused || s.briefingOpen || s.activeEvidenceId || s.dialogueSession || caseClosed(s))
         return;
-      set({ deductionOpen: true, notebookOpen: false, inputLocked: true });
+      set({ deductionOpen: true, notebookOpen: false, dialogueLogOpen: false, inputLocked: true });
     },
     toggleNotebook() {
       const s = get();
@@ -271,7 +293,17 @@ export function createGameStore(init: {
         return false;
       }
       const dialogueSession = { ...r.session, revision: nextRevision++ };
-      set({ caseState: r.state, dialogueSession, dialogueError: null, inputLocked: true });
+      set((state) => ({
+        caseState: r.state,
+        dialogueSession,
+        dialogueError: null,
+        inputLocked: true,
+        dialogueLog: withLine(state.dialogueLog, {
+          npcId: dialogueSession.npcId,
+          treeId: dialogueSession.treeId,
+          nodeId: dialogueSession.nodeId,
+        }),
+      }));
       return true;
     },
     chooseDialogue(action) {
@@ -286,7 +318,16 @@ export function createGameStore(init: {
         return;
       }
       nextRevision = r.session.revision + 1;
-      set({ caseState: r.state, dialogueSession: r.session, dialogueError: null });
+      set((state) => ({
+        caseState: r.state,
+        dialogueSession: r.session,
+        dialogueError: null,
+        dialogueLog: withLine(state.dialogueLog, {
+          npcId: r.session.npcId,
+          treeId: r.session.treeId,
+          nodeId: r.session.nodeId,
+        }),
+      }));
     },
     closeDialogue() {
       set((s) => ({
@@ -294,6 +335,33 @@ export function createGameStore(init: {
         dialogueError: null,
         inputLocked: inputLocked({ ...s, dialogueSession: null }),
       }));
+    },
+    toggleDialogueLog() {
+      const s = get();
+      if (s.dialogueLogOpen) {
+        s.closeDialogueLog();
+        return;
+      }
+      if (
+        s.paused ||
+        s.briefingOpen ||
+        s.activeEvidenceId !== null ||
+        s.notebookOpen ||
+        s.deductionOpen ||
+        caseClosed(s)
+      )
+        return;
+      set({ dialogueLogOpen: true, inputLocked: true });
+    },
+    closeDialogueLog() {
+      set((s) =>
+        s.dialogueLogOpen
+          ? {
+              dialogueLogOpen: false,
+              inputLocked: inputLocked({ ...s, dialogueLogOpen: false }),
+            }
+          : s,
+      );
     },
     setPersistenceError(persistenceError) {
       set({ persistenceError });
