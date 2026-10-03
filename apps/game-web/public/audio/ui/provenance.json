@@ -1,0 +1,68 @@
+{
+  "generator": "tools/audio-codegen/import_ui_sounds.py",
+  "sounds": {
+    "device-click": {
+      "source": "kenney-rpg-audio/Audio/metalClick.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0",
+      "transform": "copied unchanged (already Ogg Vorbis)",
+      "sourceSha256": "9851a69d0c613e13bceef08060ecc4148f098ef487927cbebe270d642398a3b3",
+      "outputSha256": "9851a69d0c613e13bceef08060ecc4148f098ef487927cbebe270d642398a3b3"
+    },
+    "paper-close": {
+      "source": "kenney-rpg-audio/Audio/bookClose.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0",
+      "transform": "copied unchanged (already Ogg Vorbis)",
+      "sourceSha256": "81e976532565f4372abd14e83d2684195fa548d0a28d345de221e56052454f32",
+      "outputSha256": "81e976532565f4372abd14e83d2684195fa548d0a28d345de221e56052454f32"
+    },
+    "paper-open": {
+      "source": "kenney-rpg-audio/Audio/bookFlip2.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0",
+      "transform": "copied unchanged (already Ogg Vorbis)",
+      "sourceSha256": "3409042acbfaebc24c1a6327dc073e36f9250841712e96c5040da566a97df73c",
+      "outputSha256": "3409042acbfaebc24c1a6327dc073e36f9250841712e96c5040da566a97df73c"
+    },
+    "pen": {
+      "source": "kenney-interface-sounds/Audio/tick_004.ogg",
+      "pack": "Kenney Interface Sounds 1.0",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0",
+      "transform": "copied unchanged (already Ogg Vorbis)",
+      "sourceSha256": "0253d5f7d8d2afbbc370eac2a4539bb844239f0c98343e516d376b137c06d27c",
+      "outputSha256": "0253d5f7d8d2afbbc370eac2a4539bb844239f0c98343e516d376b137c06d27c"
+    },
+    "press": {
+      "source": "kenney-interface-sounds/Audio/click_003.ogg",
+      "pack": "Kenney Interface Sounds 1.0",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0",
+      "transform": "copied unchanged (already Ogg Vorbis)",
+      "sourceSha256": "2fa929138bc3a0f432696588f66eac94b8f6d463905ec8808c6461ce4b054292",
+      "outputSha256": "2fa929138bc3a0f432696588f66eac94b8f6d463905ec8808c6461ce4b054292"
+    },
+    "stamp": {
+      "source": "kenney-rpg-audio/Audio/bookPlace2.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0",
+      "transform": "copied unchanged (already Ogg Vorbis)",
+      "sourceSha256": "831874e8fd142d4d0a03ff009f1f83966338a7878c0f6f38c613ae5b80dd731e",
+      "outputSha256": "831874e8fd142d4d0a03ff009f1f83966338a7878c0f6f38c613ae5b80dd731e"
+    },
+    "tab": {
+      "source": "kenney-interface-sounds/Audio/tick_001.ogg",
+      "pack": "Kenney Interface Sounds 1.0",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0",
+      "transform": "copied unchanged (already Ogg Vorbis)",
+      "sourceSha256": "9d057b918024c787bbe6c00beed13a7ef72a3fa0c259add3cef36582792f4230",
+      "outputSha256": "9d057b918024c787bbe6c00beed13a7ef72a3fa0c259add3cef36582792f4230"
+    }
+  }
+}

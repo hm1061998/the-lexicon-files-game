@@ -13,9 +13,13 @@ Ngày: 03/10/2026. Plan: `docs/superpowers/plans/2026-10-03-ui-game-feel.md`. Sp
 
 `docs/ai/playtests/2026-10-03-ui-game-feel/before/` — `dialogue`, `listening`, `evidence`, `title`, `pause` × 4 kích thước (1920×1080, 1280×720, 760×600, 390×844) bằng `e2e/ui-game-feel-shots.spec.ts` (`UI_SHOTS_DIR`, `UI_SHOTS_PHASE=before`). `dialogue-log` chỉ chụp ở ảnh sau.
 
-## Task 3b — âm thanh CC0 (chờ người dùng)
+## Task 3b — âm thanh CC0 (xong 03/10/2026)
 
-`assets/_incoming/audio/` chưa tồn tại (03/10/2026). Cần người dùng tải Kenney Interface Sounds và Kenney RPG Audio (CC0) vào `assets/_incoming/audio/kenney-interface-sounds/` và `kenney-rpg-audio/` (tuỳ chọn một tiếng băng chạy CC0 vào `oga-tape/` kèm URL nguồn). Cho đến lúc đó `UI_SOUND_FILES` rỗng: dịch vụ âm thanh UI (Task 3a) đã nối nhưng game im lặng, không lỗi. Task này chưa hoàn tất.
+Người dùng cung cấp `kenney_interface-sounds.zip` và `kenney_rpg-audio.zip` (cả hai `License.txt` ghi CC0). `tools/audio-codegen/import_ui_sounds.py` đọc `ui_sound_map.json`, kiểm tra giấy phép từng gói, copy bảy file vào `apps/game-web/public/audio/ui/` và ghi `provenance.json` (nguồn, gói, URL, SHA-256 hai đầu). Ánh xạ: `press` click_003, `tab` tick_001, `pen` tick_004, `device-click` metalClick, `paper-open` bookFlip2, `paper-close` bookClose, `stamp` bookPlace2.
+- Máy không có ffmpeg hay soundfile (plan giả định có ffmpeg) và không được thêm dependency, nên file Kenney (đã là Ogg Vorbis) được copy nguyên, không chuẩn hóa -16 LUFS; âm giao diện nhỏ hơn âm thanh chính (0,6 × âm lượng).
+- `tape-loop` chưa có file (không có tiếng băng CC0 từ OpenGameArt): máy ghi âm chạy không có tiếng băng.
+- Kiểm chứng: `test_import_ui_sounds.py` (9) và `uiSoundManifest.test.ts` (3); trong trình duyệt thật, bấm nút kích hoạt tải `press.ogg` và `tab.ogg` (không nghe được âm lượng/độ êm của từng tiếng: cần người dùng nghe thử).
+- Khi bấm đáp án đúng ở bài nghe, ngoài tiếng bút còn phát tiếng `stamp` lúc con dấu "Đã xác minh" hiện.
 
 ## Ảnh sau và so sánh
 
@@ -44,7 +48,7 @@ Xem `Ruling:` trong ledger. Tóm tắt: nghe `document` thay vì `App.tsx`; `use
 
 ## Việc còn chờ
 
-- **Âm thanh giao diện:** chưa có file CC0 (Task 3b chờ người dùng đặt Kenney Interface Sounds / RPG Audio vào `assets/_incoming/audio/`). Mọi cơ chế đã nối; game im lặng cho đến khi có file.
+- **Âm thanh giao diện:** đã có bảy file CC0 (xem Task 3b); còn thiếu `tape-loop` (tiếng băng chạy) và chưa chuẩn hóa âm lượng.
 - Animation đóng 160ms (cần giữ phần tử khi thoát).
 
 ## Review độc lập và sửa

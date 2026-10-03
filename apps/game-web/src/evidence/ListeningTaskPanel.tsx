@@ -7,6 +7,7 @@ import type {
 } from '@lexicon/shared-types';
 import type { LearningAction } from '@lexicon/shared-types';
 import { useAudioPlayback } from '../audio/useAudioPlayback';
+import { useUiSound } from '../audio/UiSoundContext';
 import { useOptionalPresentationAudio } from '../audio/PresentationAudioContext';
 import type { SubtitlePreference } from '../persistence/settingsSchema';
 import { resolveTranscriptBlock, resolveTranscriptVisibility } from './transcriptVisibility';
@@ -40,6 +41,7 @@ export function ListeningTaskPanel({
   active?: boolean;
 }): JSX.Element {
   const presentationAudio = useOptionalPresentationAudio();
+  const uiSound = useUiSound();
   const onPlayingChange = useCallback(
     (playing: boolean) => presentationAudio?.setListeningActive(playing),
     [presentationAudio],
@@ -86,6 +88,7 @@ export function ListeningTaskPanel({
       onTelemetry('answerCorrect', elapsedMs);
     }
     setAnsweredCorrectly(true);
+    uiSound?.play('stamp');
     setFeedback(strings.listeningCompleted);
   };
 

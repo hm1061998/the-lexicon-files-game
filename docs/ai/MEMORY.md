@@ -15,15 +15,15 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Current Phase
 
-- UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 xong trên `dev` (trừ Task 3b chờ file âm thanh), chưa push. Chờ người dùng duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`) và cung cấp bộ âm CC0. Phần 1–4 đã xong và đã push.
+- UI phần 4b (cảm giác game: dải thẩm vấn, nhật ký L, máy ghi âm, ba loại nút, âm thanh UI): Task 0–9 và 3b xong trên `dev`, chưa push. Chờ người dùng duyệt ảnh (`docs/ai/playtests/2026-10-03-ui-game-feel/`) và nghe thử âm thanh. Phần 1–4 đã xong và đã push.
 
 ## Active Goal
 
-- Người dùng duyệt ảnh phần 4b và đặt Kenney Interface Sounds / RPG Audio (CC0) vào `assets/_incoming/audio/` để làm Task 3b; không tự mở phase mới.
+- Người dùng duyệt ảnh phần 4b và nghe thử âm giao diện; không tự mở phase mới.
 
 ## Current Status
 
-- Phần 4b: settings v2 (`textSpeed`, `uiSounds`); `PaperButton`/`DeviceKey`/con trỏ; dịch vụ âm thanh UI (`data-sfx`, `UI_SOUND_FILES` rỗng nên im); chân dung NPC sinh từ sprite; dải hội thoại (chữ hiện dần, phím 1–9/Space/E/Enter, click hiện hết câu, camera ×1,2); nhật ký hội thoại (L); máy ghi âm cassette với sóng âm thật (`build_peaks.mjs`) và bàn vật chứng; mọi nút phần 1–4b là ba loại (`button-guard.spec.ts`). Báo cáo `docs/ai/2026-10-03-ui-game-feel-verification.md`. E2E đầy đủ: 277 pass, 19 đỏ (17 có sẵn + 2 do vùng đọc ẩn, đã sửa và chạy lại xanh). Unit game-web 789. FPS trong ngưỡng so với baseline đo lại cùng điều kiện.
+- Phần 4b: settings v2 (`textSpeed`, `uiSounds`); `PaperButton`/`DeviceKey`/con trỏ; dịch vụ âm thanh UI (`data-sfx`; bảy file Kenney CC0 trong `public/audio/ui/`, chưa có `tape-loop`); chân dung NPC sinh từ sprite; dải hội thoại (chữ hiện dần, phím 1–9/Space/E/Enter, click hiện hết câu, camera ×1,2); nhật ký hội thoại (L); máy ghi âm cassette với sóng âm thật (`build_peaks.mjs`) và bàn vật chứng; mọi nút phần 1–4b là ba loại (`button-guard.spec.ts`). Báo cáo `docs/ai/2026-10-03-ui-game-feel-verification.md`. E2E đầy đủ: 277 pass, 19 đỏ (17 có sẵn + 2 do vùng đọc ẩn, đã sửa và chạy lại xanh). Unit game-web 789. FPS trong ngưỡng so với baseline đo lại cùng điều kiện.
 - Review độc lập: không Critical; 2 sửa RED→GREEN (click hiện hết câu; migration settings). Minor chưa sửa: xem báo cáo.
 
 ## Completed
@@ -56,7 +56,7 @@ active_plan: docs/superpowers/plans/2026-10-03-ui-game-feel.md
 
 ## Next Actions
 
-1. Người dùng duyệt ảnh phần 4b và cung cấp file âm thanh CC0 → làm Task 3b (`tools/audio-codegen/import_ui_sounds.py`, `ui_sound_map.json`, `public/audio/ui/`, `UI_SOUND_FILES`); chưa push `dev`.
+1. Người dùng duyệt ảnh phần 4b và nghe thử âm giao diện (có thể thêm `tape-loop` CC0 vào `ui_sound_map.json` rồi chạy `import_ui_sounds.py`); chưa push `dev`.
 2. Phần 5 UI (sổ tay, bảng suy luận, buộc tội, xóa alias `PaperPanel`, chuyển nút còn lại) chỉ khi người dùng yêu cầu; PR-04 sau khi duyệt PR-03.
 3. Nợ: 17 E2E đỏ có sẵn, 1 pytest đỏ có sẵn, minor phần 3/4/4b.
 

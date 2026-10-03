@@ -199,3 +199,4 @@ Mỗi asset đưa vào `assets/` phải có một dòng. Không dùng asset nế
 - Hình dáng lấy ý tưởng bục/vòng đồng tâm từ ảnh người dùng; palette đồng cũ, mực sepia và ánh vàng nhẹ theo lựa chọn đã duyệt. Ellipse 2:1, floor pivot (64,92), footprint logical1.3×1.3, không collider.
 - SHA256: `7f29807d9bcb0115f89cdea4e20cea78d460ea98dc4852ccac9a0f4851b2f47f`.
 - Hiệu ứng vòng/hạt vẽ bằng Phaser Graphics, reduced motion tĩnh; source code nằm trong `portalPresentation.ts`.
+| `apps/game-web/public/audio/ui/*.ogg` (7 file) | Kenney Interface Sounds 1.0 và RPG Audio 1.0 (https://kenney.nl/assets/interface-sounds, https://kenney.nl/assets/rpg-audio), nhập bằng `tools/audio-codegen/import_ui_sounds.py`; nguồn, hash, giấy phép từng file trong `apps/game-web/public/audio/ui/provenance.json` | 2026-10-03 | Âm giao diện dùng chung (`press`, `tab`, `pen`, `device-click`, `paper-open`, `paper-close`, `stamp`) | CC0 1.0; file gốc copy nguyên, không mã hóa lại (máy không có ffmpeg) |

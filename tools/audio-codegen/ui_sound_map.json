@@ -1,0 +1,47 @@
+{
+  "_comment": "UI sound id -> source file inside assets/_incoming/audio (kept local, not committed). All Kenney, CC0.",
+  "sounds": {
+    "press": {
+      "source": "kenney-interface-sounds/Audio/click_003.ogg",
+      "pack": "Kenney Interface Sounds 1.0",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0"
+    },
+    "tab": {
+      "source": "kenney-interface-sounds/Audio/tick_001.ogg",
+      "pack": "Kenney Interface Sounds 1.0",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0"
+    },
+    "pen": {
+      "source": "kenney-interface-sounds/Audio/tick_004.ogg",
+      "pack": "Kenney Interface Sounds 1.0",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0"
+    },
+    "device-click": {
+      "source": "kenney-rpg-audio/Audio/metalClick.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0"
+    },
+    "paper-open": {
+      "source": "kenney-rpg-audio/Audio/bookFlip2.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0"
+    },
+    "paper-close": {
+      "source": "kenney-rpg-audio/Audio/bookClose.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0"
+    },
+    "stamp": {
+      "source": "kenney-rpg-audio/Audio/bookPlace2.ogg",
+      "pack": "Kenney RPG Audio 1.0",
+      "url": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0"
+    }
+  }
+}
