@@ -1,6 +1,6 @@
 # Sổ tay, bảng suy luận và bảng buộc tội: thẻ chia mục, thẻ ghim, ba loại nút
 
-Ngày: 04/10/2026. Trạng thái: **chờ duyệt**. Plan: chưa viết. Chưa sửa code.
+Ngày: 04/10/2026. Trạng thái: **đã duyệt (04/10/2026)**, kèm mockup đã duyệt: `docs/superpowers/mockups/2026-10-04-{notebook,board,accusation}.png`. Plan: chưa viết. Chưa sửa code.
 
 Phân loại theo `brainstorming`: **architectural** — đổi cách trình bày của ba màn điều tra lớn nhất, dùng lại và mở rộng primitive `packages/ui`, xóa alias `PaperPanel`. Sau khi spec được duyệt mới chuyển sang `writing-plans`.
 
