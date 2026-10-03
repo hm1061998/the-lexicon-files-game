@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react';
-import { PaperPanel } from '@lexicon/ui';
+import { FolderTabs, InkButton, PaperButton } from '@lexicon/ui';
 import type {
   CaseDefinition,
   GameState,
@@ -8,13 +8,13 @@ import type {
   UiStrings,
 } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
+import { BookFrame } from './BookFrame';
 import { NotebookReaderPage } from './NotebookReaderPage';
 import {
   createNotebookReadingState,
   selectNotebookReading,
   type NotebookReadingState,
 } from './notebookReadingState';
-import { InvestigationDecoration } from '../investigation/art/InvestigationDecoration';
 import { selectInvestigationView } from '../investigation/selectInvestigationView';
 import { useInvestigationDialogFocus } from '../investigation/useInvestigationDialogFocus';
 import './notebook.css';
@@ -73,43 +73,42 @@ export function NotebookPanel({
   };
   return (
     <div className="notebook-overlay">
-      <PaperPanel as="div" className="notebook-panel">
-        {['', 'corner-tr', 'corner-bl', 'corner-br'].map((c) => (
-          <InvestigationDecoration kind="corner" className={c} key={c} />
-        ))}
-        <section
-          ref={dialogRef}
-          className="notebook-dialog"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={headingId}
+      <section
+        ref={dialogRef}
+        className="notebook-dialog notebook-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headingId}
+      >
+        <BookFrame
+          header={
+            <header className="notebook-header">
+              <h2 id={headingId}>
+                <kbd aria-hidden="true">J</kbd> {strings.notebook}
+              </h2>
+              <div>
+                <InkButton sfx="paper-close" aria-label={strings.close} onClick={onClose}>
+                  {strings.close}
+                </InkButton>
+                <PaperButton onClick={onOpenDeduction}>{strings.openDeductionBoard}</PaperButton>
+              </div>
+            </header>
+          }
+          rightEdge={
+            <FolderTabs
+              variant="book"
+              className="notebook-tabs"
+              ariaCurrent="page"
+              label={strings.notebook}
+              items={TABS.map((id) => ({
+                id,
+                label: strings[id],
+                current: activeTab === id,
+                onSelect: () => onSelectTab(id),
+              }))}
+            />
+          }
         >
-          <header className="notebook-header">
-            <h2 id={headingId}>
-              <kbd aria-hidden="true">J</kbd> {strings.notebook}
-            </h2>
-            <div>
-              <button type="button" aria-label={strings.close} onClick={onClose}>
-                <span aria-hidden="true">×</span>
-              </button>
-              <button type="button" onClick={onOpenDeduction}>
-                {strings.openDeductionBoard}
-              </button>
-            </div>
-          </header>
-          <nav className="notebook-tabs" aria-label={strings.notebook}>
-            {TABS.map((id) => (
-              <button
-                type="button"
-                key={id}
-                aria-current={activeTab === id ? 'page' : undefined}
-                aria-pressed={activeTab === id}
-                onClick={() => onSelectTab(id)}
-              >
-                {strings[id]}
-              </button>
-            ))}
-          </nav>
           <div className="notebook-content">
             <NotebookReaderPage
               definition={caseDefinition}
@@ -124,8 +123,8 @@ export function NotebookPanel({
               onPaperCue={onPaperCue}
             />
           </div>
-        </section>
-      </PaperPanel>
+        </BookFrame>
+      </section>
     </div>
   );
 }

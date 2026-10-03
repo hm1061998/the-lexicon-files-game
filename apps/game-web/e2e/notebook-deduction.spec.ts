@@ -110,9 +110,10 @@ for (const viewport of [
       ['timeline', strings.timeline],
     ]) {
       await notebook.getByRole('button', { name: label, exact: true }).click();
-      await expect(notebook.getByRole('button', { name: label, exact: true })).toHaveCSS(
-        'background-color',
-        'rgb(116, 48, 38)',
+      // The open tab is the one marked as the current page (it sticks out of the book edge).
+      await expect(notebook.getByRole('button', { name: label, exact: true })).toHaveAttribute(
+        'aria-current',
+        'page',
       );
       await expectNoInvestigationScroll(
         page,

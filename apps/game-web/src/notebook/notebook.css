@@ -12,33 +12,23 @@
   font-family: var(--lexicon-font-body);
   font-size: 16px;
 }
-.notebook-panel {
-  box-sizing: border-box;
-  width: min(1160px, 100%);
-  height: 100%;
-  max-height: 850px;
-  padding: 12px 10px 10px;
-  line-height: 1.5;
-  border: 5px double var(--lexicon-border);
-  border-radius: 9px;
-  box-shadow:
-    0 7px 0 var(--lexicon-beige),
-    0 10px 0 var(--lexicon-border),
-    0 16px 30px rgba(0, 0, 0, 0.4);
-}
 .notebook-dialog {
   position: relative;
+  box-sizing: border-box;
+  width: min(1240px, 100%);
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  max-height: 850px;
   min-height: 0;
+}
+.notebook-dialog [tabindex]:focus-visible {
+  outline: 3px solid var(--lexicon-ink);
+  outline-offset: 3px;
 }
 .notebook-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 0 12px 8px;
   flex-shrink: 0;
 }
 .notebook-header h2 {
@@ -58,86 +48,16 @@
   border: 1px solid var(--lexicon-border);
   border-radius: 3px;
 }
-.notebook-panel button {
-  min-height: 44px;
-  min-width: 44px;
-  border: 1px solid var(--lexicon-border);
-  border-radius: 3px;
-  padding: 8px 12px;
-  background: var(--lexicon-beige);
-  color: var(--lexicon-ink);
-  font: inherit;
-  cursor: pointer;
-}
-.notebook-panel button:focus-visible,
-.notebook-panel [tabindex]:focus-visible {
-  outline: 3px solid var(--lexicon-ink);
-  outline-offset: 3px;
-}
-.notebook-panel button:disabled {
-  opacity: 0.62;
-  cursor: not-allowed;
-}
-.notebook-header button[aria-label] {
-  font-size: 28px;
-  line-height: 1;
-  padding: 6px;
-}
-.notebook-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  flex-shrink: 0;
-  padding: 0 16px;
-  border-bottom: 2px solid var(--lexicon-border);
-}
-.notebook-tabs button {
-  padding: 10px 20px;
-  border-bottom: 0;
-  border-radius: 7px 7px 0 0;
-  background: var(--lexicon-paper);
-  position: relative;
-}
-.notebook-panel .notebook-tabs button[aria-current='page'],
-.notebook-panel .notebook-tabs button[aria-current='page']:hover:not(:disabled) {
-  background: var(--lexicon-dark-red);
-  color: var(--lexicon-paper);
-  font-weight: 700;
-  box-shadow: inset 0 0 0 2px var(--lexicon-paper);
-}
 .notebook-content {
-  flex: 1;
+  height: 100%;
   min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-  scroll-padding: 16px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid var(--lexicon-warm-gray);
+  overflow: clip;
 }
 .notebook-spread {
   min-height: 100%;
   display: grid;
   grid-template-columns: minmax(0, 0.36fr) minmax(0, 0.64fr);
   position: relative;
-}
-.notebook-spread::before {
-  content: '';
-  position: absolute;
-  left: 36%;
-  top: 0;
-  bottom: 0;
-  width: 14px;
-  transform: translateX(-50%);
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, transparent, rgba(62, 52, 43, 0.22), transparent),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 65px,
-      var(--lexicon-warm-gray) 65px 68px,
-      var(--lexicon-border) 68px 70px,
-      transparent 70px 130px
-    );
 }
 .notebook-index {
   min-width: 0;
@@ -203,10 +123,6 @@
 }
 .notebook-people-list small {
   font-size: 14px;
-}
-.notebook-panel button[aria-pressed='true']:not(.vocabulary-word) {
-  border-color: var(--lexicon-investigation-red);
-  box-shadow: inset 0 0 0 1px var(--lexicon-investigation-red);
 }
 .investigation-artwork {
   position: relative;
@@ -452,39 +368,17 @@
   .notebook-overlay {
     padding: 12px;
   }
-  .notebook-panel {
-    padding: 6px;
-    height: 100%;
-    border-width: 3px;
-  }
   .notebook-header {
-    padding: 0 4px 6px;
     gap: 8px;
   }
   .notebook-header h2 {
     font-size: 16px;
   }
-  .notebook-header button {
-    padding: 6px 8px;
-    font-size: 14px;
-  }
   .notebook-header > div {
     gap: 4px;
   }
-  .notebook-tabs {
-    padding: 0 2px;
-    gap: 2px;
-  }
-  .notebook-tabs button {
-    padding: 8px 10px;
-    font-size: 14px;
-    flex: 1 1 40%;
-  }
   .notebook-spread {
     grid-template-columns: 1fr;
-  }
-  .notebook-spread::before {
-    display: none;
   }
   .notebook-index {
     padding: 16px;
@@ -526,32 +420,27 @@
 }
 
 /* Paginated game surfaces replace scrolling reading columns. */
-.notebook-panel {
-  position: relative;
-}
-.notebook-content {
-  flex: 1;
-  overflow: clip;
-  min-height: 0;
-}
+/* Two equal leaves; the gutter between them is the book's crease. */
 .paginated-spread {
   height: 100%;
   min-height: 0;
-  grid-template-columns: minmax(0, 0.36fr) minmax(0, 0.64fr);
-  gap: 24px;
-  padding: 12px 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: var(--book-gutter, 22px);
+  padding: 10px 0 4px;
   box-sizing: border-box;
-}
-.paginated-spread::before {
-  display: none;
 }
 .paginated-spread .notebook-index,
 .paginated-spread .notebook-detail {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 0 8px;
   border: 0;
+}
+.paginated-spread .notebook-index {
+  padding: 0 34px 0 24px;
+}
+.paginated-spread .notebook-detail {
+  padding: 0 24px 0 34px;
 }
 .paginated-spread .notebook-index > h3 {
   margin: 0 0 8px;
@@ -570,6 +459,11 @@
   align-items: center;
   box-sizing: border-box;
 }
+/* The open entry is the one place red marks a selection. */
+.notebook-index-card[aria-pressed='true'] {
+  border-color: var(--lexicon-investigation-red);
+  box-shadow: inset 0 0 0 1px var(--lexicon-investigation-red);
+}
 .notebook-index-card .investigation-artwork {
   width: 52px;
   height: 65px;
@@ -583,8 +477,10 @@
 .notebook-index-card small {
   font-size: 14px;
 }
-.notebook-profile-art {
+.notebook-profile-art.pinned-card {
   position: relative;
+  box-sizing: border-box;
+  padding: 5px;
   height: 96px;
   max-height: 20dvh;
   width: 76px;
@@ -604,57 +500,37 @@
 .notebook-back-contents {
   display: none;
 }
-.ring-15 {
-  top: 15%;
-}
-.ring-40 {
-  top: 40%;
-}
-.ring-65 {
-  top: 65%;
-}
-.ring-87 {
-  top: 87%;
-}
-.paginated-spread.tab-timeline {
-  grid-template-columns: 1fr;
-}
-.tab-timeline .decoration-ring {
-  display: none;
+.notebook-timeline-cover h3 {
+  font-family: var(--lexicon-font-label);
 }
 @media (max-width: 719px), (max-height: 500px) {
   .notebook-overlay {
     padding: 8px;
   }
-  .notebook-panel {
-    padding: 8px 5px;
-    max-height: none;
-  }
   .notebook-header {
-    padding: 0 5px 4px;
-    gap: 4px;
+    flex-wrap: wrap;
+    gap: 0 4px;
+  }
+  .notebook-header .paper-button,
+  .notebook-header .ink-button {
+    padding: 4px 10px;
+    font-size: 14px;
+    white-space: nowrap;
   }
   .notebook-header h2 {
     font-size: 16px;
   }
-  .notebook-header button {
-    font-size: 14px;
-    padding: 4px 8px;
-  }
-  .notebook-tabs {
-    gap: 2px;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding: 0 4px;
-  }
-  .notebook-tabs button {
-    font-size: 14px;
-    padding: 4px 2px;
-  }
   .paginated-spread {
     grid-template-columns: 1fr;
-    padding: 8px 14px 4px 20px;
+    padding: 6px 10px 2px 38px;
     gap: 0;
+  }
+  .paginated-spread .notebook-index,
+  .paginated-spread .notebook-detail {
+    padding: 0;
+  }
+  .notebook-timeline-cover {
+    display: none;
   }
   .paginated-spread.view-contents:not(.tab-timeline) .notebook-detail {
     display: none;
@@ -669,11 +545,6 @@
     padding: 4px 8px !important;
     font-size: 14px;
   }
-  .paginated-spread .decoration-ring {
-    left: -8px;
-    width: 37px;
-    height: 25px;
-  }
   .paginated-spread .page-title {
     font-size: 18px;
   }
@@ -683,12 +554,5 @@
   .notebook-header > div {
     display: flex;
     gap: 4px;
-  }
-  .notebook-header > div button:last-child {
-    max-width: 145px;
-  }
-  .decoration-corner {
-    width: 48px;
-    height: 48px;
   }
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { InkButton, PaperButton, PinnedCard } from '@lexicon/ui';
 import type { CaseDefinition, LanguageProfile } from '@lexicon/shared-types';
 import type { NotebookTab } from '../state/gameStore';
 import type { InvestigationView } from '../investigation/selectInvestigationView';
@@ -7,7 +8,6 @@ import { InvestigationArtwork } from '../investigation/InvestigationArtwork';
 import { MeasuredPage } from '../investigation/pagination/MeasuredPage';
 import { ReadDocument } from '../investigation/pagination/ReadDocument';
 import { PageTurnSurface } from '../investigation/pagination/PageTurnSurface';
-import { InvestigationDecoration } from '../investigation/art/InvestigationDecoration';
 import { buildNotebookBlocks } from './buildNotebookBlocks';
 import type { NotebookReadingState } from './notebookReadingState';
 export function NotebookReaderPage({
@@ -58,13 +58,11 @@ export function NotebookReaderPage({
     Object.entries(data.fixed).map(([id, f]) => [
       id,
       f.kind === 'image' ? (
-        <div className="notebook-profile-art" key={id}>
+        <PinnedCard className="notebook-profile-art" pin="tape" tilt={-2} key={id}>
           <InvestigationArtwork url={f.url} name={f.name} portrait={f.portrait} />
-          <InvestigationDecoration kind="clip" />
-        </div>
+        </PinnedCard>
       ) : (
-        <button
-          type="button"
+        <InkButton
           key={id}
           onClick={() => {
             if (f.action === 'review') onReviewEvidence(f.target);
@@ -80,7 +78,7 @@ export function NotebookReaderPage({
           }}
         >
           {f.label}
-        </button>
+        </InkButton>
       ),
     ]),
   );
@@ -96,8 +94,7 @@ export function NotebookReaderPage({
   const card = (id: string, passive: boolean) => {
     const i = data.items.find((i) => i.id === id)!;
     return (
-      <button
-        type="button"
+      <PaperButton
         className="notebook-index-card"
         tabIndex={passive ? -1 : undefined}
         aria-label={i.name}
@@ -109,7 +106,7 @@ export function NotebookReaderPage({
           <strong>{i.name}</strong>
           <small>{i.subtitle}</small>
         </span>
-      </button>
+      </PaperButton>
     );
   };
   const empty =
@@ -120,6 +117,11 @@ export function NotebookReaderPage({
         : strings.notebookEmptyVocabulary;
   return (
     <div className={`notebook-spread paginated-spread view-${state.view} tab-${tab}`}>
+      {tab === 'timeline' && (
+        <section className="notebook-index notebook-timeline-cover" aria-hidden="true">
+          <h3>{heading}</h3>
+        </section>
+      )}
       {tab !== 'timeline' && (
         <section className="notebook-index">
           <h3>{heading}</h3>
@@ -141,13 +143,13 @@ export function NotebookReaderPage({
         aria-label={data.selected?.name ?? heading}
       >
         {tab !== 'timeline' && (
-          <button
-            type="button"
+          <InkButton
             className="notebook-back-contents"
+            sfx="paper-close"
             onClick={() => patch({ view: 'contents' })}
           >
             {strings.notebookBackToContents}
-          </button>
+          </InkButton>
         )}
         <PageTurnSurface pageKey={String(turn)} onPaperCue={onPaperCue}>
           <ReadDocument
@@ -163,9 +165,6 @@ export function NotebookReaderPage({
           />
         </PageTurnSurface>
       </article>
-      {[15, 40, 65, 87].map((n) => (
-        <InvestigationDecoration kind="ring" key={n} className={`ring-${n}`} />
-      ))}
     </div>
   );
 }

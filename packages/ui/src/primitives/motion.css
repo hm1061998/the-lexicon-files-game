@@ -20,6 +20,9 @@
 .lexicon-motion-off .dialogue-choice,
 .lexicon-motion-off .evidence-photo,
 .lexicon-motion-off .pinned-card,
+.lexicon-motion-off .notebook-overlay,
+.lexicon-motion-off .book-frame,
+.lexicon-motion-off .book-leaf,
 .lexicon-motion-off .folder-tabs--book .folder-tab,
 .lexicon-motion-off .folder-tabs--board .folder-tab {
   transform: none !important;
@@ -39,6 +42,7 @@
   .dialogue-choice,
   .evidence-photo,
   .pinned-card,
+  .book-frame,
   .ink-button,
   .stamp,
   .index-tab {
@@ -58,6 +62,9 @@
   .dialogue-choice,
   .evidence-photo,
   .pinned-card,
+  .notebook-overlay,
+  .book-frame,
+  .book-leaf,
   .folder-tabs--book .folder-tab,
   .folder-tabs--board .folder-tab {
     transform: none !important;

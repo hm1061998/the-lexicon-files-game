@@ -1,0 +1,250 @@
+/*
+ * Layout: the cover (decoration) is absolute behind a grid of three slots. Desktop: header and content
+ * sit over the two leaves, the edge column hangs off the right of the cover. Narrow or low: the tabs
+ * lie along the top edge of the leaves above the header, and one leaf fills the width.
+ */
+.book-frame {
+  --book-edge: 128px;
+  --book-pad-x: 22px;
+  --book-pad-y: 30px;
+  --book-gutter: 22px;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--book-edge);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'header edge'
+    'content edge';
+  line-height: 1.5;
+  animation: book-open 220ms ease-out backwards;
+}
+
+.book-cover {
+  position: absolute;
+  inset: 0 var(--book-edge) 0 0;
+  border-radius: 12px;
+  background: #2f2620 url('/assets/ui/desk_wood.png') 0 0 / 256px 256px;
+  background-blend-mode: multiply;
+  box-shadow:
+    0 14px 30px rgb(0 0 0 / 60%),
+    inset 0 0 0 2px #1d1712;
+  pointer-events: none;
+}
+
+/* The stitching along the cover edge. */
+.book-cover::after {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border: 2px dashed rgb(206 176 126 / 35%);
+  border-radius: 8px;
+}
+
+.book-leaves {
+  position: absolute;
+  inset: var(--book-pad-y) var(--book-pad-x);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--book-gutter) minmax(0, 1fr);
+}
+
+/* Each leaf is a stack of sheets: the sheets underneath show as stepped edges on the outer side. */
+.book-leaf {
+  position: relative;
+  background: #d8c5a4 url('/assets/ui/paper_sheet_aged.png') 0 0 / 256px 256px;
+}
+
+.book-leaf--left {
+  border-radius: 6px 2px 2px 6px;
+  box-shadow:
+    -4px 4px 0 #d3c096,
+    -5px 5px 0 #8f7a55,
+    -9px 9px 0 #cbb78d,
+    -10px 10px 0 #8f7a55,
+    -14px 13px 0 #c2ad83,
+    -15px 14px 0 #7d6947,
+    -17px 16px 22px rgb(0 0 0 / 60%);
+}
+
+.book-leaf--right {
+  border-radius: 2px 6px 6px 2px;
+  box-shadow:
+    4px 4px 0 #d3c096,
+    5px 5px 0 #8f7a55,
+    9px 9px 0 #cbb78d,
+    10px 10px 0 #8f7a55,
+    14px 13px 0 #c2ad83,
+    15px 14px 0 #7d6947,
+    17px 16px 22px rgb(0 0 0 / 60%);
+}
+
+/* The page curves down into the gutter: shadow deepens towards the spine. */
+.book-leaf--left::after,
+.book-leaf--right::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.book-leaf--left::after {
+  background: linear-gradient(
+    to right,
+    rgb(60 40 20 / 0%) 74%,
+    rgb(60 40 20 / 12%) 88%,
+    rgb(40 25 10 / 42%) 100%
+  );
+}
+
+.book-leaf--right::after {
+  background: linear-gradient(
+    to left,
+    rgb(60 40 20 / 0%) 74%,
+    rgb(60 40 20 / 12%) 88%,
+    rgb(40 25 10 / 42%) 100%
+  );
+}
+
+.book-crease {
+  border-radius: 4px;
+  margin: -4px 0;
+  background: linear-gradient(to right, #17120e, #2b2219 50%, #17120e);
+  box-shadow: 0 0 10px rgb(0 0 0 / 70%);
+}
+
+/* Seven coils spread down the gutter, centred on it. */
+.book-coil {
+  position: absolute;
+  left: 50%;
+  width: 112px;
+  height: 46px;
+  margin-left: -56px;
+  top: calc(var(--book-pad-y) + var(--coil) * (100% - 2 * var(--book-pad-y) - 46px) / 6);
+}
+
+.book-slot {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.book-slot--header {
+  grid-area: header;
+  padding: calc(var(--book-pad-y) + 10px) calc(var(--book-pad-x) + 26px) 4px
+    calc(var(--book-pad-x) + 26px);
+}
+
+.book-slot--content {
+  grid-area: content;
+  margin: 0 var(--book-pad-x) var(--book-pad-y);
+}
+
+.book-slot--edge {
+  grid-area: edge;
+  margin-left: -12px;
+  padding-top: 96px;
+  z-index: 2;
+}
+
+@media (max-width: 959px), (max-height: 639px) {
+  .book-frame {
+    --book-pad-x: 8px;
+    --book-pad-y: 8px;
+    --book-gutter: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      'edge'
+      'header'
+      'content';
+  }
+
+  /* The cover starts under the tab row, so the tabs stand on its top edge. */
+  .book-cover {
+    position: relative;
+    inset: auto;
+    grid-row: 2 / 4;
+    grid-column: 1;
+    border-radius: 8px;
+  }
+
+  .book-cover::after {
+    inset: 3px;
+  }
+
+  .book-slot--edge {
+    margin: 0 0 -4px;
+    padding: 6px var(--book-pad-x) 0;
+  }
+
+  .book-slot--header {
+    padding: calc(var(--book-pad-y) + 4px) calc(var(--book-pad-x) + 10px) 0;
+  }
+
+  .book-slot--content {
+    margin: 0 var(--book-pad-x) var(--book-pad-x);
+  }
+
+  .book-leaf--left {
+    box-shadow:
+      -2px 2px 0 #d3c096,
+      -3px 3px 0 #8f7a55;
+  }
+
+  .book-leaf--right {
+    box-shadow:
+      2px 2px 0 #d3c096,
+      3px 3px 0 #8f7a55;
+  }
+
+  .book-coil {
+    width: 56px;
+    height: 23px;
+    margin-left: -28px;
+    top: calc(var(--book-pad-y) + var(--coil) * (100% - 2 * var(--book-pad-y) - 23px) / 6);
+  }
+}
+
+/* One leaf at a time: the second leaf and the gutter give way to a single sheet with the coils on its left. */
+@media (max-width: 719px), (max-height: 500px) {
+  .book-leaves {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .book-crease,
+  .book-leaf--right {
+    display: none;
+  }
+
+  .book-slot--header {
+    padding-left: calc(var(--book-pad-x) + 32px);
+  }
+
+  .book-leaf--left {
+    border-radius: 3px;
+  }
+
+  .book-leaf--left::after {
+    background: linear-gradient(to right, rgb(40 25 10 / 30%) 0%, rgb(60 40 20 / 0%) 6%);
+  }
+
+  .book-coil {
+    left: var(--book-pad-x);
+    margin-left: -28px;
+  }
+}
+
+@keyframes book-open {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+    rotate: -1deg;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}

@@ -136,3 +136,41 @@ describe('NotebookPanel reading pages', () => {
     },
   );
 });
+
+describe('NotebookPanel as a spiral notebook', () => {
+  const html = renderToStaticMarkup(<NotebookPanel {...props} activeTab="evidence" />);
+
+  it('has two stacked leaves, a gutter crease and seven spiral coils', () => {
+    expect(html).toContain('book-leaf--left');
+    expect(html).toContain('book-leaf--right');
+    expect(html).toContain('book-crease');
+    expect(html.match(/class="book-coil"/g)).toHaveLength(7);
+    expect(html).not.toContain('paper-panel');
+  });
+
+  it('puts the four index tabs on the book edge with one current page', () => {
+    expect(html).toContain('folder-tabs--book');
+    expect(html.match(/aria-current="page"/g)).toHaveLength(1);
+    expect(html).toMatch(/aria-current="page"[^>]*>Chứng cứ</);
+    expect(html).not.toMatch(/<nav class="notebook-tabs/);
+  });
+
+  it('uses an ink button to close and a paper button to open the board', () => {
+    expect(html).toMatch(/<button[^>]*class="ink-button[^"]*"[^>]*aria-label="Đóng"/);
+    expect(html).toMatch(/<button[^>]*class="paper-button[^"]*"[^>]*>Mở bảng suy luận</);
+  });
+
+  it('stays a labelled modal dialog around the whole book', () => {
+    expect(html).toMatch(/<section[^>]*role="dialog"[^>]*aria-modal="true"/);
+    const labelled = /aria-labelledby="([^"]+)"/.exec(html)?.[1];
+    expect(labelled).toBeTruthy();
+    expect(html).toContain(`id="${labelled}"`);
+  });
+
+  it('has no unstyled button left in the book', () => {
+    const bare = html.match(
+      /<button(?![^>]*class="[^"]*(ink-button|paper-button|folder-tab|vocabulary-word))/g,
+    );
+    expect(bare).toBeNull();
+  });
+});
