@@ -105,6 +105,7 @@ test('mouse collects desk evidence and opens notebook without world input throug
   await page.getByRole('button', { name: 'Đóng', exact: true }).click();
   await page.getByRole('button', { name: 'Mở sổ tay', exact: false }).click();
   await expect(page.locator('.notebook-panel')).toBeVisible();
+  await page.locator('.notebook-index-card').first().click();
   await expect(page.getByRole('heading', { name: 'Meeting Minutes', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Đóng', exact: true }).click();
   await page.waitForTimeout(500);

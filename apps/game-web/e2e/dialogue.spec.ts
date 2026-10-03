@@ -218,6 +218,7 @@ test('legacy Phase 4 save migrates without losing evidence or objective progress
   await expect.poll(async () => (await saved(page))?.schemaVersion).toBe(4);
   expect((await saved(page))?.activeSceneId).toBe('main_office');
   await page.keyboard.press('j');
+  await page.locator('.notebook-index-card').first().click();
   await expect(page.getByRole('heading', { name: 'Meeting Minutes', exact: true })).toBeVisible();
   expect((await saved(page))?.state.objectiveStatuses).toEqual({
     find_what_happened: 'completed',

@@ -162,6 +162,7 @@ test('settings and progress survive reload', async ({ page }) => {
   });
 
   await page.keyboard.press('j');
+  await page.locator('.notebook-index-card').first().click();
   await page.getByRole('button', { name: 'Xem lại' }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText("Leo's Phone Recording");

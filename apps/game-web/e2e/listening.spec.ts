@@ -211,6 +211,7 @@ test('a collected recording can be reopened from the notebook to answer later', 
   await expect(page.getByRole('dialog')).toHaveCount(0);
 
   await page.keyboard.press('j');
+  await page.locator('.notebook-index-card').first().click();
   await page.getByRole('button', { name: 'Xem lại' }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText("Leo's Phone Recording");
